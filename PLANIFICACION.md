@@ -19,7 +19,7 @@
 | **Plataforma** | Web (HTML + JS + Three.js); servidor Node.js en tiempo real |
 
 ### Historia
-Nude Project anuncia un **drop limitado** en su tienda de Madrid. Cada grupo es un fan que corre por las calles para llegar antes de que se agote el stock. En el camino hay que **esquivar y saltar obstáculos** y, cada tanto, **atravesar el arco de la respuesta correcta**. Acertar da ventajas para el tramo siguiente.
+Nude Project anuncia un **drop ultra limitado** en su tienda de Madrid: queda **una sola sudadera**. Cada grupo es un fan que corre por las calles para llegar primero. En el camino hay que **esquivar y saltar obstáculos** y, cada tanto, **atravesar el arco de la respuesta correcta**. Acertar da ventajas para el tramo siguiente.
 
 ### Objetivo pedagógico
 Repasar de forma activa los conceptos del caso y de la consigna:
@@ -47,7 +47,7 @@ La mecánica también refleja el caso: **stock limitado, urgencia, colas y exclu
 La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio:
 
 ```
-[Lobby] → [3,2,1 ¡DROP!] → ( [Tramo de carrera] → [Pregunta con arcos] ⚡revelado instantáneo ) ×N → [Sprint final y llegada] → [Podio] → [Repaso de errores + debate]
+[Lobby] → [3,2,1 ¡DROP!] → ( [Tramo de carrera] → [Pregunta con arcos] ⚡revelado instantáneo ) ×N → [Sprint final y llegada] → [Ganador] → [Repaso de errores + debate]
 ```
 
 | Fase | Duración | Qué pasa | Dónde mirar |
@@ -81,15 +81,18 @@ Con 10 preguntas, la carrera dura unos **7 a 8 minutos**.
    - En el proyector: durante unos 3 s se resalta la opción correcta y se ve "28 de 40 grupos acertaron", y luego vuelve el mapa. **No se muestra la explicación** en este momento.
 6. **Llegada a la tienda**
    - Después de la última pregunta hay un **sprint final** corto (unos 10 s).
-   - El stock es limitado: solo los primeros **X** grupos (configurable, por ejemplo 5 de 40) "consiguen la sudadera".
-   - El resto queda en la cola con el cartel **SOLD OUT**.
-7. **Podio**
-   - Ranking final con estadísticas: aciertos, obstáculos esquivados, saltos, likes y poderes usados.
+   - Hay **una sola sudadera**: **solo el grupo que llega primero a la tienda gana el juego**.
+   - Cuando el primero cruza la puerta, en todos los demás celulares aparece el cartel **SOLD OUT** y su corredor queda en la cola.
+   - Desempate (muy improbable, porque la distancia es continua): más aciertos y, si sigue empatado, quien respondió más rápido en total.
+7. **Ganador**
+   - El proyector muestra al **único ganador** con la sudadera, en grande.
+   - Debajo, el resto como "la cola" (el orden de llegada), sin podio ni premios para el 2.º y 3.º.
+   - Estadísticas destacadas: aciertos, obstáculos esquivados, saltos, likes y poderes usados.
 8. **Repaso de errores y debate**
    - El proyector muestra las **3 preguntas con menor porcentaje de aciertos** (cantidad configurable).
    - Para cada una: la pregunta, cuántos grupos eligieron cada opción (barras), la respuesta correcta y la **explicación**.
    - El presentador avanza manualmente para comentar cada una.
-   - Cierre con preguntas para debatir: *¿Cómo se sintieron los que quedaron afuera? ¿Exclusividad o frustración?* Así se conecta con el desafío que plantea el caso.
+   - Cierre con preguntas para debatir: *¿Cómo se sintieron los 39 grupos que quedaron afuera? ¿Exclusividad o frustración?* Así se conecta con el desafío que plantea el caso.
 
 ---
 
@@ -102,7 +105,7 @@ Con 10 preguntas, la carrera dura unos **7 a 8 minutos**.
   - **Deslizar hacia arriba: salta** (ver 3.2).
   - Botón grande: activa el poder guardado.
   - Los gestos tienen *buffer*: si se desliza un instante antes de que termine el salto o el cambio de carril, la acción se ejecuta igual, para que los controles se sientan precisos.
-- Cada corredor tiene una **distancia recorrida**. Gana quien llega primero a la tienda, es decir, quien acumula más distancia.
+- Cada corredor tiene una **distancia recorrida**. **Gana solo quien llega primero a la tienda**, es decir, quien acumula más distancia al terminar el sprint final. No hay premios para los demás puestos.
 - La distancia total es la suma de:
   1. la **distancia corrida**, que calcula el celular y depende de la velocidad durante los tramos (sube con las ventajas, baja un instante al chocar);
   2. los **bonus de distancia** por acertar preguntas, que calcula y guarda el servidor.
@@ -195,11 +198,11 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - **Durante los tramos**:
   - **Mapa de la carrera**: una vista aérea de la calle (o un mapa estilizado de Madrid) con un marcador por grupo, con su **número** grande y su color, que avanza hacia la tienda Nude Project. Con 40 grupos, los marcadores muy juntos se agrupan para que se lean.
   - **Ranking en vivo** en un costado: **top 10** con íconos de la ventaja activa (📱📸🧲🏰) y, debajo, el resto en columnas compactas.
-  - **Contador de stock** que baja a medida que el primero se acerca a la meta.
+  - **Cartel "QUEDA 1"** sobre la tienda y una barra que muestra cuánto le falta al primero para llegar.
   - Avisos en vivo, por ejemplo: "📉 ¡Grupo 23 activó Cambio de algoritmo sobre el top 3!"
 - **Durante la pregunta**: la pregunta en grande, las 3 opciones (A, B, C), el temporizador y cuántos grupos ya están "posicionados" (por ejemplo "31/40", sin revelar en qué carril).
 - **Revelado (~3 s, superpuesto al mapa)**: opción correcta resaltada y "28 de 40 grupos acertaron". El juego sigue detrás.
-- **Podio**: top X con la sudadera, el resto en la cola con el cartel SOLD OUT.
+- **Ganador**: el único grupo con la sudadera, en grande; el resto en la cola con el cartel SOLD OUT.
 - **Repaso de errores**: una pantalla por pregunta difícil, con la distribución de respuestas, la correcta y la explicación; botones "Siguiente" y "Terminar".
 - **Controles del docente o presentador**: pausar, saltar pregunta, terminar partida, liberar grupo.
 - **Indicador de red discreto**: cuántos celulares están conectados en este momento (por ejemplo "39/40 🟢").
@@ -406,7 +409,7 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 | server → host | `question:reveal` | `{ index, correctIndex, correctCount, total, distribution }` |
 | player → server | `player:use_power` | `{ powerId }` |
 | server → player | `state:sync` | `{ phase, bonusDistance, advantage, power, position, answeredIndexes }` |
-| server → todos | `game:end` | `{ ranking, stats }` |
+| server → todos | `game:end` | `{ winner, queue, stats }` (un solo ganador; `queue` es el orden de llegada del resto) |
 | server → host | `review:data` | `[{ index, text, options, correctIndex, distribution, explanation }]` (preguntas con más errores) |
 | host → server | `host:pause` / `host:skip` / `host:end` | — |
 
@@ -485,7 +488,6 @@ En `data/config.json`, o desde el lobby del host:
 | `bonusAcierto` | 150 | Distancia base por respuesta correcta |
 | `bonusRapidezMax` | 100 | Distancia extra máxima por responder rápido |
 | `penalizacionChoque` | 1.0 | Segundos de frenado al chocar |
-| `stockDrop` | 5 | Cuántos grupos "consiguen la sudadera" |
 | `poderesActivos` | true | Activar o desactivar poderes y rachas |
 | `rachaParaPoder` | 3 | Aciertos seguidos necesarios para ganar un poder |
 | `emparejar` | true | Bonus de velocidad para el último cuarto de la tabla |
@@ -576,7 +578,7 @@ drop-rush-nude-project/
 - [ ] Likes coleccionables (en el piso y en el aire)
 - [ ] Envío de la distancia al servidor y mapa en vivo en el host
 - [ ] Arcos de respuesta dentro del runner y feedback sin pausa
-- [ ] Sprint final, meta con la tienda, contador de stock y cartel SOLD OUT
+- [ ] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto
 
 ### Fase 3: Red robusta, ventajas y poderes
 - [ ] Cola de salida con `ack`, `state:sync` y recuperación de estado de Socket.io
@@ -632,7 +634,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
   - Sugerir un rol por grupo: uno **maneja el celular** y los demás **leen la pregunta en el proyector** y le dicen qué carril elegir. Así participa todo el grupo.
 - **Después de jugar**:
   - **Repaso de errores**: comentar las preguntas que más se equivocaron, con sus explicaciones.
-  - Usar el podio para abrir el debate sobre exclusividad vs. accesibilidad y conectarlo con los desafíos del caso.
+  - Usar el resultado (un ganador y 39 grupos sin sudadera) para abrir el debate sobre exclusividad vs. accesibilidad y conectarlo con los desafíos del caso.
 
 ---
 
