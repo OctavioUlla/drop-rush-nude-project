@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { cargarConfig, cargarPreguntas } from './config.js';
 import { Sala } from './rooms.js';
 import { Partida } from './game.js';
+import { esPrincipal } from './principal.js';
 
 // Un solo proceso sirve la página, el JavaScript del juego y el tiempo real (sección 5).
 
@@ -187,7 +188,8 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
   app.get('/api/health', (_req, res) => res.json({ ok: true, time: Date.now() }));
   app.get('/api/informes', (_req, res) => res.json(informes));
 
-  const produccion = process.env.NODE_ENV === 'production';
+  // `--produccion` en vez de NODE_ENV=production: así `npm start` anda igual en Windows.
+  const produccion = process.env.NODE_ENV === 'production' || process.argv.includes('--produccion');
   let vite = null;
   if (archivos === 'auto' && !produccion) {
     const { createServer: crearVite } = await import('vite');
@@ -233,7 +235,7 @@ function direccionesLocales() {
     .map((i) => i.address);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (esPrincipal(import.meta.url)) {
   const puerto = Number(process.env.PORT) || 3000;
   const servidor = await iniciarServidor({ puerto, host: '0.0.0.0' });
   console.log(`\n  Drop Rush (Fase 0) en marcha`);

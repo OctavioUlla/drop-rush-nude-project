@@ -6,7 +6,7 @@ Runner 3D multijugador para el cierre de la presentación. El plan completo est�
 
 ## Cómo correrlo
 
-Requiere Node.js 20 o más nuevo.
+Requiere Node.js 20 o más nuevo. Los comandos son los mismos en Windows (PowerShell o CMD), Mac y Linux.
 
 ```bash
 cd juego

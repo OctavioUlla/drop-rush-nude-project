@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
-import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { esPrincipal } from '../server/principal.js';
 import { Reloj } from '../public/shared/reloj.js';
 import { Guion } from '../public/shared/guion.js';
 import { FASES, VELOCIDAD_BASE, INTERVALO_PROGRESO } from '../public/shared/constantes.js';
@@ -245,7 +245,7 @@ export async function correrBots(opciones) {
   return resumen;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (esPrincipal(import.meta.url)) {
   const { values: v } = parseArgs({
     options: {
       url: { type: 'string', default: 'http://localhost:3000' },
