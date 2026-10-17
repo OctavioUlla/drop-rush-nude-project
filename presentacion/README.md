@@ -2,7 +2,7 @@
 
 Exposición del caso de éxito de Nude Project para la materia **Comercialización** (Licenciatura en Administración).
 
-- **Duración:** **25 minutos en total**: 15 de exposición + 10 del juego Drop Rush (la consigna pide entre 20 y 30).
+- **Duración:** **22 minutos en total**: 15 de exposición + 7 del juego Drop Rush (la consigna pide entre 20 y 30).
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
 - **Formato:** HTML interactivo, con drop falso de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
@@ -25,8 +25,8 @@ Cada punto de la consigna es un bloque; los separadores de bloque usan el tema *
 | 6 | **Objetivo comunicacional:** cuál es y con qué ejemplos se fundamenta | Punto 5 | 1,5 min |
 | 7 | **Desafíos:** autenticidad al crecer, sostenibilidad, dependencia de las redes, exclusividad vs. accesibilidad (se retoma la votación) | Cierre | 1,5 min |
 | | **Subtotal exposición** | | **15 min** |
-| 8 | **Drop Rush:** instrucciones (1 min), carrera con 10 preguntas (7 min), repaso de errores y debate final (2 min) | Punto 6 (creatividad) | **10 min** |
-| | **Total** | | **25 min** |
+| 8 | **Drop Rush:** instrucciones (1 min), carrera con 6 preguntas (~3,5 min), repaso de errores y debate final (2,5 min) | Punto 6 (creatividad) | **7 min** |
+| | **Total** | | **22 min** |
 
 > El punto 6 de la consigna (*presentar de forma creativa, con coherencia estética*) se cubre con el design system en toda la presentación y con el juego como cierre.
 
@@ -47,4 +47,4 @@ Todas están en la guía visual del [design system](../design-system/index.html)
 - [ ] Juntar ejemplos reales de EGC y UGC (Instagram, TikTok, YouTube, podcast).
 - [ ] Elegir la campaña viral a analizar.
 - [ ] Relevar métricas públicas actualizadas y citar las fuentes.
-- [ ] Ensayar con cronómetro: 15 min de exposición + 10 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).
+- [ ] Ensayar con cronómetro: 15 min de exposición + 7 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).

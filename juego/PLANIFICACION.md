@@ -13,7 +13,7 @@
 |---|---|
 | **Género** | Runner 3D por carriles (estilo Subway Surfers) + preguntas (estilo Kahoot) |
 | **Jugadores** | Hasta **40 grupos** jugando al mismo tiempo, **un solo celular por grupo** |
-| **Duración** | **10 minutos** en total: 1 de instrucciones, ~7 de carrera y 2 de repaso de errores y debate |
+| **Duración** | **7 minutos** en total: 1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate |
 | **Pantalla principal** | Compu del aula conectada al proyector (pantalla *host*) |
 | **Controles** | Celular de cada grupo: deslizar a izquierda o derecha para cambiar de carril y **hacia arriba para saltar** |
 | **Gráficos** | 3D *low-poly* estilizado (WebGL), pensado para andar bien en celulares de gama baja |
@@ -54,12 +54,12 @@ La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio
 
 | Fase | Duración | Qué pasa | Dónde mirar |
 |---|---|---|---|
-| **Tramo de carrera** | 20 a 25 s | El corredor avanza solo y el grupo esquiva, salta y junta likes | 📱 Celular |
-| **Pregunta** | 15 a 20 s | Desaparecen los obstáculos, aparece la pregunta y se acercan 3 arcos (A, B, C) | 📽️ Proyector para leer, 📱 celular para elegir carril |
+| **Tramo de carrera** | 15 s | El corredor avanza solo y el grupo esquiva, salta y junta likes | 📱 Celular |
+| **Pregunta** | 15 s | Desaparecen los obstáculos, aparece la pregunta y se acercan 3 arcos (A, B, C) | 📽️ Proyector para leer, 📱 celular para elegir carril |
 | **Revelado** ⚡ | ~2 s, **sin frenar** | Destello verde o rojo en el celular y la respuesta correcta resaltada en el proyector, mientras ya arranca el tramo siguiente | 📱 + 📽️ |
 | **Repaso de errores** | 2 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
 
-Con 10 preguntas, la carrera dura unos **7 minutos** (10 × (22 s de tramo + 20 s de pregunta)). Es el máximo que entra en los 10 minutos del bloque: si hace falta recortar, bajar a 8 preguntas (~5,5 min).
+Con 6 preguntas, la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 s de pregunta) = 3 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 7 u 8 preguntas (~4 a 4,5 min); si falta, bajar a 5.
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
@@ -163,7 +163,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - No hay castigos fuertes, para que ningún grupo quede descolgado y desmotivado.
 
 ### 3.6 Rachas y poderes
-- **3 aciertos seguidos** otorgan un **poder** que se guarda en el celular y se activa con un botón cuando el grupo quiere.
+- **2 aciertos seguidos** otorgan un **poder** (con solo 6 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
 - Cada grupo puede guardar **un poder a la vez**.
 
 | Poder | Ícono | Efecto |
@@ -436,7 +436,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
       "opcionesCortas": ["CORTA A", "CORTA B", "CORTA C"],
       "correcta": 0,
       "explicacion": "Explicación que se muestra en el repaso final si esta pregunta fue de las más erradas.",
-      "tiempo": 20
+      "tiempo": 15
     }
   ]
 }
@@ -455,14 +455,15 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 
 > El servidor **mezcla el orden de las opciones** en cada partida, para que la respuesta correcta no quede siempre en el mismo carril. Las estadísticas del repaso se muestran con el orden mezclado que vieron los grupos.
 
-### Distribución sugerida de temas (para 10 preguntas)
-- EGC vs. UGC: 2
-- Marketing viral: 2
+### Distribución sugerida de temas (para 6 preguntas)
+- EGC vs. UGC: 1
+- Marketing viral: 1
 - Marketing experiencial: 1
 - Métricas y rendimiento digital: 1
 - Objetivo comunicacional: 1
-- Modelo D2C, drops y comunidad: 2
-- Desafíos de la marca: 1
+- Modelo D2C, drops y comunidad: 1
+
+Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Conviene tener 2 o 3 preguntas de reserva en el banco por si se sube la cantidad.
 
 > **Pendiente:** redactar las preguntas exactas *(a cargo del equipo)*.
 
@@ -475,13 +476,13 @@ En `data/config.json`, o desde el lobby del host:
 | Parámetro | Por defecto | Descripción |
 |---|---|---|
 | `maxGrupos` | 40 | Cantidad de grupos; se numeran del 1 a este valor |
-| `cantidadPreguntas` | 10 | Cuántas preguntas del banco se usan |
+| `cantidadPreguntas` | 6 | Cuántas preguntas del banco se usan |
 | `ordenAleatorio` | true | Mezclar el orden de las preguntas |
 | `mezclarOpciones` | true | Mezclar el orden de las opciones en los carriles |
-| `tiempoPorDefecto` | 20 | Segundos por pregunta |
-| `duracionTramo` | 22 | Segundos de cada tramo de carrera |
+| `tiempoPorDefecto` | 15 | Segundos por pregunta |
+| `duracionTramo` | 15 | Segundos de cada tramo de carrera |
 | `duracionRevelado` | 3 | Segundos que el proyector resalta la respuesta correcta (el juego no se frena) |
-| `preguntasEnRepaso` | 3 | Cuántas de las preguntas más erradas se explican al final |
+| `preguntasEnRepaso` | 2 | Cuántas de las preguntas más erradas se explican al final |
 | `dificultadObstaculos` | `"facil"` | `"facil"`, `"normal"` o `"caotico"` |
 | `saltoActivo` | true | Salto con deslizar hacia arriba (si se desactiva, no aparecen obstáculos que obliguen a saltar) |
 | `calidadGrafica` | `"auto"` | `"auto"`, `"alta"`, `"media"` o `"baja"` |
@@ -490,11 +491,11 @@ En `data/config.json`, o desde el lobby del host:
 | `bonusRapidezMax` | 100 | Distancia extra máxima por responder rápido |
 | `penalizacionChoque` | 1.0 | Segundos de frenado al chocar |
 | `poderesActivos` | true | Activar o desactivar poderes y rachas |
-| `rachaParaPoder` | 3 | Aciertos seguidos necesarios para ganar un poder |
+| `rachaParaPoder` | 2 | Aciertos seguidos necesarios para ganar un poder |
 | `emparejar` | true | Bonus de velocidad para el último cuarto de la tabla |
 | `sonido` | true | Música y efectos en el host |
 
-**Referencia para balancear:** si a velocidad normal un tramo de 22 s equivale a unas **200 unidades** de distancia, una respuesta correcta (150 a 250) tiene que valer **lo mismo o más que un tramo completo**. Chocar en un tramo le cuesta al grupo solo unas 10 a 20 unidades.
+**Referencia para balancear:** si a velocidad normal un tramo de 15 s equivale a unas **140 unidades** de distancia, una respuesta correcta (150 a 250) tiene que valer **lo mismo o más que un tramo completo**. Chocar en un tramo le cuesta al grupo solo unas 10 a 20 unidades.
 
 ---
 
@@ -633,7 +634,7 @@ Ver también la [estructura de la presentación](../presentacion/README.md): el 
 
 La presentación es interactiva y usa **el mismo servidor** ([plan de la presentación](../presentacion/PLANIFICACION.md)): los grupos entran con el QR antes de empezar, participan del *drop* falso y de una votación desde el mismo celular, y esa sesión pasa directo al lobby del juego. El controlador del celular (`public/play/`) suma esas fases de la presentación.
 
-- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **10 minutos** (1 de instrucciones, ~7 de carrera y 2 de repaso de errores y debate), para un total de **25 minutos**.
+- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **7 minutos** (1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate), para un total de **22 minutos**.
 - **Antes de jugar**:
   - Pedir que cada grupo tenga **un** celular con batería, conexión y el brillo alto.
   - Mostrar el QR **al principio de la presentación** para que los 40 grupos entren al lobby con tiempo y se descarguen los gráficos.
