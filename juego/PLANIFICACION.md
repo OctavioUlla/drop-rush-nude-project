@@ -512,6 +512,7 @@ juego/
 │   ├── game.js           # Guion de fases, temporizadores, puntuación, ventajas, poderes
 │   ├── rooms.js          # Salas, grupos y tokens de dispositivo (un celular por grupo)
 │   ├── stats.js          # Estadísticas por pregunta y selección del repaso de errores
+│   ├── presentacion.js   # Drop falso y votación de la presentación (ver presentacion/PLANIFICACION.md)
 │   └── config.js         # Carga de config.json y valores por defecto
 ├── public/
 │   ├── host/
@@ -629,6 +630,8 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 ## 11. Integración con la presentación
 
 Ver también la [estructura de la presentación](../presentacion/README.md): el juego ocupa el último bloque.
+
+La presentación es interactiva y usa **el mismo servidor** ([plan de la presentación](../presentacion/PLANIFICACION.md)): los grupos entran con el QR antes de empezar, participan del *drop* falso y de una votación desde el mismo celular, y esa sesión pasa directo al lobby del juego. El controlador del celular (`public/play/`) suma esas fases de la presentación.
 
 - **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **10 minutos** (1 de instrucciones, ~7 de carrera y 2 de repaso de errores y debate), para un total de **25 minutos**.
 - **Antes de jugar**:
