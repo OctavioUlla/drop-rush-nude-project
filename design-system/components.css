@@ -320,6 +320,337 @@
 .np-diapo__columnas p { margin: 0 0 1cqw; }
 .np-diapo__datos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4cqw; }
 
+/* Diapositiva sobre la escena 3D: transparente para que se vea el canvas de la sudadera.
+   El tema (crema o cacao) sigue definiendo el color del texto; el fondo lo pone el estudio 3D.
+   --respaldo: imagen pre-renderizada de la escena, para impresión y equipos sin WebGL. */
+.np-diapo--escena { background: transparent; }
+[data-np-sin-webgl] .np-diapo--escena {
+  background: var(--np-fondo) var(--respaldo, none) center / cover no-repeat;
+}
+
+/* Layout editorial: texto en 5/12 a la izquierda, la sudadera ocupa los 7/12 de la derecha. */
+.np-diapo__editorial {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 3cqw;
+}
+.np-diapo__editorial > .np-diapo__texto { grid-column: span var(--np-escena-columnas-texto); }
+.np-diapo__editorial > .np-diapo__hueco { grid-column: span var(--np-escena-columnas-escena); }
+.np-diapo__texto { display: flex; flex-direction: column; gap: 2.2cqw; font-size: 2.1cqw; }
+.np-diapo__texto p { margin: 0; }
+.np-diapo__hueco { align-self: stretch; } /* lugar reservado para la sudadera: no se pone nada encima */
+
+/* ============ Presentación: texto animado ============ */
+/* Títulos que suben línea por línea desde una máscara. Se activan cuando el motor marca la diapositiva con --activa:
+   <h2 class="np-titulo np-revelar">
+     <span class="np-revelar__linea" style="--i: 0"><span>Primera línea</span></span>
+     <span class="np-revelar__linea" style="--i: 1"><span>Segunda línea</span></span>
+   </h2> */
+.np-revelar__linea { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.np-revelar__linea > span { display: block; }
+.np-diapo--activa .np-revelar__linea > span {
+  animation: np-subir var(--np-movimiento-texto) var(--np-movimiento-curva) both;
+  animation-delay: calc(var(--i, 0) * var(--np-movimiento-escalonado));
+}
+@keyframes np-subir { from { transform: translateY(110%); } to { transform: none; } }
+
+/* Cifra que cuenta desde 0: el motor anima el número; el ancho fijo evita que el texto salte. */
+.np-cifra { font-variant-numeric: tabular-nums; }
+
+/* Cinta de los separadores: DROP 001 — QUEDA 1 — … Repetir el contenido dos veces dentro de la pista. */
+.np-cinta {
+  overflow: hidden;
+  white-space: nowrap;
+  border-block: var(--np-borde-fino) solid var(--np-tinta);
+  font: var(--np-peso-black) 1em / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  text-transform: uppercase;
+  padding-block: 0.4em;
+}
+.np-cinta__pista { display: inline-flex; gap: 1em; animation: np-cinta var(--np-movimiento-cinta) linear infinite; }
+.np-cinta__pista > * { flex: none; }
+.np-diapo .np-cinta { font-size: 2.4cqw; }
+@keyframes np-cinta { to { transform: translateX(-50%); } }
+
+/* Grano de película sobre toda la presentación, para que la escena no se vea "plástica". */
+.np-grano {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: var(--np-escena-grano-opacidad);
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* "QUEDA 1" latiendo durante el drop. */
+.np-latido { animation: np-latido var(--np-movimiento-latido) var(--np-movimiento-curva) infinite; }
+@keyframes np-latido { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.06); } }
+
+/* ============ Presentación: cola de la tienda (barra de progreso) ============ */
+/* Franja al pie de la diapositiva. --avance va de 0 (primer bloque) a 1 (la fila llega a la puerta).
+   <div class="np-cola" style="--avance: .5">
+     <div class="np-cola__fila"><span class="np-cola__persona"></span>… <span class="np-cola__persona np-cola__persona--nosotros"></span></div>
+     <span class="np-cola__bloque">04</span><div class="np-cola__puerta"></div>
+   </div>
+   Con grupos conectados: style="--g: var(--np-grupo-7)" en cada persona. */
+.np-cola {
+  position: relative;
+  height: 2.6rem;
+  color: var(--np-tinta);
+  border-bottom: var(--np-borde-fino) solid var(--np-linea);
+}
+.np-diapo > .np-cola { position: absolute; left: 7%; right: 7%; bottom: 0; height: 4.5cqw; font-size: 1.2cqw; }
+.np-cola__fila {
+  position: absolute;
+  bottom: 0;
+  right: calc((1 - var(--avance, 0)) * (100% - 3.2em) + 3.2em);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35em;
+  height: 100%;
+  transition: right var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+}
+.np-cola__persona {
+  --g: var(--np-tinta);
+  position: relative;
+  flex: none;
+  width: 0.75em;
+  height: 70%;
+  background: var(--g);
+  border-radius: 0.35em 0.35em 0 0;
+}
+.np-cola__persona::before { /* cabeza */
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.12em);
+  width: 0.55em;
+  height: 0.55em;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: inherit;
+}
+.np-cola__persona--nosotros { --g: var(--np-acento-mostaza); }
+.np-cola__bloque {
+  position: absolute;
+  right: 3.2em;
+  top: 0;
+  font: var(--np-peso-medio) 0.8em / 1 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  color: var(--np-tinta-suave);
+}
+.np-cola__puerta {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 2.4em;
+  height: 100%;
+  background: var(--np-tinta);
+  border: var(--np-borde-fino) solid var(--np-tinta);
+  transition: background var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+}
+.np-cola__puerta::after { /* cartel de la Nude House */
+  content: '';
+  position: absolute;
+  inset: 18% 22% auto;
+  height: 0.18em;
+  background: var(--np-fondo);
+}
+.np-cola__puerta--abierta { background: var(--np-acento-mostaza); }
+
+/* ============ Presentación: votación en vivo ============ */
+/* <ol class="np-votacion"><li class="np-votacion__opcion" style="--valor: 70%">
+     <span class="np-votacion__texto">Sí</span><span class="np-votacion__barra"></span><span class="np-votacion__cifra">70 % · 22</span></li></ol>
+   <p class="np-votacion__estado">31/40 votaron</p> */
+.np-votacion { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9em; }
+.np-votacion__opcion {
+  display: grid;
+  grid-template-columns: 7em 1fr 6.5em;
+  align-items: center;
+  gap: 0.8em;
+  font: var(--np-peso-bold) 1.25em / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  font-variant-numeric: tabular-nums;
+}
+.np-votacion__barra { height: 1.6em; background: var(--np-fondo-alterno); border: var(--np-borde-fino) solid var(--np-linea); position: relative; }
+.np-votacion__barra::after {
+  content: '';
+  position: absolute;
+  inset: -1px auto -1px -1px;
+  width: var(--valor, 0%);
+  background: var(--np-tinta);
+  transition: width var(--np-movimiento-lento) var(--np-movimiento-curva);
+}
+.np-votacion__opcion--destacada .np-votacion__barra::after { background: var(--np-acento-mostaza); }
+.np-votacion__cifra { text-align: right; }
+.np-votacion__estado {
+  margin: 1.2em 0 0;
+  font: var(--np-peso-medio) 0.8em / 1 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  color: var(--np-tinta-suave);
+}
+.np-diapo .np-votacion { font-size: 2.1cqw; }
+
+/* ============ Presentación: feeds EGC vs. UGC ============ */
+/* Dos feeds 9:16 que se desplazan solos. El motor cambia --actual (0, 1, 2…) cada ~4 s.
+   <div class="np-feed" style="--actual: 0"><div class="np-feed__pista">
+     <article class="np-feed__pub"><video muted loop playsinline src="…"></video>
+       <footer class="np-feed__pie"><span class="np-feed__cuenta">@nudeproject</span><span class="np-feed__cifra">♥ 120 k</span></footer></article>
+   </div></div> */
+.np-feeds { display: grid; grid-template-columns: repeat(2, auto); justify-content: center; gap: 4cqw; }
+.np-feeds__columna { display: flex; flex-direction: column; align-items: center; gap: 1em; }
+.np-feed {
+  position: relative;
+  width: 100%;
+  max-width: 20rem;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: var(--np-marca-cacao-profundo);
+  border: var(--np-borde-grueso) solid var(--np-tinta);
+}
+.np-diapo .np-feed { width: auto; max-width: none; height: 32cqw; }
+.np-feed__pista {
+  height: 100%;
+  transform: translateY(calc(var(--actual, 0) * -100%));
+  transition: transform var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+}
+.np-feed__pub { position: relative; height: 100%; }
+.np-feed__pub > img, .np-feed__pub > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.np-feed__pie {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.6em 0.8em;
+  background: color-mix(in srgb, var(--np-marca-cacao) 88%, transparent);
+  color: var(--np-marca-crema);
+  font: var(--np-peso-medio) 0.8em / 1.2 var(--np-fuente-texto);
+}
+.np-feed__cuenta { font-weight: var(--np-peso-bold); }
+.np-feed__cifra { font-variant-numeric: tabular-nums; }
+.np-feed--pausado::after { /* el presentador frenó el feed para comentar */
+  content: 'Pausa';
+  position: absolute;
+  top: 0.6em;
+  left: 0.6em;
+  padding: 0.2em 0.6em;
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-bold) 0.7em / 1.4 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+}
+
+/* ============ Presentación: drop falso ============ */
+/* Cuenta regresiva gigante (proyector y celular). */
+.np-cuenta {
+  font: var(--np-peso-black) clamp(6rem, 40vw, 18rem) / 0.85 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-display);
+  font-variant-numeric: tabular-nums;
+}
+.np-diapo .np-cuenta { font-size: 26cqw; }
+.np-cuenta--ya { color: var(--np-acento-mostaza); }
+
+/* Botón COMPRAR del celular: ocupa toda la pantalla y es mostaza. Al tocarlo pasa a --enviado. */
+.np-comprar {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  border: 0;
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-black) clamp(3rem, 16vw, 6rem) / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-display);
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.np-comprar:active { background: #f2d900; }
+.np-comprar--enviado { background: var(--np-marca-cacao); color: var(--np-marca-crema); pointer-events: none; }
+
+/* ============ Presentación: etiquetas flotantes de la escena 3D ============ */
+/* El motor proyecta la posición de cada pieza de la sudadera a la pantalla y la pasa como --x, --y (en %).
+   <div class="np-etiqueta-3d" style="--x: 62%; --y: 30%"><span class="np-etiqueta-3d__valor">1,2 M</span><span class="np-etiqueta-3d__texto">Seguidores en Instagram</span></div> */
+.np-etiqueta-3d {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  padding: 0.5em 0.8em;
+  translate: 1.2em -50%;
+  background: var(--np-marca-crema);
+  color: var(--np-marca-cacao);
+  border: var(--np-borde-fino) solid var(--np-marca-cacao);
+}
+.np-etiqueta-3d::before { /* línea guía hasta la pieza */
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 1.2em;
+  border-top: var(--np-borde-fino) solid var(--np-marca-cacao);
+}
+.np-etiqueta-3d::after { /* punto sobre la pieza */
+  content: '';
+  position: absolute;
+  right: calc(100% + 1.2em - 0.25em);
+  top: calc(50% - 0.25em);
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--np-marca-cacao);
+}
+.np-etiqueta-3d__valor { font: var(--np-peso-bold) 1.6em / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); font-variant-numeric: tabular-nums; }
+.np-etiqueta-3d__texto { font: var(--np-peso-medio) 0.7em / 1.2 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; color: var(--np-marca-cacao-suave); }
+.np-diapo .np-etiqueta-3d { font-size: 1.6cqw; }
+
+/* ============ Presentación: modo presentador ============ */
+/* Ventana de la notebook: diapositiva actual, siguiente, notas, cronómetro y estado. */
+.np-presentador {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: var(--np-espacio-5);
+  min-height: 100vh;
+  padding: var(--np-espacio-5);
+}
+.np-presentador__actual { grid-row: span 2; }
+.np-presentador__notas { font-size: var(--np-texto-xl); line-height: 1.45; overflow: auto; }
+.np-presentador__estado { display: flex; flex-wrap: wrap; gap: var(--np-espacio-2); }
+.np-cronometro {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--np-espacio-3) var(--np-espacio-4);
+  background: var(--np-fondo-alterno);
+  border: var(--np-borde-fino) solid var(--np-linea);
+  font: var(--np-peso-bold) var(--np-texto-3xl) / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+}
+.np-cronometro small { font: var(--np-peso-medio) var(--np-texto-xs) / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; }
+.np-cronometro--aviso { background: var(--np-acento-mostaza); border-color: var(--np-acento-mostaza); color: var(--np-marca-cacao); }   /* quedan 20 s */
+.np-cronometro--pasado { background: var(--np-acento-ladrillo); border-color: var(--np-acento-ladrillo); color: var(--np-marca-crema); } /* se pasó del tiempo */
+
+/* ============ Movimiento reducido ============ */
+@media (prefers-reduced-motion: reduce) {
+  .np-diapo--activa .np-revelar__linea > span { animation: np-fundido var(--np-movimiento-lento) ease-out both; }
+  .np-cinta__pista, .np-latido { animation: none; }
+  .np-cola__fila, .np-cola__puerta, .np-feed__pista, .np-votacion__barra::after { transition-duration: var(--np-movimiento-base); }
+}
+@keyframes np-fundido { from { opacity: 0; } to { opacity: 1; } }
+
 @media print {
   .np-diapo { break-after: page; }
+  .np-diapo--escena { background: var(--np-fondo) var(--respaldo, none) center / cover no-repeat; }
+  .np-grano { display: none; }
+  .np-cinta__pista, .np-latido { animation: none; }
 }

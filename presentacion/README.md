@@ -33,14 +33,18 @@ Cada punto de la consigna es un bloque; los separadores de bloque usan el tema *
 
 ## Diapositivas tipo
 
-Todas están en la guía visual del [design system](../design-system/index.html) (sección *Presentación*) y se arman con las clases `np-diapo`. Detrás de ellas está siempre la escena 3D de la sudadera (ver el [guion visual por bloque](PLANIFICACION.md#33-guion-visual-por-bloque)):
+Todas están en la guía visual del [design system](../design-system/index.html) (sección *Presentación*). Detrás de ellas está siempre la escena 3D de la sudadera (ver el [guion visual por bloque](PLANIFICACION.md#33-guion-visual-por-bloque)), así que se arman con `np-diapo np-diapo--escena` (transparentes):
 
-- **Portada / separador** (tema cacao): etiqueta + título display + pie con logo.
-- **Contenido**: etiqueta con el número de bloque + título + 1 o 2 columnas.
-- **Comparación** (EGC vs. UGC): `np-diapo__columnas`.
-- **Cita** (tema cacao): frase de Bruno con un subrayado mostaza.
-- **Datos** (métricas): `np-diapo__datos` con hasta 3 cifras grandes.
+- **Portada / separador** (tema cacao, estudio cacao): etiqueta + título que sube línea por línea + pie con logo; en los separadores, la cinta *DROP 001 — QUEDA 1*.
+- **Contenido editorial**: `np-diapo__editorial`, con etiqueta del bloque, título y texto en 5/12 y la sudadera en 7/12.
+- **Comparación** (EGC vs. UGC): los dos **feeds 9:16** (`np-feeds`) con la sudadera en el centro.
+- **Votación**: barras en vivo (`np-votacion`) con el contador de grupos que votaron.
+- **Métricas**: vista desarmada de la sudadera con **etiquetas flotantes** (`np-etiqueta-3d`) o `np-diapo__datos` con hasta 3 cifras grandes.
+- **Cita** (tema cacao): frase de Bruno con un subrayado mostaza, con la sudadera desenfocada al fondo.
+- **Drop falso**: cuenta regresiva (`np-cuenta`), cartel *QUEDA 1* latiendo y sello *SOLD OUT*; en el celular, el botón `np-comprar`.
 - **Juego** (tema cacao): cartel *QUEDA 1*, logo Drop Rush y QR.
+
+En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas planas (sin escena) quedan para el PDF de respaldo.
 
 ## Pendientes
 - [x] Herramienta: **HTML** con el design system (ver [PLANIFICACION.md](PLANIFICACION.md))
