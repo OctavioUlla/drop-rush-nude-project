@@ -1,0 +1,325 @@
+/*
+ * Componentes del design system Nude Project (presentación + Drop Rush).
+ * Requiere tokens.css. Todas las clases llevan el prefijo np- para no chocar con nada.
+ */
+
+/* ============ Base ============ */
+.np-base {
+  margin: 0;
+  background: var(--np-fondo);
+  color: var(--np-tinta);
+  font-family: var(--np-fuente-texto);
+  font-size: var(--np-texto-base);
+  line-height: var(--np-interlinea-texto);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.np-base *, .np-base *::before, .np-base *::after { box-sizing: border-box; }
+.np-base ::selection { background: var(--np-acento-mostaza); color: var(--np-marca-cacao); }
+
+[data-np-tema] { background: var(--np-fondo); color: var(--np-tinta); }
+
+/* ============ Logo ============ */
+/* Logotipo de la marca compuesto en texto: grotesca bold, interletra muy cerrada y ® volado. */
+.np-logo {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-bold);
+  letter-spacing: var(--np-interletra-logo);
+  line-height: 1;
+  white-space: nowrap;
+  color: inherit;
+}
+.np-logo sup {
+  font-size: 0.32em;
+  font-weight: var(--np-peso-medio);
+  vertical-align: 1.35em;
+  letter-spacing: 0;
+  margin: 0 0.06em 0 0.02em;
+}
+
+/* Marca del juego: mismo ADN, en mayúsculas. */
+.np-logo-juego {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-black);
+  letter-spacing: var(--np-interletra-display);
+  text-transform: uppercase;
+  line-height: var(--np-interlinea-apretada);
+}
+.np-logo-juego span {
+  display: inline-block;
+  padding: 0 0.12em;
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+}
+
+/* ============ Tipografía ============ */
+.np-display {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-bold);
+  font-size: clamp(var(--np-texto-4xl), 8vw, var(--np-texto-6xl));
+  letter-spacing: var(--np-interletra-display);
+  line-height: var(--np-interlinea-apretada);
+  margin: 0;
+}
+.np-titulo {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-bold);
+  font-size: var(--np-texto-3xl);
+  letter-spacing: var(--np-interletra-titulo);
+  line-height: var(--np-interlinea-titulo);
+  margin: 0;
+}
+.np-subtitulo {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-medio);
+  font-size: var(--np-texto-xl);
+  letter-spacing: var(--np-interletra-titulo);
+  line-height: var(--np-interlinea-titulo);
+  margin: 0;
+}
+.np-etiqueta {
+  font-family: var(--np-fuente-texto);
+  font-weight: var(--np-peso-medio);
+  font-size: var(--np-texto-xs);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+}
+.np-texto { font-size: var(--np-texto-base); max-width: 62ch; margin: 0; }
+.np-texto-suave { color: var(--np-tinta-suave); }
+.np-cita {
+  font-family: var(--np-fuente-display);
+  font-weight: var(--np-peso-medio);
+  font-size: var(--np-texto-2xl);
+  letter-spacing: var(--np-interletra-titulo);
+  line-height: var(--np-interlinea-titulo);
+  margin: 0;
+}
+.np-cita::before { content: '“'; }
+.np-cita::after { content: '”'; }
+.np-subrayado { box-shadow: inset 0 -0.38em 0 var(--np-acento-mostaza); }
+
+/* ============ Botones ============ */
+.np-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--np-espacio-2);
+  min-height: 48px; /* objetivo táctil en celulares */
+  padding: var(--np-espacio-3) var(--np-espacio-5);
+  border: var(--np-borde-fino) solid var(--np-tinta);
+  border-radius: var(--np-radio-ninguno);
+  background: var(--np-tinta);
+  color: var(--np-fondo);
+  font: var(--np-peso-medio) var(--np-texto-sm) / 1 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--np-movimiento-rapido) var(--np-movimiento-curva),
+              background var(--np-movimiento-base) var(--np-movimiento-curva);
+}
+.np-boton:hover { background: var(--np-marca-cacao-profundo); border-color: var(--np-marca-cacao-profundo); }
+.np-boton:active { transform: scale(0.97); }
+.np-boton:focus-visible { outline: var(--np-borde-grueso) solid var(--np-acento-mostaza); outline-offset: 2px; }
+.np-boton:disabled { background: var(--np-marca-piedra); border-color: var(--np-marca-piedra); color: var(--np-marca-cacao-suave); cursor: not-allowed; }
+.np-boton--secundario { background: transparent; color: var(--np-tinta); }
+.np-boton--secundario:hover { background: var(--np-tinta); color: var(--np-fondo); }
+.np-boton--acento { background: var(--np-acento-mostaza); border-color: var(--np-acento-mostaza); color: var(--np-marca-cacao); }
+.np-boton--acento:hover { background: #f2d900; border-color: #f2d900; }
+.np-boton--grande { min-height: 64px; font-size: var(--np-texto-base); padding: var(--np-espacio-4) var(--np-espacio-6); width: 100%; }
+
+/* ============ Insignias, sellos y carteles ============ */
+.np-insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--np-espacio-1);
+  padding: var(--np-espacio-1) var(--np-espacio-3);
+  border: var(--np-borde-fino) solid currentColor;
+  border-radius: var(--np-radio-pildora);
+  font: var(--np-peso-medio) var(--np-texto-xs) / 1.4 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+}
+.np-insignia--relleno { background: var(--np-tinta); color: var(--np-fondo); border-color: var(--np-tinta); }
+.np-insignia--rosa { background: var(--np-acento-rosa); color: var(--np-marca-cacao); border-color: var(--np-acento-rosa); }
+
+/* "QUEDA 1": el único lugar donde la mostaza ocupa una superficie grande. */
+.np-cartel {
+  display: inline-block;
+  padding: var(--np-espacio-2) var(--np-espacio-4);
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-black) var(--np-texto-xl) / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  text-transform: uppercase;
+}
+
+/* "SOLD OUT": sello girado, como estampa sobre la prenda. */
+.np-sello {
+  display: inline-block;
+  padding: var(--np-espacio-2) var(--np-espacio-4);
+  border: var(--np-borde-grueso) solid var(--np-acento-ladrillo);
+  color: var(--np-acento-ladrillo);
+  font: var(--np-peso-black) var(--np-texto-2xl) / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+}
+
+/* ============ Tarjetas y datos ============ */
+.np-tarjeta {
+  background: var(--np-fondo-alterno);
+  border: var(--np-borde-fino) solid var(--np-linea);
+  border-radius: var(--np-radio-ninguno);
+  padding: var(--np-espacio-5);
+}
+.np-dato { display: flex; flex-direction: column; gap: var(--np-espacio-1); }
+.np-dato__valor {
+  font: var(--np-peso-bold) var(--np-texto-5xl) / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-display);
+  font-variant-numeric: tabular-nums;
+}
+.np-dato__etiqueta {
+  font: var(--np-peso-medio) var(--np-texto-sm) / 1.3 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  color: var(--np-tinta-suave);
+}
+
+/* ============ Juego: fichas de grupo ============ */
+/* Uso: <span class="np-ficha" style="--g: var(--np-grupo-7); --gt: var(--np-grupo-7-texto)">7</span> */
+.np-ficha {
+  --g: var(--np-tinta);
+  --gt: var(--np-fondo);
+  display: inline-grid;
+  place-items: center;
+  width: 2.25em;
+  height: 2.25em;
+  background: var(--g);
+  color: var(--gt);
+  font: var(--np-peso-black) 1em / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.np-ficha--libre { background: transparent; color: var(--np-tinta-suave); outline: 1px dashed var(--np-linea); outline-offset: -1px; }
+.np-ficha--desconectada { opacity: 0.35; }
+
+.np-grilla-grupos { display: grid; grid-template-columns: repeat(10, 1fr); gap: var(--np-espacio-2); }
+.np-grilla-grupos .np-ficha { width: 100%; height: auto; aspect-ratio: 1; font-size: var(--np-texto-lg); }
+
+/* ============ Juego: opciones de respuesta (A, B, C) ============ */
+.np-opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--np-espacio-4);
+  padding: var(--np-espacio-4) var(--np-espacio-5);
+  background: var(--np-fondo);
+  border: var(--np-borde-grueso) solid var(--np-tinta);
+  color: var(--np-tinta);
+  font: var(--np-peso-medio) var(--np-texto-xl) / 1.2 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+}
+.np-opcion__letra {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.8em;
+  height: 1.8em;
+  background: var(--np-tinta);
+  color: var(--np-fondo);
+  font-weight: var(--np-peso-black);
+}
+.np-opcion--correcta { background: var(--np-estado-correcto); border-color: var(--np-estado-correcto); color: var(--np-marca-crema); }
+.np-opcion--correcta .np-opcion__letra { background: var(--np-marca-crema); color: var(--np-estado-correcto); }
+.np-opcion--incorrecta { opacity: 0.4; }
+
+/* ============ Juego: temporizador y HUD ============ */
+.np-temporizador {
+  height: 10px;
+  background: var(--np-linea);
+  overflow: hidden;
+}
+.np-temporizador__barra {
+  height: 100%;
+  width: var(--progreso, 100%);
+  background: var(--np-tinta);
+  transition: width 1s linear;
+}
+.np-temporizador--urgente .np-temporizador__barra { background: var(--np-acento-ladrillo); }
+
+.np-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--np-espacio-3);
+  padding: var(--np-espacio-3) var(--np-espacio-4);
+  background: color-mix(in srgb, var(--np-marca-cacao) 88%, transparent);
+  color: var(--np-marca-crema);
+  font: var(--np-peso-bold) var(--np-texto-lg) / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+}
+.np-hud__posicion b { font-size: var(--np-texto-2xl); font-weight: var(--np-peso-black); }
+
+/* Destellos de feedback en el celular (sin bloquear la carrera). */
+.np-destello { position: fixed; inset: 0; pointer-events: none; animation: np-destello var(--np-movimiento-lento) ease-out forwards; }
+.np-destello--correcto { box-shadow: inset 0 0 0 14px var(--np-estado-correcto-brillo); }
+.np-destello--error { box-shadow: inset 0 0 0 14px var(--np-estado-error-brillo); }
+@keyframes np-destello { from { opacity: 1; } to { opacity: 0; } }
+
+/* ============ Juego: ranking ============ */
+.np-ranking { list-style: none; margin: 0; padding: 0; counter-reset: puesto; }
+.np-ranking li {
+  counter-increment: puesto;
+  display: grid;
+  grid-template-columns: 2.5em auto 1fr auto;
+  align-items: center;
+  gap: var(--np-espacio-3);
+  padding: var(--np-espacio-2) 0;
+  border-bottom: var(--np-borde-fino) solid var(--np-linea);
+  font: var(--np-peso-medio) var(--np-texto-lg) / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+}
+.np-ranking li::before { content: counter(puesto) '.'; color: var(--np-tinta-suave); }
+.np-ranking li:first-child { font-weight: var(--np-peso-black); }
+
+/* ============ Presentación: diapositivas 16:9 ============ */
+.np-diapo {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  container-type: inline-size;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 5.5% 7%; /* % de padding = % del ancho, escala con la diapositiva */
+  background: var(--np-fondo);
+  color: var(--np-tinta);
+  font-family: var(--np-fuente-texto);
+}
+/* Dentro de la diapositiva todo escala con su ancho (unidades cqw). */
+.np-diapo__cuerpo, .np-diapo__columnas p { font-size: 2.1cqw; }
+.np-diapo .np-display { font-size: 9cqw; }
+.np-diapo .np-titulo { font-size: 4.6cqw; }
+.np-diapo .np-subtitulo { font-size: 2.6cqw; }
+.np-diapo .np-cita { font-size: 3.8cqw; }
+.np-diapo .np-dato__valor { font-size: 9cqw; }
+.np-diapo .np-etiqueta, .np-diapo .np-dato__etiqueta { font-size: 1.4cqw; }
+.np-diapo__cuerpo { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5cqw; }
+.np-diapo__pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 1.2cqw;
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  color: var(--np-tinta-suave);
+}
+.np-diapo__pie .np-logo { font-size: 1.8cqw; text-transform: none; letter-spacing: var(--np-interletra-logo); color: var(--np-tinta); }
+.np-diapo__columnas { display: grid; grid-template-columns: 1fr 1fr; gap: 5cqw; }
+.np-diapo__columnas > * { border-top: var(--np-borde-grueso) solid var(--np-tinta); padding-top: 2cqw; }
+.np-diapo__columnas p { margin: 0 0 1cqw; }
+.np-diapo__datos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4cqw; }
+
+@media print {
+  .np-diapo { break-after: page; }
+}

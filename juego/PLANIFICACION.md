@@ -2,6 +2,8 @@
 
 > Juego multijugador para el aula, creado para la materia **Comercialización** (Licenciatura en Administración).
 > Cada grupo corre, salta y esquiva obstáculos en un runner **3D** desde el celular. El proyector muestra la pregunta, el mapa de la carrera y las posiciones en vivo.
+>
+> Es el cierre interactivo de la [presentación del caso](../presentacion/README.md) y usa el mismo [design system](../design-system/README.md).
 
 ---
 
@@ -220,7 +222,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - **Conexión**: si hay un microcorte, **no aparece ningún cartel** durante los primeros segundos. Solo si el corte dura más de ~5 s aparece un ícono pequeño 📶 en una esquina; el juego nunca se bloquea (ver 5.4).
 
 ### 4.3 Estética y gráficos 3D
-- Inspirada en la identidad de Nude Project: minimalista, blanco y negro con un color de acento y tipografía bold.
+- Sigue el [design system](../design-system/README.md) compartido con la presentación: identidad de Nude Project en **cacao `#482922` y crema `#fff8ee`**, tipografía grotesca bold (Inter Tight / Inter) y un solo color de acento por elemento.
 - Estilo **3D *low-poly* estilizado**, con colores planos o degradados suaves en lugar de texturas pesadas: se ve bien y es liviano.
 - Calles de Madrid con edificios de fachadas simples, faroles y carteles, y la tienda Nude Project como meta.
 - Obstáculos con siluetas claras y colores contrastados, para que se distingan rápido.
@@ -329,7 +331,8 @@ Todos los modelos 3D se **crean desde cero en JavaScript** (a cargo de Claude), 
 - Es mucho más barato que un personaje con esqueleto (*skinning*) y alcanza para el estilo *low-poly*.
 
 **Paleta**
-- Base blanca, negra y grises (identidad Nude Project), con un color de acento por elemento de juego: rojo para los obstáculos altos, amarillo para los bajos (los que se saltan), rosa para los likes y el color de cada grupo en su corredor. Así cada tipo se reconoce de un vistazo.
+- Todos los colores salen de [`design-system/tokens.js`](../design-system/tokens.js) (`colores3d.juego` y `colorDeGrupo(n)`), nunca escritos a mano en los modelos.
+- Base cacao, crema y tonos tierra (identidad Nude Project; fachadas de Madrid de `#efe2d0` a `#a8664a`), con un color de acento por elemento de juego: ladrillo para los obstáculos altos, mostaza para los bajos (los que se saltan), rosa para los likes y el color de cada grupo (40 colores del design system) en su corredor. Así cada tipo se reconoce de un vistazo.
 - El cielo es un degradado en un *shader* y la niebla toma su color, para que todo se funda en el horizonte.
 
 **Herramientas de trabajo**
@@ -495,11 +498,12 @@ En `data/config.json`, o desde el lobby del host:
 
 ---
 
-## 8. Estructura del repositorio (propuesta)
+## 8. Estructura del juego (propuesta)
+
+El juego vive en `juego/` dentro del repositorio del trabajo, junto a `presentacion/` y `design-system/`. Los estilos y colores no se definen acá: se importan del design system (Vite sirve `../design-system` con `server.fs.allow`, y el build lo copia).
 
 ```
-drop-rush-nude-project/
-├── README.md
+juego/
 ├── PLANIFICACION.md
 ├── package.json
 ├── vite.config.js
@@ -535,10 +539,10 @@ drop-rush-nude-project/
 │   │       │   └── store.js      # Tienda de la meta
 │   │       ├── effects.js    # Partículas, líneas de velocidad, sacudida de cámara
 │   │       └── quality.js    # Medición de FPS y niveles de calidad
-│   ├── assets/           # Sonidos y tipografías (sin modelos 3D: se generan por código)
+│   ├── assets/           # Sonidos (tipografías y colores vienen del design system; sin modelos 3D: se generan por código)
 │   ├── sw.js             # Service Worker para cachear los assets
 │   └── shared/
-│       ├── styles.css
+│       ├── styles.css    # Solo layout propio; importa design-system/tokens.css y components.css
 │       └── rng.js        # Generador aleatorio con semilla (compartido)
 ├── tools/
 │   └── bots.js           # Simulador de 40 jugadores para pruebas de carga
@@ -590,7 +594,7 @@ drop-rush-nude-project/
 ### Fase 4: Gráficos, pulido y prueba
 - [ ] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1)
 - [ ] Visor de modelos (`/dev/models`) para revisarlos y ajustar colores y proporciones
-- [ ] Estética Nude Project (paleta, tipografía, cielo, niebla)
+- [ ] Aplicar el [design system](../design-system/README.md) (paleta, tipografía, cielo, niebla, componentes `np-*`)
 - [ ] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
 - [ ] Calidad automática, resolución adaptable, Wake Lock y Service Worker
 - [ ] Controles del presentador (pausar, saltar, terminar)
@@ -623,6 +627,8 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 ---
 
 ## 11. Integración con la presentación
+
+Ver también la [estructura de la presentación](../presentacion/README.md): el juego ocupa el último bloque.
 
 - **Momento sugerido**: al final de la exposición, como repaso (unos 10 a 12 minutos de los 20 a 30 disponibles, incluyendo el repaso de errores).
 - **Antes de jugar**:
