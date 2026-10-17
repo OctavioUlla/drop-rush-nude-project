@@ -61,8 +61,8 @@ Con 10 preguntas, la carrera dura unos **7 a 8 minutos**.
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
-   - El host define cuántos grupos hay (por ejemplo, 40) o carga la lista de nombres de los grupos.
-   - Cada celular entra y **elige su grupo de una lista**. Los grupos ya tomados aparecen bloqueados: **un solo celular por grupo** (ver 3.8).
+   - El host define cuántos grupos hay (por ejemplo, 40). Los grupos se identifican **solo con un número** (1 a 40).
+   - Cada celular entra y **elige su número de grupo**. Los grupos ya tomados aparecen bloqueados: **un solo celular por grupo** (ver 3.8).
    - Mientras espera, el celular **descarga y prepara los gráficos 3D** para que la partida arranque sin demoras.
    - El proyector muestra una grilla con los 40 lugares y cuáles ya están conectados.
 2. **Cuenta regresiva**: "3, 2, 1… ¡DROP!"
@@ -174,8 +174,8 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - Su valor es bajo, para que no compitan con las preguntas.
 
 ### 3.8 Un celular por grupo
-- El host define la lista de grupos (por ejemplo "Grupo 1" a "Grupo 40", o nombres propios).
-- Cada celular **elige su grupo de esa lista**; no se escribe un nombre libre (así no aparecen "grupo 3" y "Grupo3" como dos grupos distintos).
+- Los grupos se identifican **solo con un número**, del 1 a `maxGrupos` (por ejemplo, 1 a 40).
+- Cada celular **elige su número en una grilla**; no se escribe ningún nombre (así no hay nombres repetidos, mal escritos ni inapropiados en el proyector).
 - Al elegirlo, el servidor le entrega al celular un **token de dispositivo** que queda guardado en el navegador (`localStorage`). A partir de ahí, el grupo queda **asociado a ese celular**:
   - Si otro celular intenta entrar al mismo grupo, se lo rechaza con el mensaje "Este grupo ya tiene un jugador".
   - Si el mismo celular se desconecta o recarga la página, vuelve a entrar **automáticamente** a su grupo con el token, sin elegir nada.
@@ -205,7 +205,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - **Indicador de red discreto**: cuántos celulares están conectados en este momento (por ejemplo "39/40 🟢").
 
 ### 4.2 Celular (jugador)
-- **Ingreso**: código de sala (o directo desde el QR) y elección del grupo de la lista.
+- **Ingreso**: código de sala (o directo desde el QR) y elección del número de grupo en una grilla (los tomados aparecen bloqueados).
 - **Espera**: "Esperando que empiece el drop…", con una barra de carga de los gráficos y el corredor 3D animado en pantalla, que sirve también de práctica para deslizar y saltar.
 - **Runner 3D** (pantalla principal):
   - Cámara detrás y por encima del corredor, como en Subway Surfers, con el mundo levemente curvado hacia el horizonte.
@@ -221,7 +221,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - Estilo **3D *low-poly* estilizado**, con colores planos o degradados suaves en lugar de texturas pesadas: se ve bien y es liviano.
 - Calles de Madrid con edificios de fachadas simples, faroles y carteles, y la tienda Nude Project como meta.
 - Obstáculos con siluetas claras y colores contrastados, para que se distingan rápido.
-- Corredor con animaciones de **correr, saltar, cambiar de carril y tropezar**; teñido con el color del grupo.
+- Corredor con animaciones de **correr, saltar, cambiar de carril y tropezar**; teñido con el color del grupo y con su **número en la espalda**.
 - Detalles baratos que dan "buen gráfico": cielo con degradado, niebla de distancia, sombra circular bajo el corredor, líneas de velocidad con el turbo, pequeñas partículas al juntar likes y leve sacudida de cámara al chocar.
 - Música y efectos de sonido solo en el host (configurable); en el celular, efectos cortos opcionales y vibración.
 
@@ -258,7 +258,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 ### 5.2 Stack propuesto
 - **Servidor**: Node.js + Express + Socket.io (tiempo real).
 - **Runner del celular**: [Three.js](https://threejs.org/) (WebGL), empaquetado con [Vite](https://vitejs.dev/). Se descarta Phaser porque es 2D.
-- **Modelos 3D**: formato glTF/GLB comprimido (meshopt o Draco). Base de assets libres *low-poly* (por ejemplo, [Kenney](https://kenney.nl/) y [Quaternius](https://quaternius.com/), con licencia CC0) y personaje animado con correr, saltar y tropezar.
+- **Modelos 3D**: **creados por nosotros, generados por código** (ver 5.3.1). No se usan modelos de terceros ni archivos `.glb`.
 - **Host**: HTML + JS; el mapa de la carrera en Three.js reutilizando los mismos modelos (vista aérea simple) o en Canvas 2D si se prioriza la legibilidad.
 - **Preguntas**: archivo JSON editable (ver sección 6).
 - **Sin base de datos**: el estado vive en memoria mientras dura la partida.
@@ -270,11 +270,11 @@ Objetivo: **60 FPS en gama media y 30 FPS estables en gama baja** (por ejemplo, 
 | Recurso | Límite |
 |---|---|
 | Llamadas de dibujo (*draw calls*) | ≤ 80 |
-| Triángulos visibles | ≤ 60.000 (personaje ≤ 3.000) |
+| Triángulos visibles | ≤ 60.000 (personaje ≤ 1.500) |
 | Materiales | 2 o 3 en total (`MeshLambertMaterial` / sombreado *toon*, sin PBR) |
 | Texturas | Un único atlas de 1024×1024 o menos |
 | Luces | Una luz hemisférica + una direccional, sin sombras en tiempo real |
-| Descarga total del juego | ≤ 4 MB comprimido |
+| Descarga total del juego | ≤ 1 MB comprimido (Three.js + código; los modelos se generan en el celular) |
 
 **Técnicas**
 - **Sombras falsas**: un círculo oscuro bajo el corredor y los obstáculos, en lugar de sombras reales.
@@ -297,6 +297,44 @@ Objetivo: **60 FPS en gama media y 30 FPS estables en gama baja** (por ejemplo, 
 - Si el navegador no soporta WebGL, se avisa en el lobby para cambiar de celular.
 - **Wake Lock** (`navigator.wakeLock`) para que la pantalla no se apague durante la partida (si se apaga, se corta la conexión).
 - El render se detiene si la pestaña queda oculta, para no gastar batería.
+
+#### 5.3.1 Assets 3D generados por código
+Todos los modelos 3D se **crean desde cero en JavaScript** (a cargo de Claude), armando primitivas simples de Three.js (cajas, cilindros, conos, esferas de pocas caras) que se unen en una sola geometría por modelo, con **colores por vértice** en lugar de texturas.
+
+**Por qué así**
+- **Casi no hay descarga**: los modelos son unas pocas decenas de KB de código y se generan en el celular al cargar el lobby. Clave con 40 celulares en el mismo Wi-Fi.
+- **Sin licencias** ni dependencia de packs de terceros.
+- **Fáciles de ajustar**: cambiar un color, una proporción o la paleta Nude Project es editar un número.
+- **Rendimiento**: geometrías unidas y sin texturas significan pocas llamadas de dibujo y un solo material compartido.
+
+**Catálogo**
+| Modelo | Cómo se arma | Triángulos aprox. |
+|---|---|---|
+| **Corredor** | Figura articulada (cabeza, torso, brazos y piernas en dos partes) con buzo con capucha estilo Nude Project, teñido con el color del grupo y número en la espalda | ≤ 1.500 |
+| **Valla de la cola** | Dos postes y barras con franjas | ≤ 150 |
+| **Fan haciendo fila** | Versión simplificada del corredor, quieta y con celular en la mano | ≤ 600 |
+| **Bot revendedor** | Robot de cajas con antena y ojos que brillan, con muchas bolsas | ≤ 500 |
+| **Bache del algoritmo** | Pozo en el piso con flecha de gráfico hacia abajo | ≤ 100 |
+| **Caja de stock** | Pila de cajas de cartón con cinta y logo | ≤ 150 |
+| **Camión de reparto** | Cabina y caja de carga, ruedas de pocas caras | ≤ 600 |
+| **Bloque de calle** | Asfalto con líneas de carril, veredas, cordón; una sola geometría por bloque | ≤ 300 |
+| **Edificios de Madrid** | Fachadas de varias alturas con balcones y ventanas (instanciados, con variaciones de color y altura) | ≤ 400 c/u |
+| **Decoración** | Faroles, árboles, carteles de drop, vallas publicitarias | ≤ 150 c/u |
+| **Like ❤️** | Corazón extruido que gira, instanciado | ≤ 100 |
+| **Arco de respuesta** | Marco con la letra y el texto corto de la opción (texto dibujado en un `CanvasTexture` generado al vuelo) | ≤ 200 |
+| **Tienda Nude Project** | Fachada minimalista blanca y negra con vidriera, cartel "DROP" y cola de gente | ≤ 2.000 |
+
+**Animación del corredor (procedural, sin esqueleto)**
+- Las partes del cuerpo son grupos con pivote en la articulación y se animan con funciones seno según la velocidad: **correr** (brazos y piernas alternados, leve rebote), **saltar** (piernas recogidas, brazos arriba), **cambiar de carril** (inclinación del torso hacia el lado), **tropezar** (giro hacia adelante y recuperación).
+- Es mucho más barato que un personaje con esqueleto (*skinning*) y alcanza para el estilo *low-poly*.
+
+**Paleta**
+- Base blanca, negra y grises (identidad Nude Project), con un color de acento por elemento de juego: rojo para los obstáculos altos, amarillo para los bajos (los que se saltan), rosa para los likes y el color de cada grupo en su corredor. Así cada tipo se reconoce de un vistazo.
+- El cielo es un degradado en un *shader* y la niebla toma su color, para que todo se funda en el horizonte.
+
+**Herramientas de trabajo**
+- Un **visor de modelos** (`/dev/models`) que muestra cada modelo girando, con su cantidad de triángulos, para revisarlos y ajustarlos.
+- Si más adelante se quiere editar un modelo en Blender, se puede exportar a `.glb` con `GLTFExporter` desde el visor.
 
 ### 5.4 Red, microcortes y reconexión invisible
 El objetivo es que un corte de unos segundos **no se note**: el juego sigue corriendo y al volver la conexión todo se pone al día.
@@ -334,7 +372,7 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 - Los cambios de carril durante la pregunta se envían con un límite (como máximo 2 por segundo por celular).
 
 **Wi-Fi de la facultad**
-- Con 40 celulares en el mismo punto de acceso, lo que más pesa es la **descarga inicial** de los gráficos (40 × 4 MB = 160 MB), no el juego en sí. Por eso:
+- Con 40 celulares en el mismo punto de acceso, lo que más pesa es la **descarga inicial** del juego (40 × ~1 MB = ~40 MB), no la partida en sí. Por eso:
   - Los archivos estáticos se sirven desde un **CDN** o hosting estático, no desde el servidor de Node.
   - Se cachean con un *Service Worker* y cabeceras de caché: si un celular recarga, no vuelve a descargar nada.
   - Se pide a los grupos que **entren al lobby antes** (por ejemplo, al principio de la presentación) para que la descarga no se concentre en el último minuto.
@@ -346,9 +384,9 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 
 | Dirección | Evento | Datos |
 |---|---|---|
-| host → server | `host:create_room` | `{ groups: [nombres] }` |
+| host → server | `host:create_room` | `{ maxGroups }` |
 | server → host | `room:created` | `{ code }` |
-| server → todos | `room:groups` | `[{ id, name, color, taken, connected }]` |
+| server → todos | `room:groups` | `[{ number, color, taken, connected }]` |
 | player → server | `player:join` | `{ code, groupId, deviceToken? }` |
 | server → player | `player:joined` | `{ groupId, deviceToken }` |
 | server → player | `player:join_rejected` | `{ reason: "taken" \| "room_not_found" }` |
@@ -432,8 +470,7 @@ En `data/config.json`, o desde el lobby del host:
 
 | Parámetro | Por defecto | Descripción |
 |---|---|---|
-| `maxGrupos` | 40 | Cantidad de grupos (lugares en el lobby) |
-| `nombresGrupos` | `"Grupo 1"` … `"Grupo 40"` | Lista de nombres; se puede reemplazar por nombres propios |
+| `maxGrupos` | 40 | Cantidad de grupos; se numeran del 1 a este valor |
 | `cantidadPreguntas` | 10 | Cuántas preguntas del banco se usan |
 | `ordenAleatorio` | true | Mezclar el orden de las preguntas |
 | `mezclarOpciones` | true | Mezclar el orden de las opciones en los carriles |
@@ -488,10 +525,17 @@ drop-rush-nude-project/
 │   │   └── render/
 │   │       ├── scene.js      # Renderer, cámara, luces, niebla, mundo curvado
 │   │       ├── world.js      # Bloques de calle reciclados e instancias
-│   │       ├── character.js  # Personaje y animaciones
+│   │       ├── character.js  # Personaje y animaciones procedurales
+│   │       ├── models/       # Modelos generados por código (ver 5.3.1)
+│   │       │   ├── kit.js        # Utilidades: primitivas, colores por vértice, unión de geometrías
+│   │       │   ├── runner.js     # Corredor articulado
+│   │       │   ├── obstacles.js  # Valla, fan, bot, bache, caja, camión
+│   │       │   ├── street.js     # Bloques de calle, veredas, edificios, faroles, carteles
+│   │       │   ├── props.js      # Likes, arcos de respuesta, power-ups
+│   │       │   └── store.js      # Tienda de la meta
 │   │       ├── effects.js    # Partículas, líneas de velocidad, sacudida de cámara
 │   │       └── quality.js    # Medición de FPS y niveles de calidad
-│   ├── assets/           # Modelos .glb comprimidos, atlas de texturas, sonidos, tipografías
+│   ├── assets/           # Sonidos y tipografías (sin modelos 3D: se generan por código)
 │   ├── sw.js             # Service Worker para cachear los assets
 │   └── shared/
 │       ├── styles.css
@@ -544,7 +588,8 @@ drop-rush-nude-project/
 - [ ] Sonidos, música y vibración
 
 ### Fase 4: Gráficos, pulido y prueba
-- [ ] Assets finales *low-poly*: corredor animado, obstáculos, calles de Madrid, tienda, arcos
+- [ ] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1)
+- [ ] Visor de modelos (`/dev/models`) para revisarlos y ajustar colores y proporciones
 - [ ] Estética Nude Project (paleta, tipografía, cielo, niebla)
 - [ ] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
 - [ ] Calidad automática, resolución adaptable, Wake Lock y Service Worker
@@ -595,7 +640,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 
 | Riesgo | Mitigación |
 |---|---|
-| 40 celulares saturan el Wi-Fi de la facultad | Assets livianos (≤ 4 MB) en CDN, caché con Service Worker, entrar al lobby con tiempo; datos móviles como plan B |
+| 40 celulares saturan el Wi-Fi de la facultad | Juego liviano (≤ 1 MB, modelos generados por código) en CDN, caché con Service Worker, entrar al lobby con tiempo; datos móviles como plan B |
 | El Wi-Fi tiene portal cautivo | Avisar que inicien sesión en el Wi-Fi antes de escanear el QR; probar la red con anticipación |
 | La red bloquea WebSocket o puertos raros | HTTPS en el puerto 443 y *fallback* a *long-polling* |
 | Aislamiento de clientes en la red | Servidor en la nube (opción A) |
@@ -622,11 +667,11 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 - [x] Motor: **Three.js** (se descarta Canvas 2D y Phaser)
 - [x] Salto: **incluido** desde el principio
 - [x] Revelado: instantáneo y sin pausa; explicaciones en el **repaso de errores** final
+- [x] Nombres de grupos: **solo número** (1 a 40)
+- [x] Assets 3D: **los crea Claude**, generados por código (ver 5.3.1)
 
 **Abiertas**
 - [ ] Redactar el banco de preguntas (`data/preguntas.json`), con 2 o 3 opciones y una buena explicación por pregunta
-- [ ] Definir los nombres de los grupos (números o nombres propios)
-- [ ] Conseguir o crear los assets 3D (corredor animado, obstáculos, calle, tienda, arcos)
 - [ ] Conseguir 2 o 3 celulares de gama baja para las pruebas de rendimiento
 - [ ] Averiguar cómo es el Wi-Fi de la facultad (portal cautivo, bloqueos) y probarlo
 - [ ] Elegir el hosting del servidor y del CDN
