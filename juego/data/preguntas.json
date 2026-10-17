@@ -1,0 +1,12 @@
+{
+  "titulo": "Preguntas de prueba (Fase 0)",
+  "nota": "Banco provisorio para probar el ciclo de preguntas. Las preguntas reales del caso las redacta el equipo (sección 6 de PLANIFICACION.md).",
+  "preguntas": [
+    { "id": 1, "tema": "Prueba", "pregunta": "Pregunta de prueba 1: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 0, "explicacion": "Explicación de prueba." },
+    { "id": 2, "tema": "Prueba", "pregunta": "Pregunta de prueba 2: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 1, "explicacion": "Explicación de prueba." },
+    { "id": 3, "tema": "Prueba", "pregunta": "Pregunta de prueba 3: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 2, "explicacion": "Explicación de prueba." },
+    { "id": 4, "tema": "Prueba", "pregunta": "Pregunta de prueba 4 (solo dos opciones)", "opciones": ["Opción A", "Opción B"], "opcionesCortas": ["A", "B"], "correcta": 1, "explicacion": "Explicación de prueba." },
+    { "id": 5, "tema": "Prueba", "pregunta": "Pregunta de prueba 5: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 0, "explicacion": "Explicación de prueba." },
+    { "id": 6, "tema": "Prueba", "pregunta": "Pregunta de prueba 6: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 2, "explicacion": "Explicación de prueba." }
+  ]
+}

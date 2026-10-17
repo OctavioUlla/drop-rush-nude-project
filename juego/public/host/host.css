@@ -1,0 +1,30 @@
+@import '../shared/styles.css';
+
+.barra { display: flex; align-items: center; gap: var(--np-espacio-4); padding: var(--np-espacio-3) var(--np-espacio-5); }
+.barra__logo { margin: 0; font-size: var(--np-texto-2xl); }
+.barra__red { margin-left: auto; font: var(--np-peso-bold) var(--np-texto-lg) / 1 var(--np-fuente-display); font-variant-numeric: tabular-nums; }
+
+.host { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: var(--np-espacio-5); padding: var(--np-espacio-5); }
+.panel { display: flex; flex-direction: column; gap: var(--np-espacio-3); min-width: 0; }
+.panel--ancho { grid-column: 1 / -1; }
+.panel h2 { margin: 0; color: var(--np-tinta-suave); }
+
+.controles { display: flex; flex-wrap: wrap; gap: var(--np-espacio-3); align-items: end; }
+.controles label { display: grid; gap: var(--np-espacio-1); font-size: var(--np-texto-sm); }
+.controles input, .controles select { width: 7rem; min-height: 40px; padding: 0 var(--np-espacio-2); border: var(--np-borde-fino) solid var(--np-linea); background: var(--np-fondo); color: var(--np-tinta); font: inherit; }
+
+.fase { margin: 0; font: var(--np-peso-bold) var(--np-texto-2xl) / 1.1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); font-variant-numeric: tabular-nums; }
+.pregunta { display: grid; gap: var(--np-espacio-2); }
+.pregunta p { margin: 0; font: var(--np-peso-bold) var(--np-texto-xl) / 1.2 var(--np-fuente-display); }
+.pregunta .np-opcion { font-size: var(--np-texto-lg); padding: var(--np-espacio-2) var(--np-espacio-3); }
+
+.carrera { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.carrera li { display: grid; grid-template-columns: 2.4rem 1fr 5rem; align-items: center; gap: var(--np-espacio-2); font-variant-numeric: tabular-nums; }
+.carrera .barra-dist { height: 1.1rem; background: var(--g); transition: width 0.2s linear; }
+.carrera .desconectado { opacity: 0.35; }
+.carrera .np-ficha { font-size: var(--np-texto-sm); }
+
+pre { margin: 0; font: 13px/1.5 var(--np-fuente-mono); white-space: pre-wrap; }
+.tabla { overflow-x: auto; }
+table { border-collapse: collapse; font-size: var(--np-texto-sm); font-variant-numeric: tabular-nums; }
+th, td { padding: var(--np-espacio-1) var(--np-espacio-2); border-bottom: var(--np-borde-fino) solid var(--np-linea); text-align: left; white-space: nowrap; }
