@@ -13,7 +13,7 @@
 |---|---|
 | **Género** | Runner 3D por carriles (estilo Subway Surfers) + preguntas (estilo Kahoot) |
 | **Jugadores** | Hasta **40 grupos** jugando al mismo tiempo, **un solo celular por grupo** |
-| **Duración** | 7 a 9 minutos por partida, más 2 a 3 minutos de repaso de errores |
+| **Duración** | **10 minutos** en total: 1 de instrucciones, ~7 de carrera y 2 de repaso de errores y debate |
 | **Pantalla principal** | Compu del aula conectada al proyector (pantalla *host*) |
 | **Controles** | Celular de cada grupo: deslizar a izquierda o derecha para cambiar de carril y **hacia arriba para saltar** |
 | **Gráficos** | 3D *low-poly* estilizado (WebGL), pensado para andar bien en celulares de gama baja |
@@ -57,9 +57,9 @@ La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio
 | **Tramo de carrera** | 20 a 25 s | El corredor avanza solo y el grupo esquiva, salta y junta likes | 📱 Celular |
 | **Pregunta** | 15 a 20 s | Desaparecen los obstáculos, aparece la pregunta y se acercan 3 arcos (A, B, C) | 📽️ Proyector para leer, 📱 celular para elegir carril |
 | **Revelado** ⚡ | ~2 s, **sin frenar** | Destello verde o rojo en el celular y la respuesta correcta resaltada en el proyector, mientras ya arranca el tramo siguiente | 📱 + 📽️ |
-| **Repaso de errores** | 2 a 3 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
+| **Repaso de errores** | 2 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
 
-Con 10 preguntas, la carrera dura unos **7 a 8 minutos**.
+Con 10 preguntas, la carrera dura unos **7 minutos** (10 × (22 s de tramo + 20 s de pregunta)). Es el máximo que entra en los 10 minutos del bloque: si hace falta recortar, bajar a 8 preguntas (~5,5 min).
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
@@ -630,7 +630,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 
 Ver también la [estructura de la presentación](../presentacion/README.md): el juego ocupa el último bloque.
 
-- **Momento sugerido**: al final de la exposición, como repaso (unos 10 a 12 minutos de los 20 a 30 disponibles, incluyendo el repaso de errores).
+- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **10 minutos** (1 de instrucciones, ~7 de carrera y 2 de repaso de errores y debate), para un total de **25 minutos**.
 - **Antes de jugar**:
   - Pedir que cada grupo tenga **un** celular con batería, conexión y el brillo alto.
   - Mostrar el QR **al principio de la presentación** para que los 40 grupos entren al lobby con tiempo y se descarguen los gráficos.

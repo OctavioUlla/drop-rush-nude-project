@@ -6,8 +6,8 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 
 | | Qué es | Dónde |
 |---|---|---|
-| 🎤 **Presentación** | Exposición de 20 a 30 minutos sobre la estrategia de comunicación y marketing de Nude Project, según la consigna de la cátedra. | [`presentacion/`](presentacion/README.md) |
-| 🏃 **Drop Rush** | Juego multijugador para el cierre de la presentación: hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
+| 🎤 **Presentación** | Exposición de 15 minutos sobre la estrategia de comunicación y marketing de Nude Project, según la consigna de la cátedra. | [`presentacion/`](presentacion/README.md) |
+| 🏃 **Drop Rush** | Juego multijugador de 10 minutos para el cierre de la presentación (25 minutos en total): hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
 | 🎨 **Design System** | Colores, tipografía y componentes basados en la identidad real de la marca, para que la presentación y el juego se vean como una sola cosa. | [`design-system/`](design-system/README.md) |
 
 > 🚧 **Estado:** design system listo; presentación y juego en planificación.
