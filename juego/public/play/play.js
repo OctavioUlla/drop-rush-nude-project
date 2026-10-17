@@ -34,7 +34,9 @@ let guionIniciado = null; // id del guion con el que se reinició el corredor
 let faseActual = null;
 let respuestaPendiente = null; // { index, desde } durante una pregunta
 let pregunta = null; // la pregunta en curso (textos cortos para los carriles)
-let bonus = 0;
+// Bonus de cada pregunta acertada (índice → metros): si un resultado llega dos veces no se suma dos veces.
+const bonusPorPregunta = new Map();
+const bonusTotal = () => [...bonusPorPregunta.values()].reduce((s, b) => s + b, 0);
 let rango = null;
 let resultadoFinal = null;
 let cartelHasta = 0;
@@ -133,6 +135,7 @@ function conectar() {
     red.entrarSala(red.sala);
   });
   red.addEventListener('game:script', (e) => {
+    if (guion?.id !== e.detail.id) bonusPorPregunta.clear();
     guion = new Guion(e.detail);
     resultadoFinal = null;
   });
@@ -147,7 +150,9 @@ function conectar() {
   });
   red.addEventListener('state:sync', (e) => {
     const s = e.detail;
-    bonus = s.bonusDistance;
+    // El servidor manda los resultados ya revelados: reemplazan a los que tenía el celular.
+    bonusPorPregunta.clear();
+    for (const r of s.answers ?? []) bonusPorPregunta.set(r.index, r.bonus);
     distanciaSync = s.runDistance;
     if (s.total) rango = { position: s.position, total: s.total };
     if (s.question) pregunta = s.question;
@@ -190,6 +195,7 @@ function reiniciarPartida() {
   respuestaPendiente = null;
   pregunta = null;
   practicaHasta = 0;
+  bonusPorPregunta.clear();
   corredor.limitarCarriles(2);
   corredor.corriendo = true;
 }
@@ -250,7 +256,7 @@ function partidaLocal() {
   agregar(FASES.FIN, 0);
   guion = new Guion({ id: Math.random(), startsAt: inicio, phases: fases, difficulty: 'facil', questions: 3 });
   resultadoFinal = null;
-  bonus = 0;
+  bonusPorPregunta.clear();
   aciertosSolo = 0;
   $('btn-partida').hidden = true;
 }
@@ -269,7 +275,6 @@ function actualizarFase() {
     corredor.reiniciar(f.type === FASES.CUENTA ? 0 : distanciaSync);
     pista.vaciar();
     practicaHasta = 0;
-    bonus = 0;
   }
   if (anterior?.type === FASES.PREGUNTA && anterior.numero === f.numero - 1) responder(anterior);
   if (f.type !== FASES.PREGUNTA) corredor.limitarCarriles(2);
@@ -301,7 +306,7 @@ function actualizarFase() {
           winner: 1,
           queue: [],
           questions: guion.datos.questions,
-          stats: [{ group: 1, position: 1, distance: Math.round(corredor.distancia + bonus), correct: aciertosSolo, dodged: corredor.esquivados, likes: corredor.likes }],
+          stats: [{ group: 1, position: 1, distance: Math.round(corredor.distancia + bonusTotal()), correct: aciertosSolo, dodged: corredor.esquivados, likes: corredor.likes }],
         };
         $('btn-partida').hidden = false;
       }
@@ -323,11 +328,9 @@ function responder(fase) {
   red.encolar(`q${fase.index}:${guion.id}`, 'question:answer', datos);
 }
 
-function mostrarResultado({ correct, bonus: b }) {
-  if (SOLO && correct) {
-    bonus += b;
-    aciertosSolo++;
-  }
+function mostrarResultado({ index, correct, bonus: b }) {
+  bonusPorPregunta.set(index, correct ? b : 0);
+  if (SOLO && correct) aciertosSolo++;
   const d = document.createElement('div');
   d.className = `np-destello np-destello--${correct ? 'correcto' : 'error'}`;
   document.body.append(d);
@@ -418,7 +421,9 @@ function bucle(t) {
 
 // ---------- HUD ----------
 function actualizarHud() {
-  const total = corredor.distancia + bonus;
+  // Al llegar, el corredor frena unos metros que el servidor ya no cuenta: se muestra la distancia oficial.
+  const oficial = resultadoFinal?.stats?.find((x) => x.group === grupo)?.distance;
+  const total = oficial ?? corredor.distancia + bonusTotal();
   $('hud-distancia').textContent = `${Math.round(total)} m`;
   $('hud-likes').textContent = `❤ ${corredor.likes}`;
   $('hud-puesto').textContent = rango && enPartida() ? `${rango.position}.º` : '–';
