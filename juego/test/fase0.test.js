@@ -72,7 +72,8 @@ test('40 bots con microcortes: todas las respuestas llegan y se cuentan una sola
     assert.equal(resumen.respuestasRechazadas, 0);
     assert.ok(resumen.cortes >= 40);
     // Ningún grupo quedó contado dos veces ni perdido.
-    for (const g of servidor.sala.grupos.values()) assert.equal(g.respuestas.size, 3);
+    const [sala] = servidor.salas;
+    for (const g of sala.grupos.values()) assert.equal(g.respuestas.size, 3);
   } finally {
     await servidor.cerrar();
   }

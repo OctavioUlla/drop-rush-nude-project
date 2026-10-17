@@ -8,7 +8,8 @@ import { Red } from './net.js';
 import { Vista } from './render/vista.js';
 import { Calidad, resumirCuadros } from './render/quality.js';
 
-// Controlador del celular (Fase 0: prototipo técnico).
+// Controlador del celular.
+// ?sala=ABCD   → entra directo a esa sala (es lo que trae el QR del proyector).
 // ?solo        → sin servidor: práctica y partida simulada en el propio celular.
 // ?calidad=baja|media|alta → fija la calidad (para comparar mediciones).
 // ?debug       → abre el panel de pruebas al cargar.
@@ -17,6 +18,7 @@ const PASO = 1 / PASOS_POR_SEGUNDO;
 const LETRAS = ['A', 'B', 'C'];
 const params = new URLSearchParams(location.search);
 const SOLO = params.has('solo');
+const CODIGO_URL = params.get('sala')?.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -31,13 +33,17 @@ let guion = null;
 let guionIniciado = null; // id del guion con el que se reinició el corredor
 let faseActual = null;
 let respuestaPendiente = null; // { index, desde } durante una pregunta
-let bonus = 0;
+let pregunta = null; // la pregunta en curso (textos cortos para los carriles)
+// Bonus de cada pregunta acertada (índice → metros): si un resultado llega dos veces no se suma dos veces.
+const bonusPorPregunta = new Map();
+const bonusTotal = () => [...bonusPorPregunta.values()].reduce((s, b) => s + b, 0);
 let rango = null;
 let resultadoFinal = null;
 let cartelHasta = 0;
 let practicaHasta = 0;
 let medicion = null;
 let distanciaSync = 0;
+let aciertosSolo = 0;
 
 const ahora = () => (red ? red.ahora() : Date.now());
 
@@ -97,50 +103,121 @@ function mostrarJuego() {
 
 // ---------- Red ----------
 function conectar() {
-  red = new Red();
+  red = new Red(CODIGO_URL);
   red.addEventListener('room:groups', (e) => dibujarGrilla(e.detail));
+  red.addEventListener('sala', (e) => mostrarPasoGrupo(e.detail.codigo));
   red.addEventListener('unido', (e) => {
     grupo = e.detail.grupo;
+    $('ingreso-error').hidden = true;
     mostrarJuego();
   });
   red.addEventListener('rechazado', (e) => {
+    const { motivo } = e.detail;
+    if (motivo === 'room_not_found') {
+      // El servidor se reinició o la sala ya no existe: se pide el código de nuevo.
+      volverAlIngreso();
+      mostrarPasoCodigo('Esa sala ya no existe. Escribí el código que aparece ahora en el proyector.');
+      return;
+    }
     const textos = { taken: 'Este grupo ya tiene un jugador. Elegí tu número.', invalid_group: 'Elegí tu número de grupo.' };
-    $('ingreso-error').textContent = textos[e.detail.motivo] ?? 'No se pudo entrar. Probá de nuevo.';
-    $('ingreso-error').hidden = e.detail.motivo === 'invalid_group';
-    $('ingreso').hidden = false;
-    $('juego').hidden = true;
+    $('ingreso-error').textContent = textos[motivo] ?? 'No se pudo entrar. Probá de nuevo.';
+    $('ingreso-error').hidden = motivo === 'invalid_group';
+    volverAlIngreso();
+    if (red.sala) red.entrarSala(red.sala);
+    else mostrarPasoCodigo();
+  });
+  red.addEventListener('liberado', () => {
+    reiniciarPartida();
+    grupo = null;
+    volverAlIngreso();
+    $('ingreso-error').textContent = 'El presentador liberó tu grupo. Elegí tu número de nuevo.';
+    $('ingreso-error').hidden = false;
+    red.entrarSala(red.sala);
   });
   red.addEventListener('game:script', (e) => {
+    if (guion?.id !== e.detail.id) bonusPorPregunta.clear();
     guion = new Guion(e.detail);
     resultadoFinal = null;
   });
   red.addEventListener('game:reset', (e) => {
-    guion = null;
-    guionIniciado = null;
-    faseActual = null;
-    resultadoFinal = null;
-    respuestaPendiente = null;
-    practicaHasta = 0;
-    corredor.corriendo = true;
+    reiniciarPartida();
     if (e.detail?.released) {
       red.olvidarGrupo();
       grupo = null;
-      $('juego').hidden = true;
-      $('ingreso').hidden = false;
+      volverAlIngreso();
+      red.entrarSala(red.sala);
     }
   });
   red.addEventListener('state:sync', (e) => {
     const s = e.detail;
-    bonus = s.bonusDistance;
+    // El servidor manda los resultados ya revelados: reemplazan a los que tenía el celular.
+    bonusPorPregunta.clear();
+    for (const r of s.answers ?? []) bonusPorPregunta.set(r.index, r.bonus);
     distanciaSync = s.runDistance;
     if (s.total) rango = { position: s.position, total: s.total };
+    if (s.question) pregunta = s.question;
+    if (s.final) resultadoFinal = s.final;
     // Si se recargó la página en plena carrera, se retoma desde la distancia que tenía el servidor.
     if (guion && guionIniciado === s.scriptId && s.runDistance > corredor.distancia + 5) corredor.distancia = s.runDistance;
   });
+  red.addEventListener('question:start', (e) => (pregunta = e.detail));
   red.addEventListener('question:result', (e) => mostrarResultado(e.detail));
   red.addEventListener('run:rank', (e) => (rango = e.detail));
   red.addEventListener('game:end', (e) => (resultadoFinal = e.detail));
-  if (!red.token) $('ingreso').hidden = false;
+
+  $('form-codigo').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const codigo = $('codigo').value.trim().toUpperCase();
+    if (codigo.length !== 4) return mostrarPasoCodigo('El código tiene 4 letras.');
+    const r = await red.entrarSala(codigo);
+    if (!r.ok) mostrarPasoCodigo(r.reason === 'room_not_found' ? `No hay ninguna sala ${codigo}. Revisá el código en el proyector.` : 'No hay conexión. Probá de nuevo.');
+  });
+  $('codigo').addEventListener('input', (e) => (e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '')));
+  $('btn-cambiar-sala').addEventListener('click', () => {
+    red.olvidarGrupo();
+    red.sala = null;
+    mostrarPasoCodigo();
+  });
+
+  // Sin token se elige la sala (salvo que la traiga el QR, que la Red ya abre al conectar).
+  if (!red.token) {
+    volverAlIngreso();
+    if (red.sala) mostrarPasoGrupo(red.sala);
+    else mostrarPasoCodigo();
+  }
+}
+
+function reiniciarPartida() {
+  guion = null;
+  guionIniciado = null;
+  faseActual = null;
+  resultadoFinal = null;
+  respuestaPendiente = null;
+  pregunta = null;
+  practicaHasta = 0;
+  bonusPorPregunta.clear();
+  corredor.limitarCarriles(2);
+  corredor.corriendo = true;
+}
+
+function volverAlIngreso() {
+  $('ingreso').hidden = false;
+  $('juego').hidden = true;
+}
+
+function mostrarPasoCodigo(error) {
+  $('paso-codigo').hidden = false;
+  $('paso-grupo').hidden = true;
+  $('codigo-error').textContent = error ?? '';
+  $('codigo-error').hidden = !error;
+  if (!$('codigo').value && red?.sala) $('codigo').value = red.sala;
+}
+
+function mostrarPasoGrupo(codigo) {
+  $('paso-codigo').hidden = true;
+  $('paso-grupo').hidden = false;
+  $('codigo-error').hidden = true;
+  $('sala-codigo').textContent = codigo;
 }
 
 function dibujarGrilla(lista) {
@@ -179,7 +256,8 @@ function partidaLocal() {
   agregar(FASES.FIN, 0);
   guion = new Guion({ id: Math.random(), startsAt: inicio, phases: fases, difficulty: 'facil', questions: 3 });
   resultadoFinal = null;
-  bonus = 0;
+  bonusPorPregunta.clear();
+  aciertosSolo = 0;
   $('btn-partida').hidden = true;
 }
 
@@ -197,9 +275,9 @@ function actualizarFase() {
     corredor.reiniciar(f.type === FASES.CUENTA ? 0 : distanciaSync);
     pista.vaciar();
     practicaHasta = 0;
-    bonus = 0;
   }
   if (anterior?.type === FASES.PREGUNTA && anterior.numero === f.numero - 1) responder(anterior);
+  if (f.type !== FASES.PREGUNTA) corredor.limitarCarriles(2);
 
   switch (f.type) {
     case FASES.CUENTA:
@@ -217,12 +295,19 @@ function actualizarFase() {
     case FASES.PREGUNTA:
       corredor.corriendo = true;
       pista.hundirDesde(corredor.distancia + 4);
+      // Con 2 opciones el tercer carril es una pared: el corredor solo puede elegir A o B.
+      corredor.limitarCarriles((f.options ?? 3) - 1);
       respuestaPendiente = { index: f.index, desde: Math.max(ahora(), f.startsAt), carril: corredor.carril };
       break;
     case FASES.FIN:
       corredor.corriendo = false;
       if (SOLO) {
-        resultadoFinal = { winner: 1, queue: [] };
+        resultadoFinal = {
+          winner: 1,
+          queue: [],
+          questions: guion.datos.questions,
+          stats: [{ group: 1, position: 1, distance: Math.round(corredor.distancia + bonusTotal()), correct: aciertosSolo, dodged: corredor.esquivados, likes: corredor.likes }],
+        };
         $('btn-partida').hidden = false;
       }
       break;
@@ -237,20 +322,35 @@ function responder(fase) {
   const datos = { index: fase.index, lane: corredor.carril, serverTime: fase.startsAt + fase.duration, since: r.desde };
   cartel('<span class="cartel__caja">✔ Respuesta guardada</span>', 1500);
   if (SOLO) {
-    setTimeout(() => mostrarResultado({ index: fase.index, correct: Math.random() < 0.6, bonus: 180 }), 600);
+    const correct = Math.random() < 0.6;
+    const premio = calcularPremio(fase, r.desde);
+    setTimeout(() => mostrarResultado({ index: fase.index, correct, bonus: correct ? premio.total : 0, speedBonus: premio.rapidez }), 600);
     return;
   }
   red.encolar(`q${fase.index}:${guion.id}`, 'question:answer', datos);
 }
 
-function mostrarResultado({ correct, bonus: b }) {
-  if (SOLO && correct) bonus += b;
+function mostrarResultado({ index, correct, bonus: b, speedBonus }) {
+  bonusPorPregunta.set(index, correct ? b : 0);
+  if (SOLO && correct) aciertosSolo++;
   const d = document.createElement('div');
   d.className = `np-destello np-destello--${correct ? 'correcto' : 'error'}`;
   document.body.append(d);
   setTimeout(() => d.remove(), 1200);
   navigator.vibrate?.(correct ? 60 : [40, 60, 40]);
-  cartel(correct ? `<span class="cartel__caja">✅ +${b} m</span>` : '<span class="cartel__caja">❌ Incorrecta</span>', 1500);
+  const rapidez = correct && speedBonus ? ` <small>· ⚡ ${speedBonus} por rapidez</small>` : '';
+  cartel(correct ? `<span class="cartel__caja">✅ +${b} m${rapidez}</span>` : '<span class="cartel__caja">❌ Incorrecta</span>', 2000);
+}
+
+/**
+ * Cuánto vale acertar si el grupo se queda en el carril que eligió en `desde`
+ * (misma cuenta que el servidor): base fija + extra que baja cuanto más tarde se eligió.
+ */
+function calcularPremio(fase, desde) {
+  const { base, speedMax } = guion?.datos.bonus ?? { base: 150, speedMax: 100 };
+  const t = Math.min(Math.max(desde, fase.startsAt), fase.startsAt + fase.duration);
+  const rapidez = Math.round(speedMax * (1 - (t - fase.startsAt) / fase.duration));
+  return { total: base + rapidez, rapidez, maximo: base + speedMax };
 }
 
 function cartel(html, ms) {
@@ -295,6 +395,7 @@ function bucle(t) {
     if (respuestaPendiente && corredor.carril !== respuestaPendiente.carril) {
       respuestaPendiente.carril = corredor.carril;
       respuestaPendiente.desde = ahora();
+      red?.carril(respuestaPendiente.index, corredor.carril);
     }
     corredor.paso(PASO, pista);
     pista.limpiar(corredor.distancia, PASO);
@@ -323,6 +424,7 @@ function bucle(t) {
       hits: corredor.choques,
       jumps: corredor.saltos,
       likes: corredor.likes,
+      dodged: corredor.esquivados,
     });
   }
   if (t - ultimoHud > 100) {
@@ -333,7 +435,9 @@ function bucle(t) {
 
 // ---------- HUD ----------
 function actualizarHud() {
-  const total = corredor.distancia + bonus;
+  // Al llegar, el corredor frena unos metros que el servidor ya no cuenta: se muestra la distancia oficial.
+  const oficial = resultadoFinal?.stats?.find((x) => x.group === grupo)?.distance;
+  const total = oficial ?? corredor.distancia + bonusTotal();
   $('hud-distancia').textContent = `${Math.round(total)} m`;
   $('hud-likes').textContent = `❤ ${corredor.likes}`;
   $('hud-puesto').textContent = rango && enPartida() ? `${rango.position}.º` : '–';
@@ -344,15 +448,29 @@ function actualizarHud() {
   const restante = f ? Math.max(0, f.startsAt + f.duration - t) : 0;
 
   $('temporizador').hidden = f?.type !== FASES.PREGUNTA;
+  const premio = f?.type === FASES.PREGUNTA && respuestaPendiente?.index === f.index ? calcularPremio(f, respuestaPendiente.desde) : null;
+  $('premio').hidden = !premio;
+  if (premio) {
+    $('premio').innerHTML = `⚡ Si es la correcta: <b>+${premio.total} m</b>`;
+    $('premio').classList.toggle('juego__premio--baja', premio.total < premio.maximo);
+  }
   $('carriles').hidden = f?.type !== FASES.PREGUNTA;
   if (f?.type === FASES.PREGUNTA) {
     $('temporizador').style.setProperty('--progreso', `${(restante / f.duration) * 100}%`);
     $('temporizador').classList.toggle('np-temporizador--urgente', restante < 4000);
+    const cortas = pregunta?.index === f.index ? pregunta.shortOptions : [];
     [...$('carriles').children].forEach((s, i) => {
-      s.textContent = i < (f.options ?? 3) ? LETRAS[i] : '';
-      s.classList.toggle('activo', i === corredor.carril);
+      const abierta = i < (f.options ?? 3);
+      const texto = abierta ? `${LETRAS[i]}${cortas?.[i] ? `<small>${escapar(cortas[i])}</small>` : ''}` : '✕';
+      if (s.dataset.texto !== texto) {
+        s.innerHTML = texto;
+        s.dataset.texto = texto;
+      }
+      s.classList.toggle('activo', abierta && i === corredor.carril);
+      s.classList.toggle('pared', !abierta);
     });
   }
+  actualizarFinal(f);
 
   if (performance.now() < cartelHasta) {
     // Un cartel temporal (respuesta guardada, resultado) tiene prioridad.
@@ -379,6 +497,22 @@ function actualizarHud() {
   $('sin-red').hidden = !red || red.segundosSinRed < 5;
 
   if (!$('debug').hidden) $('debug-datos').textContent = textoDebug();
+}
+
+function actualizarFinal(f) {
+  const propio = f?.type === FASES.FIN && resultadoFinal?.stats?.find((s) => s.group === grupo);
+  $('final').hidden = !propio;
+  if (!propio) return;
+  $('final-puesto').textContent = `${propio.position}.º`;
+  $('final-total').textContent = `de ${resultadoFinal.stats.length}`;
+  $('final-aciertos').textContent = `${propio.correct}/${resultadoFinal.questions ?? '–'}`;
+  $('final-distancia').textContent = `${propio.distance} m`;
+  $('final-esquivados').textContent = propio.dodged ?? corredor.esquivados;
+  $('final-likes').textContent = propio.likes;
+}
+
+function escapar(v) {
+  return String(v).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 }
 
 // ---------- Panel de pruebas ----------

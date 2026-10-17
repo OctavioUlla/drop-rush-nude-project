@@ -14,6 +14,7 @@ export const CONFIG_POR_DEFECTO = {
   duracionCuenta: 4,
   duracionSprint: 10,
   duracionRevelado: 3,
+  preguntasEnRepaso: 2,
   dificultadObstaculos: 'facil',
   toleranciaRespuestaTardia: 10,
   bonusAcierto: 150,
@@ -42,6 +43,9 @@ export function cargarPreguntas() {
     }
     if (!(p.correcta >= 0 && p.correcta < p.opciones.length)) {
       throw new Error(`La pregunta ${p.id} tiene un índice "correcta" inválido.`);
+    }
+    if (p.opcionesCortas && p.opcionesCortas.length !== p.opciones.length) {
+      throw new Error(`La pregunta ${p.id} tiene que tener una opción corta por cada opción.`);
     }
   }
   return preguntas;

@@ -8,13 +8,27 @@
   <link rel="stylesheet" href="./play.css">
 </head>
 <body class="np-base">
-  <!-- Ingreso: elegir el número de grupo (un celular por grupo). -->
+  <!-- Ingreso: código de la sala (o directo desde el QR) y número de grupo (un celular por grupo). -->
   <section id="ingreso" class="ingreso" data-np-tema="cacao" hidden>
     <p class="np-logo-juego ingreso__logo">Drop <span>Rush</span></p>
-    <h1 class="np-titulo">Elegí tu grupo</h1>
-    <p class="np-texto np-texto-suave">Un solo celular por grupo. Los números tomados aparecen bloqueados.</p>
-    <p id="ingreso-error" class="ingreso__error" role="alert" hidden></p>
-    <div id="grilla" class="np-grilla-grupos ingreso__grilla"></div>
+
+    <div id="paso-codigo" class="ingreso__paso">
+      <h1 class="np-titulo">Entrá al drop</h1>
+      <p class="np-texto np-texto-suave">Escribí el código de 4 letras que aparece en el proyector.</p>
+      <p id="codigo-error" class="ingreso__error" role="alert" hidden></p>
+      <form id="form-codigo" class="codigo" autocomplete="off">
+        <input id="codigo" class="codigo__campo" maxlength="4" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="ABCD" aria-label="Código de la sala">
+        <button class="np-boton np-boton--acento">Entrar</button>
+      </form>
+    </div>
+
+    <div id="paso-grupo" class="ingreso__paso" hidden>
+      <h1 class="np-titulo">Elegí tu grupo</h1>
+      <p class="np-texto np-texto-suave">Sala <b id="sala-codigo" class="ingreso__sala"></b> · Un solo celular por grupo: los números tomados aparecen bloqueados.</p>
+      <p id="ingreso-error" class="ingreso__error" role="alert" hidden></p>
+      <div id="grilla" class="np-grilla-grupos ingreso__grilla"></div>
+      <button id="btn-cambiar-sala" class="np-boton np-boton--secundario ingreso__cambiar">Cambiar de sala</button>
+    </div>
   </section>
 
   <!-- Juego: runner 3D a pantalla completa con HUD encima. -->
@@ -30,7 +44,21 @@
 
     <div id="cartel" class="juego__cartel" aria-live="polite"></div>
     <div id="temporizador" class="np-temporizador juego__temporizador" hidden><div class="np-temporizador__barra"></div></div>
-    <div id="carriles" class="juego__carriles" hidden><span>A</span><span>B</span><span>C</span></div>
+    <p id="premio" class="juego__premio" aria-live="polite" hidden></p>
+    <div id="carriles" class="juego__carriles" hidden><span></span><span></span><span></span></div>
+
+    <!-- Llegada: puesto y estadísticas del grupo. -->
+    <section id="final" class="final" hidden>
+      <p class="np-etiqueta">Llegada a la tienda</p>
+      <p class="final__puesto"><b id="final-puesto">–</b> <span id="final-total"></span></p>
+      <dl class="final__datos">
+        <div class="np-dato"><dt class="np-dato__etiqueta">Aciertos</dt><dd id="final-aciertos" class="np-dato__valor">–</dd></div>
+        <div class="np-dato"><dt class="np-dato__etiqueta">Distancia</dt><dd id="final-distancia" class="np-dato__valor">–</dd></div>
+        <div class="np-dato"><dt class="np-dato__etiqueta">Esquivados</dt><dd id="final-esquivados" class="np-dato__valor">–</dd></div>
+        <div class="np-dato"><dt class="np-dato__etiqueta">Likes</dt><dd id="final-likes" class="np-dato__valor">–</dd></div>
+      </dl>
+      <p class="np-texto-suave final__nota">Mirá el proyector para el repaso de las preguntas.</p>
+    </section>
 
     <span id="sin-red" class="juego__sin-red" title="Sin conexión: el juego sigue igual" hidden>📶</span>
 

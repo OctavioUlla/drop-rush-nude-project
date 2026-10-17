@@ -10,7 +10,7 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 | 🏃 **Drop Rush** | Juego multijugador de 7 minutos para el cierre de la presentación (22 minutos en total): hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
 | 🎨 **Design System** | Colores, tipografía y componentes basados en la identidad real de la marca, para que la presentación y el juego se vean como una sola cosa. | [`design-system/`](design-system/README.md) |
 
-> 🚧 **Estado:** design system listo; juego en la Fase 0 (prototipo técnico, ver [`juego/README.md`](juego/README.md)); presentación en planificación.
+> 🚧 **Estado:** design system listo; juego en la Fase 1 (base jugable: salas con QR, preguntas, ranking y repaso; ver [`juego/README.md`](juego/README.md)); presentación en planificación.
 
 ## Estructura
 
@@ -22,7 +22,7 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 │   ├── README.md               # Estructura, tiempos y diapositivas tipo
 │   └── PLANIFICACION.md        # Plan de la presentación interactiva en HTML
 ├── juego/
-│   ├── README.md               # Cómo correr el juego y las pruebas de la Fase 0
+│   ├── README.md               # Cómo correr el juego, jugar una partida y las pruebas
 │   ├── PLANIFICACION.md        # Plan completo de Drop Rush
 │   ├── server/ · public/       # Servidor Node y clientes (celular y proyector)
 │   └── tools/ · test/          # Simulador de 40 bots y pruebas

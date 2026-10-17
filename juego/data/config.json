@@ -8,6 +8,7 @@
   "duracionCuenta": 4,
   "duracionSprint": 10,
   "duracionRevelado": 3,
+  "preguntasEnRepaso": 2,
   "dificultadObstaculos": "facil",
   "toleranciaRespuestaTardia": 10,
   "bonusAcierto": 150,

@@ -1,5 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { FASES } from '../public/shared/constantes.js';
+import { estadisticaPregunta, elegirRepaso, ordenarLlegada } from './stats.js';
 
 // Guion de la partida, preguntas, respuestas y posiciones.
 // El celular sigue el guion solo (aunque se corte la red); el servidor solo
@@ -17,14 +18,24 @@ function mezclar(lista) {
   return copia;
 }
 
-/** Elige las preguntas de la partida y mezcla sus opciones (el celular nunca recibe la correcta). */
+/**
+ * Elige las preguntas de la partida y mezcla sus opciones (el celular nunca recibe la correcta).
+ * Primero van las principales (una por tema) y solo si hacen falta más, las de reserva.
+ */
 export function prepararPreguntas(banco, config) {
-  const orden = config.ordenAleatorio ? mezclar(banco) : banco;
-  return orden.slice(0, config.cantidadPreguntas).map((p) => {
+  const principales = banco.filter((p) => !p.reserva);
+  const reservas = banco.filter((p) => p.reserva);
+  const elegidas = [
+    ...(config.ordenAleatorio ? mezclar(principales) : principales),
+    ...(config.ordenAleatorio ? mezclar(reservas) : reservas),
+  ].slice(0, config.cantidadPreguntas);
+  const orden = config.ordenAleatorio ? mezclar(elegidas) : elegidas;
+  return orden.map((p) => {
     const indices = p.opciones.map((_, i) => i);
     const orden = config.mezclarOpciones ? mezclar(indices) : indices;
     return {
       id: p.id,
+      topic: p.tema ?? '',
       text: p.pregunta,
       options: orden.map((i) => p.opciones[i]),
       shortOptions: orden.map((i) => p.opcionesCortas?.[i] ?? null),
@@ -56,6 +67,9 @@ export function crearGuion(config, preguntas, inicio) {
     phases,
     difficulty: config.dificultadObstaculos,
     questions: preguntas.length,
+    revealDuration: config.duracionRevelado * 1000,
+    // Para que el celular muestre en vivo cuánto vale responder bien (base + extra por rapidez).
+    bonus: { base: config.bonusAcierto, speedMax: config.bonusRapidezMax },
   };
 }
 
@@ -71,6 +85,10 @@ export class Partida {
     this.revelados = new Set();
     this.temporizadores = [];
     this.terminada = false;
+    this.ajustes = {};
+    this.preguntaEnCurso = null; // índice de la pregunta que se está respondiendo
+    this.ultimoRevelado = null; // { ...resumen, at } para el host que recarga en pleno revelado
+    this.final = null;
   }
 
   get activa() {
@@ -79,11 +97,13 @@ export class Partida {
 
   iniciar(ajustes = {}) {
     this.detener();
-    const config = { ...this.config, ...filtrarAjustes(ajustes) };
+    this.ajustes = filtrarAjustes(ajustes);
+    const config = this.configActual;
     this.preguntas = prepararPreguntas(this.banco, config);
     this.guion = crearGuion(config, this.preguntas, this.ahora() + 1500);
     this.revelados.clear();
     this.terminada = false;
+    this.sala.limpiarLiberados();
     for (const g of this.sala.grupos.values()) g.reiniciarPartida();
 
     for (const fase of this.guion.phases) {
@@ -97,11 +117,19 @@ export class Partida {
     return this.guion;
   }
 
+  /** Configuración de la partida en curso: la de config.json con los ajustes del lobby encima. */
+  get configActual() {
+    return { ...this.config, ...this.ajustes };
+  }
+
   detener() {
     for (const t of this.temporizadores) clearTimeout(t);
     this.temporizadores = [];
     this.guion = null;
     this.terminada = false;
+    this.preguntaEnCurso = null;
+    this.ultimoRevelado = null;
+    this.final = null;
   }
 
   programar(hora, fn) {
@@ -112,15 +140,43 @@ export class Partida {
     return this.guion?.phases.find((f) => f.type === FASES.PREGUNTA && f.index === index);
   }
 
-  empezarPregunta(index) {
+  /** Lo que ven los celulares y el proyector de una pregunta (nunca la respuesta correcta). */
+  datosPregunta(index) {
     const p = this.preguntas[index];
-    this.enviar('todos', 'question:start', {
+    const fase = this.faseDePregunta(index);
+    return {
       index,
+      number: index + 1,
+      total: this.preguntas.length,
       text: p.text,
       options: p.options,
       shortOptions: p.shortOptions,
       timeLimit: p.timeLimit,
-    });
+      startsAt: fase.startsAt,
+      endsAt: fase.startsAt + fase.duration,
+    };
+  }
+
+  empezarPregunta(index) {
+    this.preguntaEnCurso = index;
+    this.enviar('todos', 'question:start', this.datosPregunta(index));
+  }
+
+  /** Carril elegido mientras corre la pregunta: solo sirve para el contador "posicionados" del proyector. */
+  registrarCarril(grupo, datos) {
+    const index = Number(datos?.index);
+    const lane = Number(datos?.lane);
+    if (!this.activa || index !== this.preguntaEnCurso || !Number.isInteger(lane)) return;
+    grupo.carriles.set(index, lane);
+  }
+
+  /** Grupos que ya eligieron carril en la pregunta en curso (sin revelar cuál). */
+  posicionados() {
+    const index = this.preguntaEnCurso;
+    if (index == null) return null;
+    let count = 0;
+    for (const g of this.sala.grupos.values()) if (g.carriles.has(index) || g.respuestas.has(index)) count++;
+    return { index, count, total: this.sala.grupos.size };
   }
 
   registrarProgreso(grupo, datos) {
@@ -132,6 +188,7 @@ export class Partida {
     if (Number.isFinite(datos.hits)) grupo.choques = datos.hits;
     if (Number.isFinite(datos.jumps)) grupo.saltos = datos.jumps;
     if (Number.isFinite(datos.likes)) grupo.likes = datos.likes;
+    if (Number.isFinite(datos.dodged)) grupo.esquivados = datos.dodged;
     grupo.ultimoDato = this.ahora();
   }
 
@@ -156,53 +213,49 @@ export class Partida {
 
     const p = this.preguntas[index];
     const lane = Number(datos.lane);
+    // Con 2 opciones el tercer carril es una pared: no cuenta como respuesta válida.
     const correct = lane === p.correctIndex;
+    // Desde cuándo estaba en ese carril: cuanto antes lo eligió y lo mantuvo, más bonus.
+    const desde = Math.min(Math.max(Number(datos.since) || fin, fase.startsAt), fin);
     let bonus = 0;
+    let speedBonus = 0;
     if (correct) {
-      const desde = Math.min(Math.max(Number(datos.since) || fin, fase.startsAt), fin);
       const rapidez = 1 - (desde - fase.startsAt) / fase.duration;
-      bonus = this.config.bonusAcierto + Math.round(this.config.bonusRapidezMax * rapidez);
+      speedBonus = Math.round(this.config.bonusRapidezMax * rapidez);
+      bonus = this.config.bonusAcierto + speedBonus;
       grupo.bonus += bonus;
     }
-    const resultado = { index, lane, correct, bonus };
+    const resultado = { index, lane, correct, bonus, speedBonus, demora: Math.round(desde - fase.startsAt) };
     grupo.respuestas.set(index, resultado);
 
     // Si ya se reveló (llegó tarde por un corte), se informa enseguida.
     if (this.revelados.has(index)) {
       this.enviar(grupo.numero, 'question:result', resultado);
-      this.enviar('hosts', 'question:reveal', this.resumenPregunta(index));
+      // El host actualiza el número de aciertos (sin volver a mostrar el revelado si ya pasó).
+      this.enviar('hosts', 'question:reveal', { ...this.resumenPregunta(index), late: true });
     }
     return { ok: true };
   }
 
   revelar(index) {
     this.revelados.add(index);
+    if (this.preguntaEnCurso === index) this.preguntaEnCurso = null;
     for (const g of this.sala.grupos.values()) {
       const r = g.respuestas.get(index);
       if (r) this.enviar(g.numero, 'question:result', r);
     }
-    this.enviar('hosts', 'question:reveal', this.resumenPregunta(index));
+    const resumen = this.resumenPregunta(index);
+    this.ultimoRevelado = { ...resumen, at: this.ahora() };
+    this.enviar('hosts', 'question:reveal', resumen);
   }
 
   resumenPregunta(index) {
-    const p = this.preguntas[index];
-    const distribution = p.options.map(() => 0);
-    let correctCount = 0;
-    let answered = 0;
-    for (const g of this.sala.grupos.values()) {
-      const r = g.respuestas.get(index);
-      if (!r) continue;
-      answered++;
-      if (r.lane >= 0 && r.lane < distribution.length) distribution[r.lane]++;
-      if (r.correct) correctCount++;
-    }
-    return { index, correctIndex: p.correctIndex, correctCount, answered, total: this.sala.grupos.size, distribution };
+    const { correctRate, ...resumen } = estadisticaPregunta(this.preguntas[index], index, this.sala.jugadores);
+    return resumen;
   }
 
   ranking() {
-    return [...this.sala.grupos.values()].sort(
-      (a, b) => b.distanciaTotal - a.distanciaTotal || aciertos(b) - aciertos(a),
-    );
+    return ordenarLlegada(this.sala.grupos.values());
   }
 
   posiciones() {
@@ -211,19 +264,47 @@ export class Partida {
 
   terminar() {
     this.terminada = true;
+    this.preguntaEnCurso = null;
     const [ganador, ...cola] = this.ranking();
-    this.enviar('todos', 'game:end', {
+    this.final = {
       winner: ganador?.numero ?? null,
       queue: cola.map((g) => g.numero),
-      stats: this.ranking().map((g) => ({
+      questions: this.preguntas.length,
+      stats: this.ranking().map((g, i) => ({
         group: g.numero,
+        position: i + 1,
         distance: Math.round(g.distanciaTotal),
-        correct: aciertos(g),
+        correct: g.aciertos,
         hits: g.choques,
+        dodged: g.esquivados,
         jumps: g.saltos,
         likes: g.likes,
       })),
-    });
+    };
+    this.enviar('todos', 'game:end', this.final);
+  }
+
+  /** Preguntas más erradas, con su distribución y explicación, para el repaso del final. */
+  repaso() {
+    if (!this.guion) return [];
+    return elegirRepaso(this.preguntas, this.sala.jugadores, this.configActual.preguntasEnRepaso);
+  }
+
+  /** Pregunta que se está respondiendo ahora (para quien entra o recarga en plena pregunta). */
+  preguntaActual() {
+    return this.activa && this.preguntaEnCurso != null ? this.datosPregunta(this.preguntaEnCurso) : null;
+  }
+
+  /** Todo lo que necesita un proyector que recarga en plena partida. */
+  estadoHost() {
+    if (!this.guion) return null;
+    return {
+      script: this.guion,
+      question: this.preguntaActual(),
+      reveal: this.ultimoRevelado,
+      positioned: this.posicionados(),
+      final: this.final,
+    };
   }
 
   /** Estado completo de un grupo, para corregir diferencias al reconectar. */
@@ -236,19 +317,15 @@ export class Partida {
       bonusDistance: grupo.bonus,
       answers: [...grupo.respuestas.values()].filter((r) => this.revelados.has(r.index)),
       answeredIndexes: [...grupo.respuestas.keys()],
+      question: this.preguntaActual(),
       position: ranking.indexOf(grupo) + 1,
       total: ranking.length,
+      final: this.final,
     };
   }
 }
 
-function aciertos(grupo) {
-  let n = 0;
-  for (const r of grupo.respuestas.values()) if (r.correct) n++;
-  return n;
-}
-
-const AJUSTES_PERMITIDOS = ['cantidadPreguntas', 'duracionTramo', 'tiempoPorDefecto', 'dificultadObstaculos'];
+const AJUSTES_PERMITIDOS = ['cantidadPreguntas', 'duracionTramo', 'tiempoPorDefecto', 'dificultadObstaculos', 'preguntasEnRepaso'];
 
 function filtrarAjustes(ajustes) {
   const salida = {};
@@ -256,6 +333,7 @@ function filtrarAjustes(ajustes) {
   if (salida.cantidadPreguntas !== undefined) salida.cantidadPreguntas = Math.max(1, Math.min(12, Number(salida.cantidadPreguntas) || 1));
   if (salida.duracionTramo !== undefined) salida.duracionTramo = Math.max(1, Number(salida.duracionTramo) || 15);
   if (salida.tiempoPorDefecto !== undefined) salida.tiempoPorDefecto = Math.max(1, Number(salida.tiempoPorDefecto) || 15);
+  if (salida.preguntasEnRepaso !== undefined) salida.preguntasEnRepaso = Math.max(0, Math.min(12, Math.round(Number(salida.preguntasEnRepaso)) || 0));
   if (!['facil', 'normal', 'caotico'].includes(salida.dificultadObstaculos)) delete salida.dificultadObstaculos;
   return salida;
 }

@@ -26,6 +26,7 @@ export class Corredor {
     this.frenado = 0;
     this.invulnerable = 0;
     this.lenta = 0; // arranque lento tras una respuesta incorrecta (fase 3)
+    this.carrilMax = 2; // en una pregunta de 2 opciones el tercer carril es una pared
     this.corriendo = false;
     this.pendiente = null; // gesto guardado en el buffer
     this.tPendiente = 0;
@@ -38,6 +39,12 @@ export class Corredor {
     this.anterior = { distancia, x: this.x, y: 0 };
   }
 
+  /** Limita los carriles disponibles (y saca al corredor del carril cerrado si estaba ahí). */
+  limitarCarriles(max) {
+    this.carrilMax = max;
+    if (this.carril > max) this.carril = max;
+  }
+
   gesto(accion) {
     this.pendiente = accion;
     this.tPendiente = BUFFER_GESTO;
@@ -47,7 +54,7 @@ export class Corredor {
     if (!this.pendiente) return;
     const a = this.pendiente;
     if (a === 'izq' || a === 'der') {
-      const nuevo = Math.max(0, Math.min(2, this.carril + (a === 'izq' ? -1 : 1)));
+      const nuevo = Math.max(0, Math.min(this.carrilMax, this.carril + (a === 'izq' ? -1 : 1)));
       if (nuevo !== this.carril) {
         this.carril = nuevo;
         this.ultimoCambioCarril = this.tiempoCarrera;

@@ -23,6 +23,27 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .ingreso__grilla .np-ficha { border: 0; cursor: pointer; font-size: var(--np-texto-xl); }
 .ingreso__grilla .np-ficha:disabled { cursor: not-allowed; }
 .ingreso__error { margin: 0; padding: var(--np-espacio-3); background: var(--np-acento-ladrillo); color: var(--np-marca-crema); }
+.ingreso__paso { display: flex; flex-direction: column; gap: var(--np-espacio-3); }
+.ingreso__paso > * { margin: 0; flex: none; }
+.ingreso__sala { letter-spacing: var(--np-interletra-etiqueta); }
+.ingreso__cambiar { align-self: flex-start; margin-top: var(--np-espacio-4); color: var(--np-marca-crema); border-color: var(--np-marca-crema); }
+
+.codigo { display: flex; gap: var(--np-espacio-2); margin-top: var(--np-espacio-3); }
+.codigo__campo {
+  flex: 1;
+  min-width: 0;
+  min-height: 64px;
+  padding: 0 var(--np-espacio-3);
+  border: var(--np-borde-grueso) solid var(--np-marca-crema);
+  background: transparent;
+  color: var(--np-marca-crema);
+  font: var(--np-peso-black) var(--np-texto-3xl) / 1 var(--np-fuente-display);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  user-select: text;
+}
+.codigo__campo::placeholder { color: color-mix(in srgb, var(--np-marca-crema) 35%, transparent); }
+.codigo .np-boton { min-height: 64px; }
 
 /* ---------- Juego ---------- */
 .juego { position: fixed; inset: 0; background: var(--np-juego-niebla); }
@@ -61,6 +82,25 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .juego__temporizador { position: absolute; left: 0; right: 0; top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 3.2rem); }
 .juego__temporizador .np-temporizador__barra { transition: none; }
 
+/* Cuánto vale acertar ahora: se ve bajar si el grupo cambia de carril tarde. */
+.juego__premio {
+  position: absolute;
+  left: 50%;
+  top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 4.2rem);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: var(--np-espacio-2) var(--np-espacio-3);
+  white-space: nowrap;
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-bold) var(--np-texto-base) / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.juego__premio b { font-weight: var(--np-peso-black); font-size: var(--np-texto-lg); }
+.juego__premio--baja { background: var(--np-marca-crema); }
+.cartel__caja small { font-size: var(--np-texto-base); font-weight: var(--np-peso-medio); }
+
 .juego__carriles {
   position: absolute;
   bottom: 18%;
@@ -74,7 +114,30 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
   color: var(--np-marca-crema);
   text-shadow: 0 2px 6px rgb(46 25 20 / 0.6);
 }
+.juego__carriles span { display: grid; justify-items: center; gap: var(--np-espacio-1); padding: 0 var(--np-espacio-1); }
+.juego__carriles small { font: var(--np-peso-bold) var(--np-texto-sm) / 1.15 var(--np-fuente-display); overflow-wrap: anywhere; }
 .juego__carriles .activo { color: var(--np-acento-mostaza); }
+.juego__carriles .pared { color: color-mix(in srgb, var(--np-marca-crema) 45%, transparent); }
+
+/* ---------- Llegada ---------- */
+.final {
+  position: absolute;
+  left: var(--np-espacio-3);
+  right: var(--np-espacio-3);
+  bottom: calc(max(var(--np-espacio-3), env(safe-area-inset-bottom)) + 56px);
+  padding: var(--np-espacio-4);
+  background: var(--np-marca-crema);
+  color: var(--np-marca-cacao);
+  display: grid;
+  gap: var(--np-espacio-3);
+}
+.final > * { margin: 0; }
+.final__puesto { font: var(--np-peso-bold) var(--np-texto-xl) / 1 var(--np-fuente-display); }
+.final__puesto b { font-size: var(--np-texto-5xl); font-weight: var(--np-peso-black); letter-spacing: var(--np-interletra-display); }
+.final__datos { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: var(--np-espacio-3); margin: 0; }
+.final__datos dd { margin: 0; font-size: var(--np-texto-xl); white-space: nowrap; }
+.final__datos dt { font-size: var(--np-texto-xs); }
+.final__nota { font-size: var(--np-texto-sm); }
 
 .juego__sin-red { position: absolute; right: var(--np-espacio-3); top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 3.6rem); font-size: var(--np-texto-xl); opacity: 0.85; }
 
