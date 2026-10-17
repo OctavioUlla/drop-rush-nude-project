@@ -1,0 +1,13 @@
+/* Solo layout propio: colores, tipografía y componentes vienen del design system. */
+@import '../../../design-system/tokens.css';
+@import '../../../design-system/components.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--np-fondo);
+  color: var(--np-tinta);
+  font-family: var(--np-fuente-texto);
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }

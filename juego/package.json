@@ -1,0 +1,26 @@
+{
+  "name": "drop-rush",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Drop Rush: runner 3D multijugador sobre el caso Nude Project",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node server/index.js",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "bots": "node tools/bots.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0"
+  }
+}

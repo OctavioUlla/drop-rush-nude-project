@@ -561,10 +561,12 @@ juego/
 ## 9. Plan de trabajo
 
 ### Fase 0: Prototipo técnico (riesgos primero)
-- [ ] Escena 3D mínima en Three.js: calle infinita reciclada, corredor que cambia de carril y salta, obstáculos simples
-- [ ] **Medir FPS en 2 o 3 celulares de gama baja reales** y ajustar el presupuesto de la sección 5.3
-- [ ] Prueba de reconexión: cortar el Wi-Fi unos segundos en medio de un tramo y verificar que el juego sigue
-- [ ] Simulador de 40 bots (`tools/bots.js`) contra el servidor
+> Implementada: ver [`README.md`](README.md) para correr cada prueba.
+
+- [x] Escena 3D mínima en Three.js: calle infinita reciclada, corredor que cambia de carril y salta, obstáculos simples
+- [ ] **Medir FPS en 2 o 3 celulares de gama baja reales** y ajustar el presupuesto de la sección 5.3 *(herramienta lista: 🐞 → "Medir 20 s"; los resultados llegan a `/host/`)*
+- [ ] Prueba de reconexión: cortar el Wi-Fi unos segundos en medio de un tramo y verificar que el juego sigue *(automatizada con bots en `npm test`; falta probarla con celulares reales)*
+- [x] Simulador de 40 bots (`tools/bots.js`) contra el servidor
 
 ### Fase 1: Base jugable (solo preguntas)
 - [ ] Inicializar el proyecto Node con Express, Socket.io y Vite

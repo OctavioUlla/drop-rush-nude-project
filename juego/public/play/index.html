@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#482922">
+  <title>Drop Rush</title>
+  <link rel="stylesheet" href="./play.css">
+</head>
+<body class="np-base">
+  <!-- Ingreso: elegir el número de grupo (un celular por grupo). -->
+  <section id="ingreso" class="ingreso" data-np-tema="cacao" hidden>
+    <p class="np-logo-juego ingreso__logo">Drop <span>Rush</span></p>
+    <h1 class="np-titulo">Elegí tu grupo</h1>
+    <p class="np-texto np-texto-suave">Un solo celular por grupo. Los números tomados aparecen bloqueados.</p>
+    <p id="ingreso-error" class="ingreso__error" role="alert" hidden></p>
+    <div id="grilla" class="np-grilla-grupos ingreso__grilla"></div>
+  </section>
+
+  <!-- Juego: runner 3D a pantalla completa con HUD encima. -->
+  <main id="juego" class="juego" hidden>
+    <canvas id="lienzo" class="juego__lienzo"></canvas>
+
+    <header class="np-hud juego__hud">
+      <span id="hud-grupo" class="np-ficha"></span>
+      <span class="np-hud__posicion"><b id="hud-puesto">–</b><small id="hud-total"></small></span>
+      <span id="hud-likes">❤ 0</span>
+      <span id="hud-distancia">0 m</span>
+    </header>
+
+    <div id="cartel" class="juego__cartel" aria-live="polite"></div>
+    <div id="temporizador" class="np-temporizador juego__temporizador" hidden><div class="np-temporizador__barra"></div></div>
+    <div id="carriles" class="juego__carriles" hidden><span>A</span><span>B</span><span>C</span></div>
+
+    <span id="sin-red" class="juego__sin-red" title="Sin conexión: el juego sigue igual" hidden>📶</span>
+
+    <div class="juego__botones">
+      <button id="btn-partida" class="np-boton np-boton--acento" hidden>Probar partida</button>
+      <button id="btn-calidad" class="np-boton np-boton--secundario juego__mini" title="Calidad gráfica">⚙️ <span id="calidad-texto">auto</span></button>
+      <button id="btn-debug" class="np-boton np-boton--secundario juego__mini" title="Panel de pruebas">🐞</button>
+    </div>
+
+    <!-- Panel de pruebas de la Fase 0: FPS, red, corte simulado y medición. -->
+    <aside id="debug" class="debug" hidden>
+      <pre id="debug-datos"></pre>
+      <div class="debug__acciones">
+        <button id="btn-medir" class="np-boton">Medir 20 s</button>
+        <button id="btn-corte" class="np-boton np-boton--secundario">Cortar red 5 s</button>
+        <button id="btn-corte-largo" class="np-boton np-boton--secundario">Cortar red 20 s</button>
+      </div>
+      <pre id="debug-medicion"></pre>
+    </aside>
+  </main>
+
+  <p id="sin-webgl" class="sin-webgl" hidden>Este celular no puede mostrar gráficos 3D (WebGL). Usen otro celular del grupo.</p>
+
+  <script type="module" src="./play.js"></script>
+</body>
+</html>

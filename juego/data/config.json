@@ -1,0 +1,15 @@
+{
+  "maxGrupos": 40,
+  "cantidadPreguntas": 6,
+  "ordenAleatorio": true,
+  "mezclarOpciones": true,
+  "tiempoPorDefecto": 15,
+  "duracionTramo": 15,
+  "duracionCuenta": 4,
+  "duracionSprint": 10,
+  "duracionRevelado": 3,
+  "dificultadObstaculos": "facil",
+  "toleranciaRespuestaTardia": 10,
+  "bonusAcierto": 150,
+  "bonusRapidezMax": 100
+}
