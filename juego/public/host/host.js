@@ -3,8 +3,9 @@ import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
 import { Reloj } from '../shared/reloj.js';
 import { Guion } from '../shared/guion.js';
 import { FASES } from '../shared/constantes.js';
+import { Mapa } from './map.js';
 
-// Pantalla del proyector: lobby con código y QR, pregunta con revelado, ranking en vivo
+// Pantalla del proyector: lobby con código y QR, mapa de la carrera, pregunta con revelado, ranking en vivo
 // de hasta 40 grupos, ganador, repaso de errores y debate (secciones 2 y 4.1).
 // ?debug abre el panel técnico (carga del servidor y FPS de los celulares).
 
@@ -34,6 +35,7 @@ let final = null;
 let repaso = [];
 let vista = 'auto'; // 'auto' (según el guion) | 'repaso' | 'debate'
 let repasoIndice = 0;
+const mapa = new Mapa({ lienzo: $('mapa-lienzo'), falta: $('mapa-falta'), progreso: $('mapa-progreso') });
 
 // ---------- Sesión del proyector ----------
 function leerSesion() {
@@ -97,6 +99,7 @@ function limpiarPartida() {
   final = null;
   repaso = [];
   vista = 'auto';
+  mapa.reiniciar();
   dibujarPosiciones();
 }
 
@@ -519,3 +522,14 @@ function escapar(v) {
 }
 
 setInterval(actualizar, 100);
+
+// El mapa se anima a los FPS de la pantalla (las posiciones llegan 5 veces por segundo y se interpolan).
+let tMapa = performance.now();
+function animarMapa(t) {
+  requestAnimationFrame(animarMapa);
+  const dt = Math.min(0.1, (t - tMapa) / 1000);
+  tMapa = t;
+  const carrera = $('pantalla-carrera');
+  if (!carrera.hidden && !carrera.classList.contains('carrera--pregunta')) mapa.dibujar(posiciones, guion?.datos, reloj.ahora(), dt);
+}
+requestAnimationFrame(animarMapa);

@@ -1,5 +1,6 @@
 import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
-import { FASES, PASOS_POR_SEGUNDO, VELOCIDAD_BASE, INTERVALO_PROGRESO } from '../shared/constantes.js';
+import { FASES, PASOS_POR_SEGUNDO, VELOCIDAD_BASE, INTERVALO_PROGRESO, VALOR_LIKE } from '../shared/constantes.js';
+import { recorridoIdeal } from '../shared/carrera.js';
 import { Guion } from '../shared/guion.js';
 import { Corredor } from './runner.js';
 import { Pista } from './track.js';
@@ -16,6 +17,10 @@ import { Calidad, resumirCuadros } from './render/quality.js';
 
 const PASO = 1 / PASOS_POR_SEGUNDO;
 const LETRAS = ['A', 'B', 'C'];
+// Al llegar, el corredor frena en unos 3 m y queda mirando la tienda (y la cola) desde un poco antes.
+const FRENADA_TIENDA = 14;
+// Textos cortos de ejemplo para los arcos de la partida simulada (?solo).
+const CORTAS_SOLO = ['EGC', 'UGC', 'Influencers'];
 const params = new URLSearchParams(location.search);
 const SOLO = params.has('solo');
 const CODIGO_URL = params.get('sala')?.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) || null;
@@ -37,6 +42,8 @@ let pregunta = null; // la pregunta en curso (textos cortos para los carriles)
 // Bonus de cada pregunta acertada (índice → metros): si un resultado llega dos veces no se suma dos veces.
 const bonusPorPregunta = new Map();
 const bonusTotal = () => [...bonusPorPregunta.values()].reduce((s, b) => s + b, 0);
+/** Distancia total como la calcula el servidor: corrida + bonus de las respuestas + likes. */
+const distanciaTotal = () => corredor.distancia + bonusTotal() + corredor.likes * VALOR_LIKE;
 let rango = null;
 let resultadoFinal = null;
 let cartelHasta = 0;
@@ -44,6 +51,9 @@ let practicaHasta = 0;
 let medicion = null;
 let distanciaSync = 0;
 let aciertosSolo = 0;
+let arcos = null; // { index, opciones, z } de la última pregunta (se quedan donde se cruzaron)
+let tiendaZ = null; // distancia de la puerta de la tienda (sprint final y llegada)
+const carteles = LETRAS.map((letra) => ({ letra, texto: '', activo: false, cerrado: false }));
 
 const ahora = () => (red ? red.ahora() : Date.now());
 
@@ -195,6 +205,8 @@ function reiniciarPartida() {
   respuestaPendiente = null;
   pregunta = null;
   practicaHasta = 0;
+  arcos = null;
+  tiendaZ = null;
   bonusPorPregunta.clear();
   corredor.limitarCarriles(2);
   corredor.corriendo = true;
@@ -275,6 +287,8 @@ function actualizarFase() {
     corredor.reiniciar(f.type === FASES.CUENTA ? 0 : distanciaSync);
     pista.vaciar();
     practicaHasta = 0;
+    arcos = null;
+    tiendaZ = null;
   }
   if (anterior?.type === FASES.PREGUNTA && anterior.numero === f.numero - 1) responder(anterior);
   if (f.type !== FASES.PREGUNTA) corredor.limitarCarriles(2);
@@ -298,6 +312,7 @@ function actualizarFase() {
       // Con 2 opciones el tercer carril es una pared: el corredor solo puede elegir A o B.
       corredor.limitarCarriles((f.options ?? 3) - 1);
       respuestaPendiente = { index: f.index, desde: Math.max(ahora(), f.startsAt), carril: corredor.carril };
+      if (SOLO) pregunta = { index: f.index, shortOptions: CORTAS_SOLO };
       break;
     case FASES.FIN:
       corredor.corriendo = false;
@@ -306,7 +321,7 @@ function actualizarFase() {
           winner: 1,
           queue: [],
           questions: guion.datos.questions,
-          stats: [{ group: 1, position: 1, distance: Math.round(corredor.distancia + bonusTotal()), correct: aciertosSolo, dodged: corredor.esquivados, likes: corredor.likes }],
+          stats: [{ group: 1, position: 1, distance: Math.round(distanciaTotal()), correct: aciertosSolo, dodged: corredor.esquivados, likes: corredor.likes }],
         };
         $('btn-partida').hidden = false;
       }
@@ -411,6 +426,7 @@ function bucle(t) {
   estado.x = ant.x + (corredor.x - ant.x) * a;
   estado.y = ant.y + (corredor.y - ant.y) * a;
 
+  ubicarDecorados(estado.distancia);
   vista.dibujar(estado, corredor, pista, dt, tiempo);
   corredor.eventos.length = 0;
   calidad.registrar(dt);
@@ -433,11 +449,49 @@ function bucle(t) {
   }
 }
 
+// ---------- Arcos y tienda ----------
+/** Metros que va a correr el corredor en los próximos `s` segundos si no choca. */
+function recorrido(s) {
+  return recorridoIdeal(corredor.tiempoCarrera + s) - recorridoIdeal(corredor.tiempoCarrera);
+}
+
+/**
+ * Los arcos de la pregunta y la tienda se acercan de forma que el corredor los cruza
+ * justo cuando termina la fase (la respuesta la decide el guion, no el choque con el arco).
+ * Al terminar la fase quedan fijos donde se cruzaron.
+ */
+function ubicarDecorados(distancia) {
+  const f = guion && guionIniciado === guion.id ? faseActual : null;
+  const restante = f ? Math.max(0, f.startsAt + f.duration - ahora()) / 1000 : 0;
+
+  if (f?.type === FASES.PREGUNTA) {
+    arcos ??= {}; // se reutiliza el mismo objeto en cada cuadro
+    arcos.index = f.index;
+    arcos.opciones = f.options ?? 3;
+    arcos.z = distancia + recorrido(restante);
+  } else if (arcos && (!f || distancia > arcos.z + 15)) arcos = null;
+  if (arcos) {
+    const cortas = pregunta?.index === arcos.index ? pregunta.shortOptions : null;
+    const respondiendo = f?.type === FASES.PREGUNTA;
+    carteles.forEach((c, i) => {
+      c.cerrado = i >= arcos.opciones;
+      c.texto = cortas?.[i] ?? '';
+      c.activo = respondiendo && !c.cerrado && i === corredor.carril;
+    });
+  }
+  vista.ubicarArcos(arcos?.z ?? null, carteles);
+
+  if (f?.type === FASES.SPRINT) tiendaZ = distancia + recorrido(restante) + FRENADA_TIENDA;
+  else if (f?.type === FASES.FIN) tiendaZ ??= distancia + FRENADA_TIENDA; // si recargó ya en la llegada
+  else tiendaZ = null;
+  vista.ubicarTienda(tiendaZ);
+}
+
 // ---------- HUD ----------
 function actualizarHud() {
   // Al llegar, el corredor frena unos metros que el servidor ya no cuenta: se muestra la distancia oficial.
   const oficial = resultadoFinal?.stats?.find((x) => x.group === grupo)?.distance;
-  const total = oficial ?? corredor.distancia + bonusTotal();
+  const total = oficial ?? distanciaTotal();
   $('hud-distancia').textContent = `${Math.round(total)} m`;
   $('hud-likes').textContent = `❤ ${corredor.likes}`;
   $('hud-puesto').textContent = rango && enPartida() ? `${rango.position}.º` : '–';

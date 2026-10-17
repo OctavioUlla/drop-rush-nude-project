@@ -4,12 +4,13 @@ import { CARRILES } from '../../shared/constantes.js';
 import { materialMundo, triangulos } from './models/kit.js';
 import { bloqueCalle } from './models/street.js';
 import { MODELOS_OBSTACULOS, like } from './models/obstacles.js';
+import { xObstaculo } from '../track.js';
 
 // Mundo: bloques de calle reciclados (object pooling) y obstáculos/likes instanciados.
 // Durante la partida no se crea ningún objeto: solo se mueven los que ya existen.
 
 const LARGO_BLOQUE = 24;
-const CAPACIDAD = { valla: 24, caja: 24, fan: 24, camion: 10 };
+const CAPACIDAD = { valla: 24, caja: 24, bache: 16, fan: 24, bot: 10, camion: 10 };
 const CAPACIDAD_LIKES = 80;
 
 const m = new Matrix4();
@@ -85,8 +86,11 @@ export class Mundo {
       const malla = this.instancias[o.tipo];
       if (malla.count >= malla.instanceMatrix.count) continue;
       const caida = o.golpeado ? 0.35 : 0;
-      pos.set(CARRILES[o.carril], -o.hundido * (o.altura + 0.6), -o.z);
-      rot.setFromEuler(euler.set(-caida, 0, 0));
+      const x = xObstaculo(o, distancia);
+      pos.set(x, -o.hundido * (o.altura + 0.6), -o.z);
+      // El bot revendedor se inclina hacia donde cruza.
+      const giro = o.destino == null ? 0 : (CARRILES[o.destino] - x) * 0.12;
+      rot.setFromEuler(euler.set(-caida, giro, 0));
       malla.setMatrixAt(malla.count++, m.compose(pos, rot, esc));
     }
     for (const malla of Object.values(this.instancias)) malla.instanceMatrix.needsUpdate = true;

@@ -2,8 +2,12 @@ import { crearEscena } from './scene.js';
 import { Mundo } from './world.js';
 import { Personaje } from './character.js';
 import { curvatura } from './models/kit.js';
+import { crearArco } from './models/props.js';
+import { crearTienda } from './models/store.js';
+import { CARRILES } from '../../shared/constantes.js';
 
-// Junta escena, mundo y personaje, y mueve la cámara detrás y por encima del corredor.
+// Junta escena, mundo, personaje, arcos de respuesta y tienda de la meta,
+// y mueve la cámara detrás y por encima del corredor.
 
 export class Vista {
   constructor(lienzo, numeroGrupo, calidad) {
@@ -14,6 +18,17 @@ export class Vista {
     this.distanciaDibujo(calidad.config.distancia);
     this.mundo = new Mundo(this.escena, { detalle: calidad.config.detalle, distancia: calidad.config.distancia });
     this.personaje = new Personaje(this.escena, numeroGrupo);
+    // Se crean una sola vez y se esconden: durante la partida solo se mueven.
+    this.arcos = CARRILES.map((x) => {
+      const arco = crearArco();
+      arco.raiz.position.x = x;
+      arco.raiz.visible = false;
+      this.escena.add(arco.raiz);
+      return arco;
+    });
+    this.tienda = crearTienda();
+    this.tienda.visible = false;
+    this.escena.add(this.tienda);
     this.camX = 0;
     this.sacudida = 0;
     this.dprAplicado = 0;
@@ -39,6 +54,25 @@ export class Vista {
 
   cambiarGrupo(numero) {
     this.personaje.cambiarGrupo(this.escena, numero);
+  }
+
+  /**
+   * Arcos de la pregunta en la distancia `z` (o null para esconderlos).
+   * `carteles`: [{ letra, texto, activo, cerrado }] uno por carril.
+   */
+  ubicarArcos(z, carteles) {
+    this.arcos.forEach((arco, i) => {
+      arco.raiz.visible = z != null;
+      if (z == null) return;
+      arco.raiz.position.z = -z;
+      arco.mostrar(carteles[i]);
+    });
+  }
+
+  /** Tienda de la meta con la puerta en la distancia `z` (o null para esconderla). */
+  ubicarTienda(z) {
+    this.tienda.visible = z != null;
+    if (z != null) this.tienda.position.z = -z;
   }
 
   dibujar(estado, corredor, pista, dt, tiempo) {

@@ -1,4 +1,5 @@
 import { crearRng, mezclarSemilla } from '../shared/rng.js';
+import { CARRILES } from '../shared/constantes.js';
 
 // Obstáculos y likes generados a partir de una semilla: todos los grupos
 // enfrentan la misma calle en cada tramo (sección 3.3).
@@ -6,18 +7,38 @@ import { crearRng, mezclarSemilla } from '../shared/rng.js';
 export const TIPOS = {
   valla: { alto: false, altura: 0.9, largo: 0.5 },
   caja: { alto: false, altura: 1.0, largo: 1.0 },
+  bache: { alto: false, altura: 0.5, largo: 1.4 },
   fan: { alto: true, altura: 2.0, largo: 0.6 },
+  bot: { alto: true, altura: 2.2, largo: 0.8 },
   camion: { alto: true, altura: 3.0, largo: 6.0 },
 };
 
+// `bots`: probabilidad de que una fila de un solo obstáculo sea un bot revendedor que cruza de carril.
 const DIFICULTAD = {
-  facil: { separacion: [17, 23], dobles: 0.25, triples: 0 },
-  normal: { separacion: [13, 18], dobles: 0.45, triples: 0.1 },
-  caotico: { separacion: [10, 14], dobles: 0.55, triples: 0.25 },
+  facil: { separacion: [17, 23], dobles: 0.25, triples: 0, bots: 0.15 },
+  normal: { separacion: [13, 18], dobles: 0.45, triples: 0.1, bots: 0.25 },
+  caotico: { separacion: [10, 14], dobles: 0.55, triples: 0.25, bots: 0.35 },
 };
 
-const BAJOS = ['valla', 'caja'];
+const BAJOS = ['valla', 'caja', 'bache'];
 const ALTOS = ['fan', 'fan', 'camion'];
+
+// El bot revendedor cruza al carril vecino mientras el corredor está entre 28 y 14 m de él:
+// se lo ve venir y queda ~1,5 s para esquivarlo.
+const CRUCE_DESDE = 28;
+const CRUCE_LARGO = 14;
+
+/**
+ * Posición lateral de un obstáculo cuando el corredor está en la distancia `d`.
+ * Depende solo de la distancia (no del tiempo ni de los FPS): todos los grupos ven
+ * al bot moverse igual, y el choque se calcula igual que el dibujo.
+ */
+export function xObstaculo(o, d) {
+  const x = CARRILES[o.carril];
+  if (o.destino == null) return x;
+  const t = Math.min(1, Math.max(0, (d - (o.z - CRUCE_DESDE)) / CRUCE_LARGO));
+  return x + (CARRILES[o.destino] - x) * t * t * (3 - 2 * t);
+}
 
 /**
  * Genera las filas de un tramo entre dos distancias. Reglas:
@@ -39,13 +60,22 @@ export function generarTramo(semilla, desde, hasta, dificultad = 'facil') {
 
     let largoFila = 0;
     let altos = 0;
-    for (const carril of carriles) {
-      // En una fila de 3, al menos uno tiene que ser bajo (saltable).
-      const debeSerBajo = cantidad === 3 && altos === 2;
-      const tipo = debeSerBajo || rng() < 0.5 ? rng.elegir(BAJOS) : rng.elegir(ALTOS);
-      if (TIPOS[tipo].alto) altos++;
-      obstaculos.push({ tipo, carril, z, ...TIPOS[tipo] });
-      largoFila = Math.max(largoFila, TIPOS[tipo].largo);
+    // Un bot revendedor va siempre solo en su fila: mientras cruza ocupa dos carriles y el tercero queda libre.
+    if (cantidad === 1 && rng() < reglas.bots) {
+      const carril = carriles[0];
+      const destino = carril === 1 ? rng.elegir([0, 2]) : 1;
+      obstaculos.push({ tipo: 'bot', carril, destino, z, ...TIPOS.bot });
+      carriles.push(destino);
+      largoFila = TIPOS.bot.largo;
+    } else {
+      for (const carril of carriles) {
+        // En una fila de 3, al menos uno tiene que ser bajo (saltable).
+        const debeSerBajo = cantidad === 3 && altos === 2;
+        const tipo = debeSerBajo || rng() < 0.5 ? rng.elegir(BAJOS) : rng.elegir(ALTOS);
+        if (TIPOS[tipo].alto) altos++;
+        obstaculos.push({ tipo, carril, z, ...TIPOS[tipo] });
+        largoFila = Math.max(largoFila, TIPOS[tipo].largo);
+      }
     }
 
     // Likes en un carril libre o sobre un obstáculo bajo (para atraparlos saltando).
