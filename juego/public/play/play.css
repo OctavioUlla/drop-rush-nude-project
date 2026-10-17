@@ -3,17 +3,23 @@
 html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; user-select: none; }
 
 /* ---------- Ingreso ---------- */
+/* La página no scrollea (para que deslizar en el juego no mueva nada): la grilla
+   de grupos tiene su propio scroll a pantalla completa. */
 .ingreso {
-  min-height: 100%;
-  padding: max(var(--np-espacio-6), env(safe-area-inset-top)) var(--np-espacio-4) var(--np-espacio-6);
+  position: fixed;
+  inset: 0;
+  padding: max(var(--np-espacio-6), env(safe-area-inset-top)) var(--np-espacio-4) max(var(--np-espacio-6), env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: var(--np-espacio-3);
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
 }
+.ingreso > * { flex: none; }
 .ingreso__logo { font-size: var(--np-texto-2xl); margin: 0 0 var(--np-espacio-4); }
-.ingreso__grilla { grid-template-columns: repeat(5, 1fr); margin-top: var(--np-espacio-3); }
+.ingreso__grilla { grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr)); margin-top: var(--np-espacio-3); }
 .ingreso__grilla .np-ficha { border: 0; cursor: pointer; font-size: var(--np-texto-xl); }
 .ingreso__grilla .np-ficha:disabled { cursor: not-allowed; }
 .ingreso__error { margin: 0; padding: var(--np-espacio-3); background: var(--np-acento-ladrillo); color: var(--np-marca-crema); }
