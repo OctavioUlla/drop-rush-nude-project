@@ -1,19 +1,65 @@
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 
-// Fase 0: una sola sala. Cada grupo (1 a maxGrupos) queda atado a un celular
-// mediante un token de dispositivo que el celular guarda en localStorage.
+// Salas con código de 4 letras. Cada grupo (1 a maxGrupos) queda atado a un celular
+// mediante un token de dispositivo que el celular guarda en localStorage (sección 3.8).
+
+// Sin I, L, O ni Q: no se confunden con 1 y 0 al copiarlas del proyector.
+const LETRAS = 'ABCDEFGHJKMNPRSTUVWXYZ';
+const LARGO_CODIGO = 4;
+
+export function normalizarCodigo(codigo) {
+  return String(codigo ?? '').trim().toUpperCase().replace(/[^A-Z]/g, '').slice(0, LARGO_CODIGO);
+}
+
+export class Salas {
+  constructor() {
+    /** @type {Map<string, Sala>} */
+    this.porCodigo = new Map();
+  }
+
+  crear(maxGrupos) {
+    let codigo;
+    do {
+      codigo = Array.from({ length: LARGO_CODIGO }, () => LETRAS[randomInt(LETRAS.length)]).join('');
+    } while (this.porCodigo.has(codigo));
+    const sala = new Sala(codigo, maxGrupos);
+    this.porCodigo.set(codigo, sala);
+    return sala;
+  }
+
+  get(codigo) {
+    return this.porCodigo.get(normalizarCodigo(codigo)) ?? null;
+  }
+
+  borrar(codigo) {
+    this.porCodigo.delete(codigo);
+  }
+
+  [Symbol.iterator]() {
+    return this.porCodigo.values();
+  }
+
+  get size() {
+    return this.porCodigo.size;
+  }
+}
 
 export class Sala {
-  constructor(maxGrupos) {
+  constructor(codigo, maxGrupos) {
+    this.codigo = codigo;
+    this.claveHost = randomUUID();
     this.maxGrupos = maxGrupos;
-    /** @type {Map<number, Grupo>} */
+    /** @type {Map<number, Grupo>} grupos que alguna vez tuvieron celular (aunque estén liberados) */
     this.grupos = new Map();
     this.tokens = new Map(); // token → número de grupo
+    this.partida = null;
+    this.ultimaActividad = Date.now();
   }
 
   /**
    * Intenta asociar un celular a un grupo.
    * Con un token conocido vuelve siempre a su grupo; sin token solo entra a un grupo libre.
+   * Un grupo liberado por el presentador se retoma conservando la distancia y las estadísticas.
    */
   unir(numero, token) {
     const delToken = token && this.tokens.get(token);
@@ -22,17 +68,53 @@ export class Sala {
     if (!Number.isInteger(numero) || numero < 1 || numero > this.maxGrupos) {
       return { ok: false, motivo: 'invalid_group' };
     }
-    if (this.grupos.has(numero)) return { ok: false, motivo: 'taken' };
+    let grupo = this.grupos.get(numero);
+    if (grupo && !grupo.libre) return { ok: false, motivo: 'taken' };
 
-    const grupo = new Grupo(numero, randomUUID());
-    this.grupos.set(numero, grupo);
+    if (grupo) {
+      grupo.token = randomUUID();
+      grupo.libre = false;
+    } else {
+      grupo = new Grupo(numero, randomUUID());
+      this.grupos.set(numero, grupo);
+    }
     this.tokens.set(grupo.token, numero);
     return { ok: true, grupo };
+  }
+
+  /** El celular del grupo se quedó sin batería: otro celular lo puede retomar. */
+  liberar(numero) {
+    const grupo = this.grupos.get(numero);
+    if (!grupo || grupo.libre) return null;
+    this.tokens.delete(grupo.token);
+    grupo.token = null;
+    grupo.libre = true;
+    grupo.conectado = false;
+    grupo.socketId = null;
+    // Sin partida en curso no hay nada que conservar: el número queda como nuevo.
+    if (!this.partida?.guion) this.grupos.delete(numero);
+    return grupo;
+  }
+
+  /** Al volver al lobby, los grupos liberados que nadie retomó quedan libres del todo. */
+  limpiarLiberados() {
+    for (const [n, g] of this.grupos) if (g.libre) this.grupos.delete(n);
   }
 
   liberarTodos() {
     this.grupos.clear();
     this.tokens.clear();
+  }
+
+  /** Grupos que están jugando (con celular asignado o liberados en plena partida). */
+  get jugadores() {
+    return [...this.grupos.values()];
+  }
+
+  get ocupados() {
+    let n = 0;
+    for (const g of this.grupos.values()) if (!g.libre) n++;
+    return n;
   }
 
   conectados() {
@@ -45,7 +127,7 @@ export class Sala {
     const lista = [];
     for (let n = 1; n <= this.maxGrupos; n++) {
       const g = this.grupos.get(n);
-      lista.push({ number: n, taken: Boolean(g), connected: Boolean(g?.conectado) });
+      lista.push({ number: n, taken: Boolean(g && !g.libre), connected: Boolean(g?.conectado) });
     }
     return lista;
   }
@@ -55,6 +137,7 @@ export class Grupo {
   constructor(numero, token) {
     this.numero = numero;
     this.token = token;
+    this.libre = false;
     this.conectado = false;
     this.socketId = null;
     this.ultimoDato = 0;
@@ -68,11 +151,27 @@ export class Grupo {
     this.choques = 0;
     this.saltos = 0;
     this.likes = 0;
-    /** índice de pregunta → { lane, correct, bonus } */
+    this.esquivados = 0;
+    /** índice de pregunta → { index, lane, correct, bonus, demora } */
     this.respuestas = new Map();
+    /** índice de pregunta → último carril informado mientras corre la pregunta */
+    this.carriles = new Map();
   }
 
   get distanciaTotal() {
     return this.distanciaCorrida + this.bonus;
+  }
+
+  get aciertos() {
+    let n = 0;
+    for (const r of this.respuestas.values()) if (r.correct) n++;
+    return n;
+  }
+
+  /** Suma de lo que tardó en elegir el carril de cada respuesta correcta (desempate final). */
+  get demoraTotal() {
+    let ms = 0;
+    for (const r of this.respuestas.values()) if (r.correct) ms += r.demora;
+    return ms;
   }
 }

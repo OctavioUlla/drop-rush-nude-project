@@ -388,13 +388,17 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 
 | Dirección | Evento | Datos |
 |---|---|---|
-| host → server | `host:create_room` | `{ maxGroups }` |
+| host → server | `host:create_room` | `{ maxGroups }` (ack: `{ code, hostKey, maxGroups, settings }`) |
 | server → host | `room:created` | `{ code }` |
-| server → todos | `room:groups` | `[{ number, color, taken, connected }]` |
+| host → server | `host:hello` | `{ code, hostKey }`: el proyector recargado vuelve a su sala |
+| server → host | `host:state` | `{ script, question, reveal, positioned, final }` (o `null` sin partida) |
+| player → server | `room:enter` | `{ code }` (ack: `{ ok, maxGroups, groups }` o `{ ok: false, reason: "room_not_found" }`) |
+| server → todos | `room:groups` | `[{ number, taken, connected }]` |
 | player → server | `player:join` | `{ code, groupId, deviceToken? }` |
-| server → player | `player:joined` | `{ groupId, deviceToken }` |
-| server → player | `player:join_rejected` | `{ reason: "taken" \| "room_not_found" }` |
+| server → player | `player:joined` | `{ code, groupId, deviceToken }` |
+| server → player | `player:join_rejected` | `{ reason: "taken" \| "room_not_found" \| "invalid_group" }` |
 | host → server | `host:release_group` | `{ groupId }` |
+| server → player | `player:released` | `{ groupId }` (el celular vuelve a la grilla) |
 | player ↔ server | `time:ping` / `time:pong` | `{ clientTime }` / `{ clientTime, serverTime }` (sincronización de reloj) |
 | host → server | `host:start` | `{ settings }` |
 | server → todos | `game:script` | `{ startsAt, phases: [{ type, index, startsAt, duration, seed? }], difficulty }` |
@@ -404,6 +408,7 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 | server → player | `run:rank` | `{ position, total }` |
 | server → todos | `question:start` | `{ index, text, options, shortOptions, timeLimit, closedOption? }` |
 | player → server | `question:lane` | `{ index, lane }` (para el contador "posicionados") |
+| server → host | `question:positioned` | `{ index, count, total }` (grupos que ya se movieron de carril) |
 | player → server | `question:answer` | `{ index, lane, serverTime }` (con reintento hasta el `ack`) |
 | server → player | `question:answer_ack` | `{ index }` |
 | server → player | `question:result` | `{ index, correct, bonus, advantageId?, powerId? }` |
@@ -411,7 +416,7 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 | player → server | `player:use_power` | `{ powerId }` |
 | server → player | `state:sync` | `{ phase, bonusDistance, advantage, power, position, answeredIndexes }` |
 | server → todos | `game:end` | `{ winner, queue, stats }` (un solo ganador; `queue` es el orden de llegada del resto) |
-| server → host | `review:data` | `[{ index, text, options, correctIndex, distribution, explanation }]` (preguntas con más errores) |
+| host → server | `host:review` | ack: `[{ index, text, options, correctIndex, distribution, correctCount, answered, total, topic, explanation }]` (preguntas con más errores) |
 | host → server | `host:pause` / `host:skip` / `host:end` | — |
 
 ---
@@ -451,7 +456,8 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 | `opcionesCortas` | lista | Opcional; texto de hasta 20 letras para los arcos del celular. Si falta, el arco muestra solo la letra |
 | `correcta` | número | Índice de la opción correcta (empieza en 0) |
 | `explicacion` | texto | **Recomendado**; se muestra en el **repaso de errores** al final (no durante la carrera). Puede ser más larga que antes, ya que hay tiempo para leerla y comentarla |
-| `tiempo` | número | Opcional; segundos para responder (por defecto 20) |
+| `tiempo` | número | Opcional; segundos para responder (por defecto, `tiempoPorDefecto`) |
+| `reserva` | booleano | Opcional; las de reserva solo se usan si la partida pide más preguntas que las principales (así con 6 preguntas sale una por tema) |
 
 > El servidor **mezcla el orden de las opciones** en cada partida, para que la respuesta correcta no quede siempre en el mismo carril. Las estadísticas del repaso se muestran con el orden mezclado que vieron los grupos.
 
@@ -465,7 +471,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 
 Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Conviene tener 2 o 3 preguntas de reserva en el banco por si se sube la cantidad.
 
-> **Pendiente:** redactar las preguntas exactas *(a cargo del equipo)*.
+> **Pendiente:** revisar el borrador de `data/preguntas.json` *(a cargo del equipo)*: 6 preguntas principales (una por tema) y 3 de reserva, todas tomadas del caso.
 
 ---
 
@@ -569,12 +575,14 @@ juego/
 - [x] Simulador de 40 bots (`tools/bots.js`) contra el servidor
 
 ### Fase 1: Base jugable (solo preguntas)
-- [ ] Inicializar el proyecto Node con Express, Socket.io y Vite
-- [ ] Crear sala con código y QR; lista de grupos con **un celular por grupo** y token de dispositivo
-- [ ] Cargar las preguntas desde el JSON
-- [ ] Guion de la partida, sincronización de reloj y ciclo pregunta → elección de carril → **revelado instantáneo**
-- [ ] Puntuación por distancia y ranking en el host para 40 grupos
-- [ ] Estadísticas por pregunta, pantalla final con ranking y **repaso de errores**
+> Implementada: ver [`README.md`](README.md#qué-hay-en-la-fase-1).
+
+- [x] Inicializar el proyecto Node con Express, Socket.io y Vite
+- [x] Crear sala con código y QR; lista de grupos con **un celular por grupo** y token de dispositivo
+- [x] Cargar las preguntas desde el JSON *(con un banco borrador redactado a partir del caso: falta que lo revise el equipo)*
+- [x] Guion de la partida, sincronización de reloj y ciclo pregunta → elección de carril → **revelado instantáneo**
+- [x] Puntuación por distancia y ranking en el host para 40 grupos
+- [x] Estadísticas por pregunta, pantalla final con ranking y **repaso de errores**
 
 ### Fase 2: Runner 3D y obstáculos
 - [ ] Runner 3D de 3 carriles con controles de deslizar, tocar y **saltar**
@@ -589,7 +597,7 @@ juego/
 ### Fase 3: Red robusta, ventajas y poderes
 - [ ] Cola de salida con `ack`, `state:sync` y recuperación de estado de Socket.io
 - [ ] Predicción de marcadores en el host para grupos sin datos
-- [ ] Liberar grupo desde el host
+- [x] Liberar grupo desde el host *(adelantado en la Fase 1: desde el lobby o tocando la ficha en el ranking)*
 - [ ] Ventajas por respuesta correcta (turbo, escudo, imán, ruta VIP)
 - [ ] Rachas y poderes (Cambio de algoritmo, 50/50, Hype)
 - [ ] Mecanismo para emparejar
@@ -683,7 +691,7 @@ La presentación es interactiva y usa **el mismo servidor** ([plan de la present
 - [x] Assets 3D: **los crea Claude**, generados por código (ver 5.3.1)
 
 **Abiertas**
-- [ ] Redactar el banco de preguntas (`data/preguntas.json`), con 2 o 3 opciones y una buena explicación por pregunta
+- [ ] Revisar el banco de preguntas (`data/preguntas.json`): hay un **borrador** de 6 preguntas (una por tema) + 3 de reserva, redactado a partir del caso
 - [ ] Conseguir 2 o 3 celulares de gama baja para las pruebas de rendimiento
 - [ ] Averiguar cómo es el Wi-Fi de la facultad (portal cautivo, bloqueos) y probarlo
 - [ ] Elegir el hosting del servidor (uno solo)

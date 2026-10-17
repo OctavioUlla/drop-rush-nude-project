@@ -9,8 +9,8 @@ import { FASES, VELOCIDAD_BASE, INTERVALO_PROGRESO } from '../public/shared/cons
 // sincronizan el reloj, siguen el guion, mandan su distancia y responden las preguntas.
 // Con --cortes, cada bot sufre microcortes al azar para probar la reconexión.
 //
-//   node tools/bots.js --bots 40 --empezar --cortes 2
-//   node tools/bots.js --url https://mi-servidor --bots 40          (solo jugar; el proyector arranca)
+//   node tools/bots.js --bots 40 --empezar --cortes 2               (crea su propia sala y la arranca)
+//   node tools/bots.js --url https://mi-servidor --sala ABCD --bots 40   (entran a la sala del proyector)
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 const azar = (min, max) => min + Math.random() * (max - min);
@@ -50,7 +50,7 @@ class Bot {
       if (s.recovered) this.m.recuperadas++;
       else {
         if (this.token) this.m.reingresos++;
-        s.emit('player:join', { groupId: this.numero, deviceToken: this.token });
+        s.emit('player:join', { code: this.opciones.sala, groupId: this.numero, deviceToken: this.token });
       }
       this.reloj.sincronizar(4);
       this.vaciarCola();
@@ -140,6 +140,7 @@ class Bot {
         setTimeout(() => {
           this.carril = Math.floor(Math.random() * (f.options ?? 3));
           this.desdeCarril = this.reloj.ahora();
+          if (this.socket.connected) this.socket.emit('question:lane', { index: f.index, lane: this.carril });
         }, demora);
       }
     }
@@ -179,7 +180,19 @@ function percentil(lista, p) {
 
 /** Corre una prueba completa y devuelve un resumen (lo usan el CLI y los tests). */
 export async function correrBots(opciones) {
-  const o = { url: 'http://localhost:3000', bots: 40, desde: 1, cortes: 0, corteMin: 2, corteMax: 8, empezar: false, polling: false, log: console.log, ...opciones };
+  const o = { url: 'http://localhost:3000', sala: null, bots: 40, desde: 1, cortes: 0, corteMin: 2, corteMax: 8, empezar: false, polling: false, log: console.log, ...opciones };
+
+  // Con --empezar el script hace de proyector: crea la sala antes de que entren los bots.
+  let host = null;
+  if (o.empezar) {
+    host = io(o.url, { transports: ['websocket'], forceNew: true });
+    await new Promise((r) => host.on('connect', r));
+    const sala = await host.emitWithAck('host:create_room', {});
+    o.sala = sala.code;
+    o.log(`▶ Sala ${o.sala} creada por el bot-proyector`);
+  }
+  if (!o.sala) throw new Error('Falta el código de la sala (--sala ABCD) o --empezar.');
+
   const bots = [];
   for (let i = 0; i < o.bots; i++) {
     bots.push(new Bot(o.desde + i, o));
@@ -195,11 +208,8 @@ export async function correrBots(opciones) {
   while (bots.some((b) => !b.token) && Date.now() < limite) await espera(100);
   o.log(`✔ ${bots.filter((b) => b.token).length}/${o.bots} bots dentro de la sala`);
 
-  let host = null;
-  if (o.empezar) {
-    host = io(o.url, { transports: ['websocket'], forceNew: true });
-    await new Promise((r) => host.on('connect', r));
-    host.emit('host:hello');
+  let repaso = null;
+  if (host) {
     host.emit('host:start', { cantidadPreguntas: o.preguntas, duracionTramo: o.tramo, tiempoPorDefecto: o.pregunta, dificultadObstaculos: 'facil' });
     o.log('▶ Partida iniciada por el bot-proyector');
   }
@@ -213,6 +223,7 @@ export async function correrBots(opciones) {
   // Esperar el final de la partida (o Ctrl+C si la arranca el proyector real).
   while (!bots.every((b) => b.terminado)) await espera(200);
   await espera(1500); // dar tiempo a acks y resultados atrasados
+  if (host) repaso = await host.timeout(5000).emitWithAck('host:review', {}).catch(() => null);
 
   clearInterval(tick);
   clearInterval(progreso);
@@ -223,6 +234,7 @@ export async function correrBots(opciones) {
   const rtts = bots.flatMap((b) => b.rtts);
   const suma = (k) => bots.reduce((s, b) => s + b.m[k], 0);
   const resumen = {
+    sala: o.sala,
     bots: o.bots,
     preguntas,
     respuestasEsperadas: o.bots * preguntas,
@@ -237,6 +249,7 @@ export async function correrBots(opciones) {
     progresosEnviados: suma('progresos'),
     rttMedianaMs: percentil(rtts, 0.5)?.toFixed(1),
     rttP95Ms: percentil(rtts, 0.95)?.toFixed(1),
+    preguntasEnRepaso: repaso?.length ?? null,
   };
   resumen.ok = resumen.respuestasOk === resumen.respuestasEsperadas && resumen.resultadosRecibidos === resumen.respuestasEsperadas;
 
@@ -249,6 +262,7 @@ if (esPrincipal(import.meta.url)) {
   const { values: v } = parseArgs({
     options: {
       url: { type: 'string', default: 'http://localhost:3000' },
+      sala: { type: 'string' },
       bots: { type: 'string', default: '40' },
       desde: { type: 'string', default: '1' },
       cortes: { type: 'string', default: '0' },
@@ -263,6 +277,7 @@ if (esPrincipal(import.meta.url)) {
   });
   const resumen = await correrBots({
     url: v.url,
+    sala: v.sala?.toUpperCase(),
     bots: Number(v.bots),
     desde: Number(v.desde),
     cortes: Number(v.cortes),

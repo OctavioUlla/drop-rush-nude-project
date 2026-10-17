@@ -1,12 +1,90 @@
 {
-  "titulo": "Preguntas de prueba (Fase 0)",
-  "nota": "Banco provisorio para probar el ciclo de preguntas. Las preguntas reales del caso las redacta el equipo (sección 6 de PLANIFICACION.md).",
+  "titulo": "Caso Nude Project",
+  "nota": "Borrador redactado a partir del caso de la cátedra (docs/caso-nude-project.pdf): revisarlo en equipo antes de la clase. Las 6 principales cubren un tema cada una; las de \"reserva\" solo se usan si se juega con más de 6 preguntas.",
   "preguntas": [
-    { "id": 1, "tema": "Prueba", "pregunta": "Pregunta de prueba 1: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 0, "explicacion": "Explicación de prueba." },
-    { "id": 2, "tema": "Prueba", "pregunta": "Pregunta de prueba 2: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 1, "explicacion": "Explicación de prueba." },
-    { "id": 3, "tema": "Prueba", "pregunta": "Pregunta de prueba 3: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 2, "explicacion": "Explicación de prueba." },
-    { "id": 4, "tema": "Prueba", "pregunta": "Pregunta de prueba 4 (solo dos opciones)", "opciones": ["Opción A", "Opción B"], "opcionesCortas": ["A", "B"], "correcta": 1, "explicacion": "Explicación de prueba." },
-    { "id": 5, "tema": "Prueba", "pregunta": "Pregunta de prueba 5: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 0, "explicacion": "Explicación de prueba." },
-    { "id": 6, "tema": "Prueba", "pregunta": "Pregunta de prueba 6: ¿qué carril es el correcto?", "opciones": ["Opción A", "Opción B", "Opción C"], "opcionesCortas": ["A", "B", "C"], "correcta": 2, "explicacion": "Explicación de prueba." }
+    {
+      "id": 1,
+      "tema": "EGC vs UGC",
+      "pregunta": "¿Qué es el EGC, el contenido en el que más se apoya Nude Project?",
+      "opciones": ["Contenido creado por los fundadores y el equipo", "Contenido creado por los clientes y seguidores", "Publicidad paga en redes sociales"],
+      "opcionesCortas": ["Del equipo", "De los clientes", "Publicidad paga"],
+      "correcta": 0,
+      "explicacion": "EGC (Employee/Owner Generated Content) es el contenido que generan los propios fundadores y el equipo: Bruno muestra reuniones, viajes de producción, fracasos y éxitos. Mantiene una «autenticidad controlada»: es genuino, pero no improvisado. El UGC (lo que publican los usuarios) también existe, pero la marca lo usa como validación social."
+    },
+    {
+      "id": 2,
+      "tema": "Marketing viral",
+      "pregunta": "Las colaboraciones con Victoria Federica o Belén Esteban, ¿qué buscaban según el caso?",
+      "opciones": ["Bajar los precios de las prendas", "Generar conversación y debate", "Mostrar una imagen perfecta de la marca"],
+      "opcionesCortas": ["Bajar precios", "Conversación", "Imagen perfecta"],
+      "correcta": 1,
+      "explicacion": "Lejos de buscar la perfección, estas colaboraciones apuntan a generar conversación y debate. Un tono provocador, fresco y cercano, con personajes de la cultura pop española, hace que la gente lo comparta: eso es lo que vuelve viral una pieza, más que la inversión en publicidad."
+    },
+    {
+      "id": 3,
+      "tema": "Marketing experiencial",
+      "pregunta": "¿Qué fue el «Nude Project Château»?",
+      "opciones": ["Una colección de ropa de lujo", "Una tienda online solo para socios", "Una experiencia inmersiva en una mansión de Ibiza"],
+      "opcionesCortas": ["Ropa de lujo", "Tienda online", "Mansión en Ibiza"],
+      "correcta": 2,
+      "explicacion": "Artistas, creadores e influencers convivieron varios días en una mansión de Ibiza ambientada al estilo Nude Project. Cada publicación que hacían funcionaba como comunicación viral: la experiencia física fideliza a la comunidad y, a la vez, amplifica el alcance de la marca en redes."
+    },
+    {
+      "id": 4,
+      "tema": "Métricas y rendimiento digital",
+      "pregunta": "Nude Project empezó con 600 € de inversión. ¿Cuánto llegó a facturar en menos de cuatro años?",
+      "opciones": ["Más de 250 millones de euros al año", "Más de 25 millones de euros al año", "Unos 2 millones de euros al año"],
+      "opcionesCortas": ["+250 M€", "+25 M€", "2 M€"],
+      "correcta": 1,
+      "explicacion": "Superó los 25 millones de euros anuales sin depender de grandes inversiones en publicidad: los lanzamientos se agotan en minutos y las campañas suman millones de visualizaciones. Es un indicador de que su comunicación orgánica en redes es muy eficaz."
+    },
+    {
+      "id": 5,
+      "tema": "Objetivo comunicacional",
+      "pregunta": "Completá la frase de Bruno: «El mundo no necesita más sudaderas, pero la gente sí necesita…»",
+      "opciones": ["…pertenecer a algo", "…precios más bajos", "…más publicidad"],
+      "opcionesCortas": ["Pertenecer", "Precios bajos", "Más publicidad"],
+      "correcta": 0,
+      "explicacion": "El objetivo comunicacional de la marca no es vender una prenda sino construir una identidad compartida y una comunidad: «Nude Project no vende ropa: vende una identidad compartida». Por eso muestra su día a día, sus valores y el proceso, más que el producto."
+    },
+    {
+      "id": 6,
+      "tema": "Modelo D2C, drops y comunidad",
+      "pregunta": "Nude Project trabaja con un modelo D2C. ¿Qué significa?",
+      "opciones": ["Vende a través de tiendas multimarca", "Vende solo en temporada de rebajas", "Vende directo al consumidor, sin intermediarios"],
+      "opcionesCortas": ["Multimarca", "Solo rebajas", "Directo"],
+      "correcta": 2,
+      "explicacion": "Direct-to-consumer: vende por canales propios (web, tiendas y redes sociales). Así controla la experiencia de compra y los márgenes y, sobre todo, mantiene un vínculo emocional directo con su comunidad, sin depender de tiendas multimarca."
+    },
+    {
+      "id": 7,
+      "tema": "EGC vs UGC",
+      "reserva": true,
+      "pregunta": "Los seguidores suben fotos con las prendas y videos haciendo fila en las tiendas. ¿Qué tipo de contenido es?",
+      "opciones": ["UGC: contenido creado por los usuarios", "EGC: contenido creado por el equipo", "Publicidad tradicional"],
+      "opcionesCortas": ["UGC", "EGC", "Publicidad"],
+      "correcta": 0,
+      "explicacion": "Es UGC (User Generated Content). Nude Project lo fomenta como validación social: amplifica el mensaje de forma orgánica y convierte a la marca en una conversación constante entre quienes la crean (EGC) y quienes la consumen (UGC)."
+    },
+    {
+      "id": 8,
+      "tema": "Modelo D2C, drops y comunidad",
+      "reserva": true,
+      "pregunta": "Los «drops» limitados que se agotan en minutos generan sensación de…",
+      "opciones": ["Abundancia y descuentos", "Exclusividad, urgencia y deseo"],
+      "opcionesCortas": ["Descuentos", "Exclusividad"],
+      "correcta": 1,
+      "explicacion": "A diferencia del fast fashion, no lanza colecciones masivas ni compite en precio: los drops pequeños y por tiempo limitado generan exclusividad, urgencia y deseo, propios del fenómeno del «hype». El desafío es que esa exclusividad no se convierta en frustración o elitismo."
+    },
+    {
+      "id": 9,
+      "tema": "Métricas y rendimiento digital",
+      "reserva": true,
+      "pregunta": "Ventas agotadas en minutos y millones de visualizaciones, sin grandes inversiones en publicidad. ¿Qué indica?",
+      "opciones": ["Que depende de la publicidad paga", "Que vende sobre todo en tiendas multimarca", "Que su comunicación orgánica es muy eficaz"],
+      "opcionesCortas": ["Publicidad paga", "Multimarca", "Orgánica eficaz"],
+      "correcta": 2,
+      "explicacion": "Los resultados llegan sin grandes campañas pagas: el alcance viene del contenido propio (EGC), de lo que comparte la comunidad (UGC) y de la conversación que generan sus acciones. Por eso la confianza y la pertenencia valen más que la publicidad tradicional."
+    }
   ]
 }

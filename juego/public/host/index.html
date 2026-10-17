@@ -3,60 +3,136 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Drop Rush · Proyector (prototipo)</title>
+  <title>Drop Rush · Proyector</title>
   <link rel="stylesheet" href="./host.css">
 </head>
 <body class="np-base">
   <header class="barra" data-np-tema="cacao">
     <p class="np-logo-juego barra__logo">Drop <span>Rush</span></p>
-    <span class="np-etiqueta">Fase 0 · prototipo técnico</span>
-    <span id="red" class="barra__red">–</span>
+    <span id="barra-sala" class="np-insignia" hidden></span>
+    <span id="barra-fase" class="barra__fase"></span>
+    <span id="red" class="barra__red" title="Celulares conectados">–</span>
+    <button id="btn-debug" class="barra__boton" title="Panel técnico" aria-label="Panel técnico">🐞</button>
   </header>
 
-  <main class="host">
-    <section class="panel">
-      <h2 class="np-etiqueta">Partida</h2>
-      <div class="controles">
-        <label>Preguntas <input id="cfg-preguntas" type="number" min="1" max="12" value="6"></label>
-        <label>Tramo (s) <input id="cfg-tramo" type="number" min="3" max="60" value="15"></label>
-        <label>Pregunta (s) <input id="cfg-pregunta" type="number" min="3" max="60" value="15"></label>
-        <label>Obstáculos
-          <select id="cfg-dificultad">
-            <option value="facil">Fácil</option>
-            <option value="normal">Normal</option>
-            <option value="caotico">Caótico</option>
-          </select>
-        </label>
+  <!-- Lobby: código, QR y grilla de grupos. -->
+  <main id="pantalla-lobby" class="pantalla lobby" hidden>
+    <section class="lobby__ingreso" data-np-tema="cacao">
+      <p class="np-etiqueta">Entrá con el celular</p>
+      <img id="qr" class="lobby__qr" alt="Código QR para entrar a la sala">
+      <p class="lobby__url">o en <b id="url"></b> con el código</p>
+      <p id="codigo" class="lobby__codigo">····</p>
+    </section>
+
+    <section class="lobby__grupos">
+      <div class="lobby__titulo">
+        <h1 class="np-titulo">Elegí tu número de grupo</h1>
+        <p id="contador" class="np-cifra lobby__contador">0 grupos listos</p>
       </div>
-      <div class="controles">
-        <button id="btn-empezar" class="np-boton np-boton--acento">Empezar</button>
-        <button id="btn-terminar" class="np-boton np-boton--secundario">Terminar</button>
-        <button id="btn-liberar" class="np-boton np-boton--secundario">Liberar todos los grupos</button>
-      </div>
-      <p id="fase" class="fase">Sin partida</p>
-      <div id="pregunta" class="pregunta" hidden></div>
-    </section>
+      <div id="grilla" class="np-grilla-grupos lobby__grilla"></div>
+      <p class="np-texto-suave lobby__ayuda">Un celular por grupo. Tocá un grupo tomado para liberarlo si su celular se quedó sin batería.</p>
 
-    <section class="panel">
-      <h2 class="np-etiqueta">Grupos</h2>
-      <div id="grilla" class="np-grilla-grupos"></div>
-    </section>
+      <details class="ajustes">
+        <summary class="np-etiqueta">Ajustes de la partida</summary>
+        <div class="ajustes__campos">
+          <label>Preguntas <input id="cfg-preguntas" type="number" min="1" max="12" value="6"></label>
+          <label>Tramo (s) <input id="cfg-tramo" type="number" min="3" max="60" value="15"></label>
+          <label>Pregunta (s) <input id="cfg-pregunta" type="number" min="3" max="60" value="15"></label>
+          <label>En el repaso <input id="cfg-repaso" type="number" min="0" max="12" value="2"></label>
+          <label>Obstáculos
+            <select id="cfg-dificultad">
+              <option value="facil">Fácil</option>
+              <option value="normal">Normal</option>
+              <option value="caotico">Caótico</option>
+            </select>
+          </label>
+        </div>
+        <div class="ajustes__acciones">
+          <button id="btn-liberar" class="np-boton np-boton--secundario">Liberar todos los grupos</button>
+          <button id="btn-nueva-sala" class="np-boton np-boton--secundario">Nueva sala</button>
+        </div>
+      </details>
 
-    <section class="panel panel--ancho">
-      <h2 class="np-etiqueta">Carrera (distancia total)</h2>
-      <ol id="ranking" class="carrera"></ol>
-    </section>
-
-    <section class="panel">
-      <h2 class="np-etiqueta">Servidor</h2>
-      <pre id="stats">–</pre>
-    </section>
-
-    <section class="panel">
-      <h2 class="np-etiqueta">Mediciones de FPS de los celulares</h2>
-      <div class="tabla"><table id="informes"></table></div>
+      <button id="btn-empezar" class="np-boton np-boton--acento np-boton--grande lobby__empezar" disabled>Empezar el drop</button>
     </section>
   </main>
+
+  <!-- Carrera: pregunta (cuando corre) y ranking en vivo de hasta 40 grupos. -->
+  <main id="pantalla-carrera" class="pantalla carrera" hidden>
+    <section id="pregunta" class="pregunta" hidden>
+      <p id="pregunta-numero" class="np-etiqueta"></p>
+      <h1 id="pregunta-texto" class="pregunta__texto"></h1>
+      <div id="pregunta-opciones" class="pregunta__opciones"></div>
+      <div id="pregunta-tiempo" class="np-temporizador pregunta__tiempo"><div class="np-temporizador__barra"></div></div>
+      <p id="pregunta-estado" class="pregunta__estado np-cifra"></p>
+    </section>
+
+    <section class="posiciones">
+      <div class="posiciones__titulo">
+        <h2 class="np-etiqueta">Camino a la tienda</h2>
+        <span class="np-cartel">Queda 1</span>
+      </div>
+      <ol id="top" class="top"></ol>
+      <ol id="resto" class="resto" start="11"></ol>
+    </section>
+
+    <div id="cuenta" class="cuenta" hidden></div>
+  </main>
+
+  <!-- Llegada: un único ganador; el resto queda en la cola. -->
+  <main id="pantalla-final" class="pantalla final" hidden>
+    <section class="final__ganador" data-np-tema="cacao">
+      <p class="np-etiqueta">La única sudadera es para el</p>
+      <p id="ganador-ficha" class="final__ficha"></p>
+      <p id="ganador-nombre" class="final__nombre"></p>
+      <dl id="ganador-datos" class="final__datos"></dl>
+      <button id="btn-repaso" class="np-boton np-boton--acento np-boton--grande">Repaso de errores →</button>
+    </section>
+    <section class="final__cola">
+      <div class="final__cola-titulo">
+        <h2 class="np-titulo">La cola</h2>
+        <span class="np-sello">Sold out</span>
+      </div>
+      <ol id="cola" class="cola" start="2"></ol>
+    </section>
+  </main>
+
+  <!-- Repaso: las preguntas con menos aciertos, con la distribución y la explicación. -->
+  <main id="pantalla-repaso" class="pantalla repaso" hidden>
+    <p id="repaso-numero" class="np-etiqueta"></p>
+    <h1 id="repaso-texto" class="repaso__texto"></h1>
+    <div id="repaso-opciones" class="repaso__opciones"></div>
+    <p id="repaso-aciertos" class="repaso__aciertos np-cifra"></p>
+    <div id="repaso-explicacion" class="np-tarjeta repaso__explicacion"></div>
+    <div class="repaso__acciones">
+      <button id="btn-repaso-anterior" class="np-boton np-boton--secundario">← Anterior</button>
+      <button id="btn-repaso-siguiente" class="np-boton">Siguiente →</button>
+    </div>
+  </main>
+
+  <!-- Debate de cierre: un ganador y el resto sin sudadera. -->
+  <main id="pantalla-debate" class="pantalla debate" data-np-tema="cacao" hidden>
+    <p class="np-etiqueta">Para debatir</p>
+    <h1 id="debate-pregunta" class="debate__pregunta"></h1>
+    <p class="debate__sub">¿Exclusividad o frustración? ¿Dónde está el límite entre el hype y el elitismo?</p>
+    <div class="debate__acciones">
+      <button id="btn-debate-volver" class="np-boton np-boton--secundario">← Repaso</button>
+      <button id="btn-lobby" class="np-boton np-boton--acento">Volver al lobby</button>
+    </div>
+  </main>
+
+  <!-- Panel técnico (?debug o 🐞): carga del servidor y FPS de los celulares. -->
+  <aside id="debug" class="debug" hidden>
+    <div class="debug__panel">
+      <h2 class="np-etiqueta">Servidor</h2>
+      <pre id="stats">–</pre>
+      <button id="btn-terminar" class="np-boton np-boton--secundario">Terminar la partida</button>
+    </div>
+    <div class="debug__panel">
+      <h2 class="np-etiqueta">Mediciones de FPS de los celulares</h2>
+      <div class="tabla"><table id="informes"></table></div>
+    </div>
+  </aside>
 
   <script type="module" src="./host.js"></script>
 </body>
