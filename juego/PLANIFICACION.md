@@ -2,6 +2,8 @@
 
 > Juego multijugador para el aula, creado para la materia **Comercialización** (Licenciatura en Administración).
 > Cada grupo corre, salta y esquiva obstáculos en un runner **3D** desde el celular. El proyector muestra la pregunta, el mapa de la carrera y las posiciones en vivo.
+>
+> Es el cierre interactivo de la [presentación del caso](../presentacion/README.md) y usa el mismo [design system](../design-system/README.md).
 
 ---
 
@@ -11,7 +13,7 @@
 |---|---|
 | **Género** | Runner 3D por carriles (estilo Subway Surfers) + preguntas (estilo Kahoot) |
 | **Jugadores** | Hasta **40 grupos** jugando al mismo tiempo, **un solo celular por grupo** |
-| **Duración** | 7 a 9 minutos por partida, más 2 a 3 minutos de repaso de errores |
+| **Duración** | **7 minutos** en total: 1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate |
 | **Pantalla principal** | Compu del aula conectada al proyector (pantalla *host*) |
 | **Controles** | Celular de cada grupo: deslizar a izquierda o derecha para cambiar de carril y **hacia arriba para saltar** |
 | **Gráficos** | 3D *low-poly* estilizado (WebGL), pensado para andar bien en celulares de gama baja |
@@ -52,12 +54,12 @@ La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio
 
 | Fase | Duración | Qué pasa | Dónde mirar |
 |---|---|---|---|
-| **Tramo de carrera** | 20 a 25 s | El corredor avanza solo y el grupo esquiva, salta y junta likes | 📱 Celular |
-| **Pregunta** | 15 a 20 s | Desaparecen los obstáculos, aparece la pregunta y se acercan 3 arcos (A, B, C) | 📽️ Proyector para leer, 📱 celular para elegir carril |
+| **Tramo de carrera** | 15 s | El corredor avanza solo y el grupo esquiva, salta y junta likes | 📱 Celular |
+| **Pregunta** | 15 s | Desaparecen los obstáculos, aparece la pregunta y se acercan 3 arcos (A, B, C) | 📽️ Proyector para leer, 📱 celular para elegir carril |
 | **Revelado** ⚡ | ~2 s, **sin frenar** | Destello verde o rojo en el celular y la respuesta correcta resaltada en el proyector, mientras ya arranca el tramo siguiente | 📱 + 📽️ |
-| **Repaso de errores** | 2 a 3 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
+| **Repaso de errores** | 2 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
 
-Con 10 preguntas, la carrera dura unos **7 a 8 minutos**.
+Con 6 preguntas, la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 s de pregunta) = 3 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 7 u 8 preguntas (~4 a 4,5 min); si falta, bajar a 5.
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
@@ -161,7 +163,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - No hay castigos fuertes, para que ningún grupo quede descolgado y desmotivado.
 
 ### 3.6 Rachas y poderes
-- **3 aciertos seguidos** otorgan un **poder** que se guarda en el celular y se activa con un botón cuando el grupo quiere.
+- **2 aciertos seguidos** otorgan un **poder** (con solo 6 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
 - Cada grupo puede guardar **un poder a la vez**.
 
 | Poder | Ícono | Efecto |
@@ -220,7 +222,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - **Conexión**: si hay un microcorte, **no aparece ningún cartel** durante los primeros segundos. Solo si el corte dura más de ~5 s aparece un ícono pequeño 📶 en una esquina; el juego nunca se bloquea (ver 5.4).
 
 ### 4.3 Estética y gráficos 3D
-- Inspirada en la identidad de Nude Project: minimalista, blanco y negro con un color de acento y tipografía bold.
+- Sigue el [design system](../design-system/README.md) compartido con la presentación: identidad de Nude Project en **cacao `#482922` y crema `#fff8ee`**, tipografía grotesca bold (Inter Tight / Inter) y un solo color de acento por elemento.
 - Estilo **3D *low-poly* estilizado**, con colores planos o degradados suaves en lugar de texturas pesadas: se ve bien y es liviano.
 - Calles de Madrid con edificios de fachadas simples, faroles y carteles, y la tienda Nude Project como meta.
 - Obstáculos con siluetas claras y colores contrastados, para que se distingan rápido.
@@ -329,7 +331,8 @@ Todos los modelos 3D se **crean desde cero en JavaScript** (a cargo de Claude), 
 - Es mucho más barato que un personaje con esqueleto (*skinning*) y alcanza para el estilo *low-poly*.
 
 **Paleta**
-- Base blanca, negra y grises (identidad Nude Project), con un color de acento por elemento de juego: rojo para los obstáculos altos, amarillo para los bajos (los que se saltan), rosa para los likes y el color de cada grupo en su corredor. Así cada tipo se reconoce de un vistazo.
+- Todos los colores salen de [`design-system/tokens.js`](../design-system/tokens.js) (`colores3d.juego` y `colorDeGrupo(n)`), nunca escritos a mano en los modelos.
+- Base cacao, crema y tonos tierra (identidad Nude Project; fachadas de Madrid de `#efe2d0` a `#a8664a`), con un color de acento por elemento de juego: ladrillo para los obstáculos altos, mostaza para los bajos (los que se saltan), rosa para los likes y el color de cada grupo (40 colores del design system) en su corredor. Así cada tipo se reconoce de un vistazo.
 - El cielo es un degradado en un *shader* y la niebla toma su color, para que todo se funda en el horizonte.
 
 **Herramientas de trabajo**
@@ -433,7 +436,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
       "opcionesCortas": ["CORTA A", "CORTA B", "CORTA C"],
       "correcta": 0,
       "explicacion": "Explicación que se muestra en el repaso final si esta pregunta fue de las más erradas.",
-      "tiempo": 20
+      "tiempo": 15
     }
   ]
 }
@@ -452,14 +455,15 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 
 > El servidor **mezcla el orden de las opciones** en cada partida, para que la respuesta correcta no quede siempre en el mismo carril. Las estadísticas del repaso se muestran con el orden mezclado que vieron los grupos.
 
-### Distribución sugerida de temas (para 10 preguntas)
-- EGC vs. UGC: 2
-- Marketing viral: 2
+### Distribución sugerida de temas (para 6 preguntas)
+- EGC vs. UGC: 1
+- Marketing viral: 1
 - Marketing experiencial: 1
 - Métricas y rendimiento digital: 1
 - Objetivo comunicacional: 1
-- Modelo D2C, drops y comunidad: 2
-- Desafíos de la marca: 1
+- Modelo D2C, drops y comunidad: 1
+
+Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Conviene tener 2 o 3 preguntas de reserva en el banco por si se sube la cantidad.
 
 > **Pendiente:** redactar las preguntas exactas *(a cargo del equipo)*.
 
@@ -472,13 +476,13 @@ En `data/config.json`, o desde el lobby del host:
 | Parámetro | Por defecto | Descripción |
 |---|---|---|
 | `maxGrupos` | 40 | Cantidad de grupos; se numeran del 1 a este valor |
-| `cantidadPreguntas` | 10 | Cuántas preguntas del banco se usan |
+| `cantidadPreguntas` | 6 | Cuántas preguntas del banco se usan |
 | `ordenAleatorio` | true | Mezclar el orden de las preguntas |
 | `mezclarOpciones` | true | Mezclar el orden de las opciones en los carriles |
-| `tiempoPorDefecto` | 20 | Segundos por pregunta |
-| `duracionTramo` | 22 | Segundos de cada tramo de carrera |
+| `tiempoPorDefecto` | 15 | Segundos por pregunta |
+| `duracionTramo` | 15 | Segundos de cada tramo de carrera |
 | `duracionRevelado` | 3 | Segundos que el proyector resalta la respuesta correcta (el juego no se frena) |
-| `preguntasEnRepaso` | 3 | Cuántas de las preguntas más erradas se explican al final |
+| `preguntasEnRepaso` | 2 | Cuántas de las preguntas más erradas se explican al final |
 | `dificultadObstaculos` | `"facil"` | `"facil"`, `"normal"` o `"caotico"` |
 | `saltoActivo` | true | Salto con deslizar hacia arriba (si se desactiva, no aparecen obstáculos que obliguen a saltar) |
 | `calidadGrafica` | `"auto"` | `"auto"`, `"alta"`, `"media"` o `"baja"` |
@@ -487,19 +491,20 @@ En `data/config.json`, o desde el lobby del host:
 | `bonusRapidezMax` | 100 | Distancia extra máxima por responder rápido |
 | `penalizacionChoque` | 1.0 | Segundos de frenado al chocar |
 | `poderesActivos` | true | Activar o desactivar poderes y rachas |
-| `rachaParaPoder` | 3 | Aciertos seguidos necesarios para ganar un poder |
+| `rachaParaPoder` | 2 | Aciertos seguidos necesarios para ganar un poder |
 | `emparejar` | true | Bonus de velocidad para el último cuarto de la tabla |
 | `sonido` | true | Música y efectos en el host |
 
-**Referencia para balancear:** si a velocidad normal un tramo de 22 s equivale a unas **200 unidades** de distancia, una respuesta correcta (150 a 250) tiene que valer **lo mismo o más que un tramo completo**. Chocar en un tramo le cuesta al grupo solo unas 10 a 20 unidades.
+**Referencia para balancear:** si a velocidad normal un tramo de 15 s equivale a unas **140 unidades** de distancia, una respuesta correcta (150 a 250) tiene que valer **lo mismo o más que un tramo completo**. Chocar en un tramo le cuesta al grupo solo unas 10 a 20 unidades.
 
 ---
 
-## 8. Estructura del repositorio (propuesta)
+## 8. Estructura del juego (propuesta)
+
+El juego vive en `juego/` dentro del repositorio del trabajo, junto a `presentacion/` y `design-system/`. Los estilos y colores no se definen acá: se importan del design system (Vite sirve `../design-system` con `server.fs.allow`, y el build lo copia).
 
 ```
-drop-rush-nude-project/
-├── README.md
+juego/
 ├── PLANIFICACION.md
 ├── package.json
 ├── vite.config.js
@@ -508,6 +513,7 @@ drop-rush-nude-project/
 │   ├── game.js           # Guion de fases, temporizadores, puntuación, ventajas, poderes
 │   ├── rooms.js          # Salas, grupos y tokens de dispositivo (un celular por grupo)
 │   ├── stats.js          # Estadísticas por pregunta y selección del repaso de errores
+│   ├── presentacion.js   # Drop falso y votación de la presentación (ver presentacion/PLANIFICACION.md)
 │   └── config.js         # Carga de config.json y valores por defecto
 ├── public/
 │   ├── host/
@@ -535,10 +541,10 @@ drop-rush-nude-project/
 │   │       │   └── store.js      # Tienda de la meta
 │   │       ├── effects.js    # Partículas, líneas de velocidad, sacudida de cámara
 │   │       └── quality.js    # Medición de FPS y niveles de calidad
-│   ├── assets/           # Sonidos y tipografías (sin modelos 3D: se generan por código)
+│   ├── assets/           # Sonidos (tipografías y colores vienen del design system; sin modelos 3D: se generan por código)
 │   ├── sw.js             # Service Worker para cachear los assets
 │   └── shared/
-│       ├── styles.css
+│       ├── styles.css    # Solo layout propio; importa design-system/tokens.css y components.css
 │       └── rng.js        # Generador aleatorio con semilla (compartido)
 ├── tools/
 │   └── bots.js           # Simulador de 40 jugadores para pruebas de carga
@@ -590,7 +596,7 @@ drop-rush-nude-project/
 ### Fase 4: Gráficos, pulido y prueba
 - [ ] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1)
 - [ ] Visor de modelos (`/dev/models`) para revisarlos y ajustar colores y proporciones
-- [ ] Estética Nude Project (paleta, tipografía, cielo, niebla)
+- [ ] Aplicar el [design system](../design-system/README.md) (paleta, tipografía, cielo, niebla, componentes `np-*`)
 - [ ] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
 - [ ] Calidad automática, resolución adaptable, Wake Lock y Service Worker
 - [ ] Controles del presentador (pausar, saltar, terminar)
@@ -624,7 +630,11 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 
 ## 11. Integración con la presentación
 
-- **Momento sugerido**: al final de la exposición, como repaso (unos 10 a 12 minutos de los 20 a 30 disponibles, incluyendo el repaso de errores).
+Ver también la [estructura de la presentación](../presentacion/README.md): el juego ocupa el último bloque.
+
+La presentación es interactiva y usa **el mismo servidor** ([plan de la presentación](../presentacion/PLANIFICACION.md)): los grupos entran con el QR antes de empezar, participan del *drop* falso y de una votación desde el mismo celular, y esa sesión pasa directo al lobby del juego. El controlador del celular (`public/play/`) suma esas fases de la presentación.
+
+- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **7 minutos** (1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate), para un total de **22 minutos**.
 - **Antes de jugar**:
   - Pedir que cada grupo tenga **un** celular con batería, conexión y el brillo alto.
   - Mostrar el QR **al principio de la presentación** para que los 40 grupos entren al lobby con tiempo y se descarguen los gráficos.

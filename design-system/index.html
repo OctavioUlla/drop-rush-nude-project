@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design System · Nude Project</title>
+  <link rel="stylesheet" href="./tokens.css">
+  <link rel="stylesheet" href="./components.css">
+  <style>
+    /* Estilos propios de esta guía visual (no forman parte del sistema). */
+    .guia { max-width: 1120px; margin: 0 auto; padding: 0 var(--np-espacio-4) var(--np-espacio-9); }
+    .guia header { padding: var(--np-espacio-9) 0 var(--np-espacio-8); }
+    .guia section { padding: var(--np-espacio-8) 0; border-top: var(--np-borde-grueso) solid var(--np-tinta); }
+    .guia section > .np-etiqueta { display: block; margin-bottom: var(--np-espacio-3); color: var(--np-tinta-suave); }
+    .guia h2 { margin-bottom: var(--np-espacio-6); }
+    .guia h3 { margin: var(--np-espacio-7) 0 var(--np-espacio-4); }
+    .fila { display: flex; flex-wrap: wrap; gap: var(--np-espacio-4); align-items: center; }
+    .muestras { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--np-espacio-4); }
+    .muestra { border: var(--np-borde-fino) solid var(--np-linea); background: var(--np-superficie); }
+    .muestra div { height: 96px; }
+    .muestra p { margin: 0; padding: var(--np-espacio-3); font-size: var(--np-texto-sm); line-height: 1.35; }
+    .muestra code { font-family: var(--np-fuente-mono); font-size: var(--np-texto-xs); color: var(--np-tinta-suave); }
+    .logo-caja { padding: var(--np-espacio-8) var(--np-espacio-6); display: grid; place-items: center; }
+    .dos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--np-espacio-5); }
+    .celular { max-width: 360px; border: 10px solid var(--np-marca-cacao-profundo); border-radius: 28px; overflow: hidden; background: linear-gradient(var(--np-juego-cielo-arriba), var(--np-juego-cielo-horizonte) 45%, var(--np-juego-asfalto) 45%); aspect-ratio: 9 / 16; display: flex; flex-direction: column; justify-content: space-between; }
+    .celular .np-boton { margin: var(--np-espacio-4); width: auto; }
+    .diapos { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: var(--np-espacio-5); }
+    .diapos .np-diapo { box-shadow: var(--np-sombra-md); }
+    .regla { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--np-espacio-5); }
+    .regla .np-tarjeta h4 { margin: 0 0 var(--np-espacio-2); font-family: var(--np-fuente-display); }
+    @media (max-width: 520px) { .diapos { grid-template-columns: 1fr; } .np-grilla-grupos { grid-template-columns: repeat(5, 1fr); } }
+  </style>
+</head>
+<body class="np-base">
+<div class="guia">
+
+  <header>
+    <span class="np-etiqueta">Comercialización · Caso Nude Project · Design System v1</span>
+    <h1 class="np-display" style="margin-top: var(--np-espacio-4)">By artists,<br>for artists.</h1>
+    <p class="np-texto np-texto-suave" style="margin-top: var(--np-espacio-5)">
+      Un solo lenguaje visual para la presentación del caso y para el juego <b>Drop Rush</b>.
+      Cacao y crema, grotesca bold con interletra cerrada, mucho aire y un acento por vez.
+    </p>
+  </header>
+
+  <section>
+    <span class="np-etiqueta">01 · Identidad</span>
+    <h2 class="np-titulo">Logo</h2>
+    <div class="dos">
+      <div class="logo-caja" data-np-tema="cacao"><span class="np-logo" style="font-size: 3.5rem">Nude<sup>®</sup>Project</span></div>
+      <div class="logo-caja np-tarjeta"><span class="np-logo" style="font-size: 3.5rem">Nude<sup>®</sup>Project</span></div>
+      <div class="logo-caja" data-np-tema="cacao"><span class="np-logo-juego" style="font-size: 3.5rem">Drop <span>Rush</span></span></div>
+      <div class="logo-caja np-tarjeta"><span class="np-logo-juego" style="font-size: 3.5rem">Drop <span>Rush</span></span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">02 · Color</span>
+    <h2 class="np-titulo">Marca</h2>
+    <div class="muestras" id="marca"></div>
+    <h3 class="np-subtitulo">Acentos (uno por vez, nunca todos juntos)</h3>
+    <div class="muestras" id="acento"></div>
+    <h3 class="np-subtitulo">Mundo 3D del juego</h3>
+    <div class="muestras" id="juego"></div>
+    <h3 class="np-subtitulo">Los 40 grupos</h3>
+    <div class="np-grilla-grupos" id="grupos"></div>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">03 · Tipografía</span>
+    <h2 class="np-titulo">Inter Tight + Inter</h2>
+    <p class="np-display">El mundo no necesita más sudaderas.</p>
+    <p class="np-titulo" style="margin-top: var(--np-espacio-5)">Pero la gente sí necesita pertenecer a algo.</p>
+    <p class="np-subtitulo" style="margin-top: var(--np-espacio-4)">EGC vs. UGC: quién cuenta la historia.</p>
+    <p class="np-texto" style="margin-top: var(--np-espacio-4)">Texto de lectura en Inter regular. Sustituyen a Neue Haas Unica, la tipografía de la web oficial (comercial), con la misma estructura neo-grotesca.</p>
+    <p class="np-etiqueta" style="margin-top: var(--np-espacio-4)">Etiqueta · drop limitado · sold out</p>
+    <p class="np-cita" style="margin-top: var(--np-espacio-5)">Nude Project no vende ropa: vende una <span class="np-subrayado">identidad compartida</span>.</p>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">04 · Componentes</span>
+    <h2 class="np-titulo">Base</h2>
+    <div class="fila">
+      <button class="np-boton">Empezar el drop</button>
+      <button class="np-boton np-boton--secundario">Liberar grupo</button>
+      <button class="np-boton np-boton--acento">Usar poder</button>
+      <button class="np-boton" disabled>Tomado</button>
+    </div>
+    <div class="fila" style="margin-top: var(--np-espacio-5)">
+      <span class="np-insignia">Nuevo drop</span>
+      <span class="np-insignia np-insignia--relleno">EGC</span>
+      <span class="np-insignia np-insignia--rosa">♥ 128 likes</span>
+      <span class="np-cartel">Queda 1</span>
+      <span class="np-sello">Sold out</span>
+    </div>
+    <div class="np-diapo__datos" style="margin-top: var(--np-espacio-7); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--np-espacio-5)">
+      <div class="np-dato"><span class="np-dato__valor">+25M€</span><span class="np-dato__etiqueta">Facturación anual</span></div>
+      <div class="np-dato"><span class="np-dato__valor">600€</span><span class="np-dato__etiqueta">Inversión inicial</span></div>
+      <div class="np-dato"><span class="np-dato__valor">2019</span><span class="np-dato__etiqueta">Primer drop</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">05 · Drop Rush</span>
+    <h2 class="np-titulo">Juego</h2>
+    <div class="dos">
+      <div>
+        <div class="np-opcion"><span class="np-opcion__letra">A</span>Contenido creado por los fundadores y el equipo</div>
+        <div class="np-opcion np-opcion--correcta" style="margin-top: var(--np-espacio-3)"><span class="np-opcion__letra">B</span>Contenido creado por la comunidad</div>
+        <div class="np-opcion np-opcion--incorrecta" style="margin-top: var(--np-espacio-3)"><span class="np-opcion__letra">C</span>Publicidad programática</div>
+        <div class="np-temporizador" style="margin-top: var(--np-espacio-5); --progreso: 62%"><div class="np-temporizador__barra"></div></div>
+        <div class="np-temporizador np-temporizador--urgente" style="margin-top: var(--np-espacio-3); --progreso: 18%"><div class="np-temporizador__barra"></div></div>
+        <h3 class="np-subtitulo">Ranking en vivo</h3>
+        <ol class="np-ranking" id="ranking"></ol>
+      </div>
+      <div class="celular">
+        <div class="np-hud"><span class="np-hud__posicion"><b>12.º</b> de 40</span><span>♥ 37</span><span class="np-ficha" style="--g: var(--np-grupo-7); --gt: var(--np-grupo-7-texto)">7</span></div>
+        <button class="np-boton np-boton--acento np-boton--grande">🧲 Imán</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">06 · Presentación</span>
+    <h2 class="np-titulo">Diapositivas 16:9</h2>
+    <div class="diapos">
+      <div class="np-diapo" data-np-tema="cacao">
+        <div class="np-diapo__cuerpo">
+          <span class="np-etiqueta">Caso de estudio · Comercialización</span>
+          <h1 class="np-display">Comunidad, comunicación y autenticidad.</h1>
+        </div>
+        <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>Grupo X · 2026</span></div>
+      </div>
+      <div class="np-diapo">
+        <div class="np-diapo__cuerpo">
+          <span class="np-etiqueta">01 · Contenido</span>
+          <h2 class="np-titulo">EGC vs. UGC</h2>
+          <div class="np-diapo__columnas">
+            <div><p class="np-subtitulo">EGC</p><p>Lo cuentan Bruno, Álex y el equipo: reuniones, viajes, errores.</p></div>
+            <div><p class="np-subtitulo">UGC</p><p>Lo cuenta la comunidad: filas en las tiendas, outfits, eventos.</p></div>
+          </div>
+        </div>
+        <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>02</span></div>
+      </div>
+      <div class="np-diapo" data-np-tema="cacao">
+        <div class="np-diapo__cuerpo">
+          <p class="np-cita">El mundo no necesita más sudaderas, pero la gente sí necesita <span class="np-subrayado" style="color: var(--np-marca-crema)">pertenecer a algo</span>.</p>
+          <span class="np-etiqueta">Bruno Casanovas · Cofundador</span>
+        </div>
+        <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>03</span></div>
+      </div>
+      <div class="np-diapo">
+        <div class="np-diapo__cuerpo">
+          <span class="np-etiqueta">04 · Métricas</span>
+          <div class="np-diapo__datos">
+            <div class="np-dato"><span class="np-dato__valor">+25M€</span><span class="np-dato__etiqueta">Facturación</span></div>
+            <div class="np-dato"><span class="np-dato__valor">8</span><span class="np-dato__etiqueta">Tiendas</span></div>
+            <div class="np-dato"><span class="np-dato__valor">4</span><span class="np-dato__etiqueta">Años</span></div>
+          </div>
+        </div>
+        <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>04</span></div>
+      </div>
+      <div class="np-diapo" data-np-tema="cacao">
+        <div class="np-diapo__cuerpo" style="align-items: flex-start">
+          <span class="np-cartel">Queda 1</span>
+          <h2 class="np-display"><span class="np-logo-juego">Drop <span>Rush</span></span></h2>
+          <p class="np-subtitulo">Escaneá el QR · un celular por grupo</p>
+        </div>
+        <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>Juego</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="np-etiqueta">07 · Reglas</span>
+    <h2 class="np-titulo">Hacer y no hacer</h2>
+    <div class="regla">
+      <div class="np-tarjeta"><h4>Sí: aire</h4><p class="np-texto">Una idea por diapositiva. Márgenes generosos. El vacío también es marca.</p></div>
+      <div class="np-tarjeta"><h4>Sí: cacao y crema</h4><p class="np-texto">El 90 % de cualquier pantalla es cacao, crema o arena.</p></div>
+      <div class="np-tarjeta"><h4>Sí: un acento</h4><p class="np-texto">Mostaza, rosa o ladrillo marcan una sola cosa por pantalla.</p></div>
+      <div class="np-tarjeta"><h4>No: negro puro</h4><p class="np-texto">El negro de la marca es cacao (#482922). Evitar #000.</p></div>
+      <div class="np-tarjeta"><h4>No: esquinas redondas</h4><p class="np-texto">Formas rectas y bordes finos. La píldora solo para insignias.</p></div>
+      <div class="np-tarjeta"><h4>No: sombras y degradados pesados</h4><p class="np-texto">Planos de color. El único degradado es el cielo del juego.</p></div>
+    </div>
+  </section>
+
+</div>
+<script>
+  // Esta guía lee los valores directamente de tokens.css, así siempre muestra lo vigente.
+  const css = getComputedStyle(document.documentElement);
+  const v = (n) => css.getPropertyValue(n).trim();
+  const muestras = {
+    marca: ['cacao', 'cacao-profundo', 'cacao-suave', 'crema', 'arena', 'piedra', 'blanco'],
+    acento: ['mostaza', 'rosa', 'marino', 'bosque', 'ladrillo'],
+    juego: ['obstaculo-alto', 'obstaculo-bajo', 'like', 'asfalto', 'vereda', 'niebla', 'fachada-1', 'fachada-2', 'fachada-3', 'fachada-4'],
+  };
+  for (const [grupo, nombres] of Object.entries(muestras)) {
+    document.getElementById(grupo).innerHTML = nombres.map((n) => {
+      const nombre = `--np-${grupo}-${n}`;
+      return `<div class="muestra"><div style="background: var(${nombre})"></div><p><b>${n}</b><br><code>${v(nombre)}</code></p></div>`;
+    }).join('');
+  }
+  const ficha = (n) => `<span class="np-ficha" style="--g: var(--np-grupo-${n}); --gt: var(--np-grupo-${n}-texto)">${n}</span>`;
+  document.getElementById('grupos').innerHTML = Array.from({ length: 40 }, (_, i) => ficha(i + 1)).join('');
+  document.getElementById('ranking').innerHTML = [
+    [23, '🏰 Ruta VIP', '412 m'], [7, '🧲 Imán', '398 m'], [31, '📸 Turbo', '377 m'], [12, '', '360 m'], [4, '', '342 m'],
+  ].map(([n, ventaja, d]) => `<li>${ficha(n)}<span>Grupo ${n} <small class="np-texto-suave">${ventaja}</small></span><span>${d}</span></li>`).join('');
+</script>
+</body>
+</html>
