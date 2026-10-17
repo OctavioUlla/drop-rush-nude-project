@@ -47,8 +47,19 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .mapa, .pregunta { grid-column: 1; grid-row: 1; }
 .posiciones { grid-column: 2; grid-row: 1; min-height: 0; overflow-y: auto; }
 .carrera--pregunta .mapa { visibility: hidden; }
-.mapa { position: relative; min-height: 18rem; }
+.mapa { display: flex; flex-direction: column; gap: var(--np-espacio-3); min-height: 22rem; min-width: 0; }
+.mapa__cabecera { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--np-espacio-2) var(--np-espacio-4); }
+.mapa__cabecera > * { margin: 0; }
+.mapa__vivo { display: inline-flex; align-items: center; gap: var(--np-espacio-2); color: var(--np-tinta-suave); }
+.mapa__vivo::before { content: ''; width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--np-acento-ladrillo); animation: mapa-latido 1.4s ease-in-out infinite; }
+.mapa__falta { display: flex; align-items: center; gap: var(--np-espacio-3); justify-self: end; font: var(--np-peso-bold) var(--np-texto-2xl) / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); font-variant-numeric: tabular-nums; }
+.mapa__falta b { font-weight: var(--np-peso-black); }
+.mapa__falta .np-ficha { font-size: var(--np-texto-xl); }
+.mapa__barra { grid-column: 1 / -1; height: 10px; background: var(--np-fondo-alterno); }
+.mapa__barra div { height: 100%; width: 0; background: var(--np-tinta); transition: width 0.25s linear; }
+.mapa__escena { position: relative; flex: 1; min-height: 0; border: var(--np-borde-grueso) solid var(--np-marca-cacao); }
 .mapa__lienzo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+@keyframes mapa-latido { 50% { opacity: 0.25; } }
 
 .pregunta { display: flex; flex-direction: column; gap: var(--np-espacio-4); min-width: 0; }
 .pregunta > * { margin: 0; }
@@ -177,5 +188,6 @@ th, td { padding: var(--np-espacio-1) var(--np-espacio-2); border-bottom: var(--
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .top li, .top .pista div { transition: none; }
+  .top li, .top .pista div, .mapa__barra div { transition: none; }
+  .mapa__vivo::before { animation: none; }
 }

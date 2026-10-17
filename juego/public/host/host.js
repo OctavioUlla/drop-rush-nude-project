@@ -35,7 +35,7 @@ let final = null;
 let repaso = [];
 let vista = 'auto'; // 'auto' (según el guion) | 'repaso' | 'debate'
 let repasoIndice = 0;
-const mapa = new Mapa($('mapa-lienzo'));
+const mapa = new Mapa({ lienzo: $('mapa-lienzo'), falta: $('mapa-falta'), progreso: $('mapa-progreso') });
 
 // ---------- Sesión del proyector ----------
 function leerSesion() {

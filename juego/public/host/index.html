@@ -60,7 +60,12 @@
   <!-- Carrera: mapa en vivo (o la pregunta, mientras corre) y ranking de hasta 40 grupos. -->
   <main id="pantalla-carrera" class="pantalla carrera" hidden>
     <section id="mapa" class="mapa" aria-label="Mapa de la carrera">
-      <canvas id="mapa-lienzo" class="mapa__lienzo"></canvas>
+      <header class="mapa__cabecera">
+        <p class="np-etiqueta mapa__vivo">En vivo</p>
+        <p id="mapa-falta" class="mapa__falta"></p>
+        <div class="mapa__barra"><div id="mapa-progreso"></div></div>
+      </header>
+      <div class="mapa__escena"><canvas id="mapa-lienzo" class="mapa__lienzo"></canvas></div>
     </section>
 
     <section id="pregunta" class="pregunta" hidden>
