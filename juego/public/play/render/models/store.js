@@ -35,7 +35,7 @@ function fachada() {
     p.push(caja(0.1, 1.4, 0.1, negro, { x, y: 1.2, z: -0.1 }));
   }
   // Ventanas del primer piso, negras y simples.
-  for (let i = -3; i <= 3; i++) p.push(caja(1.6, 1.6, 0.1, negro, { x: i * 3.2, y: 6.4, z: 0.05 }));
+  for (let i = -3; i <= 3; i++) p.push(caja(1.6, 1.6, 0.1, negro, { x: i * 3.2, y: 7.3, z: 0.05 }));
   return unir(p);
 }
 
@@ -66,7 +66,7 @@ function cartel() {
   const textura = new CanvasTexture(lienzo);
   textura.colorSpace = SRGBColorSpace;
   const malla = new Mesh(new PlaneGeometry(10, 1.56), curvarMaterial(new MeshBasicMaterial({ map: textura })));
-  malla.position.set(0, 4.95, 0.08);
+  malla.position.set(0, 5.7, 0.08); // entre las ventanas del primer piso y el cartel del drop
   return malla;
 }
 
@@ -86,7 +86,7 @@ function cartelDrop() {
   const textura = new CanvasTexture(lienzo);
   textura.colorSpace = SRGBColorSpace;
   const malla = new Mesh(new PlaneGeometry(3.2, 0.8), curvarMaterial(new MeshBasicMaterial({ map: textura })));
-  malla.position.set(0, 4.25, 0.2);
+  malla.position.set(0, 4.45, 0.2); // justo arriba de la puerta, sin tocar el cartel con el nombre
   return malla;
 }
 

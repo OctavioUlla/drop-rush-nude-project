@@ -418,7 +418,10 @@ function tienda(ctx, g) {
   const izq = g.x1 + 14;
   const ancho = g.w - izq;
   const base = g.calle - 4;
-  const alto = g.vereda * 0.9 + (g.calle - g.vereda);
+  // El cartel "Queda 1" va arriba de la fachada: se reserva su lugar para que no se corte.
+  const tamanoQueda = Math.max(14, Math.min(ancho * 0.11, g.h * 0.045));
+  const altoQueda = tamanoQueda * 1.45;
+  const alto = Math.min(g.vereda * 0.9 + (g.calle - g.vereda), base - altoQueda - 18);
   const y = base - alto;
   // Sombra suave sobre la vereda.
   ctx.fillStyle = 'rgba(46, 25, 20, 0.15)';
@@ -455,9 +458,9 @@ function tienda(ctx, g) {
   ctx.fillRect(izq + ancho * 0.775, pbY + pbAlto * 0.08, 2, pbAlto * 0.92);
   // "Queda 1" colgado, como el cartel del design system.
   ctx.save();
-  ctx.translate(izq + ancho / 2, y - Math.max(14, ancho * 0.08));
-  ctx.rotate(-0.05);
-  cartelito(ctx, 'QUEDA 1', 0, Math.max(14, ancho * 0.11) * 0.7, Math.max(14, ancho * 0.11), C.acento.mostaza, C.marca.cacao);
+  ctx.translate(izq + ancho / 2, y - 4);
+  ctx.rotate(-0.04);
+  cartelito(ctx, 'QUEDA 1', 0, 0, tamanoQueda, C.acento.mostaza, C.marca.cacao);
   ctx.restore();
 }
 
