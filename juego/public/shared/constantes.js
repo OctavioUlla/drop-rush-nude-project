@@ -20,6 +20,9 @@ export const BUFFER_GESTO = 0.18;
 export const FRENADO_CHOQUE = 1.0;
 export const INVULNERABLE_CHOQUE = 1.5;
 
+/** Metros extra que suma cada like: poco, para que no compitan con las preguntas (sección 3.7). */
+export const VALOR_LIKE = 1;
+
 /** Cada cuánto el celular informa su distancia al servidor (ms). */
 export const INTERVALO_PROGRESO = 250;
 

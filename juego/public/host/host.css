@@ -42,8 +42,13 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .ajustes input, .ajustes select { width: 7rem; min-height: 40px; padding: 0 var(--np-espacio-2); border: var(--np-borde-fino) solid var(--np-linea); background: var(--np-fondo); color: var(--np-tinta); font: inherit; }
 
 /* ---------- Carrera ---------- */
-.carrera { position: relative; display: grid; grid-template-columns: 1fr; gap: var(--np-espacio-6); padding: var(--np-espacio-5) var(--np-espacio-6); }
-.carrera--pregunta { grid-template-columns: 3fr 2fr; }
+.carrera { position: relative; display: grid; grid-template-columns: 3fr 2fr; grid-template-rows: minmax(0, 1fr); gap: var(--np-espacio-6); padding: var(--np-espacio-5) var(--np-espacio-6); }
+/* El mapa y la pregunta comparten la columna izquierda: la pregunta tapa el mapa mientras corre. */
+.mapa, .pregunta { grid-column: 1; grid-row: 1; }
+.posiciones { grid-column: 2; grid-row: 1; min-height: 0; overflow-y: auto; }
+.carrera--pregunta .mapa { visibility: hidden; }
+.mapa { position: relative; min-height: 18rem; }
+.mapa__lienzo { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .pregunta { display: flex; flex-direction: column; gap: var(--np-espacio-4); min-width: 0; }
 .pregunta > * { margin: 0; }
@@ -58,6 +63,7 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .pregunta--revelada .pregunta__estado { color: var(--np-estado-correcto); }
 
 .posiciones { display: flex; flex-direction: column; gap: var(--np-espacio-3); min-width: 0; }
+.posiciones > * { flex: none; }
 .posiciones__titulo { display: flex; align-items: center; justify-content: space-between; }
 .posiciones__titulo h2 { margin: 0; color: var(--np-tinta-suave); }
 
@@ -86,11 +92,12 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .top .metros { text-align: right; }
 .top .desconectado, .resto .desconectado { opacity: 0.4; }
 
-.carrera--pregunta .top { --fila: 2.5rem; }
-.carrera--pregunta .top li { font-size: var(--np-texto-lg); grid-template-columns: 2rem 2.2rem 1fr 5rem; }
-.carrera--pregunta .resto { grid-template-columns: repeat(4, 1fr); gap: 2px var(--np-espacio-2); }
-.carrera--pregunta .resto li { font-size: var(--np-texto-xs); gap: var(--np-espacio-1); }
-.carrera--pregunta .resto .puesto { width: 1.5rem; }
+/* En la carrera el ranking ocupa la columna derecha (al lado del mapa o de la pregunta): versión compacta. */
+.carrera .top { --fila: 2.5rem; }
+.carrera .top li { font-size: var(--np-texto-lg); grid-template-columns: 2rem 2.2rem 1fr 5rem; }
+.carrera .resto { grid-template-columns: repeat(4, 1fr); gap: 2px var(--np-espacio-2); }
+.carrera .resto li { font-size: var(--np-texto-xs); gap: var(--np-espacio-1); }
+.carrera .resto .puesto { width: 1.5rem; }
 
 .resto { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: var(--np-espacio-1) var(--np-espacio-3); }
 .resto li { display: flex; align-items: center; gap: var(--np-espacio-2); font: var(--np-peso-medio) var(--np-texto-sm) / 1 var(--np-fuente-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -158,7 +165,9 @@ th, td { padding: var(--np-espacio-1) var(--np-espacio-2); border-bottom: var(--
 /* En pantallas angostas (probar desde el celular) todo pasa a una columna. */
 @media (max-width: 760px) {
   html { font-size: 14px; }
-  .lobby, .final, .carrera--pregunta { grid-template-columns: 1fr; }
+  .lobby, .final, .carrera { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .mapa, .pregunta, .posiciones { grid-column: 1; grid-row: auto; }
+  .carrera--pregunta .mapa { display: none; }
   .lobby__codigo { font-size: 4rem; }
   .repaso { padding: var(--np-espacio-5) var(--np-espacio-4); }
   .repaso__opcion { grid-template-columns: 1fr; }

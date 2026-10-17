@@ -2,6 +2,7 @@ import {
   CARRILES, VELOCIDAD_BASE, ACELERACION, VELOCIDAD_MAX, DURACION_SALTO, ALTURA_SALTO,
   TIEMPO_CAMBIO_CARRIL, BUFFER_GESTO, FRENADO_CHOQUE, INVULNERABLE_CHOQUE,
 } from '../shared/constantes.js';
+import { xObstaculo } from './track.js';
 
 // Lógica del corredor a paso fijo (60 pasos por segundo, sin importar los FPS):
 // un celular lento ve menos cuadros pero no choca distinto que uno rápido (sección 3.3).
@@ -125,7 +126,7 @@ export class Corredor {
         continue;
       }
       if (d + MEDIO_LARGO < o.z || d - MEDIO_LARGO > o.z + o.largo) continue;
-      if (Math.abs(this.x - CARRILES[o.carril]) > ALCANCE_LATERAL) continue;
+      if (Math.abs(this.x - xObstaculo(o, d)) > ALCANCE_LATERAL) continue;
       if (!o.alto && this.y > o.altura - 0.25) continue; // lo saltó
       if (this.invulnerable > 0) continue;
       o.golpeado = true;

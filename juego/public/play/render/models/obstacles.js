@@ -65,6 +65,51 @@ export function camion() {
   return unir(partes);
 }
 
+/** Bache del algoritmo: pozo en el piso con un gráfico que cae (bajo: se salta). */
+export function bache() {
+  const borde = J['obstaculo-bajo'];
+  const partes = [
+    caja(1.5, 0.04, 1.2, M['cacao-profundo'], { y: 0.02, z: -0.7 }),
+    caja(1.7, 0.14, 0.12, borde, { y: 0.07, z: -0.06 }),
+    caja(1.7, 0.14, 0.12, borde, { y: 0.07, z: -1.34 }),
+    caja(0.12, 0.14, 1.2, borde, { x: -0.8, y: 0.07, z: -0.7 }),
+    caja(0.12, 0.14, 1.2, borde, { x: 0.8, y: 0.07, z: -0.7 }),
+  ];
+  // Línea de gráfico en zigzag hacia abajo, con la punta de flecha.
+  const tramos = [
+    [-0.55, 0.42, -0.5],
+    [-0.2, 0.32, 0.5],
+    [0.15, 0.3, -0.7],
+  ];
+  for (const [x, y, rz] of tramos) partes.push(caja(0.42, 0.08, 0.06, A.ladrillo, { x, y, z: -0.7, rz }));
+  partes.push(cono(0.13, 0.22, 4, A.ladrillo, { x: 0.42, y: 0.12, z: -0.7, rz: -Math.PI * 0.72 }));
+  return unir(partes);
+}
+
+/** Bot revendedor: robot de cajas con antena, ojos que brillan y muchas bolsas (alto: se esquiva). */
+export function bot() {
+  const cuerpo = J['obstaculo-alto'];
+  const metal = M['cacao-profundo'];
+  return unir([
+    caja(0.9, 0.3, 0.6, metal, { y: 0.15, z: -0.4 }), // base con orugas
+    caja(0.75, 0.9, 0.5, cuerpo, { y: 0.75, z: -0.4 }),
+    caja(0.5, 0.3, 0.04, M.crema, { y: 0.85, z: -0.13 }), // pantalla del pecho
+    caja(0.12, 0.2, 0.3, metal, { y: 1.3, z: -0.4 }), // cuello
+    caja(0.7, 0.5, 0.5, cuerpo, { y: 1.6, z: -0.4 }),
+    caja(0.16, 0.1, 0.04, A.mostaza, { x: -0.15, y: 1.65, z: -0.13 }),
+    caja(0.16, 0.1, 0.04, A.mostaza, { x: 0.15, y: 1.65, z: -0.13 }),
+    cilindro(0.025, 0.025, 0.35, 4, metal, { y: 2.02, z: -0.4 }),
+    esfera(0.07, 5, A.mostaza, { y: 2.22, z: -0.4 }),
+    // Brazos abiertos cargando bolsas de compras (las que revende).
+    caja(0.14, 0.6, 0.14, metal, { x: -0.5, y: 0.95, z: -0.4, rz: -0.35 }),
+    caja(0.14, 0.6, 0.14, metal, { x: 0.5, y: 0.95, z: -0.4, rz: 0.35 }),
+    caja(0.32, 0.38, 0.14, M.crema, { x: -0.68, y: 0.5, z: -0.4 }),
+    caja(0.3, 0.34, 0.14, M.cacao, { x: -0.62, y: 0.42, z: -0.22 }),
+    caja(0.32, 0.38, 0.14, M.crema, { x: 0.68, y: 0.5, z: -0.4 }),
+    caja(0.3, 0.34, 0.14, A.rosa, { x: 0.62, y: 0.42, z: -0.22 }),
+  ]);
+}
+
 export function like() {
   const c = J.like;
   return unir([
@@ -74,4 +119,4 @@ export function like() {
   ]);
 }
 
-export const MODELOS_OBSTACULOS = { valla, caja: cajaStock, fan, camion };
+export const MODELOS_OBSTACULOS = { valla, caja: cajaStock, bache, fan, bot, camion };

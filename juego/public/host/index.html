@@ -57,8 +57,12 @@
     </section>
   </main>
 
-  <!-- Carrera: pregunta (cuando corre) y ranking en vivo de hasta 40 grupos. -->
+  <!-- Carrera: mapa en vivo (o la pregunta, mientras corre) y ranking de hasta 40 grupos. -->
   <main id="pantalla-carrera" class="pantalla carrera" hidden>
+    <section id="mapa" class="mapa" aria-label="Mapa de la carrera">
+      <canvas id="mapa-lienzo" class="mapa__lienzo"></canvas>
+    </section>
+
     <section id="pregunta" class="pregunta" hidden>
       <p id="pregunta-numero" class="np-etiqueta"></p>
       <h1 id="pregunta-texto" class="pregunta__texto"></h1>

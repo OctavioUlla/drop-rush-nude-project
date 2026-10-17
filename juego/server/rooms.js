@@ -1,4 +1,5 @@
 import { randomInt, randomUUID } from 'node:crypto';
+import { VALOR_LIKE } from '../public/shared/constantes.js';
 
 // Salas con código de 4 letras. Cada grupo (1 a maxGrupos) queda atado a un celular
 // mediante un token de dispositivo que el celular guarda en localStorage (sección 3.8).
@@ -158,8 +159,9 @@ export class Grupo {
     this.carriles = new Map();
   }
 
+  /** Corrida (la calcula el celular) + bonus de las respuestas (el servidor) + likes juntados. */
   get distanciaTotal() {
-    return this.distanciaCorrida + this.bonus;
+    return this.distanciaCorrida + this.bonus + this.likes * VALOR_LIKE;
   }
 
   get aciertos() {

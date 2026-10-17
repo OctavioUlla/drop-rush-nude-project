@@ -575,7 +575,7 @@ juego/
 - [x] Simulador de 40 bots (`tools/bots.js`) contra el servidor
 
 ### Fase 1: Base jugable (solo preguntas)
-> Implementada: ver [`README.md`](README.md#qué-hay-en-la-fase-1).
+> Implementada: ver [`README.md`](README.md#cómo-se-juega-una-partida).
 
 - [x] Inicializar el proyecto Node con Express, Socket.io y Vite
 - [x] Crear sala con código y QR; lista de grupos con **un celular por grupo** y token de dispositivo
@@ -585,14 +585,16 @@ juego/
 - [x] Estadísticas por pregunta, pantalla final con ranking y **repaso de errores**
 
 ### Fase 2: Runner 3D y obstáculos
-- [ ] Runner 3D de 3 carriles con controles de deslizar, tocar y **saltar**
-- [ ] Simulación a paso fijo e interpolación del render
-- [ ] Generación de obstáculos altos y bajos con semilla (`rng.js` + `track.js`)
-- [ ] Choques: tropiezo, frenado e invulnerabilidad
-- [ ] Likes coleccionables (en el piso y en el aire)
-- [ ] Envío de la distancia al servidor y mapa en vivo en el host
-- [ ] Arcos de respuesta dentro del runner y feedback sin pausa
-- [ ] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto
+> Implementada: ver [`README.md`](README.md#qué-hay-en-la-fase-2).
+
+- [x] Runner 3D de 3 carriles con controles de deslizar, tocar y **saltar**
+- [x] Simulación a paso fijo e interpolación del render
+- [x] Generación de obstáculos altos y bajos con semilla (`rng.js` + `track.js`) *(los 6 del plan, con el bot revendedor que cruza de carril)*
+- [x] Choques: tropiezo, frenado e invulnerabilidad
+- [x] Likes coleccionables (en el piso y en el aire) *(+1 m cada uno)*
+- [x] Envío de la distancia al servidor y mapa en vivo en el host
+- [x] Arcos de respuesta dentro del runner y feedback sin pausa
+- [x] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto
 
 ### Fase 3: Red robusta, ventajas y poderes
 - [ ] Cola de salida con `ack`, `state:sync` y recuperación de estado de Socket.io
