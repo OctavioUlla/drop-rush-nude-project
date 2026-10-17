@@ -133,6 +133,7 @@ Las transiciones entre bloques son **movimientos continuos de cámara y de la pr
 
 ### 3.4 Técnica
 - **Three.js** para el 3D y **GSAP** para animar cámara, prenda y texto en una misma línea de tiempo. Las dos librerías se guardan dentro del repositorio para funcionar sin internet.
+- **Valores del design system:** colores del estudio y las luces, material, grano, colorways por bloque y duraciones salen de [`tokens.js`](../design-system/tokens.js) (`colores3d.presentacion`, `tokens.escena`, `colorwayDeBloque(n)`, `segundos('escena')`). Ver la [sección 3.1 del design system](../design-system/README.md#31-escena-3d-de-la-presentación).
 - **Un solo canvas 3D** fijo detrás de todas las diapositivas. Cada diapositiva declara su escena con un atributo (por ejemplo, `data-escena="metricas"`) y el motor anima la transición hacia ella. Ir para atrás funciona igual.
 - **Guion como datos:** cada escena (color, posición de la cámara, pose de la prenda y objetos extra) se define en un archivo, así se ajusta sin tocar el motor.
 - **Rendimiento:** corre en la notebook del presentador, no en los celulares, pero puede tener una placa de video integrada. Objetivo: **60 fps a 1080p**, con la resolución interna limitada a 1,5×, la sombra de contacto falsa (sin mapas de sombras en tiempo real) y el render pausado cuando nada se mueve.
@@ -202,7 +203,8 @@ Así se reutiliza todo lo ya planeado para el juego: salas, un celular por grupo
 
 ### 6.2 Motor de diapositivas
 Liviano y propio, sin frameworks:
-- Cada diapositiva es un `<section class="np-diapo">` del design system, con sus notas en un `<aside class="notas">`. Las diapositivas son transparentes donde corresponde, para que se vea la escena 3D de atrás.
+- Cada diapositiva es un `<section class="np-diapo np-diapo--escena">` del design system (transparente, para que se vea la escena 3D de atrás), con sus notas en un `<aside class="notas">`. El motor marca la actual con `np-diapo--activa`, que dispara los títulos animados.
+- Los componentes visuales de las interacciones (cola, votación, feeds, drop, etiquetas 3D, modo presentador) ya están en [`components.css`](../design-system/components.css); el motor solo cambia sus variables (`--avance`, `--valor`, `--actual`, `--x`/`--y`).
 - `deck.js` se encarga de la navegación, el teclado, el escalado 16:9, el cronómetro, el modo presentador y el modo impresión.
 - Los componentes interactivos son módulos separados que se "enganchan" a una diapositiva por un atributo (por ejemplo, `data-interactivo="drop"`).
 - **Contenido separado del motor:** agregar o cambiar una diapositiva es editar HTML con las clases `np-*`, sin tocar JavaScript.

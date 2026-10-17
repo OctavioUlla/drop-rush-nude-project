@@ -30,6 +30,16 @@ for (const [k, v] of Object.entries(t.borde)) vars.push(`  --np-borde-${k}: ${v}
 for (const [k, v] of Object.entries(t.sombra)) vars.push(`  --np-sombra-${k}: ${v};`);
 for (const [k, v] of Object.entries(t.movimiento)) vars.push(`  --np-movimiento-${k}: ${v};`);
 
+// Escena 3D de la presentación: colorway de cada bloque y lo que también usa el CSS.
+const valorDe = (ref) => ref.split('.').reduce((o, k) => o[k], t.color).valor;
+const esc = t.escena;
+for (const c of esc.colorways) vars.push(`  --np-colorway-${c.bloque}: var(--np-${c.color.replace('.', '-')});`);
+vars.push(
+  `  --np-escena-grano-opacidad: ${esc.grano.opacidad};`,
+  `  --np-escena-columnas-texto: ${esc.layout['columnas-texto']};`,
+  `  --np-escena-columnas-escena: ${esc.layout['columnas-escena']};`,
+);
+
 const css = `/* ${aviso} */
 
 @font-face {
@@ -87,6 +97,7 @@ for (const [grupo, lista] of Object.entries(t.color)) {
   }
 }
 const grupos = t.grupos.map((g) => ({ ...g, color3d: hex(g.color) }));
+const colorways = esc.colorways.map((c) => ({ ...c, valor: valorDe(c.color), color3d: hex(valorDe(c.color)) }));
 const { $descripcion, color, grupos: _g, ...resto } = t;
 
 const js = `// ${aviso}
@@ -99,6 +110,14 @@ export const colores3d = ${JSON.stringify(colores3d, null, 2)};
 export const grupos = ${JSON.stringify(grupos)};
 
 export const colorDeGrupo = (n) => grupos[(n - 1) % grupos.length];
+
+/** Colorway de la sudadera en cada bloque de la presentación (0 a 8), con su estudio crema o cacao. */
+export const colorways = ${JSON.stringify(colorways)};
+
+export const colorwayDeBloque = (n) => colorways.find((c) => c.bloque === n);
+
+/** Duración de un token de movimiento en segundos, para GSAP: segundos('escena') → 0.8 */
+export const segundos = (nombre) => Number.parseFloat(tokens.movimiento[nombre]) / (tokens.movimiento[nombre].endsWith('ms') ? 1000 : 1);
 
 export const tokens = ${JSON.stringify(resto, null, 2)};
 `;

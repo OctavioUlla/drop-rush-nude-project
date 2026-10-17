@@ -50,6 +50,17 @@
   --np-juego-ventana: #482922;
   --np-juego-tienda: #482922;
   --np-juego-tienda-cartel: #fff8ee;
+  --np-presentacion-estudio-crema-fondo: #fff8ee;
+  --np-presentacion-estudio-crema-piso: #efe2d0;
+  --np-presentacion-estudio-cacao-fondo: #2e1914;
+  --np-presentacion-estudio-cacao-piso: #3a201a;
+  --np-presentacion-pedestal-crema: #e9dccb;
+  --np-presentacion-pedestal-cacao: #573429;
+  --np-presentacion-luz-principal: #fff1de;
+  --np-presentacion-luz-relleno: #f3e9dc;
+  --np-presentacion-luz-contorno: #ffffff;
+  --np-presentacion-luz-ambiente: #e9d6c2;
+  --np-presentacion-sombra-contacto: #2e1914;
   --np-grupo-1: #2f52bc;
   --np-grupo-1-texto: #fff8ee;
   --np-grupo-2: #3bb075;
@@ -179,6 +190,25 @@
   --np-movimiento-lento: 420ms;
   --np-movimiento-curva: cubic-bezier(.2,.8,.2,1);
   --np-movimiento-rebote: cubic-bezier(.34,1.56,.64,1);
+  --np-movimiento-escena: 800ms;
+  --np-movimiento-texto: 700ms;
+  --np-movimiento-escalonado: 90ms;
+  --np-movimiento-cifra: 1200ms;
+  --np-movimiento-latido: 900ms;
+  --np-movimiento-cinta: 24s;
+  --np-movimiento-curva-escena: cubic-bezier(.65,0,.35,1);
+  --np-colorway-0: var(--np-marca-cacao);
+  --np-colorway-1: var(--np-marca-crema);
+  --np-colorway-2: var(--np-marca-arena);
+  --np-colorway-3: var(--np-acento-rosa);
+  --np-colorway-4: var(--np-acento-bosque);
+  --np-colorway-5: var(--np-acento-marino);
+  --np-colorway-6: var(--np-marca-cacao);
+  --np-colorway-7: var(--np-acento-mostaza);
+  --np-colorway-8: var(--np-marca-cacao);
+  --np-escena-grano-opacidad: 0.05;
+  --np-escena-columnas-texto: 5;
+  --np-escena-columnas-escena: 7;
 
   /* Roles semánticos: tema crema (por defecto) */
   --np-fondo: var(--np-marca-crema);
