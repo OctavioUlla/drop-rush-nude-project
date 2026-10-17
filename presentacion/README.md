@@ -5,6 +5,7 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 - **Duración:** **22 minutos en total**: 15 de exposición + 7 del juego Drop Rush (la consigna pide entre 20 y 30).
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
+- **Visual:** lanzamiento de producto con una **sudadera 3D estilo *clay*** que protagoniza cada bloque (gira, cambia de color, se desarma en piezas con datos).
 - **Formato:** HTML interactivo, con drop falso de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
 - **Cierre interactivo:** el juego [Drop Rush](../juego/PLANIFICACION.md).
 
@@ -32,7 +33,7 @@ Cada punto de la consigna es un bloque; los separadores de bloque usan el tema *
 
 ## Diapositivas tipo
 
-Todas están en la guía visual del [design system](../design-system/index.html) (sección *Presentación*) y se arman con las clases `np-diapo`:
+Todas están en la guía visual del [design system](../design-system/index.html) (sección *Presentación*) y se arman con las clases `np-diapo`. Detrás de ellas está siempre la escena 3D de la sudadera (ver el [guion visual por bloque](PLANIFICACION.md#33-guion-visual-por-bloque)):
 
 - **Portada / separador** (tema cacao): etiqueta + título display + pie con logo.
 - **Contenido**: etiqueta con el número de bloque + título + 1 o 2 columnas.
@@ -43,7 +44,7 @@ Todas están en la guía visual del [design system](../design-system/index.html)
 
 ## Pendientes
 - [x] Herramienta: **HTML** con el design system (ver [PLANIFICACION.md](PLANIFICACION.md))
-- [ ] Definir los contenidos de cada bloque (ver la sección 7 de [PLANIFICACION.md](PLANIFICACION.md#7-contenido-pendiente-a-cargo-del-equipo))
+- [ ] Definir los contenidos de cada bloque (ver la sección 8 de [PLANIFICACION.md](PLANIFICACION.md#8-contenido-pendiente-a-cargo-del-equipo))
 - [ ] Juntar ejemplos reales de EGC y UGC (Instagram, TikTok, YouTube, podcast).
 - [ ] Elegir la campaña viral a analizar.
 - [ ] Relevar métricas públicas actualizadas y citar las fuentes.

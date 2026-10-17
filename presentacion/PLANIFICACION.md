@@ -2,6 +2,7 @@
 
 > La presentación se hace en **HTML**, con el mismo [design system](../design-system/README.md) y el mismo servidor que el juego [Drop Rush](../juego/PLANIFICACION.md).
 > La idea central: **la presentación es un *drop***. La clase no mira una exposición sobre el hype, lo vive desde el primer minuto.
+> Visualmente es el **lanzamiento de un producto**: una sudadera 3D estilo *clay* que protagoniza cada bloque (ver sección 3).
 >
 > 📝 Los **contenidos** de cada bloque todavía no están definidos. Este plan describe el formato, las interacciones y la técnica; el texto, las imágenes y los videos se cargan después sin tocar el motor.
 
@@ -81,11 +82,68 @@
 - Cada publicación muestra la cuenta (@usuario) y, si suma, la cifra de likes o vistas.
 - El presentador puede **pausar** un feed para comentar una publicación puntual.
 - Se ve la diferencia antes de explicarla: quién habla, cómo se ve, qué se muestra.
-- 📝 **Contenido pendiente:** elegir 4 a 6 publicaciones por lado (ver sección 7).
+- 📝 **Contenido pendiente:** elegir 4 a 6 publicaciones por lado (ver sección 8).
 
 ---
 
-## 3. Tiempos
+## 3. Dirección visual: la sudadera como producto
+
+> **Concepto:** la presentación es el **lanzamiento de un producto**, al estilo de una keynote de Apple. Hay un solo protagonista 3D, **la sudadera Nude Project**, que está en escena de principio a fin: gira, cambia de color, se desarma en piezas con datos, se multiplica en gráficos y, al final, queda **una sola** con el cartel *QUEDA 1*.
+>
+> **Estilo: clay.** Formas redondeadas y suaves, sin texturas, colores mate de la marca e iluminación de estudio con sombras suaves: el look *clay render* de las campañas 3D actuales. Es más premium que el low-poly del juego, pero también se genera **por código**.
+
+### 3.1 Lenguaje visual
+
+| Elemento | Cómo se ve |
+|---|---|
+| **Escenario** | Estudio infinito (un ciclorama sin horizonte) en crema o en cacao, según el tema de la diapositiva. Un pedestal cilíndrico bajo y redondeado. |
+| **Luz** | Luz principal cálida desde arriba a la izquierda, luz de relleno suave y una luz de contorno que separa la prenda del fondo. Luz ambiente cálida (tonos Nude House). |
+| **Sombras** | Sombra de contacto difusa bajo la prenda (un plano con degradado, barato) y oclusión ambiental suave en los pliegues. Sin sombras duras. |
+| **Material** | Mate (rugosidad alta, sin brillo metálico) con un leve brillo de tela (*sheen*) en los bordes, para que se lea como algodón grueso. |
+| **Colorways** | Un color por bloque, todos del design system: cacao, crema, arena, mostaza, marino, bosque y rosa. La prenda cambia de color con un fundido mientras gira. |
+| **Layout** | Editorial: el texto ocupa ~5/12 del ancho (a la izquierda) y la sudadera ~7/12 (a la derecha). En las diapositivas de cita o de cifra gigante, la sudadera pasa al fondo, desenfocada. |
+| **Texto animado** | Los títulos aparecen línea por línea, subiendo desde una máscara. Las cifras cuentan desde 0. En los separadores corre una cinta: *DROP 001 — QUEDA 1 — DROP 001 —*. |
+| **Grano** | Un grano de película muy leve sobre todo, para que no se vea "plástico". |
+
+### 3.2 La sudadera, por código
+Se arma en Three.js con piezas redondeadas que se unen y suavizan:
+- **Cuerpo:** caja con bordes muy redondeados, levemente deformada (más ancha abajo, hombros caídos).
+- **Capucha:** casquete de esfera aplanado, apoyado sobre la espalda, con el borde engrosado.
+- **Mangas:** tubos que siguen una curva suave (relajadas, con un leve pliegue en el codo).
+- **Puños y cintura:** anillos acanalados (rib), un poco más angostos que la manga.
+- **Bolsillo canguro**, **cordones** con sus puntas y el **logo *Nude® Project* bordado** en el pecho (texto en relieve muy leve, del mismo color o en crema).
+- Las piezas son **independientes**, para poder separarlas en la vista desarmada (bloque 5) y animarlas por separado.
+- El mismo modelo se puede usar después **en el juego**: en la vidriera de la tienda de la meta y en la pantalla del ganador.
+
+### 3.3 Guion visual por bloque
+
+| Bloque | Qué hace la sudadera | Colorway |
+|---|---|---|
+| **0. Portada + drop falso** | Gira lenta sobre el pedestal, bajo un foco. En la cuenta regresiva la luz se apaga; en *¡DROP!* la sudadera cae desde arriba al pedestal con un pequeño rebote. Al conocerse el ganador, un sello **SOLD OUT** se estampa delante y el pedestal queda vacío. | Cacao |
+| **1. La historia** | Aparece dentro de una caja de envío de cartón (la de los primeros pedidos desde la habitación). Mientras pasan los años 2019 → hoy, la caja se multiplica y la sudadera cambia de color en cada año. | Crema |
+| **2. EGC vs. UGC** | Queda en el centro entre los dos feeds y gira hacia el lado que se está comentando. | Arena |
+| **3. Marketing viral** | Corazones rosas en 3D salen de la prenda y orbitan alrededor mientras un contador de vistas sube a la cifra real. | Rosa |
+| **4. Marketing experiencial** | Se cuelga de una percha y la cámara retrocede: aparece un rincón mínimo de la Nude House (perchero, sillón, una planta, una pila de vinilos), todo en clay. | Bosque |
+| **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una etiqueta flotante con un dato (seguidores, engagement, vistas, facturación). Para comparar, un **gráfico de barras hecho con pilas de sudaderas dobladas**. | Marino |
+| **6. Objetivo comunicacional** | La cámara se acerca al pecho hasta llenar la pantalla con el logo bordado; la frase de Bruno se escribe encima. | Cacao |
+| **7. Desafíos** | Una **balanza** clay: de un lado *exclusividad*, del otro *accesibilidad*. Se inclina según el resultado de la votación en vivo. | Mostaza |
+| **8. Drop Rush** | Vuelve a estar sola en el pedestal con el cartel **QUEDA 1**. La cámara retrocede, aparece la vidriera de la tienda y la calle: transición directa al juego. | Cacao |
+
+Las transiciones entre bloques son **movimientos continuos de cámara y de la prenda** (~0,8 s), nunca cortes: la sudadera no desaparece entre diapositivas.
+
+### 3.4 Técnica
+- **Three.js** para el 3D y **GSAP** para animar cámara, prenda y texto en una misma línea de tiempo. Las dos librerías se guardan dentro del repositorio para funcionar sin internet.
+- **Un solo canvas 3D** fijo detrás de todas las diapositivas. Cada diapositiva declara su escena con un atributo (por ejemplo, `data-escena="metricas"`) y el motor anima la transición hacia ella. Ir para atrás funciona igual.
+- **Guion como datos:** cada escena (color, posición de la cámara, pose de la prenda y objetos extra) se define en un archivo, así se ajusta sin tocar el motor.
+- **Rendimiento:** corre en la notebook del presentador, no en los celulares, pero puede tener una placa de video integrada. Objetivo: **60 fps a 1080p**, con la resolución interna limitada a 1,5×, la sombra de contacto falsa (sin mapas de sombras en tiempo real) y el render pausado cuando nada se mueve.
+- **Respaldos:**
+  - Si WebGL no está disponible, cada escena se reemplaza por una **imagen pre-renderizada** (las mismas imágenes sirven para el PDF).
+  - Con `prefers-reduced-motion`, las transiciones pasan a ser fundidos cortos.
+- **Gráficos de datos 2D** (líneas, barras simples): SVG animado con la paleta del design system.
+
+---
+
+## 4. Tiempos
 
 La interactividad se come minutos de la exposición, así que va **dentro** de los tiempos de [`README.md`](README.md):
 
@@ -104,7 +162,7 @@ La **cola** está presente todo el tiempo y no suma minutos.
 
 ---
 
-## 4. Modo presentador y seguridad
+## 5. Modo presentador y seguridad
 
 - **Dos ventanas:** el proyector muestra la presentación y la notebook muestra el **modo presentador**:
   - diapositiva actual y siguiente;
@@ -131,9 +189,9 @@ La **cola** está presente todo el tiempo y no suma minutos.
 
 ---
 
-## 5. Arquitectura técnica
+## 6. Arquitectura técnica
 
-### 5.1 Un solo servidor
+### 6.1 Un solo servidor
 El servidor de Node del juego también sirve la presentación y maneja sus eventos. El celular de cada grupo entra **una sola vez** (QR → elegir número de grupo) y la misma sesión pasa por tres etapas:
 
 ```
@@ -142,14 +200,14 @@ El servidor de Node del juego también sirve la presentación y maneja sus event
 
 Así se reutiliza todo lo ya planeado para el juego: salas, un celular por grupo, tokens de dispositivo, reconexión invisible y sincronización de reloj.
 
-### 5.2 Motor de diapositivas
+### 6.2 Motor de diapositivas
 Liviano y propio, sin frameworks:
-- Cada diapositiva es un `<section class="np-diapo">` del design system, con sus notas en un `<aside class="notas">`.
+- Cada diapositiva es un `<section class="np-diapo">` del design system, con sus notas en un `<aside class="notas">`. Las diapositivas son transparentes donde corresponde, para que se vea la escena 3D de atrás.
 - `deck.js` se encarga de la navegación, el teclado, el escalado 16:9, el cronómetro, el modo presentador y el modo impresión.
 - Los componentes interactivos son módulos separados que se "enganchan" a una diapositiva por un atributo (por ejemplo, `data-interactivo="drop"`).
 - **Contenido separado del motor:** agregar o cambiar una diapositiva es editar HTML con las clases `np-*`, sin tocar JavaScript.
 
-### 5.3 Estructura propuesta
+### 6.3 Estructura propuesta
 ```
 presentacion/
 ├── README.md            # Estructura y tiempos por bloque
@@ -158,6 +216,13 @@ presentacion/
 ├── presentador.html     # Modo presentador (notas, próxima, cronómetro)
 ├── estilos.css          # Solo layout propio; importa el design system
 ├── deck.js              # Navegación, teclado, escalado, cronómetro, BroadcastChannel, impresión
+├── escena/
+│   ├── escena.js        # Renderer, estudio, luces, sombra de contacto, grano, pausa del render
+│   ├── sudadera.js      # Modelo de la sudadera por piezas (por código)
+│   ├── extras.js        # Pedestal, caja de envío, corazones, percha y rincón Nude House, pilas, balanza, vidriera
+│   ├── guion.js         # Escena de cada bloque: colorway, cámara, pose y extras
+│   └── transiciones.js  # Animaciones entre escenas (GSAP)
+├── vendor/              # three.js y GSAP guardados localmente
 ├── interactivo/
 │   ├── drop.js          # Drop falso (proyector)
 │   ├── votacion.js      # Votación en vivo (proyector)
@@ -166,11 +231,12 @@ presentacion/
 ├── datos/
 │   ├── votacion.json    # Pregunta y opciones
 │   └── feeds.json       # Publicaciones de cada feed (archivo, cuenta, cifra)
-└── media/               # Fotos y clips de video comprimidos
+├── media/               # Fotos y clips de video comprimidos
+└── renders/             # Imágenes pre-renderizadas de cada escena (respaldo sin WebGL y PDF)
 ```
 Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el drop y la votación.
 
-### 5.4 Eventos de Socket.io (borrador)
+### 6.4 Eventos de Socket.io (borrador)
 
 | Dirección | Evento | Datos |
 |---|---|---|
@@ -187,7 +253,7 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 - El servidor guarda el resultado del drop y de la votación para retomarlos en el debate, aunque se recargue la página.
 - Un celular que se reconecta recibe el estado actual (por ejemplo, la votación abierta) con el mismo `state:sync` del juego.
 
-### 5.5 Medios
+### 6.5 Medios
 - **Videos:** MP4 (H.264), 720p o menos, 5 a 10 s, sin audio; objetivo **< 2 MB por clip**.
 - **Fotos:** WebP o JPG de 1600 px como máximo.
 - Se precargan las del bloque siguiente para que no haya saltos.
@@ -195,18 +261,28 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 
 ---
 
-## 6. Plan de trabajo
+## 7. Plan de trabajo
 
-### Fase 0: Motor y plantilla
+### Fase 0: Prototipo visual (riesgo primero)
+- [ ] Sudadera clay por código girando en el estudio, con 2 o 3 colorways
+- [ ] Una transición de cámara entre dos escenas, con texto animado encima
+- [ ] Medir fps en la notebook que se va a usar y validar que se vea bien en el proyector
+
+### Fase 1: Motor y plantilla
 - [ ] `deck.js`: navegación, teclado, escalado 16:9, modo impresión
 - [ ] Plantilla con una diapositiva vacía por bloque (títulos provisorios y marcadores de contenido)
 - [ ] Modo presentador: notas, próxima diapositiva y cronómetro por bloque
 
-### Fase 1: Interacciones sin servidor
+### Fase 2: Escenas 3D
+- [ ] Guion completo de escenas (sección 3.3), con sus extras: caja, corazones, percha y rincón Nude House, vista desarmada, pilas de sudaderas, balanza y vidriera
+- [ ] Transiciones continuas ida y vuelta entre todas las escenas
+- [ ] Imágenes pre-renderizadas de respaldo
+
+### Fase 3: Interacciones sin servidor
 - [ ] Cola de la tienda (avance por bloque y apertura de la puerta)
 - [ ] Feeds EGC vs. UGC con contenido de prueba y `feeds.json`
 
-### Fase 2: Interacciones con servidor
+### Fase 4: Interacciones con servidor
 *Depende de la Fase 1 del juego: salas, grupos, tokens y sincronización de reloj.*
 - [ ] Pantallas de espera, drop y votación en el celular
 - [ ] Drop falso: cuenta regresiva sincronizada, primer toque y resultado
@@ -215,15 +291,15 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 - [ ] Versión estática de respaldo si el servidor no responde
 - [ ] Prueba con los 40 bots del juego
 
-### Fase 3: Contenido y ensayo
-- [ ] Cargar el contenido de cada bloque (sección 7)
+### Fase 5: Contenido y ensayo
+- [ ] Cargar el contenido de cada bloque (sección 8)
 - [ ] Ensayo con cronómetro: 15 min de exposición + 7 min de juego
 - [ ] Prueba en el aula: proyector, Wi-Fi y control de diapositivas
 - [ ] Exportar el PDF de respaldo
 
 ---
 
-## 7. Contenido pendiente (a cargo del equipo)
+## 8. Contenido pendiente (a cargo del equipo)
 
 - [ ] Texto e imágenes de cada bloque (ver [`README.md`](README.md))
 - [ ] 4 a 6 publicaciones **EGC** y 4 a 6 **UGC** para los feeds (descargar los clips y anotar cuenta y cifras)
@@ -234,13 +310,16 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 
 ---
 
-## 8. Riesgos y mitigaciones
+## 9. Riesgos y mitigaciones
 
 | Riesgo | Mitigación |
 |---|---|
 | Pocos grupos conectados al momento del drop | Mostrar el QR desde antes de empezar; el presentador lanza el drop cuando ve el contador alto |
-| La interactividad se come los 15 minutos | Tiempos fijos por interacción (sección 3) y cronómetro en el modo presentador |
+| La interactividad se come los 15 minutos | Tiempos fijos por interacción (sección 4) y cronómetro en el modo presentador |
 | El servidor o el Wi-Fi fallan | La presentación funciona sola, con versiones estáticas y PDF de respaldo |
 | Videos pesados o que se traban | Clips cortos y comprimidos, guardados en el repositorio y precargados |
 | Distracción con el celular | El celular solo muestra algo durante el drop y la votación; el resto del tiempo, una pantalla de espera quieta |
+| La sudadera por código no queda creíble | Prototipo visual primero (Fase 0) con un visor para ajustar proporciones; si no alcanza, usar un modelo 3D libre (GLTF con licencia abierta) con el mismo material clay |
+| La notebook no mueve bien el 3D | Medir en la Fase 0; bajar la resolución interna o usar las imágenes pre-renderizadas |
+| El 3D distrae del contenido | La sudadera acompaña, no explica: cada escena refuerza el mensaje del bloque y se mueve solo en las transiciones |
 | Derechos de las publicaciones | Uso académico, con la cuenta de origen visible en cada una |
