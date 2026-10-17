@@ -68,6 +68,8 @@ export function crearGuion(config, preguntas, inicio) {
     difficulty: config.dificultadObstaculos,
     questions: preguntas.length,
     revealDuration: config.duracionRevelado * 1000,
+    // Para que el celular muestre en vivo cuánto vale responder bien (base + extra por rapidez).
+    bonus: { base: config.bonusAcierto, speedMax: config.bonusRapidezMax },
   };
 }
 
@@ -216,12 +218,14 @@ export class Partida {
     // Desde cuándo estaba en ese carril: cuanto antes lo eligió y lo mantuvo, más bonus.
     const desde = Math.min(Math.max(Number(datos.since) || fin, fase.startsAt), fin);
     let bonus = 0;
+    let speedBonus = 0;
     if (correct) {
       const rapidez = 1 - (desde - fase.startsAt) / fase.duration;
-      bonus = this.config.bonusAcierto + Math.round(this.config.bonusRapidezMax * rapidez);
+      speedBonus = Math.round(this.config.bonusRapidezMax * rapidez);
+      bonus = this.config.bonusAcierto + speedBonus;
       grupo.bonus += bonus;
     }
-    const resultado = { index, lane, correct, bonus, demora: Math.round(desde - fase.startsAt) };
+    const resultado = { index, lane, correct, bonus, speedBonus, demora: Math.round(desde - fase.startsAt) };
     grupo.respuestas.set(index, resultado);
 
     // Si ya se reveló (llegó tarde por un corte), se informa enseguida.

@@ -417,6 +417,10 @@ function dibujarPregunta(f, t) {
     const pos = posicionados?.index === p.index ? posicionados : { count: 0, total: grupos.filter((g) => g.taken).length };
     estado.innerHTML = `<b>${pos.count}</b>/${pos.total} grupos posicionados · ${Math.ceil(restante / 1000)} s`;
   } else estado.textContent = 'Atravesando los arcos…';
+
+  const bonus = guion.datos.bonus;
+  $('pregunta-ayuda').hidden = !respondiendo || !bonus?.speedMax;
+  if (bonus) $('pregunta-ayuda').textContent = `⚡ Cuanto antes elijan el carril (y se queden ahí), más metros: hasta +${bonus.base + bonus.speedMax} m`;
 }
 
 function dibujarFinal() {

@@ -54,6 +54,7 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .pregunta__tiempo .np-temporizador__barra { transition: width 0.1s linear; }
 .pregunta__estado { font: var(--np-peso-bold) var(--np-texto-2xl) / 1.2 var(--np-fuente-display); }
 .pregunta__estado b { font-weight: var(--np-peso-black); }
+.pregunta__ayuda { font: var(--np-peso-medio) var(--np-texto-lg) / 1.3 var(--np-fuente-display); color: var(--np-tinta-suave); }
 .pregunta--revelada .pregunta__estado { color: var(--np-estado-correcto); }
 
 .posiciones { display: flex; flex-direction: column; gap: var(--np-espacio-3); min-width: 0; }

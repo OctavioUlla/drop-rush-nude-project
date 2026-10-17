@@ -322,13 +322,15 @@ function responder(fase) {
   const datos = { index: fase.index, lane: corredor.carril, serverTime: fase.startsAt + fase.duration, since: r.desde };
   cartel('<span class="cartel__caja">✔ Respuesta guardada</span>', 1500);
   if (SOLO) {
-    setTimeout(() => mostrarResultado({ index: fase.index, correct: Math.random() < 0.6, bonus: 180 }), 600);
+    const correct = Math.random() < 0.6;
+    const premio = calcularPremio(fase, r.desde);
+    setTimeout(() => mostrarResultado({ index: fase.index, correct, bonus: correct ? premio.total : 0, speedBonus: premio.rapidez }), 600);
     return;
   }
   red.encolar(`q${fase.index}:${guion.id}`, 'question:answer', datos);
 }
 
-function mostrarResultado({ index, correct, bonus: b }) {
+function mostrarResultado({ index, correct, bonus: b, speedBonus }) {
   bonusPorPregunta.set(index, correct ? b : 0);
   if (SOLO && correct) aciertosSolo++;
   const d = document.createElement('div');
@@ -336,7 +338,19 @@ function mostrarResultado({ index, correct, bonus: b }) {
   document.body.append(d);
   setTimeout(() => d.remove(), 1200);
   navigator.vibrate?.(correct ? 60 : [40, 60, 40]);
-  cartel(correct ? `<span class="cartel__caja">✅ +${b} m</span>` : '<span class="cartel__caja">❌ Incorrecta</span>', 1500);
+  const rapidez = correct && speedBonus ? ` <small>· ⚡ ${speedBonus} por rapidez</small>` : '';
+  cartel(correct ? `<span class="cartel__caja">✅ +${b} m${rapidez}</span>` : '<span class="cartel__caja">❌ Incorrecta</span>', 2000);
+}
+
+/**
+ * Cuánto vale acertar si el grupo se queda en el carril que eligió en `desde`
+ * (misma cuenta que el servidor): base fija + extra que baja cuanto más tarde se eligió.
+ */
+function calcularPremio(fase, desde) {
+  const { base, speedMax } = guion?.datos.bonus ?? { base: 150, speedMax: 100 };
+  const t = Math.min(Math.max(desde, fase.startsAt), fase.startsAt + fase.duration);
+  const rapidez = Math.round(speedMax * (1 - (t - fase.startsAt) / fase.duration));
+  return { total: base + rapidez, rapidez, maximo: base + speedMax };
 }
 
 function cartel(html, ms) {
@@ -434,6 +448,12 @@ function actualizarHud() {
   const restante = f ? Math.max(0, f.startsAt + f.duration - t) : 0;
 
   $('temporizador').hidden = f?.type !== FASES.PREGUNTA;
+  const premio = f?.type === FASES.PREGUNTA && respuestaPendiente?.index === f.index ? calcularPremio(f, respuestaPendiente.desde) : null;
+  $('premio').hidden = !premio;
+  if (premio) {
+    $('premio').innerHTML = `⚡ Si es la correcta: <b>+${premio.total} m</b>`;
+    $('premio').classList.toggle('juego__premio--baja', premio.total < premio.maximo);
+  }
   $('carriles').hidden = f?.type !== FASES.PREGUNTA;
   if (f?.type === FASES.PREGUNTA) {
     $('temporizador').style.setProperty('--progreso', `${(restante / f.duration) * 100}%`);

@@ -82,6 +82,25 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .juego__temporizador { position: absolute; left: 0; right: 0; top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 3.2rem); }
 .juego__temporizador .np-temporizador__barra { transition: none; }
 
+/* Cuánto vale acertar ahora: se ve bajar si el grupo cambia de carril tarde. */
+.juego__premio {
+  position: absolute;
+  left: 50%;
+  top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 4.2rem);
+  transform: translateX(-50%);
+  margin: 0;
+  padding: var(--np-espacio-2) var(--np-espacio-3);
+  white-space: nowrap;
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-bold) var(--np-texto-base) / 1 var(--np-fuente-display);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.juego__premio b { font-weight: var(--np-peso-black); font-size: var(--np-texto-lg); }
+.juego__premio--baja { background: var(--np-marca-crema); }
+.cartel__caja small { font-size: var(--np-texto-base); font-weight: var(--np-peso-medio); }
+
 .juego__carriles {
   position: absolute;
   bottom: 18%;
