@@ -242,15 +242,12 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 │  (runner 3D) │                         │  - preguntas         │
 ├──────────────┤                         │  - puntuación        │
 │  Celular 40  │ ◄─────────────────────► │  - ventajas/poderes  │
-└──────────────┘                         └──────────────────────┘
-        ▲
-        │ HTTPS (archivos estáticos y modelos 3D, con caché)
-        ▼
-┌──────────────────────┐
-│ CDN / hosting        │
-│ estático             │
-└──────────────────────┘
+└──────────────┘    + HTTPS (archivos    │  - archivos estáticos│
+                    del juego, con caché)│    (Express)         │
+                                         └──────────────────────┘
 ```
+
+> **Un solo servidor**: el mismo proceso de Node sirve la página, el JavaScript del juego y el tiempo real. No hace falta CDN ni hosting aparte (ver 5.5).
 
 ### 5.1 Reparto de responsabilidades
 - **El runner corre en el celular**: el movimiento, el salto, los obstáculos y los choques se calculan en el propio celular, para que el control sea instantáneo y no dependa de la red.
@@ -376,7 +373,8 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 
 **Wi-Fi de la facultad**
 - Con 40 celulares en el mismo punto de acceso, lo que más pesa es la **descarga inicial** del juego (40 × ~1 MB = ~40 MB), no la partida en sí. Por eso:
-  - Los archivos estáticos se sirven desde un **CDN** o hosting estático, no desde el servidor de Node.
+  - **No hace falta CDN**: como los modelos 3D se generan por código, todo el juego pesa ~1 MB y el mismo servidor de Node lo sirve sin problema. 40 MB repartidos en unos minutos es muy poco para cualquier hosting.
+  - Los archivos se sirven **ya comprimidos** (Vite genera versiones Brotli y gzip al compilar) y con nombres con *hash*, con cabecera `Cache-Control: immutable` de un año: cada celular los descarga una sola vez.
   - Se cachean con un *Service Worker* y cabeceras de caché: si un celular recarga, no vuelve a descargar nada.
   - Se pide a los grupos que **entren al lobby antes** (por ejemplo, al principio de la presentación) para que la descarga no se concentre en el último minuto.
 - Las redes institucionales suelen tener **portal cautivo** (hay que iniciar sesión) y **aislamiento de clientes** (los celulares no se ven entre sí ni ven a una notebook de la misma red). Por eso la opción en la nube es la principal (ver sección 10).
@@ -609,7 +607,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 
 ### A. En la nube (principal)
 - Servidor de Node en **Fly.io** (región São Paulo `gru`, la más cercana), **Railway** o **Render**: todos soportan WebSockets y HTTPS en el puerto 443.
-- Archivos estáticos y modelos 3D en un **CDN** (por ejemplo Cloudflare Pages o Netlify), para que la descarga de 40 celulares no pase por el servidor del juego.
+- **Un solo servidor**: el mismo proceso de Node sirve los archivos del juego (Express) y el tiempo real (Socket.io), en el mismo dominio. No hace falta CDN.
 - Los celulares entran por una URL pública usando el Wi-Fi de la facultad o datos móviles.
 - ⚠️ Los planes gratuitos pueden "dormir" el servidor: abrir la URL unos minutos antes de la clase (o usar un plan que no duerma ese día).
 - Un solo proceso de Node alcanza de sobra para 40 jugadores (ver 5.5).
@@ -642,7 +640,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 
 | Riesgo | Mitigación |
 |---|---|
-| 40 celulares saturan el Wi-Fi de la facultad | Juego liviano (≤ 1 MB, modelos generados por código) en CDN, caché con Service Worker, entrar al lobby con tiempo; datos móviles como plan B |
+| 40 celulares saturan el Wi-Fi de la facultad | Juego liviano (≤ 1 MB, modelos generados por código) servido comprimido, caché con Service Worker, entrar al lobby con tiempo; datos móviles como plan B |
 | El Wi-Fi tiene portal cautivo | Avisar que inicien sesión en el Wi-Fi antes de escanear el QR; probar la red con anticipación |
 | La red bloquea WebSocket o puertos raros | HTTPS en el puerto 443 y *fallback* a *long-polling* |
 | Aislamiento de clientes en la red | Servidor en la nube (opción A) |
@@ -676,7 +674,7 @@ Con 40 grupos en la red de la facultad, la nube pasa a ser la **opción principa
 - [ ] Redactar el banco de preguntas (`data/preguntas.json`), con 2 o 3 opciones y una buena explicación por pregunta
 - [ ] Conseguir 2 o 3 celulares de gama baja para las pruebas de rendimiento
 - [ ] Averiguar cómo es el Wi-Fi de la facultad (portal cautivo, bloqueos) y probarlo
-- [ ] Elegir el hosting del servidor y del CDN
+- [ ] Elegir el hosting del servidor (uno solo)
 - [ ] Hacer un ensayo general con el equipo
 
 ---
