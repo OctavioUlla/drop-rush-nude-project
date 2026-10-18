@@ -1,15 +1,17 @@
 {
-  "nota": "Publicaciones de los dos celulares del bloque 2 (EGC vs. UGC). Cada feed pasa una cada 4 s. Campos: cuenta, texto, cifra (opcional, debajo del ícono), icono ('like' o 'vistas'), archivo (foto .jpg/.webp o clip .mp4/.webm en ../media/, relativo a este archivo; en silencio y en bucle), arte (ilustración de prueba que se ve si no hay archivo o no carga: dia1, reglas, podcast, oficina, cola, llave, outfit, artistas) y claro (true si el fondo es claro: la barra de estado va en cacao). Contenido de prueba hasta cargar los clips reales (fase 5).",
+  "nota": "Publicaciones de los dos celulares del bloque 2 (EGC vs. UGC). cada: segundos que queda cada publicación en pantalla (lo que dura un clip; el feed de UGC cambia a mitad de ese tiempo). Campos de cada publicación: cuenta, texto, cifra (opcional, debajo del ícono), icono ('like' o 'vistas'), archivo (foto .jpg/.webp o clip .mp4/.webm en ../media/, relativo a este archivo; en silencio y en bucle), arte (ilustración de prueba que se ve si no hay archivo o no carga: dia1, reglas, podcast, oficina, cola, llave, outfit, artistas), claro (true si el fondo es claro: la barra de estado va en cacao) y fuente (publicación original, para citarla). viral: la publicación de la pared de celulares del bloque 3 (archivo, cuenta y fuente; si falta el archivo, la ilustración de Out of Office). Clips de TikTok recortados a su tramo clave; vistas tomadas el 18/10/2026.",
+  "cada": 8,
   "egc": [
-    { "cuenta": "@brunocasanovas", "texto": "Day 1 of making our brand known in the US", "arte": "dia1" },
-    { "cuenta": "@nudeproject", "texto": "House Rules: las reglas de la casa.", "arte": "reglas", "claro": true },
-    { "cuenta": "@nudeproject.podcast", "texto": "Episodio 1: de 0 a 200.000 seguidores.", "arte": "podcast" },
-    { "cuenta": "@nudeproject", "texto": "Out of Office: la campaña la protagoniza el equipo.", "arte": "oficina", "cifra": "+500 k", "icono": "like" }
+    { "cuenta": "@nudeproject", "texto": "Day 5 making our brand known in the US: Gary Vee.", "cifra": "56,6 k", "icono": "vistas", "archivo": "../media/egc-dia5-gary-vee.mp4", "arte": "dia1", "claro": true, "fuente": "https://www.tiktok.com/@nudeproject/video/7563203803151895830" },
+    { "cuenta": "@nudeproject", "texto": "Del cuarto de la residencia a la oficina propia.", "cifra": "1,4 M", "icono": "vistas", "archivo": "../media/egc-origen.mp4", "arte": "oficina", "fuente": "https://www.tiktok.com/@nudeproject/video/6964446640346303750" },
+    { "cuenta": "@nudeprojectpodcast", "texto": "Jugamos al semáforo con Franco Colapinto.", "cifra": "823 k", "icono": "vistas", "archivo": "../media/egc-podcast-colapinto.mp4", "arte": "podcast", "fuente": "https://www.tiktok.com/@nudeprojectpodcast/video/7491275434005433623" },
+    { "cuenta": "@nudeproject", "texto": "Nueva tienda en Barcelona: así fue la apertura.", "cifra": "895 k", "icono": "vistas", "archivo": "../media/egc-apertura-barcelona.mp4", "arte": "cola", "claro": true, "fuente": "https://www.tiktok.com/@nudeproject/video/7632700411228491030" }
   ],
   "ugc": [
-    { "cuenta": "@cola.madrid", "texto": "Cola desde las 6 de la mañana para la apertura.", "arte": "cola", "claro": true },
-    { "cuenta": "@primeros60", "texto": "Uno de los 60: tengo la llave.", "arte": "llave" },
-    { "cuenta": "@fitcheck", "texto": "Fit check con la sudadera nueva.", "arte": "outfit" },
-    { "cuenta": "@comunidad", "texto": "La marca, vista en sus artistas.", "arte": "artistas" }
-  ]
+    { "cuenta": "@andrewponch", "texto": "Nude Project llegó a Miami: después de tantas filas, lo logramos.", "cifra": "113 k", "icono": "vistas", "archivo": "../media/ugc-llegada-miami.mp4", "arte": "llave", "fuente": "https://www.tiktok.com/@andrewponch/video/7559736425516633362" },
+    { "cuenta": "@christianrodr_", "texto": "Apertura del pop-up: welcome to Miami!", "cifra": "17,1 k", "icono": "vistas", "archivo": "../media/ugc-apertura-miami.mp4", "arte": "cola", "fuente": "https://www.tiktok.com/@christianrodr_/video/7560100068821437727" },
+    { "cuenta": "@nataliesmirnakos", "texto": "Honestly a must have tank from Nude Project.", "cifra": "88,8 k", "icono": "vistas", "archivo": "../media/ugc-outfit-tank.mp4", "arte": "outfit", "claro": true, "fuente": "https://www.tiktok.com/@nataliesmirnakos/video/7647728671951817991" },
+    { "cuenta": "@santiabarzaa", "texto": "Outfit con el pullover de Nude Project.", "cifra": "84,6 k", "icono": "vistas", "archivo": "../media/ugc-outfit-pullover.mp4", "arte": "outfit", "claro": true, "fuente": "https://www.tiktok.com/@santiabarzaa/video/7497715567646870790" }
+  ],
+  "viral": { "cuenta": "@nudeproject", "texto": "'Out of Office' drop. Se acabaron las vacaciones.", "cifra": "106 k", "icono": "vistas", "archivo": "../media/viral-out-of-office.mp4", "fuente": "https://www.tiktok.com/@nudeproject/video/7540362569878424854" }
 }

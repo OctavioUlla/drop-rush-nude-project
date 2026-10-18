@@ -379,8 +379,10 @@ function celular(textura_, w = 1.5, h = 3.0, soporte = true) {
 }
 function estacionEgcUgc(g, { feeds: datos } = {}) {
   g.add(fondo(caja(13, 0.3, 7, C.marca.arena, 0, -0.3, -0.6, 0.1)));
-  // Publicaciones de datos/feeds.json (si la presentación las pasa) o las de prueba de pantallas.js.
-  const feeds = [feed('egc', { publicaciones: datos?.egc }), feed('ugc', { publicaciones: datos?.ugc, desfase: 2 })];
+  // Publicaciones de datos/feeds.json (si la presentación las pasa) o las de prueba de pantallas.js. `cada` (segundos
+  // por publicación) también sale de ahí; el feed de UGC cambia a mitad de ciclo del de EGC, nunca a la vez.
+  const cada = datos?.cada ?? 4;
+  const feeds = [feed('egc', { publicaciones: datos?.egc, cada }), feed('ugc', { publicaciones: datos?.ugc, cada, desfase: -cada / 2 })];
   const anclas = {};
   [[-1, feeds[0], 'egc'], [1, feeds[1], 'ugc']].forEach(([lado, tex, clave]) => {
     const c = celular(tex);
@@ -416,11 +418,11 @@ function corazonGeo() {
   geo.center();
   return geo;
 }
-function estacionViral(g) {
+function estacionViral(g, { feeds: datos } = {}) {
   g.add(pisoSombra());
   // Pared de celulares con la misma publicación, como cuando algo se hace viral. La prenda queda a la izquierda,
-  // junto al texto, y la pared ocupa el resto: la tapa apenas en una esquina.
-  const tex = publicacionViral();
+  // junto al texto, y la pared ocupa el resto: la tapa apenas en una esquina. El clip sale de datos/feeds.json (viral).
+  const tex = publicacionViral({ archivo: datos?.viral?.archivo });
   const panel = new THREE.Group();
   const cols = 8, filas = 3, pw = 0.48, ph = 1.0, sx = 0.6, sy = 1.12;
   panel.add(caja(cols * sx + 0.24, (filas - 1) * sy + ph + 0.4, 0.14, C.marca.arena, 0, 0, -0.07, 0.07));
@@ -434,12 +436,14 @@ function estacionViral(g) {
   panel.position.set(2.25, 0, -3.2);
   panel.rotation.y = -0.1;
   g.add(panel);
-  // Corazones que brotan de los celulares (likes en vivo): suben un poco delante de su pantalla y se apagan.
+  // Corazones que brotan de los celulares (likes en vivo): suben un poco delante de su pantalla y se apagan. Nunca de
+  // las dos primeras columnas, las que encuadra la pose de la remera: ahí taparían la frase.
   const geo = corazonGeo();
   const mat = clay(C.acento.rosa, { roughness: 0.8 });
+  const libres = pantallas.filter((_, k) => k % cols > 1);
   const corazones = Array.from({ length: 14 }, (_, i) => {
     const m = malla(geo, mat);
-    const origen = pantallas[(i * 11) % pantallas.length].clone().add(V(0, 0.3, 0.22)).applyAxisAngle(V(0, 1, 0), panel.rotation.y).add(panel.position);
+    const origen = libres[(i * 7) % libres.length].clone().add(V(0, 0.3, 0.22)).applyAxisAngle(V(0, 1, 0), panel.rotation.y).add(panel.position);
     m.userData = { origen, fase: i / 14, s: 0.15 + (i % 3) * 0.03 };
     g.add(m);
     return m;
@@ -454,11 +458,19 @@ function estacionViral(g) {
     tema: 'crema', encuadre: 'editorial', ancla, escala: 0.72,
     // La prenda a ~57 % del ancho (no al 72 % de siempre), para dejarle lugar a la pared.
     mira: V(1.2, 1.6, 0),
+    poses: {
+      // La cámara se acerca de frente a la punta izquierda de la fila del medio hasta que se lee la remera (el mensaje
+      // es la campaña); el texto queda sobre la pared lisa, a la izquierda de los celulares. Desvíos desde el encuadre
+      // editorial: mira en (-0.55, 1.6, 0) y cámara en (-0.55, 2.2, 8.5).
+      // La prenda se corre a la izquierda, fuera de cuadro: si no, queda delante de la cámara.
+      remera: { mira: V(0.56, 0.3, -3.25), camara: V(1.06, -0.25, -9.25), heroe: V(-4, 0, 0) },
+    },
     actualizar(dt, t, presencia) {
       // Contador de likes: arranca cuando llega la cámara y sube hasta pasar el medio millón.
       reloj = presencia > 0.95 ? reloj + dt : presencia < 0.05 ? 0 : reloj;
       const u = Math.min(reloj / 3.2, 1);
       tex.poner(500000 * (1 - (1 - u) ** 4) + Math.max(0, reloj - 3.2) * 37, t); // superó el medio millón en menos de 24 h
+      if (presencia > 0.3) tex.avanzar(dt); else tex.dormir();
       const crecer = smoothstep(presencia, 0.3, 1);
       for (const m of corazones) {
         const d = m.userData;

@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const raiz = fileURLToPath(new URL('../../', import.meta.url));
 const destino = join(raiz, 'presentacion/renders');
-const tipos = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.jpg': 'image/jpeg', '.png': 'image/png' };
+const tipos = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4' };
 
 let chromium;
 try {
@@ -51,7 +51,7 @@ const encuadres = await pagina.evaluate(() => {
 for (const [nombre, diapositiva] of encuadres) {
   await pagina.goto(`${base}?render&escala=1&n=${diapositiva}#${diapositiva}`);
   await pagina.waitForFunction(() => document.getElementById('cargador')?.classList.contains('np-cargador--listo'), null, { timeout: 120000 });
-  await pagina.waitForTimeout(500); // arranca la caída de la sudadera
+  await pagina.waitForTimeout(2500); // arranca la caída de la sudadera y cargan los clips de los celulares
   // La escena se adelanta sin esperar: cámara, prenda, contadores y feeds quedan asentados.
   await pagina.evaluate(() => { window.motor.depuracion.pausar(true); window.motor.adelantar(7); });
   await pagina.waitForTimeout(2200); // entran las etiquetas

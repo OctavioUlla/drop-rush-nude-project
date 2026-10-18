@@ -84,7 +84,7 @@
 | Contenido de Bruno, Álex y el equipo: reuniones, viajes de producción, procesos, podcast | Contenido de la comunidad: filas en las tiendas, outfits, eventos, reacciones |
 
 **Detalles.**
-- Cada feed pasa una publicación cada ~4 s con una transición de desplazamiento vertical. Los videos se reproducen **en silencio y en bucle** (clips de 5 a 10 s).
+- Cada feed pasa una publicación cada 8 s (`cada` en `datos/feeds.json`, lo que dura un clip) con una transición de desplazamiento vertical; el de UGC cambia a mitad de tiempo del de EGC. Cada clip arranca desde el principio al entrar y se reproduce **en silencio y en bucle**.
 - Cada publicación muestra la cuenta (@usuario) y, si suma, la cifra de likes o vistas.
 - El presentador puede **pausar** un feed para comentar una publicación puntual.
 - Se ve la diferencia antes de explicarla: quién habla, cómo se ve, qué se muestra.
@@ -318,7 +318,7 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 ## 8. Contenido pendiente (a cargo del equipo)
 
 - [ ] Texto e imágenes de cada bloque (ver [`README.md`](README.md))
-- [ ] 4 a 6 publicaciones **EGC** y 4 a 6 **UGC** para los feeds (descargar los clips y anotar cuenta y cifras)
+- [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
 - [ ] Campaña o publicación viral a analizar
 - [ ] Métricas públicas actualizadas, con sus fuentes
 - [ ] Pregunta definitiva de la votación y sus opciones

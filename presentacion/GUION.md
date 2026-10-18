@@ -51,23 +51,25 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 ## 2. EGC vs. UGC (~3:00)
 
-*[Los dos celulares pasan su feed solos (contenido de prueba hasta la fase 3); la sudadera en el centro gira hacia un lado y el otro.]*
+*[Los dos celulares pasan su feed solos, con clips reales de TikTok; la sudadera en el centro gira hacia un lado y el otro. `F` frena los feeds para comentar una publicación.]*
 
 "Empecemos por el contenido. El **EGC** es el que crean los dueños y el equipo de la marca; el **UGC**, el que crean los usuarios. En Nude Project el EGC es la base, y el UGC lo amplifica.
 
-*[Feed EGC.]* Su EGC tiene muchos formatos. Bruno hizo del contenido el protagonista desde el primer día, con material de detrás de escena, y lo sigue haciendo en su propio canal de vlogs. Cuando llegaron a Nueva York lo documentaron todo con la serie *Day 1, Day 2 of making our brand known in the US*. Publicaron hasta sus *House Rules*, como las reglas de una casa de amigos. El primer episodio del podcast cuenta cómo pasaron de cero a 200.000 seguidores. Y en su campaña viral, los que aparecen en las fotos son los propios empleados.
+*[Feed EGC.]* Su EGC tiene muchos formatos, y siempre muestra a las personas detrás de la marca. Desde el principio contaron su recorrido en primera persona: empezaron en 2018 despachando pedidos desde el cuarto de la residencia, con producciones chicas y jornadas de 16 horas, y ese video ya pasó 1,4 millones de vistas. Cuando llegaron a Estados Unidos lo documentaron día a día con la serie *making our brand known in the US*: en el día 5 se sientan con Gary Vee, uno de los emprendedores más conocidos del país. Tienen su propio podcast, donde juegan al semáforo con Franco Colapinto (823.000 vistas). Y hasta las aperturas son contenido: en Barcelona filmaron cómo un grupo de corredores atraviesa la cinta antes de tiempo y detrás entra la multitud (895.000 vistas).
 
-*[Feed UGC.]* El UGC aparece donde la marca no controla la escena. Cuando abre una tienda, la gente hace cola desde las seis de la mañana, y las primeras 60 personas reciben una llave metálica que se volvió objeto de colección y símbolo de estatus. Esa llave se fotografía y se comparte. También Lil Nas X, Drake y Bad Gyal publicaron fotos con prendas de la marca.
+*[Feed UGC.]* El UGC aparece donde la marca no controla la escena. Cuando abrió su primer pop-up en Estados Unidos, en Miami, se hizo fila antes de que abrieran las puertas. @andrewponch se filmó llegando, ‘después de tantas filas lo logramos’, y sumó 113.000 vistas; @christianrodr_ grabó la apertura, con la gente festejando en la puerta. El resto lo hace la ropa: *fit checks* como los de @nataliesmirnakos y @santiabarzaa, que muestran cómo combinan sus prendas y superan las 80.000 vistas cada uno. Pasa lo mismo con la llave metálica que reciben los primeros 60 de cada apertura, o con las fotos de artistas como Lil Nas X, Drake y Bad Gyal. Ninguno es publicidad paga: es su gente mostrando la marca porque quiere.
 
 ¿Qué impacto tiene en su identidad? El EGC hace que la historia sea genuina pero no improvisada: lo que el caso llama **autenticidad controlada**. El UGC aporta **validación social**: ya no lo dice la marca, lo dice su gente. Juntos logran que la marca hable como un amigo y que la comunidad le responda."
 
 ## 3. Marketing viral (~2:00)
 
-*[La pared de 24 celulares repite la publicación; los corazones brotan de las pantallas y el contador pasa el medio millón.]*
+*[La pared de 24 celulares repite el TikTok de la campaña (la remera en el metro); los corazones brotan de las pantallas y el contador pasa el medio millón.]*
 
 "Lo viral está en el ADN de la marca. Su primera sudadera, con la frase *pretty girls like trap music*, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.
 
 La campaña que elegimos es **Out of Office**, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, *Heading to work because I was too shy to dance on TikTok in 2020*. Superó el medio millón de likes en Instagram en menos de 24 horas.
+
+*[`→`: la cámara se acerca a la pared hasta que se lee la remera. Diapositiva "El producto es el mensaje".]*
 
 ¿Por qué funcionó? Por el **tono**: ironía y humor. Por el **mensaje**: le habla a la frustración de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la **estética**: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el **contexto**: salió justo cuando todos volvían de vacaciones. Y porque el **producto es el mensaje**: quien se pone la remera comparte el chiste.
 
