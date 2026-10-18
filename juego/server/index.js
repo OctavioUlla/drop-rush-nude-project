@@ -525,7 +525,8 @@ export function servirComprimidos(raiz) {
       const conHash = ruta.startsWith('/assets/');
       res.set({ 'Content-Encoding': codificacion, Vary: 'Accept-Encoding' });
       res.type(extname(ruta));
-      return res.sendFile(archivo + extension, { maxAge: conHash ? '1y' : 0, immutable: conHash });
+      // Ruta relativa a `root`: con la absoluta, `send` da 404 si alguna carpeta de arriba empieza con punto.
+      return res.sendFile(`.${ruta}${extension}`, { root: base, maxAge: conHash ? '1y' : 0, immutable: conHash });
     }
     next();
   };

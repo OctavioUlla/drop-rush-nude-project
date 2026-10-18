@@ -132,7 +132,18 @@ Lo que queda de la Fase 4 solo se puede hacer con celulares y la red reales. Lis
 
 El servidor es un único proceso de Node (Express + Socket.io) que sirve el juego y el tiempo real en el mismo dominio y puerto (sección 10). El estado de la partida vive en memoria: **tiene que haber una sola instancia**.
 
-**Fly.io** (recomendado: región São Paulo, no se duerme). Desde la raíz del repositorio:
+**Notebook + Cloudflare Tunnel** (gratis, sin cuenta y con la menor latencia desde Argentina: el tráfico entra por el nodo de Cloudflare en Buenos Aires). El servidor corre en la notebook del proyector y Cloudflare le da una dirección pública `https://….trycloudflare.com` con WebSockets, a la que los celulares entran por el Wi-Fi de la facultad o por datos.
+
+1. Instalar `cloudflared` una sola vez y volver a abrir la terminal: `winget install --id Cloudflare.cloudflared` en Windows o `brew install cloudflared` en macOS.
+2. En `juego/`, correr `npm run tunel`. El script compila el juego si falta `dist/`, levanta el servidor en modo producción, abre el túnel, espera a que la dirección responda y muestra las direcciones del proyector, la presentación y los celulares. No abre el navegador salvo que se pida: `npm run tunel -- --abrir host` abre el proyector y `--abrir presentacion`, la presentación (`--build` vuelve a compilar; `--puerto 3001` cambia el puerto).
+3. Abrir el proyector y la presentación **con la dirección del túnel, no con `localhost`**: el QR toma la dirección de la página, así que apunta al túnel solo. La dirección cambia cada vez que se corre el script; no hace falta anotarla.
+4. `Ctrl+C` cierra el servidor y el túnel.
+
+Probado desde Argentina con 40 bots por el túnel, 3 preguntas y un corte por bot: 120 de 120 respuestas contadas una sola vez, 40 sesiones recuperadas y RTT mediano de 17 ms (p95 56 ms).
+
+Cosas a tener en cuenta: la notebook tiene que estar enchufada, sin suspenderse y con buena conexión durante toda la clase (si se corta, se corta el juego). `cloudflared` sale por el puerto 7844: si la red de la facultad lo bloquea, el script lo avisa y se puede conectar la notebook a los datos de un celular. El túnel rápido no tiene garantía de servicio; para el día de la clase conviene probarlo antes en el aula (ver [Ensayo en el aula](#ensayo-en-el-aula), prueba 5, con `--url` apuntando al túnel).
+
+**Fly.io** (región São Paulo, no se duerme; ya no tiene plan gratis para cuentas nuevas). Desde la raíz del repositorio:
 
 ```bash
 fly launch --no-deploy --copy-config   # la primera vez (usa fly.toml; cambiar "app" si el nombre está tomado)
