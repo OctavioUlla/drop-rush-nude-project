@@ -13,7 +13,7 @@
 |---|---|
 | **Género** | Runner 3D por carriles (estilo Subway Surfers) + preguntas (estilo Kahoot) |
 | **Jugadores** | Hasta **40 grupos** jugando al mismo tiempo, **un solo celular por grupo** |
-| **Duración** | **7 minutos** en total: 1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate |
+| **Duración** | **8 minutos** en total: 1 de instrucciones, ~4,5 de carrera y 2,5 de repaso de errores y debate |
 | **Pantalla principal** | Compu del aula conectada al proyector (pantalla *host*) |
 | **Controles** | Celular de cada grupo: deslizar a izquierda o derecha para cambiar de carril y **hacia arriba para saltar** |
 | **Gráficos** | 3D *low-poly* estilizado (WebGL), pensado para andar bien en celulares de gama baja |
@@ -59,7 +59,7 @@ La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio
 | **Revelado** ⚡ | ~2 s, **sin frenar** | Destello verde o rojo en el celular y la respuesta correcta resaltada en el proyector, mientras ya arranca el tramo siguiente | 📱 + 📽️ |
 | **Repaso de errores** | 2 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
 
-Con 6 preguntas, la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 s de pregunta) = 3 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 7 u 8 preguntas (~4 a 4,5 min); si falta, bajar a 5.
+Con 8 preguntas, la carrera dura unos **4,5 minutos**: 8 × (15 s de tramo + 15 s de pregunta) = 4 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 9 o 10 preguntas (~5 a 5,5 min); si falta, bajar a 6 (~3,5 min).
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
@@ -163,7 +163,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - No hay castigos fuertes, para que ningún grupo quede descolgado y desmotivado.
 
 ### 3.6 Rachas y poderes
-- **2 aciertos seguidos** otorgan un **poder** (con solo 6 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
+- **2 aciertos seguidos** otorgan un **poder** (con 8 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
 - Cada grupo puede guardar **un poder a la vez**.
 
 | Poder | Ícono | Efecto |
@@ -176,7 +176,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 
 ### 3.7 Coleccionables
 - **❤️ Likes** en la calle, muchos, como las monedas de Subway Surfers: filas de 8 en un carril libre y arcos de 7 sobre los obstáculos bajos que siguen la curva del salto (saltando a tiempo se juntan enteros). Dan una pequeña cantidad de distancia extra y suman a las estadísticas finales.
-- Su valor es bajo (0,5 m cada uno), para que no compitan con las preguntas: no se pueden juntar todos (en cada fila hay likes en más de un carril), y aun juntando todos los que se pueden en la carrera suman menos que una respuesta correcta.
+- Su valor es bajo (0,5 m cada uno), para que no compitan con las preguntas: no se pueden juntar todos (en cada fila hay likes en más de un carril), y aun juntando todos los que se pueden en la carrera suman menos que una respuesta correcta cada 6 preguntas (con 8 preguntas, el tope es de 200 m).
 
 ### 3.8 Un celular por grupo
 - Los grupos se identifican **solo con un número**, del 1 a `maxGrupos` (por ejemplo, 1 a 40).
@@ -460,11 +460,11 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 | `correcta` | número | Índice de la opción correcta (empieza en 0) |
 | `explicacion` | texto | **Recomendado**; se muestra en el **repaso de errores** al final (no durante la carrera). Puede ser más larga que antes, ya que hay tiempo para leerla y comentarla |
 | `tiempo` | número | Opcional; segundos para responder (por defecto, `tiempoPorDefecto`) |
-| `reserva` | booleano | Opcional; las de reserva solo se usan si la partida pide más preguntas que las principales (así con 6 preguntas sale una por tema) |
+| `reserva` | booleano | Opcional; las de reserva solo se usan si la partida pide más preguntas que las principales (con las 8 por defecto se suman 2 de reserva; con 6 sale una por tema) |
 
 > El servidor **mezcla el orden de las opciones** en cada partida, para que la respuesta correcta no quede siempre en el mismo carril. Las estadísticas del repaso se muestran con el orden mezclado que vieron los grupos.
 
-### Distribución sugerida de temas (para 6 preguntas)
+### Distribución de temas (6 principales, una por tema)
 - EGC vs. UGC: 1
 - Marketing viral: 1
 - Marketing experiencial: 1
@@ -472,9 +472,9 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 - Objetivo comunicacional: 1
 - Modelo D2C, drops y comunidad: 1
 
-Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Conviene tener 2 o 3 preguntas de reserva en el banco por si se sube la cantidad.
+Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Las 8 preguntas por defecto suman 2 de las de reserva, elegidas al azar; conviene tener alguna más en el banco por si se sube la cantidad.
 
-> **Pendiente:** revisar el borrador de `data/preguntas.json` *(a cargo del equipo)*: 6 preguntas principales (una por tema) y 3 de reserva, todas tomadas del caso.
+> **Pendiente:** revisar el borrador de `data/preguntas.json` *(a cargo del equipo)*: 6 preguntas principales (una por tema) y 4 de reserva, todas tomadas del caso.
 
 ---
 
@@ -485,7 +485,7 @@ En `data/config.json`, o desde el lobby del host:
 | Parámetro | Por defecto | Descripción |
 |---|---|---|
 | `maxGrupos` | 40 | Cantidad de grupos; se numeran del 1 a este valor |
-| `cantidadPreguntas` | 6 | Cuántas preguntas del banco se usan |
+| `cantidadPreguntas` | 8 | Cuántas preguntas del banco se usan |
 | `ordenAleatorio` | true | Mezclar el orden de las preguntas |
 | `mezclarOpciones` | true | Mezclar el orden de las opciones en los carriles |
 | `tiempoPorDefecto` | 15 | Segundos por pregunta |
@@ -622,7 +622,7 @@ juego/
 - [x] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
 - [x] Calidad automática, resolución adaptable, Wake Lock y Service Worker *(+ tope de 30 FPS en calidad baja y archivos precomprimidos con Brotli y gzip)*
 - [x] Controles del presentador (pausar, saltar, terminar)
-- [x] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7) *(`npm run balanceo` y en `npm test`: en fácil, no esquivar nada en toda la carrera cuesta 116 m, menos que una respuesta correcta)*
+- [x] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7) *(`npm run balanceo` y en `npm test`: en fácil y con 8 preguntas, no esquivar nada en toda la carrera cuesta 158 m, menos que una respuesta correcta cada 6 preguntas: 200 m)*
 - [ ] Prueba de carga con 40 bots + algunos celulares reales a la vez *(40 bots con cortes contra el build de producción: ✓; falta sumar celulares reales)*
 - [ ] Prueba en el **Wi-Fi real de la facultad** (portal cautivo, WebSocket, velocidad de descarga) *(lista de pasos en el README)*
 - [ ] Deploy *(Dockerfile, `fly.toml` y `render.yaml` listos; falta crear la app en la cuenta del equipo)*
@@ -656,7 +656,7 @@ Ver también la [estructura de la presentación](../presentacion/README.md): el 
 
 La presentación es interactiva y usa **el mismo servidor** ([plan de la presentación](../presentacion/PLANIFICACION.md)): los grupos entran con el QR antes de empezar, participan del hype colectivo de apertura y de una votación desde el mismo celular, y esa sesión pasa directo al lobby del juego. El controlador del celular (`public/play/`) suma esas fases de la presentación.
 
-- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **7 minutos** (1 de instrucciones, ~3,5 de carrera y 2,5 de repaso de errores y debate), para un total de **22 minutos**.
+- **Momento**: al final de los 15 minutos de exposición, como repaso. El bloque del juego dura **8 minutos** (1 de instrucciones, ~4,5 de carrera y 2,5 de repaso de errores y debate), para un total de **23 minutos**.
 - **Antes de jugar**:
   - Pedir que cada grupo tenga **un** celular con batería, conexión y el brillo alto.
   - Mostrar el QR **al principio de la presentación** para que los 40 grupos entren al lobby con tiempo y se descarguen los gráficos.
@@ -703,7 +703,7 @@ La presentación es interactiva y usa **el mismo servidor** ([plan de la present
 - [x] Assets 3D: **los crea Claude**, generados por código (ver 5.3.1)
 
 **Abiertas**
-- [ ] Revisar el banco de preguntas (`data/preguntas.json`): hay un **borrador** de 6 preguntas (una por tema) + 3 de reserva, redactado a partir del caso
+- [ ] Revisar el banco de preguntas (`data/preguntas.json`): hay un **borrador** de 6 preguntas (una por tema) + 4 de reserva, redactado a partir del caso
 - [ ] Conseguir 2 o 3 celulares de gama baja para las pruebas de rendimiento
 - [ ] Averiguar cómo es el Wi-Fi de la facultad (portal cautivo, bloqueos) y probarlo
 - [ ] Elegir el hosting del servidor (uno solo)

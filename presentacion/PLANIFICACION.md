@@ -160,8 +160,8 @@ La interactividad se come minutos de la exposición, así que va **dentro** de l
 | 2. EGC vs. UGC | 3 min | **Feeds** |
 | 3 a 6 | 7,5 min | — |
 | 7. Desafíos | 1,5 min | Se retoma la votación |
-| 8. Drop Rush | 7 min | La **cola** llega a la puerta → juego |
-| **Total** | **22 min** | |
+| 8. Drop Rush | 8 min | La **cola** llega a la puerta → juego |
+| **Total** | **23 min** | |
 
 La **cola** está presente todo el tiempo y no suma minutos.
 
@@ -300,7 +300,7 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 
 ### Fase 5: Contenido y ensayo
 - [ ] Cargar el contenido de cada bloque (sección 8)
-- [ ] Ensayo con cronómetro: 15 min de exposición + 7 min de juego
+- [ ] Ensayo con cronómetro: 15 min de exposición + 8 min de juego
 - [ ] Prueba en el aula: proyector, Wi-Fi y control de diapositivas
 - [ ] Exportar el PDF de respaldo
 

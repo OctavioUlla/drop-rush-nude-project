@@ -6,7 +6,7 @@ const DATA = new URL('../data/', import.meta.url);
 /** Valores por defecto de la sección 7 de PLANIFICACION.md. */
 export const CONFIG_POR_DEFECTO = {
   maxGrupos: 40,
-  cantidadPreguntas: 6,
+  cantidadPreguntas: 8,
   ordenAleatorio: true,
   mezclarOpciones: true,
   tiempoPorDefecto: 15,
