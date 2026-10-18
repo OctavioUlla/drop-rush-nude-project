@@ -15,7 +15,7 @@ export const CONFIG_POR_DEFECTO = {
   duracionSprint: 10,
   duracionRevelado: 3,
   preguntasEnRepaso: 2,
-  dificultadObstaculos: 'facil',
+  dificultadObstaculos: 'caotico',
   toleranciaRespuestaTardia: 10,
   bonusAcierto: 150,
   bonusRapidezMax: 100,
