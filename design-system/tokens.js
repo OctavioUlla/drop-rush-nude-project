@@ -42,7 +42,13 @@ export const colores = {
     "fachada-4": "#a8664a",
     "ventana": "#482922",
     "tienda": "#482922",
-    "tienda-cartel": "#fff8ee"
+    "tienda-cartel": "#fff8ee",
+    "piel": "#c68863",
+    "arbol-copa": "#6f8a4a",
+    "arbol-tronco": "#6e4a40",
+    "toldo": "#0b4d3b",
+    "particula-polvo": "#cfc3b6",
+    "linea-velocidad": "#fff8ee"
   },
   "presentacion": {
     "estudio-crema-fondo": "#fff8ee",
@@ -103,7 +109,13 @@ export const colores3d = {
     "fachada-4": 11036234,
     "ventana": 4729122,
     "tienda": 4729122,
-    "tienda-cartel": 16775406
+    "tienda-cartel": 16775406,
+    "piel": 13011043,
+    "arbol-copa": 7309898,
+    "arbol-tronco": 7227968,
+    "toldo": 740667,
+    "particula-polvo": 13616054,
+    "linea-velocidad": 16775406
   },
   "presentacion": {
     "estudio-crema-fondo": 16775406,

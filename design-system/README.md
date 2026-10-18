@@ -66,6 +66,7 @@ Un solo lenguaje visual para la **presentación interactiva** del caso (HTML con
 
 ### Juego
 - **Mundo 3D:** asfalto `#5a4640`, vereda `#cfc3b6`, fachadas de Madrid en tonos tierra (`#efe2d0` → `#a8664a`), cielo de `#e9d6c2` a `#fff8ee`, niebla `#f3e9dc`, tienda cacao con cartel crema.
+- **Detalles del mundo:** piel `#c68863`, árboles en verde oliva apagado (`#6f8a4a`, tronco `#6e4a40`) para no competir con los acentos, toldos de los locales en bosque `#0b4d3b`, partículas de polvo `#cfc3b6` y líneas de velocidad crema.
 - **Elementos:** obstáculo alto = ladrillo, obstáculo bajo = mostaza, like = rosa. Cada tipo se reconoce por color *y* por silueta.
 - **40 grupos:** 10 tonos × 4 luminosidades, ordenados para que los primeros 10 grupos sean los más distintos entre sí. Cada color trae su color de texto (crema o cacao) con contraste ≥ 4:1 para el número.
 

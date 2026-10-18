@@ -3,6 +3,7 @@ import { colores3d } from '../../../../design-system/tokens.js';
 import { crearEscena } from './scene.js';
 import { Mundo } from './world.js';
 import { Personaje } from './character.js';
+import { Efectos } from './effects.js';
 import { curvatura, curvarMaterial } from './models/kit.js';
 import { crearArco } from './models/props.js';
 import { crearTienda } from './models/store.js';
@@ -35,6 +36,7 @@ export class Vista {
     );
     this.burbuja.visible = false;
     this.escena.add(this.burbuja);
+    this.efectos = new Efectos(this.escena);
     this.fovExtra = 0; // el turbo abre un poco el campo de visión
     this.imanPos = { x: 0, y: 0 };
     this.tienda = crearTienda();
@@ -98,10 +100,13 @@ export class Vista {
     this.mundo.actualizar(estado.distancia, pista, tiempo, corredor.iman ? this.imanPos : null);
     this.personaje.actualizar(estado, corredor, dt, tiempo);
 
+    const { particulas, lineas } = this.calidad.config;
     for (const e of corredor.eventos) {
       if (e === 'choque') this.sacudida = 1;
       if (e === 'escudo') this.sacudida = 0.5;
+      this.efectos.rafaga(e, estado.x, estado.y, estado.distancia, corredor.velocidad, particulas);
     }
+    this.efectos.actualizar(dt, estado.distancia, corredor.velocidad, lineas && corredor.turbo && !corredor.pausado ? 1 : 0);
     this.burbuja.visible = corredor.escudos > 0 || corredor.invulnerable > 0 && this.burbuja.visible;
     if (this.burbuja.visible) {
       this.burbuja.position.set(estado.x, estado.y + 0.95, -estado.distancia);

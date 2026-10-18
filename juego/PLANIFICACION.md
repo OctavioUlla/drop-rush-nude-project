@@ -419,7 +419,8 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 | server → player | `state:sync` | `{ runDistance, bonusDistance, answers, answeredIndexes, question, position, total, catchUp, final, advantage, power, hype, fiftyFifty, closed, extraObstacles, streak }` |
 | server → todos | `game:end` | `{ winner, queue, stats }` (un solo ganador; `queue` es el orden de llegada del resto) |
 | host → server | `host:review` | ack: `[{ index, text, options, correctIndex, distribution, correctCount, answered, total, topic, explanation }]` (preguntas con más errores) |
-| host → server | `host:pause` / `host:skip` / `host:end` | — |
+| host → server | `host:pause` / `host:resume` / `host:skip` / `host:finish` | ack: `{ ok }`. Pausar, seguir, terminar ya la fase en curso, o terminar la carrera con el ganador de ahora. El servidor manda el mismo `game:script` (mismo `id`, `revision` nueva) con `pausedAt` y `shifts: [{ from, delta }]` |
+| host → server | `host:end` | — Cancela la partida (sin ganador) y vuelve al lobby (`game:reset`) |
 
 ---
 
@@ -547,15 +548,18 @@ juego/
 │   │       │   ├── street.js     # Bloques de calle, veredas, edificios, faroles, carteles
 │   │       │   ├── props.js      # Likes, arcos de respuesta, power-ups
 │   │       │   └── store.js      # Tienda de la meta
-│   │       ├── effects.js    # Partículas, líneas de velocidad, sacudida de cámara
+│   │       ├── effects.js    # Partículas y líneas de velocidad
 │   │       └── quality.js    # Medición de FPS y niveles de calidad
+│   ├── dev/models/       # Visor de modelos (/dev/models/)
 │   ├── assets/           # Sonidos (tipografías y colores vienen del design system; sin modelos 3D: se generan por código)
-│   ├── sw.js             # Service Worker para cachear los assets
 │   └── shared/
 │       ├── styles.css    # Solo layout propio; importa design-system/tokens.css y components.css
 │       └── rng.js        # Generador aleatorio con semilla (compartido)
+├── estaticos/
+│   └── sw.js             # Service Worker para cachear los assets (se sirve en /sw.js)
 ├── tools/
-│   └── bots.js           # Simulador de 40 jugadores para pruebas de carga
+│   ├── bots.js           # Simulador de 40 jugadores para pruebas de carga
+│   └── balanceo.js       # Balanceo con la simulación real del corredor (sección 7)
 └── data/
     ├── preguntas.json
     └── config.json
@@ -610,16 +614,18 @@ juego/
 - [x] Sonidos, música y vibración *(música y efectos sintetizados en el proyector; los celulares solo vibran)*
 
 ### Fase 4: Gráficos, pulido y prueba
-- [ ] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1)
-- [ ] Visor de modelos (`/dev/models`) para revisarlos y ajustar colores y proporciones
-- [ ] Aplicar el [design system](../design-system/README.md) (paleta, tipografía, cielo, niebla, componentes `np-*`)
-- [ ] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
-- [ ] Calidad automática, resolución adaptable, Wake Lock y Service Worker
-- [ ] Controles del presentador (pausar, saltar, terminar)
-- [ ] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7)
-- [ ] Prueba de carga con 40 bots + algunos celulares reales a la vez
-- [ ] Prueba en el **Wi-Fi real de la facultad** (portal cautivo, WebSocket, velocidad de descarga)
-- [ ] Deploy
+> Implementada en código: ver [`README.md`](README.md#qué-hay-en-la-fase-4). Falta lo que se hace en el aula: ver [Ensayo en el aula](README.md#ensayo-en-el-aula).
+
+- [x] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1) *(calles con árboles, toldos, carteles del drop y balcones; todos dentro del presupuesto)*
+- [x] Visor de modelos (`/dev/models`) para revisarlos y ajustar colores y proporciones *(con triángulos contra el presupuesto, alambre, mundo curvado y exportación a `.glb`)*
+- [x] Aplicar el [design system](../design-system/README.md) (paleta, tipografía, cielo, niebla, componentes `np-*`) *(los colores 3D nuevos, como la piel, los árboles y los toldos, se sumaron a `tokens.json`; no queda ningún color escrito a mano en los modelos)*
+- [x] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
+- [x] Calidad automática, resolución adaptable, Wake Lock y Service Worker *(+ tope de 30 FPS en calidad baja y archivos precomprimidos con Brotli y gzip)*
+- [x] Controles del presentador (pausar, saltar, terminar)
+- [x] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7) *(`npm run balanceo` y en `npm test`: en fácil, no esquivar nada en toda la carrera cuesta 116 m, menos que una respuesta correcta)*
+- [ ] Prueba de carga con 40 bots + algunos celulares reales a la vez *(40 bots con cortes contra el build de producción: ✓; falta sumar celulares reales)*
+- [ ] Prueba en el **Wi-Fi real de la facultad** (portal cautivo, WebSocket, velocidad de descarga) *(lista de pasos en el README)*
+- [ ] Deploy *(Dockerfile, `fly.toml` y `render.yaml` listos; falta crear la app en la cuenta del equipo)*
 
 ---
 

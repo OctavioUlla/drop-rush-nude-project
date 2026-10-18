@@ -123,6 +123,7 @@ function limpiarPartida() {
   sonido.pararMusica();
   ultimoSonido = { fase: null, segundo: null, final: false };
   $('avisos').replaceChildren();
+  mostrarPausa();
 }
 
 // ---------- Red ----------
@@ -138,18 +139,32 @@ socket.on('room:groups', (lista) => {
 socket.on('host:state', (e) => {
   if (!e) return limpiarPartida();
   guion = new Guion(e.script);
+  mostrarPausa();
   pregunta = e.question ?? pregunta;
   posicionados = e.positioned;
   final = e.final;
   if (e.reveal) revelado = { ...e.reveal, hasta: performance.now() + e.reveal.at + guion.datos.revealDuration - Date.now() };
 });
 socket.on('game:script', (datos) => {
-  limpiarPartida();
-  guion = new Guion(datos);
+  if (guion?.id === datos.id) {
+    // El mismo guion, pausado, reanudado o con una fase saltada: se sigue sin limpiar nada.
+    const estabaPausada = guion.pausada;
+    guion = new Guion(datos);
+    ajustarPregunta();
+    if (estabaPausada && !guion.pausada) {
+      const f = guion.faseEn(reloj.ahora());
+      if (f && f.type !== FASES.CUENTA && f.type !== FASES.FIN) sonido.tocarMusica(f.type === FASES.SPRINT ? sonido.tempoSprint : undefined);
+    }
+  } else {
+    limpiarPartida();
+    guion = new Guion(datos);
+  }
+  mostrarPausa();
 });
 socket.on('game:reset', limpiarPartida);
 socket.on('question:start', (p) => {
   pregunta = p;
+  ajustarPregunta();
   posicionados = { index: p.index, count: 0, total: grupos.filter((g) => g.taken).length };
 });
 socket.on('question:positioned', (p) => (posicionados = p));
@@ -181,6 +196,28 @@ socket.on('server:stats', (s) => {
 socket.on('debug:reports', dibujarInformes);
 setInterval(() => reloj.sincronizar(3), 15_000);
 
+/** Hora del guion: la del servidor, congelada mientras la partida está en pausa. */
+function ahoraGuion() {
+  const t = reloj.ahora();
+  return guion ? guion.tiempo(t) : t;
+}
+
+/** Si el presentador pausó o saltó, el tiempo de la pregunta en curso sale del guion nuevo. */
+function ajustarPregunta() {
+  const f = pregunta && guion?.fases.find((x) => x.type === FASES.PREGUNTA && x.index === pregunta.index);
+  if (!f) return;
+  pregunta.startsAt = f.startsAt;
+  pregunta.endsAt = f.startsAt + f.duration;
+}
+
+function mostrarPausa() {
+  const pausada = Boolean(guion?.pausada);
+  $('pausa').hidden = !pausada;
+  $('btn-pausa').textContent = pausada ? '▶ Seguir' : '⏸ Pausar';
+  $('btn-pausa').setAttribute('aria-pressed', String(pausada));
+  if (pausada) sonido.pararMusica();
+}
+
 // ---------- Controles ----------
 $('btn-empezar').addEventListener('click', () =>
   socket.emit('host:start', {
@@ -211,7 +248,30 @@ $('btn-sonido').addEventListener('click', () => {
   }
 });
 $('btn-terminar').addEventListener('click', () => {
-  if (confirm('¿Terminar la partida y volver al lobby?')) socket.emit('host:end');
+  if (confirm('¿Cancelar la partida y volver al lobby? No va a haber ganador.')) socket.emit('host:end');
+});
+
+// Controles del presentador (sección 4.1): pausar, saltar el tramo o la pregunta y terminar con el ganador de ahora.
+const controlesActivos = () => Boolean(guion) && !final && vista === 'auto';
+function pausarOSeguir() {
+  if (controlesActivos()) socket.emit(guion.pausada ? 'host:resume' : 'host:pause');
+}
+function saltarFase() {
+  if (controlesActivos()) socket.emit('host:skip');
+}
+function terminarCarrera() {
+  if (controlesActivos() && confirm('¿Terminar la carrera ahora? Gana el grupo que va primero en este momento.')) socket.emit('host:finish');
+}
+$('btn-pausa').addEventListener('click', pausarOSeguir);
+$('btn-saltar').addEventListener('click', saltarFase);
+$('btn-fin').addEventListener('click', terminarCarrera);
+document.addEventListener('keydown', (e) => {
+  if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.target.closest?.('input, select, textarea')) return;
+  const accion = { KeyP: pausarOSeguir, KeyS: saltarFase, KeyF: terminarCarrera }[e.code];
+  if (accion && controlesActivos()) {
+    e.preventDefault();
+    accion();
+  }
 });
 $('btn-liberar').addEventListener('click', () => {
   if (confirm('¿Liberar todos los grupos? Cada celular va a tener que elegir su número de nuevo.')) socket.emit('host:release_all');
@@ -375,8 +435,10 @@ function mostrarPantalla(id) {
 
 function actualizar() {
   if (!sala) return;
-  const t = reloj.ahora();
+  const t = ahoraGuion();
   const f = guion?.faseEn(t) ?? null;
+  const enCarrera = Boolean(guion) && vista === 'auto' && f?.type !== FASES.FIN;
+  $('controles').hidden = !enCarrera;
 
   if (!guion) {
     mostrarPantalla('pantalla-lobby');
@@ -405,7 +467,7 @@ function actualizar() {
 
 /** Efectos y música según el guion (se llama 10 veces por segundo: cada efecto suena una sola vez). */
 function sonar(f, t) {
-  if (!f) return;
+  if (!f || guion.pausada) return;
   const u = ultimoSonido;
   const segundo = Math.ceil(f.restante / 1000);
   const nuevaFase = u.fase !== f.numero;
@@ -456,6 +518,7 @@ function mostrarPoder({ group, powerId, targets }) {
 }
 
 function textoFase(f, t) {
+  if (guion.pausada) return 'En pausa';
   if (!f) return `Empieza en ${Math.max(0, Math.ceil((guion.datos.startsAt - t) / 1000))} s`;
   if (f.type === FASES.FIN) return 'Llegando a la tienda…';
   const numero = f.type === FASES.TRAMO || f.type === FASES.PREGUNTA ? ` ${f.index + 1}/${guion.datos.questions}` : '';
@@ -629,6 +692,6 @@ function animarMapa(t) {
   const dt = Math.min(0.1, (t - tMapa) / 1000);
   tMapa = t;
   const carrera = $('pantalla-carrera');
-  if (!carrera.hidden && !carrera.classList.contains('carrera--pregunta')) mapa.dibujar(posiciones, guion?.datos, reloj.ahora(), dt);
+  if (!carrera.hidden && !carrera.classList.contains('carrera--pregunta')) mapa.dibujar(posiciones, guion?.datos, ahoraGuion(), dt);
 }
 requestAnimationFrame(animarMapa);

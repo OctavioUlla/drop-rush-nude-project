@@ -13,6 +13,20 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .barra__boton { border: 0; background: transparent; font-size: var(--np-texto-lg); cursor: pointer; opacity: 0.6; padding: var(--np-espacio-1); }
 .barra__boton:hover { opacity: 1; }
 
+.barra__controles { display: flex; gap: var(--np-espacio-2); }
+.barra__control {
+  min-height: 40px;
+  padding: 0 var(--np-espacio-3);
+  border: var(--np-borde-fino) solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: var(--np-peso-bold) var(--np-texto-base) / 1 var(--np-fuente-display);
+  cursor: pointer;
+}
+.barra__control:hover { background: var(--np-marca-crema); color: var(--np-marca-cacao); }
+.barra__control[aria-pressed='true'] { background: var(--np-acento-mostaza); color: var(--np-marca-cacao); border-color: var(--np-acento-mostaza); }
+.barra__control:disabled { opacity: 0.4; cursor: default; background: transparent; color: inherit; }
+
 .pantalla { flex: 1; min-height: 0; }
 
 /* ---------- Lobby ---------- */
@@ -126,6 +140,23 @@ body { display: flex; flex-direction: column; min-height: 100%; }
   font: var(--np-peso-black) 16rem / 1 var(--np-fuente-display);
   letter-spacing: var(--np-interletra-display);
 }
+
+/* Pausa del presentador: tapa la carrera (el ranking queda visible al costado). */
+.pausa {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--np-espacio-3);
+  background: color-mix(in srgb, var(--np-marca-cacao) 88%, transparent);
+  color: var(--np-marca-crema);
+  text-align: center;
+}
+.pausa > * { margin: 0; }
+.pausa__titulo { font: var(--np-peso-black) 9rem / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+.pausa__sub { font: var(--np-peso-medio) var(--np-texto-2xl) / 1.3 var(--np-fuente-display); }
 
 /* ---------- Llegada ---------- */
 .final { display: grid; grid-template-columns: 1fr 1fr; }

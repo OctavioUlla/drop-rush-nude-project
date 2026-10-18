@@ -66,8 +66,13 @@ let algoritmoHasta = 0; // Cambio de algoritmo de otro grupo: más obstáculos h
 let extrasHasta = 0; // distancia hasta la que ya se agregaron obstáculos extra
 let impulso = false; // último cuarto de la tabla (emparejar): se aplica desde la próxima fase
 const resultadosVistos = new Set(); // índices de pregunta cuyo resultado ya se aplicó
+let corrimientosVistos = 0; // corrimientos del guion (pausa o salto del presentador) ya aplicados
 
-const ahora = () => (red ? red.ahora() : Date.now());
+/** Hora del guion: la del servidor, congelada mientras el presentador tiene la partida en pausa. */
+const ahora = () => {
+  const t = red ? red.ahora() : Date.now();
+  return guion ? guion.tiempo(t) : t;
+};
 
 // ---------- Arranque ----------
 function hayWebGL() {
@@ -162,11 +167,16 @@ function conectar() {
   });
   red.addEventListener('game:script', (e) => {
     if (guion?.id !== e.detail.id) {
+      // Partida nueva.
       bonusPorPregunta.clear();
       reiniciarEfectos();
+      resultadoFinal = null;
+      corrimientosVistos = e.detail.shifts?.length ?? 0;
+    } else {
+      // El mismo guion con una pausa, un salto o el final adelantado por el presentador.
+      correrHoras(e.detail.shifts ?? []);
     }
     guion = new Guion(e.detail);
-    resultadoFinal = null;
   });
   red.addEventListener('game:reset', (e) => {
     reiniciarPartida();
@@ -236,6 +246,16 @@ function reiniciarPartida() {
   reiniciarEfectos();
   corredor.limitarCarriles(2);
   corredor.corriendo = true;
+}
+
+/** Corre las horas propias (ventaja, Cambio de algoritmo) igual que el servidor corrió el guion. */
+function correrHoras(lista) {
+  for (const { from, delta } of lista.slice(corrimientosVistos)) {
+    const mover = (t) => (t > from ? t + delta : t);
+    if (ventaja) ventaja.hasta = mover(ventaja.hasta);
+    algoritmoHasta = mover(algoritmoHasta);
+  }
+  corrimientosVistos = lista.length;
 }
 
 function reiniciarEfectos() {
@@ -340,7 +360,14 @@ function partidaLocal() {
 function actualizarFase() {
   if (!guion) return;
   const f = guion.faseEn(ahora());
-  if (!f || f.numero === faseActual?.numero) return;
+  if (!f) return;
+  const misma = f.numero === faseActual?.numero && f.type === faseActual.type;
+  if (faseActual && guionIniciado === guion.id && (misma || f.numero < faseActual.numero)) {
+    // Misma fase (con las horas al día si el presentador pausó o saltó). Nunca se vuelve atrás:
+    // si la pausa llegó tarde por un corte, se sigue en la fase que ya estaba.
+    if (misma) faseActual = f;
+    return;
+  }
   const anterior = faseActual;
   faseActual = f;
 
@@ -391,6 +418,8 @@ function actualizarFase() {
       break;
     case FASES.FIN:
       corredor.corriendo = false;
+      // Si el presentador terminó la carrera antes, la tienda aparece cerca en vez de quedar a lo lejos.
+      if (tiendaZ != null && tiendaZ > corredor.distancia + FRENADA_TIENDA * 2) tiendaZ = corredor.distancia + FRENADA_TIENDA * 2;
       if (SOLO) {
         resultadoFinal = {
           winner: 1,
@@ -505,7 +534,7 @@ function recibirAlgoritmo({ extraObstacles, by }) {
 
 /** Usa el poder guardado. Se reintenta hasta el ack: aunque se corte la red, se aplica una sola vez. */
 function usarPoder() {
-  if (!poder || !enPartida()) return;
+  if (!poder || !enPartida() || guion.pausada) return;
   const id = poder;
   const p = PODERES[id];
   poder = null;
@@ -588,6 +617,7 @@ function practicar() {
 
 // ---------- Bucle ----------
 let tAnterior = performance.now();
+let ultimoCuadro = 0;
 let acumulado = 0;
 let tiempo = 0;
 let ultimoProgreso = 0;
@@ -600,12 +630,22 @@ function enPartida() {
 
 function bucle(t) {
   requestAnimationFrame(bucle);
+  // Calidad baja: como máximo 30 cuadros por segundo (la simulación no cambia: va a paso fijo).
+  const { fpsMax } = calidad.config;
+  if (fpsMax && t - ultimoCuadro < 1000 / fpsMax - 2) return;
+  ultimoCuadro = t;
   // Si la pestaña estuvo oculta, no se intenta recuperar todo el tiempo perdido de golpe.
   const dt = Math.min(0.1, (t - tAnterior) / 1000);
   tAnterior = t;
   tiempo += dt;
 
-  acumulado += dt;
+  // En pausa no avanza nada: el corredor queda quieto donde estaba (los gestos no se guardan).
+  const pausada = Boolean(guion?.pausada && enPartida());
+  corredor.pausado = pausada;
+  if (pausada) {
+    acumulado = 0;
+    corredor.pendiente = null;
+  } else acumulado += dt;
   let pasos = 0;
   while (acumulado >= PASO && pasos < 8) {
     actualizarFase();
@@ -739,7 +779,9 @@ function actualizarHud() {
   actualizarFinal(f);
   actualizarEfectos(f, t);
 
-  if (performance.now() < cartelHasta) {
+  if (guion?.pausada && enPartida()) {
+    $('cartel').innerHTML = '<span class="cartel__caja">⏸ Pausa<br><small>Mirá el proyector</small></span>';
+  } else if (performance.now() < cartelHasta) {
     // Un cartel temporal (respuesta guardada, resultado) tiene prioridad.
   } else if (guion && !f && t < guion.datos.startsAt) {
     $('cartel').innerHTML = '<span class="cartel__caja">¡Prepárense!</span>';
@@ -786,7 +828,7 @@ function actualizarEfectos(f, t) {
     $('efectos').dataset.html = html;
   }
 
-  const mostrar = Boolean(poder) && enCarrera && f?.type !== FASES.FIN;
+  const mostrar = Boolean(poder) && enCarrera && f?.type !== FASES.FIN && !guion.pausada;
   $('poder').hidden = !mostrar;
   if (mostrar && $('poder').dataset.id !== poder) {
     const p = PODERES[poder];
@@ -872,5 +914,12 @@ document.addEventListener('visibilitychange', () => {
   // El sistema suelta el bloqueo al ocultar la pestaña: se vuelve a pedir al volver.
   if (document.visibilityState === 'visible' && vista && (!wakeLock || wakeLock.released)) pedirWakeLock();
 });
+
+// ---------- Service Worker ----------
+// Solo en producción (npm run build): guarda el juego para que recargar no vuelva a descargarlo.
+// En `npm run dev` no se registra, así Vite recarga los cambios sin caché de por medio.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
 
 iniciar();

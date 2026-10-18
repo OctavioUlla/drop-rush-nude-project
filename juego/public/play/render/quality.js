@@ -1,10 +1,12 @@
 // Calidad automática (sección 5.3): mide los FPS y ajusta la resolución de a poco.
 // Tres niveles; el jugador puede fijar uno a mano y la elección queda guardada.
 
+// `particulas`: cuántas por ráfaga (1 = todas); `lineas`: líneas de velocidad con el turbo;
+// `fpsMax`: en baja se dibuja a 30 FPS como máximo, para que el celular no se caliente (sección 12).
 export const NIVELES = {
-  alta: { dprMax: 1.5, dprMin: 1.0, distancia: 120, detalle: 2 },
-  media: { dprMax: 1.0, dprMin: 0.85, distancia: 105, detalle: 1 },
-  baja: { dprMax: 0.75, dprMin: 0.6, distancia: 85, detalle: 0 },
+  alta: { dprMax: 1.5, dprMin: 1.0, distancia: 120, detalle: 2, particulas: 1, lineas: true, fpsMax: null },
+  media: { dprMax: 1.0, dprMin: 0.85, distancia: 105, detalle: 1, particulas: 0.5, lineas: false, fpsMax: null },
+  baja: { dprMax: 0.75, dprMin: 0.6, distancia: 85, detalle: 0, particulas: 0, lineas: false, fpsMax: 30 },
 };
 const ORDEN = ['alta', 'media', 'baja'];
 const CLAVE = 'dropRush.calidad';
@@ -65,10 +67,12 @@ export class Calidad {
     this.ventana.tiempo = 0;
     if (this.preferencia !== 'auto') return false;
 
-    const { dprMin, dprMax } = this.config;
+    const { dprMin, dprMax, fpsMax } = this.config;
     const dprTope = Math.min(window.devicePixelRatio || 1, dprMax);
-    this.lentas = this.fps < 45 ? this.lentas + 1 : 0;
-    this.rapidas = this.fps > 57 ? this.rapidas + 1 : 0;
+    // Con el tope de 30 FPS de la calidad baja, "lento" y "rápido" se miden contra ese tope.
+    const objetivo = fpsMax ?? 60;
+    this.lentas = this.fps < objetivo * 0.75 ? this.lentas + 1 : 0;
+    this.rapidas = this.fps > objetivo * 0.95 ? this.rapidas + 1 : 0;
 
     if (this.lentas >= 2) {
       this.lentas = 0;

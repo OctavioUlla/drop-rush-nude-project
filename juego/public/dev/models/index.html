@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drop Rush · Visor de modelos</title>
+  <link rel="stylesheet" href="./visor.css">
+</head>
+<body class="np-base">
+  <!-- Visor de los modelos generados por código (sección 5.3.1): para revisarlos y ajustar colores y proporciones. -->
+  <aside class="visor__lista" data-np-tema="cacao">
+    <p class="np-logo-juego visor__logo">Drop <span>Rush</span></p>
+    <p class="np-etiqueta">Modelos</p>
+    <ul id="modelos" class="visor__modelos"></ul>
+    <p class="visor__nota">Los colores salen de <code>design-system/tokens.json</code> (<code>color.juego</code>): se cambian ahí y se regenera con <code>node design-system/build.mjs</code>.</p>
+  </aside>
+
+  <main class="visor__escena">
+    <canvas id="lienzo" class="visor__lienzo"></canvas>
+
+    <header class="visor__cabecera">
+      <h1 id="nombre" class="np-titulo visor__nombre"></h1>
+      <p id="detalle" class="visor__detalle np-cifra"></p>
+    </header>
+
+    <div class="visor__controles">
+      <label id="control-grupo" class="visor__campo" hidden>Grupo <input id="grupo" type="number" min="1" max="40" value="1"></label>
+      <label id="control-detalle" class="visor__campo" hidden>Detalle
+        <select id="nivel-detalle">
+          <option value="2">Alta</option>
+          <option value="1">Media</option>
+          <option value="0">Baja</option>
+        </select>
+      </label>
+      <span id="control-corredor" class="visor__acciones" hidden>
+        <button id="btn-correr" class="np-boton np-boton--secundario" aria-pressed="true">Correr</button>
+        <button id="btn-saltar" class="np-boton np-boton--secundario">Saltar</button>
+        <button id="btn-tropezar" class="np-boton np-boton--secundario">Tropezar</button>
+      </span>
+      <label class="visor__check"><input id="girar" type="checkbox" checked> Girar</label>
+      <label class="visor__check"><input id="alambre" type="checkbox"> Alambre</label>
+      <label class="visor__check"><input id="curvo" type="checkbox"> Mundo curvado</label>
+      <button id="btn-exportar" class="np-boton">Exportar .glb</button>
+    </div>
+  </main>
+
+  <script type="module" src="./visor.js"></script>
+</body>
+</html>

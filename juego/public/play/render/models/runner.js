@@ -6,8 +6,8 @@ import { caja, esfera, unir, materialMundo, curvarMaterial } from './kit.js';
 // para animarlo con funciones seno (sin esqueleto). Buzo con capucha en el color del grupo
 // y número en la espalda. Mira hacia −z.
 
-const { marca: M } = colores3d;
-const PIEL = 0xc68863;
+const { marca: M, juego: J } = colores3d;
+const PIEL = J.piel;
 
 function parte(geometria, x, y, z) {
   const pivote = new Group();
@@ -53,6 +53,10 @@ export function crearCorredor(numeroGrupo) {
       caja(0.62, 0.66, 0.34, buzo, { y: 0.33 }),
       caja(0.5, 0.14, 0.06, M['cacao-profundo'], { y: 0.12, z: -0.18 }), // bolsillo canguro
       caja(0.56, 0.12, 0.32, M.cacao, { y: -0.02 }), // cintura del pantalón
+      caja(0.64, 0.08, 0.36, M.crema, { y: 0.05 }), // puño elástico del buzo
+      // Cordones de la capucha.
+      caja(0.03, 0.2, 0.03, M.crema, { x: -0.08, y: 0.55, z: -0.18 }),
+      caja(0.03, 0.2, 0.03, M.crema, { x: 0.08, y: 0.55, z: -0.18 }),
     ]),
     0, 0, 0,
   );
@@ -73,7 +77,9 @@ export function crearCorredor(numeroGrupo) {
   const brazoD = miembro(0.38, 0.6, 0.32, 0.16, buzo, buzo, mano);
   torso.add(brazoI.arriba, brazoD.arriba);
 
-  const zapatilla = () => caja(0.2, 0.12, 0.34, M.crema, { y: -0.46, z: -0.06 });
+  // Zapatilla crema con suela cacao (se lee bien desde la cámara de atrás).
+  const zapatilla = () =>
+    unir([caja(0.2, 0.12, 0.34, M.crema, { y: -0.44, z: -0.06 }), caja(0.21, 0.04, 0.36, M['cacao-profundo'], { y: -0.52, z: -0.06 })]);
   const piernaI = miembro(-0.15, 0, 0.45, 0.2, M.cacao, M.cacao, zapatilla());
   const piernaD = miembro(0.15, 0, 0.45, 0.2, M.cacao, M.cacao, zapatilla());
   cadera.add(piernaI.arriba, piernaD.arriba);

@@ -60,7 +60,10 @@ class Bot {
     s.on('player:joined', ({ deviceToken }) => (this.token = deviceToken));
     s.on('player:join_rejected', () => this.m.rechazos++);
     s.on('game:script', (g) => {
+      // El mismo guion vuelve si el presentador pausa, salta una fase o termina antes: se sigue igual.
+      const nuevo = this.guion?.id !== g.id;
       this.guion = new Guion(g);
+      if (!nuevo) return;
       this.distancia = 0;
       this.resultados.clear();
       this.faseActual = null;
@@ -131,10 +134,10 @@ class Bot {
 
   /** Avanza la simulación del bot (se llama cada 50 ms). */
   paso(dt) {
-    if (!this.guion) return;
-    const t = this.reloj.ahora();
+    if (!this.guion || this.guion.pausada) return;
+    const t = this.guion.tiempo(this.reloj.ahora());
     const f = this.guion.faseEn(t);
-    if (f && f.numero !== this.faseActual?.numero) {
+    if (f && (f.numero !== this.faseActual?.numero || f.type !== this.faseActual.type)) {
       const anterior = this.faseActual;
       this.faseActual = f;
       if (anterior?.type === FASES.PREGUNTA) {
