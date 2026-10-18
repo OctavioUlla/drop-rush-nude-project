@@ -28,13 +28,14 @@ function correrTramo({ semilla, dificultad, segundos, previos, torpe, extra = fa
   const largo = VELOCIDAD_BASE * segundos;
   pista.agregarTramo(semilla, 30, Math.max(40, largo - 15), dificultad);
   // Cambio de algoritmo de otro grupo: obstáculos extra durante 5 s desde el principio del tramo.
+  const disponibles = pista.likes.length;
   if (extra) pista.agregarExtra(semilla + 1, 22, 22 + c.velocidad * (DURACION_ALGORITMO / 1000));
   for (let i = 0; i < segundos * PASOS_POR_SEGUNDO; i++) {
     c.paso(PASO, torpe ? pista : null);
     pista.limpiar(c.distancia, PASO);
     c.eventos.length = 0;
   }
-  return { distancia: c.distancia, choques: c.choques, likes: c.likes };
+  return { distancia: c.distancia, choques: c.choques, likes: c.likes, disponibles };
 }
 
 const promedio = (lista) => lista.reduce((s, x) => s + x, 0) / lista.length;
@@ -55,6 +56,7 @@ export function medirBalance({ config = CONFIG_POR_DEFECTO, dificultad = config.
     const perdidas = [];
     const choques = [];
     const likes = [];
+    const disponibles = [];
     let perfecto = 0;
     for (let s = 0; s < semillas; s++) {
       const semilla = 1000 + s * 7919 + i * 104729;
@@ -64,8 +66,12 @@ export function medirBalance({ config = CONFIG_POR_DEFECTO, dificultad = config.
       perdidas.push(p.distancia - t.distancia);
       choques.push(t.choques);
       likes.push(t.likes);
+      disponibles.push(t.disponibles);
     }
-    tramos.push({ sprint, perfecto, perdida: promedio(perdidas), peorPerdida: Math.max(...perdidas), choques: promedio(choques), likes: promedio(likes) });
+    tramos.push({
+      sprint, perfecto, perdida: promedio(perdidas), peorPerdida: Math.max(...perdidas), choques: promedio(choques),
+      likes: promedio(likes), disponibles: promedio(disponibles),
+    });
   }
 
   const perdidaCarrera = tramos.reduce((s, t) => s + t.perdida, 0);
@@ -93,6 +99,8 @@ export function medirBalance({ config = CONFIG_POR_DEFECTO, dificultad = config.
     costoPorChoque: r(perdidaCarrera / choquesCarrera),
     perdidaCarrera: r(perdidaCarrera),
     likesCarrera: r(tramos.reduce((s, t) => s + t.likes, 0) * VALOR_LIKE),
+    likesDisponibles: Math.round(tramos.reduce((s, t) => s + t.disponibles, 0)),
+    todosLosLikes: r(tramos.reduce((s, t) => s + t.disponibles, 0) * VALOR_LIKE),
     // Ventajas y poderes, en metros sobre un tramo.
     turbo: r(tramos[0].perfecto * (TURBO - 1)),
     impulsoCarrera: r((n * ciclo + config.duracionSprint) * VELOCIDAD_BASE * (IMPULSO_EMPAREJAR - 1)),
@@ -134,9 +142,9 @@ export function reglasDeBalance(b) {
       detalle: `${b.algoritmo} m`,
     },
     {
-      regla: 'Los likes de toda la carrera valen menos que una respuesta correcta',
-      ok: b.likesCarrera < b.acierto.minimo,
-      detalle: `${b.likesCarrera} m`,
+      regla: 'Juntar todos los likes de la carrera vale menos que una respuesta correcta',
+      ok: b.todosLosLikes < b.acierto.minimo,
+      detalle: `${b.likesDisponibles} likes = ${b.todosLosLikes} m vs ${b.acierto.minimo} m`,
     },
   ];
 }
@@ -159,7 +167,7 @@ if (esPrincipal(import.meta.url)) {
     'Costo de cada choque': `${b.costoPorChoque} m`,
     'Pérdida por tramo sin esquivar (peor caso)': `${b.perdidaPorTramo} m (${b.peorPerdidaTramo} m)`,
     'Pérdida en toda la carrera sin esquivar': `${b.perdidaCarrera} m`,
-    'Likes de toda la carrera (sin buscarlos)': `${b.likesCarrera} m`,
+    'Likes de toda la carrera (sin buscarlos / todos)': `${b.likesCarrera} m / ${b.todosLosLikes} m (${b.likesDisponibles} likes)`,
     'Turbo durante un tramo': `+${b.turbo} m`,
     'Impulso de emparejar en toda la carrera': `+${b.impulsoCarrera} m`,
     'Cambio de algoritmo recibido': `−${b.algoritmo} m`,

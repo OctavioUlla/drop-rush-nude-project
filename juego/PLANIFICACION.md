@@ -113,7 +113,7 @@ Con 6 preguntas, la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 
   2. los **bonus de distancia** por acertar preguntas, que calcula y guarda el servidor.
 
 ### 3.2 Salto
-- Se activa deslizando hacia arriba. Dura unos **0,6 s** y permite pasar por encima de los obstáculos **bajos**.
+- Se activa deslizando hacia arriba. Es alto y "flotado", como en Subway Surfers: dura unos **0,75 s**, sube **1,9 m** (pasa holgado por encima de los obstáculos **bajos**) y su cima queda por debajo de la cabeza del fan, para que no parezca que lo alto se puede saltar.
 - Los obstáculos **altos** no se pueden saltar: hay que cambiar de carril.
 - Se puede cambiar de carril en el aire, como en Subway Surfers.
 - Saltar no afecta la elección del arco durante las preguntas: cuenta el carril.
@@ -175,8 +175,8 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 > Con 40 grupos, **Cambio de algoritmo** afecta al top 3 (y no solo al primero) para que tenga sentido usarlo desde cualquier posición. Si varios grupos lo usan a la vez, el efecto no se acumula: se extiende la duración, con un tope de 10 s.
 
 ### 3.7 Coleccionables
-- **❤️ Likes** en la calle (algunos en el aire, para atraparlos saltando): dan una pequeña cantidad de distancia extra y suman a las estadísticas finales.
-- Su valor es bajo, para que no compitan con las preguntas.
+- **❤️ Likes** en la calle, muchos, como las monedas de Subway Surfers: filas de 8 en un carril libre y arcos de 7 sobre los obstáculos bajos que siguen la curva del salto (saltando a tiempo se juntan enteros). Dan una pequeña cantidad de distancia extra y suman a las estadísticas finales.
+- Su valor es bajo (0,35 m cada uno), para que no compitan con las preguntas: juntar todos los de la carrera vale menos que una respuesta correcta.
 
 ### 3.8 Un celular por grupo
 - Los grupos se identifican **solo con un número**, del 1 a `maxGrupos` (por ejemplo, 1 a 40).
@@ -597,7 +597,7 @@ juego/
 - [x] Simulación a paso fijo e interpolación del render
 - [x] Generación de obstáculos altos y bajos con semilla (`rng.js` + `track.js`) *(los 6 del plan, con el bot revendedor que cruza de carril)*
 - [x] Choques: tropiezo, frenado e invulnerabilidad
-- [x] Likes coleccionables (en el piso y en el aire) *(+1 m cada uno)*
+- [x] Likes coleccionables (en el piso y en el aire) *(+0,35 m cada uno; muchos, en filas y en arcos)*
 - [x] Envío de la distancia al servidor y mapa en vivo en el host
 - [x] Arcos de respuesta dentro del runner y feedback sin pausa
 - [x] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto

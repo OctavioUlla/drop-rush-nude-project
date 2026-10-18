@@ -11,7 +11,7 @@ import { xObstaculo } from '../track.js';
 
 const LARGO_BLOQUE = 24;
 const CAPACIDAD = { valla: 24, caja: 24, bache: 16, fan: 24, bot: 10, camion: 10 };
-const CAPACIDAD_LIKES = 80;
+const CAPACIDAD_LIKES = 160;
 // Con el imán, los likes que están a menos de esta distancia vuelan hacia el corredor.
 const ALCANCE_IMAN = 9;
 
