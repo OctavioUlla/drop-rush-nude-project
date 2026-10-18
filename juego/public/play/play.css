@@ -154,12 +154,14 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
   touch-action: manipulation;
   animation: poder-latido 1.2s ease-in-out infinite;
 }
+/* Zona táctil más grande que el botón, para acertarle sin mirar. */
+.juego__poder::before { content: ''; position: absolute; inset: -12px -12px -8px; }
 .juego__poder-icono { font-size: var(--np-texto-3xl); line-height: 1; }
 .juego__poder-texto { display: grid; gap: 2px; }
 .juego__poder-texto b { font: var(--np-peso-black) var(--np-texto-lg) / 1.1 var(--np-fuente-display); }
 .juego__poder-texto small { font-size: var(--np-texto-xs); line-height: 1.2; }
 .juego__poder-accion { padding: var(--np-espacio-2) var(--np-espacio-3); background: var(--np-marca-cacao); color: var(--np-marca-crema); font: var(--np-peso-black) var(--np-texto-base) / 1 var(--np-fuente-display); text-transform: uppercase; }
-.juego__poder:active { transform: translateX(-50%) scale(0.97); }
+.juego__poder:active { animation: none; transform: translateX(-50%) scale(0.97); }
 @keyframes poder-latido { 50% { transform: translateX(-50%) scale(1.03); } }
 @media (prefers-reduced-motion: reduce) { .juego__poder { animation: none; } }
 

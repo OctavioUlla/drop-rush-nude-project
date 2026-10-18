@@ -105,6 +105,12 @@ function iniciar() {
   });
   $('calidad-texto').textContent = calidad.preferencia;
   $('btn-debug').addEventListener('click', () => ($('debug').hidden = !$('debug').hidden));
+  // En el celu se usa apenas se apoya el dedo: el click se pierde si el dedo se mueve un poco
+  // o si hay otro dedo en la pantalla (por ejemplo, deslizando de carril). El click queda para el teclado.
+  $('poder').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    usarPoder();
+  });
   $('poder').addEventListener('click', usarPoder);
   window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyE' || e.code === 'Enter') usarPoder();
