@@ -13,7 +13,6 @@ import { VENTAJAS } from '../shared/poderes.js';
 const C = colores;
 const FUENTE = '"Inter Tight", "Helvetica Neue", Arial, sans-serif';
 const FILAS = 5;
-const PASOS_REGLA = [50, 100, 200, 250, 500, 1000];
 
 export class Mapa {
   /** `elementos`: { lienzo, falta, progreso } — la cabecera es HTML para usar la tipografía del design system. */
@@ -243,15 +242,19 @@ export class Mapa {
   dibujarRegla(g) {
     const { ctx } = this;
     const largo = g.x1 - g.x0;
-    const paso = PASOS_REGLA.find((p) => (p / this.meta) * largo >= 90) ?? PASOS_REGLA.at(-1);
     const tamano = Math.max(11, g.regla * 0.42);
+    // Las marcas quedan separadas al menos lo que ocupa la etiqueta más ancha (la de la tienda) y
+    // un respiro: si no, al principio, con la tienda lejos, los números se pisan.
+    ctx.font = `900 ${tamano}px ${FUENTE}`;
+    const separacion = Math.max(90, ctx.measureText(`${Math.round(this.meta)} m`).width + tamano * 1.5);
+    const paso = pasoRegla(this.meta, largo, separacion);
     ctx.font = `700 ${tamano}px ${FUENTE}`;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     ctx.fillStyle = C.marca['cacao-suave'];
-    for (let d = paso; d < this.meta * 0.97; d += paso) {
+    for (let d = paso; paso && d < this.meta * 0.97; d += paso) {
       const x = g.x0 + (d / this.meta) * largo;
-      if (x > g.x1 - 90) break;
+      if (x > g.x1 + 7 - separacion) break;
       ctx.fillRect(x - 1, g.abajo + 4, 2, g.regla * 0.22);
       ctx.fillText(`${d} m`, x, g.abajo + g.regla * 0.62);
     }
@@ -338,6 +341,19 @@ export class Mapa {
     }
     ctx.globalAlpha = 1;
   }
+}
+
+/**
+ * El paso más chico de la regla (50, 100, 200, 250, 500, 1000, 2000, 2500, 5000…) que deja las
+ * marcas a `minimo` px o más una de otra. Sin lugar para ninguna marca, 0.
+ */
+function pasoRegla(meta, largo, minimo) {
+  for (let escala = 10; escala <= 1e7; escala *= 10) {
+    for (const f of [5, 10, 20, 25]) {
+      if (((f * escala) / meta) * largo >= minimo) return f * escala;
+    }
+  }
+  return 0;
 }
 
 // ---------- Piezas del fondo ----------
