@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { generarTramo, xObstaculo, Pista, TIPOS } from '../public/play/track.js';
 import { Corredor } from '../public/play/runner.js';
 import { recorridoIdeal, proyectarMeta } from '../public/shared/carrera.js';
-import { CARRILES, FASES, VALOR_LIKE } from '../public/shared/constantes.js';
+import { CARRILES, FASES, VALOR_LIKE, VELOCIDAD_BASE, DURACION_SALTO } from '../public/shared/constantes.js';
 import { Grupo } from '../server/rooms.js';
 import { crearGuion } from '../server/game.js';
 import { cargarConfig } from '../server/config.js';
@@ -93,7 +93,48 @@ test('los likes suman poca distancia en el total oficial', () => {
   g.likes = 12;
   assert.equal(g.distanciaTotal, 340 + 12 * VALOR_LIKE);
   // Un tramo entero de likes vale mucho menos que una respuesta correcta.
-  assert.ok(15 * VALOR_LIKE < cargarConfig().bonusAcierto / 5);
+  assert.ok(45 * VALOR_LIKE < cargarConfig().bonusAcierto / 5);
+});
+
+test('hay muchos likes, como las monedas de Subway Surfers', () => {
+  let total = 0;
+  for (let semilla = 0; semilla < 50; semilla++) total += generarTramo(semilla, 30, 125, 'facil').likes.length;
+  assert.ok(total / 50 >= 30, `${total / 50} likes por tramo`);
+});
+
+test('la caja de stock se salta a tiempo, pero no saltando tarde', () => {
+  const saltar = (antes) => {
+    const pista = new Pista();
+    pista.obstaculos.push(obstaculo('caja', 1, 30));
+    const c = new Corredor();
+    c.velocidad = VELOCIDAD_BASE;
+    // `antes`: metros antes del centro de la caja en los que despega.
+    correrHasta(c, pista, 40, (k) => k.saltos === 0 && k.distancia >= 30.5 - antes && k.gesto('saltar'));
+    return c.choques;
+  };
+  assert.equal(saltar((VELOCIDAD_BASE * DURACION_SALTO) / 2), 0);
+  assert.equal(saltar(1), 1);
+});
+
+test('el arco de likes sobre un obstáculo bajo se junta entero con un salto a tiempo', () => {
+  let probados = 0;
+  for (let semilla = 0; semilla < 40 && probados < 10; semilla++) {
+    const tramo = generarTramo(semilla, 30, 125, 'facil');
+    const i = tramo.likes.findIndex((l) => l.y > 0.6);
+    if (i < 0) continue;
+    const arco = tramo.likes.slice(i, i + 7);
+    const pista = new Pista();
+    for (const l of arco) pista.likes.push({ ...l, tomado: false, hundido: 0 });
+    const c = new Corredor();
+    c.carril = arco[0].carril;
+    c.x = CARRILES[c.carril];
+    c.velocidad = VELOCIDAD_BASE;
+    const centro = (arco[0].z + arco[6].z) / 2;
+    correrHasta(c, pista, arco[6].z + 2, (k) => k.saltos === 0 && k.distancia >= centro - (VELOCIDAD_BASE * DURACION_SALTO) / 2 && k.gesto('saltar'));
+    assert.equal(c.likes, 7, `semilla ${semilla}`);
+    probados++;
+  }
+  assert.ok(probados > 0);
 });
 
 test('recorridoIdeal coincide con lo que corre el corredor sin chocar', () => {

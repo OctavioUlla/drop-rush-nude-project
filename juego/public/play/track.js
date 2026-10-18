@@ -1,12 +1,14 @@
 import { crearRng, mezclarSemilla } from '../shared/rng.js';
-import { CARRILES } from '../shared/constantes.js';
+import { CARRILES, VELOCIDAD_BASE, DURACION_SALTO, ALTURA_SALTO } from '../shared/constantes.js';
 
 // Obstáculos y likes generados a partir de una semilla: todos los grupos
 // enfrentan la misma calle en cada tramo (sección 3.3).
 
 export const TIPOS = {
-  valla: { alto: false, altura: 0.9, largo: 0.5 },
-  caja: { alto: false, altura: 1.0, largo: 1.0 },
+  // Las vallas y las cajas llegan a la cintura del corredor, como las barreras de Subway Surfers:
+  // con el salto alto hay que saltarlas a tiempo, no basta con saltar "más o menos".
+  valla: { alto: false, altura: 1.2, largo: 0.5 },
+  caja: { alto: false, altura: 1.3, largo: 1.0 },
   bache: { alto: false, altura: 0.5, largo: 1.4 },
   fan: { alto: true, altura: 2.0, largo: 0.6 },
   bot: { alto: true, altura: 2.2, largo: 0.8 },
@@ -23,6 +25,12 @@ const DIFICULTAD = {
 const BAJOS = ['valla', 'caja', 'bache'];
 const EXTRA = ['valla', 'caja', 'bache', 'fan'];
 const ALTOS = ['fan', 'fan', 'camion'];
+
+// Likes por fila de obstáculos: probabilidad y cantidad de la fila en un carril libre y del arco sobre uno bajo.
+const LIKES_EN_FILA = 0.9;
+const LARGO_FILA_LIKES = 8;
+const LIKES_EN_ARCO = 0.5;
+const LARGO_ARCO_LIKES = 7;
 
 // El bot revendedor cruza al carril vecino mientras el corredor está entre 28 y 14 m de él:
 // se lo ve venir y queda ~1,5 s para esquivarlo.
@@ -79,16 +87,21 @@ export function generarTramo(semilla, desde, hasta, dificultad = 'facil') {
       }
     }
 
-    // Likes en un carril libre o sobre un obstáculo bajo (para atraparlos saltando).
+    // Likes como las monedas de Subway Surfers: muchos y en fila india, para que siempre haya algo que juntar.
     const libres = [0, 1, 2].filter((c) => !carriles.includes(c));
-    if (rng() < 0.7) {
-      const sobreBajo = obstaculos.filter((o) => o.z === z && !o.alto);
-      if (sobreBajo.length && rng() < 0.4) {
-        const o = rng.elegir(sobreBajo);
-        for (let i = -1; i <= 1; i++) likes.push({ carril: o.carril, z: z + i * 1.2, y: 1.2 + (1 - Math.abs(i)) * 0.6 });
-      } else if (libres.length) {
-        const carril = rng.elegir(libres);
-        for (let i = 0; i < 5; i++) likes.push({ carril, z: z - 4 + i * 1.6, y: 0.6 });
+    if (libres.length && rng() < LIKES_EN_FILA) {
+      const carril = rng.elegir(libres);
+      for (let i = 0; i < LARGO_FILA_LIKES; i++) likes.push({ carril, z: z - 6 + i * 1.6, y: 0.6 });
+    }
+    // Arco sobre un obstáculo bajo que sigue la curva del salto: saltando a tiempo se junta entero.
+    const bajos = obstaculos.filter((o) => o.z === z && !o.alto);
+    if (bajos.length && rng() < LIKES_EN_ARCO) {
+      const o = rng.elegir(bajos);
+      const centro = z + o.largo / 2;
+      const largoSalto = VELOCIDAD_BASE * DURACION_SALTO;
+      for (let i = 0; i < LARGO_ARCO_LIKES; i++) {
+        const t = (i + 0.5) / LARGO_ARCO_LIKES;
+        likes.push({ carril: o.carril, z: centro + (t - 0.5) * largoSalto, y: 0.6 + 4 * ALTURA_SALTO * t * (1 - t) });
       }
     }
 
