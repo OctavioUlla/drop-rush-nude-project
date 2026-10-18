@@ -14,7 +14,8 @@
     "bots": "node tools/bots.js",
     "test": "node --test test/*.test.js",
     "balanceo": "node tools/balanceo.js",
-    "vendor:presentacion": "node tools/vendor-presentacion.js"
+    "vendor:presentacion": "node tools/vendor-presentacion.js",
+    "renders:presentacion": "node tools/renders-presentacion.js"
   },
   "dependencies": {
     "express": "^5.1.0",

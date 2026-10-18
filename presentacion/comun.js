@@ -21,7 +21,8 @@ export const dosDigitos = (n) => String(n).padStart(2, '0');
 /**
  * Lee las diapositivas de un documento (el del proyector o el index.html que baja el presentador).
  * Cada <section data-escena> es una diapositiva; las que comparten escena forman un bloque, y la primera
- * del bloque declara su nombre (data-bloque) y su tiempo (data-tiempo="2:00").
+ * del bloque declara su nombre (data-bloque) y su tiempo (data-tiempo="2:00"). data-pose elige un encuadre
+ * alternativo de la estación (la cámara se acomoda sin viajar).
  */
 export function leerDiapositivas(doc) {
   const diapos = [...doc.querySelectorAll('section[data-escena]')].map((el, indice) => ({
@@ -29,6 +30,7 @@ export function leerDiapositivas(doc) {
     indice,
     escena: el.dataset.escena,
     estacion: recorrido.indexOf(el.dataset.escena),
+    pose: el.dataset.pose ?? null,
     tema: el.dataset.npTema === 'cacao' ? 'cacao' : 'crema',
     notas: el.querySelector('aside.notas')?.innerHTML.trim() ?? '',
   }));

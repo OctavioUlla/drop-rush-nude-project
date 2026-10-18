@@ -32,12 +32,17 @@ if (!imprimiendo) {
     const { iniciar } = await import('../design-system/escena/escena.js');
     const escala = Number.parseFloat(params.get('escala'));
     motor = iniciar({ lienzo: $('#lienzo'), escenario, eventos: { salir, entrar, llegar }, escalaMaxima: escala > 0 ? escala : undefined });
+    if (params.has('depurar') || params.has('render')) window.motor = motor; // herramientas: control de solapes y renders
   } catch (error) {
     // Sin WebGL: la presentación sigue, con el fondo del tema (y las imágenes de respaldo cuando existan).
     document.documentElement.setAttribute('data-np-sin-webgl', '');
     console.error(error);
   }
 }
+// Imagen pre-renderizada de cada diapositiva (renders/, ver tools/renders.mjs): se ve sin WebGL y en el PDF.
+for (const d of diapos) d.el.style.setProperty('--respaldo', `url("${new URL(`./renders/${d.escena}${d.pose ? `-${d.pose}` : ''}.jpg`, location.href)}")`);
+// ?render: solo la escena, sin texto ni interfaz (para generar esas imágenes).
+document.documentElement.toggleAttribute('data-render', params.has('render'));
 window.deckListo = true;
 
 // ---------- Interfaz: índice de bloques ----------
@@ -73,6 +78,7 @@ function mostrar(i) {
     g.classList.remove('np-gigante--sale');
     g.classList.toggle('np-gigante--activa', g.dataset.escena === d.escena);
   }
+  contar(d.el);
   $('#numero').textContent = dosDigitos(d.bloque);
   $('#bloque').textContent = dosDigitos(d.bloque);
   $('#barra').style.setProperty('--avance', d.bloque / ultimoBloque);
@@ -95,11 +101,26 @@ function ocultar() {
   d.el.querySelector('.np-etiquetas')?.classList.remove('np-etiquetas--visibles');
 }
 
-/** Con la cámara quieta en la estación: etiquetas de la vista desarmada. */
+/** Con la cámara quieta en la estación: aparecen las etiquetas que señalan piezas y objetos de la escena. */
 function asentar() {
-  if (visible === null) return;
-  const desarmar = motor?.estaciones[diapos[visible].estacion].desarmar === true;
-  diapos[visible].el.querySelector('.np-etiquetas')?.classList.toggle('np-etiquetas--visibles', desarmar);
+  if (visible === null || !motor) return;
+  diapos[visible].el.querySelector('.np-etiquetas')?.classList.add('np-etiquetas--visibles');
+}
+
+/** Cifras que cuentan desde 0 al entrar la diapositiva: <b data-contar="512394">. */
+const formato = new Intl.NumberFormat('es-AR');
+const durCifra = Number.parseFloat(tokens.movimiento.cifra);
+function contar(el) {
+  for (const c of el.querySelectorAll('[data-contar]')) {
+    const meta = Number(c.dataset.contar), t0 = performance.now() + 450;
+    cancelAnimationFrame(c.animacion);
+    const paso = (ahora) => {
+      const u = Math.min(Math.max((ahora - t0) / durCifra, 0), 1);
+      c.textContent = formato.format(Math.round(meta * (1 - (1 - u) ** 4)));
+      if (u < 1) c.animacion = requestAnimationFrame(paso);
+    };
+    c.animacion = requestAnimationFrame(paso);
+  }
 }
 
 /** Cambia el texto sin mover la cámara (dos diapositivas de una misma estación). */
@@ -117,9 +138,9 @@ function ir(n) {
   if (reloj.inicio !== null) marcarBloque();
   else if (n !== 0) empezarReloj(); // si nadie lo empezó, arranca al pasar de la portada
   avisar();
-  const estacion = diapos[n].estacion;
-  if (motor && (motor.viajando || motor.actual !== estacion)) motor.ir(estacion);
-  else cambiarTexto(n);
+  const { estacion, pose } = diapos[n];
+  if (motor && (motor.viajando || motor.actual !== estacion)) motor.ir(estacion, pose);
+  else { motor?.pose(pose); cambiarTexto(n); }
 }
 const siguiente = () => ir(actual + 1);
 const anterior = () => ir(actual - 1);
@@ -136,12 +157,14 @@ function llegar(estacion) {
   else asentar();
 }
 
-// Etiquetas de la vista desarmada: se proyectan desde cada pieza de la sudadera en cada cuadro.
+// Etiquetas flotantes: se proyectan en cada cuadro desde una pieza de la sudadera (data-pieza) o un ancla de la
+// estación (data-ancla); data-punto="x y z" elige el punto de la pieza (de -1 a 1) o desplaza el ancla (en metros).
 const fijarEtiquetas = () => {
   const capa = visible !== null && diapos[visible].el.querySelector('.np-etiquetas--visibles');
   if (capa) {
     for (const el of capa.children) {
-      const { x, y } = motor.proyectar(el.dataset.pieza);
+      el.punto ??= (el.dataset.punto ?? '0 0 0').split(' ').map(Number);
+      const { x, y } = motor.proyectar(el.dataset.pieza ?? el.dataset.ancla, el.punto);
       el.style.setProperty('--x', `${x}%`);
       el.style.setProperty('--y', `${y}%`);
     }
@@ -190,6 +213,57 @@ function alternarPausa() {
   avisar();
 }
 
+// ---------- Hype colectivo de la portada (PLANIFICACION 2.1) ----------
+// Tecla H: cuenta regresiva → medidor → drop. Hasta la fase 4 es un ensayo sin celulares: los toques se simulan
+// con 40 grupos; la fase 4 reemplaza la simulación por los eventos pres:hype:* del servidor, sin tocar la escena.
+const hypeUi = $('#hype');
+const GRUPOS = 40, META = 25 * GRUPOS;
+let ensayo = null;
+if (hypeUi) $('#hype-grupos').innerHTML = Array.from({ length: GRUPOS }, (_, i) => `<span class="np-ficha np-ficha--libre" style="--g: var(--np-grupo-${i + 1}); --gt: var(--np-grupo-${i + 1}-texto)">${i + 1}</span>`).join('');
+function faseHype(fase) {
+  escenario.dataset.hype = fase;
+  hypeUi?.setAttribute('data-fase', fase);
+}
+function pintarHype(toques, sumando) {
+  const nivel = Math.min(toques / META, 1);
+  $('#hype-barra').style.setProperty('--valor', `${(nivel * 100).toFixed(1)}%`);
+  $('#hype-cifra').textContent = `${Math.floor(nivel * 100)} % · ${formato.format(toques)} toques`;
+  $('#hype-sumando').textContent = `${sumando.size}/${GRUPOS} grupos sumando`;
+  $('#hype-grupos').querySelectorAll('.np-ficha').forEach((f, i) => f.classList.toggle('np-ficha--libre', !sumando.has(i)));
+  motor?.hype('llenando', nivel);
+}
+function hype() {
+  if (!hypeUi || diapos[actual].escena !== 'portada' || motor?.viajando) return;
+  if (ensayo?.fase === 'llenando') { ensayo.toques = META; return; } // el presentador lo completa si se estanca
+  if (ensayo) return;
+  ensayo = { fase: 'cuenta', toques: 0, sumando: new Set() };
+  faseHype('cuenta');
+  motor?.hype('cuenta');
+  const cuenta = $('#hype-cuenta');
+  [3, 2, 1].forEach((n, k) => setTimeout(() => { cuenta.textContent = n; cuenta.classList.remove('np-cuenta--ya'); }, k * 1000));
+  setTimeout(() => {
+    cuenta.textContent = '¡Hype!'; cuenta.classList.add('np-cuenta--ya');
+    ensayo.fase = 'llenando';
+    faseHype('llenando');
+    pintarHype(0, ensayo.sumando);
+    let ultimo = performance.now();
+    const simular = (ahora) => {
+      const dt = (ahora - ultimo) / 1000; ultimo = ahora;
+      // Cada grupo arranca a su tiempo y toca entre 4 y 8 veces por segundo (el tope del servidor).
+      for (let g = 0; g < GRUPOS; g++) if (Math.random() < dt * 1.4) ensayo.sumando.add(g);
+      ensayo.toques = Math.min(META, ensayo.toques + Math.round(ensayo.sumando.size * dt * (2 + Math.random() * 1.6)));
+      pintarHype(ensayo.toques, ensayo.sumando);
+      if (ensayo.toques < META) return requestAnimationFrame(simular);
+      // ¡Drop!
+      faseHype('drop');
+      motor?.hype('drop');
+      $('#hype-final').textContent = `${GRUPOS} grupos, ${formato.format(ensayo.toques)} toques: el drop salió.`;
+      setTimeout(() => { faseHype('reposo'); ensayo = null; }, 6000);
+    };
+    requestAnimationFrame(simular);
+  }, 3000);
+}
+
 // ---------- Medidor de rendimiento (fase 0: fps en la notebook del presentador) ----------
 let medidor = null;
 async function medir(recorrer = false) {
@@ -213,6 +287,7 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'p') abrirPresentador();
   else if (tecla === 'b' || tecla === '.') alternarPausa(); // los controles de diapositivas mandan "." para la pantalla negra
   else if (tecla === 'm') medir();
+  else if (tecla === 'h') hype();
 });
 addEventListener('hashchange', () => ir(Number.parseInt(location.hash.slice(1), 10) || 0));
 // La rueda recorre la presentación solo a pantalla completa: dentro de un iframe tiene que seguir bajando la página.
@@ -241,7 +316,7 @@ if (imprimiendo) {
   $('#cargador').remove();
   diapos.forEach((d) => d.el.classList.add('np-diapo--activa'));
 } else {
-  if (motor) motor.saltar(diapos[actual].estacion);
+  if (motor) motor.saltar(diapos[actual].estacion, diapos[actual].pose);
   const durCarga = Number.parseFloat(tokens.movimiento.cargador);
   const t0 = performance.now();
   await document.fonts.ready;

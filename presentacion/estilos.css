@@ -22,8 +22,45 @@ body { display: grid; place-items: center; }
   color: var(--np-tinta-suave);
 }
 .np-capa.np-diapo--activa .marcador.np-capa__entra { opacity: 0.75; }
-.marcadores-pie { margin-top: auto; align-self: stretch; display: flex; justify-content: space-between; padding: 0 0 3cqw; }
-.marcadores-pie .marcador { align-self: auto; }
+
+/* ============ Portada: título abajo a la izquierda y lugar del QR abajo a la derecha ============ */
+.portada__pie { display: flex; justify-content: space-between; align-items: flex-end; gap: 4cqw; }
+.np-capa .portada__titulo .np-titulo { font-size: 4.6cqw; }
+.portada__qr { align-self: flex-end; max-width: 16cqw; }
+.np-capa .portada__titulo, .portada__qr { transition: opacity var(--np-movimiento-lento) linear; }
+
+/* ============ Hype colectivo (tecla H) ============ */
+/* La cuenta va en el centro (la sudadera sube fuera de cuadro); el medidor ocupa el lugar del título. */
+.hype { position: absolute; inset: 0; pointer-events: none; }
+.hype > * { position: absolute; opacity: 0; transition: opacity var(--np-movimiento-lento) linear, transform var(--np-movimiento-texto) var(--np-movimiento-curva); }
+.hype__cuenta { inset: 0; display: grid; place-items: center; padding-bottom: 6cqw; font-size: 20cqw; color: var(--np-marca-crema); transform: scale(0.9); }
+.hype__medidor { left: 7%; width: 28cqw; bottom: 10%; display: grid; gap: 1.1cqw; transform: translateY(1.5cqw); }
+.hype__estado { display: grid; gap: 0.7cqw; }
+.np-capa .hype .np-hype { font-size: 1.5cqw; }
+.np-capa .hype .np-hype__barra { border-color: var(--np-marca-crema); background: rgb(255 248 238 / .08); }
+.np-capa .hype .np-grilla-grupos { grid-template-columns: repeat(10, 1fr); gap: 0.4cqw; }
+.np-capa .hype .np-ficha { font-size: 0.85cqw; transition: background var(--np-movimiento-base) linear, color var(--np-movimiento-base) linear; }
+.np-capa .hype .np-ficha--libre { outline-color: rgb(255 248 238 / .25); }
+.hype__final { left: 7%; bottom: 10%; margin: 0; max-width: 40cqw; font: var(--np-peso-bold) 3.2cqw / 1.02 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); color: var(--np-marca-crema); transform: translateY(1.5cqw); }
+.hype[data-fase="cuenta"] .hype__cuenta, .hype[data-fase="llenando"] .hype__medidor, .hype[data-fase="drop"] .hype__final { opacity: 1; transform: none; }
+.hype[data-fase="llenando"] .hype__cuenta { opacity: 0; transform: scale(1.15); }
+.np-escenario:is([data-hype="cuenta"], [data-hype="llenando"], [data-hype="drop"]) :is(.portada__titulo, .portada__qr) { opacity: 0; }
+.np-escenario:is([data-hype="cuenta"], [data-hype="llenando"]) .np-gigante > span { opacity: 0; transform: translateY(-30%); transition-delay: 0ms; }
+
+/* Hitos de la historia: cuatro cifras en fila, con una línea de tiempo arriba. */
+.np-capa .hitos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 2.4cqw; }
+.hitos li { display: grid; gap: 0.5cqw; padding-top: 0.9cqw; border-top: 1px solid var(--np-linea); }
+.hitos li:last-child { border-top: 2px solid var(--np-tinta); }
+.hitos b { font: var(--np-peso-bold) 2.1cqw / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hitos span { font: var(--np-peso-medio) 0.95cqw / 1.2 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; color: var(--np-tinta-suave); }
+
+/* Cifra que cuenta en vivo debajo del párrafo (likes de la campaña viral). */
+.np-capa .dato-vivo { display: flex; align-items: center; gap: 1cqw; max-width: none; font-size: 1.4cqw; color: var(--np-tinta); }
+.dato-vivo b { font: var(--np-peso-black) 2.6cqw / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); font-variant-numeric: tabular-nums; margin-right: 0.4em; }
+.dato-vivo__icono { display: grid; place-items: center; width: 3.4cqw; height: 3.4cqw; background: var(--np-acento-rosa); color: var(--np-acento-ladrillo); font-size: 1.8cqw; }
+
+/* ?render: solo la escena 3D (y sus etiquetas), para las imágenes de respaldo. */
+[data-render] :is(.np-diapo__texto, .portada__pie, .np-interfaz, .np-grano, .np-cargador, .hype) { display: none !important; }
 
 /* Pantalla en cacao (tecla B). */
 .pausa {
@@ -66,10 +103,11 @@ body { display: grid; place-items: center; }
 [data-impresion] .np-capas { position: static; display: grid; gap: 2vw; }
 [data-impresion] .np-capa {
   position: relative; inset: auto; width: 100%; box-sizing: border-box; aspect-ratio: 16 / 9; visibility: visible;
-  background: var(--np-fondo); break-after: page; break-inside: avoid;
+  background: var(--np-fondo) var(--respaldo, none) center / cover no-repeat; break-after: page; break-inside: avoid;
 }
+[data-impresion] .hype { display: none; }
 [data-impresion] .np-capa * { animation: none !important; transition: none !important; }
 [data-impresion] .np-capa .np-capa__entra { opacity: 1; transform: none; }
 [data-impresion] .np-capa .marcador { opacity: 0.75; }
-[data-impresion] .np-etiquetas { display: none; }
+[data-impresion] .np-etiquetas { display: none; } /* ya están en la imagen de respaldo */
 @media print { [data-impresion] .np-capas { gap: 0; } }

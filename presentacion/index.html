@@ -37,13 +37,26 @@
 
     <!-- ============ 0. Portada + hype colectivo ============ -->
     <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-np-tema="cacao" data-escena="portada" data-bloque="Portada" data-tiempo="1:00">
-      <div class="np-diapo__texto">
-        <span class="np-etiqueta np-capa__entra">Caso de estudio · Comercialización</span>
-        <h1 class="np-titulo np-revelar">
-          <span class="np-revelar__linea" style="--i: 0"><span>Comunidad, comunicación</span></span>
-          <span class="np-revelar__linea" style="--i: 1"><span>y autenticidad.</span></span>
-        </h1>
-        <span class="marcador np-capa__entra">Pendiente · QR, grupos conectados y medidor de hype (fase 4)</span>
+      <div class="portada__pie">
+        <div class="np-diapo__texto portada__titulo">
+          <span class="np-etiqueta np-capa__entra">Caso de estudio · Comercialización</span>
+          <h1 class="np-titulo np-revelar">
+            <span class="np-revelar__linea" style="--i: 0"><span>Comunidad,</span></span>
+            <span class="np-revelar__linea" style="--i: 1"><span>comunicación</span></span>
+            <span class="np-revelar__linea" style="--i: 2"><span>y autenticidad.</span></span>
+          </h1>
+        </div>
+        <span class="marcador np-capa__entra portada__qr">Pendiente · QR y grupos conectados (fase 4)</span>
+      </div>
+      <!-- Hype colectivo (tecla H): cuenta regresiva, medidor y drop. Ensayo sin celulares hasta la fase 4. -->
+      <div class="hype" id="hype" data-fase="reposo" aria-live="polite">
+        <div class="np-cuenta hype__cuenta" id="hype-cuenta">3</div>
+        <div class="hype__medidor">
+          <div class="hype__estado"><span class="np-etiqueta">Hype colectivo · ensayo sin celulares</span><span class="np-etiqueta" id="hype-sumando">0/40 grupos sumando</span></div>
+          <div class="np-hype" id="hype-barra" style="--valor: 0%"><div class="np-hype__barra"></div><p class="np-hype__cifra" id="hype-cifra">0 % · 0 toques</p></div>
+          <div class="np-grilla-grupos" id="hype-grupos"></div>
+        </div>
+        <p class="hype__final" id="hype-final"></p>
       </div>
       <aside class="notas">
         <p><em>Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.</em></p>
@@ -62,13 +75,32 @@
           <span class="np-revelar__linea" style="--i: 1"><span>una habitación</span></span>
           <span class="np-revelar__linea" style="--i: 2"><span>y un drop.</span></span>
         </h2>
-        <p class="np-capa__entra">De 2019 a 26 M€: venta directa (D2C) y colecciones limitadas que se agotan.</p>
+        <p class="np-capa__entra">Bruno Casanovas y Álex Benlloch, 2019: 300 € cada uno y ninguna experiencia en moda.</p>
+      </div>
+      <aside class="notas">
+        <p><em>La sudadera sale de la caja de envío del pedido #0001.</em></p>
+        <p>“Imaginen empezar una marca de ropa con 600 euros, desde una habitación, sin saber de moda. Eso hicieron Bruno Casanovas y Álex Benlloch en 2019: pusieron 300 euros cada uno y crearon Nude Project. El nombre lo dice todo: <i>nude</i> es transparencia y autenticidad.”</p>
+      </aside>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="historia">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">01 — El modelo</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>De 600 €</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>a 26 M€.</span></span>
+        </h2>
+        <ol class="hitos np-capa__entra">
+          <li><b>600 €</b><span>2019</span></li>
+          <li><b>600 mil €</b><span>1.ª colección</span></li>
+          <li><b>11,5 M€</b><span>2022</span></li>
+          <li><b>26 M€</b><span>2023</span></li>
+        </ol>
+        <p class="np-capa__entra">Venta directa (D2C) y drops limitados que se agotan: urgencia y deseo.</p>
         <span class="marcador np-capa__entra">Pendiente · Votación en vivo: ¿pagarías 90 € por una sudadera que se agota en minutos? (fase 4)</span>
       </div>
       <aside class="notas">
-        <p><em>La sudadera sale de una caja de envío; la caja se multiplica con los años 2019 → hoy.</em></p>
-        <p>“Imaginen empezar una marca de ropa con 600 euros, desde una habitación, sin saber de moda. Eso hicieron Bruno Casanovas y Álex Benlloch en 2019: pusieron 300 euros cada uno y crearon Nude Project. El nombre lo dice todo: <i>nude</i> es transparencia y autenticidad.</p>
-        <p>Su primera colección facturó unos 600.000 euros; en 2022 llegaron a 11,5 millones y en 2023, a 26 millones. Hoy venden en más de cien países, con 11 tiendas en Europa y unos 250 empleados.</p>
+        <p><em>Los hitos aparecen en la columna del texto; la sudadera sigue sobre la caja del pedido #0001.</em></p>
+        <p>“Su primera colección facturó unos 600.000 euros; en 2022 llegaron a 11,5 millones y en 2023, a 26 millones. Hoy venden en más de cien países, con 11 tiendas en Europa y unos 250 empleados.</p>
         <p>¿Cómo lo hicieron? Con dos decisiones. Un modelo <i>direct-to-consumer</i>: venden sin intermediarios, desde su web, sus tiendas y sus redes. Y drops limitados: colecciones pequeñas que se agotan rápido y generan urgencia y deseo.”</p>
         <p><em><kbd>V</kbd>: se abre la votación.</em></p>
         <p>“Ahora les toca a ustedes. En el celular tienen una pregunta: ¿pagarían 90 euros por una sudadera que se agota en minutos?</p>
@@ -85,12 +117,12 @@
           <span class="np-revelar__linea" style="--i: 0"><span>¿Quién cuenta la historia?</span></span>
         </h2>
       </div>
-      <div class="marcadores-pie">
-        <span class="marcador np-capa__entra">Pendiente · Feed EGC 9:16 (fase 3)</span>
-        <span class="marcador np-capa__entra">Pendiente · Feed UGC 9:16 (fase 3)</span>
+      <div class="np-etiquetas" aria-hidden="true">
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="egc" style="--i: 0"><span class="np-etiqueta-3d__valor">EGC</span><span class="np-etiqueta-3d__texto">Lo cuenta la marca</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="ugc" style="--i: 1"><span class="np-etiqueta-3d__valor">UGC</span><span class="np-etiqueta-3d__texto">Lo cuenta la comunidad</span></div>
       </div>
       <aside class="notas">
-        <p><em>Los dos feeds 9:16; la sudadera en el centro gira hacia el lado que se comenta. <kbd>F</kbd> pausa un feed.</em></p>
+        <p><em>Los dos celulares pasan su feed solos (contenido de prueba hasta la fase 3); la sudadera en el centro gira hacia un lado y el otro.</em></p>
         <p>“Empecemos por el contenido. El <b>EGC</b> es el que crean los dueños y el equipo de la marca; el <b>UGC</b>, el que crean los usuarios. En Nude Project el EGC es la base, y el UGC lo amplifica.</p>
         <p><em>Feed EGC.</em> Su EGC tiene muchos formatos. Bruno hizo del contenido el protagonista desde el primer día, con material de detrás de escena, y lo sigue haciendo en su propio canal de vlogs. Cuando llegaron a Nueva York lo documentaron todo con la serie <i>Day 1, Day 2 of making our brand known in the US</i>. Publicaron hasta sus <i>House Rules</i>, como las reglas de una casa de amigos. El primer episodio del podcast cuenta cómo pasaron de cero a 200.000 seguidores. Y en su campaña viral, los que aparecen en las fotos son los propios empleados.</p>
         <p><em>Feed UGC.</em> El UGC aparece donde la marca no controla la escena. Cuando abre una tienda, la gente hace cola desde las seis de la mañana, y las primeras 60 personas reciben una llave metálica que se volvió objeto de colección y símbolo de estatus. Esa llave se fotografía y se comparte. También Lil Nas X, Drake y Bad Gyal publicaron fotos con prendas de la marca.</p>
@@ -108,10 +140,10 @@
           <span class="np-revelar__linea" style="--i: 2"><span>en un día.</span></span>
         </h2>
         <p class="np-capa__entra">Tono, mensaje, estética y contexto: la viralidad parece casual, pero está diseñada.</p>
-        <span class="marcador np-capa__entra">Pendiente · Publicación de la campaña y contador de likes (fase 2)</span>
+        <p class="dato-vivo np-capa__entra"><span class="dato-vivo__icono" aria-hidden="true">♥</span><span><b>+<span data-contar="500000">500.000</span></b> likes en menos de 24 h</span></p>
       </div>
       <aside class="notas">
-        <p><em>Corazones rosas orbitan la sudadera; el contador sube hasta el medio millón de likes.</em></p>
+        <p><em>La pared de 24 celulares repite la publicación; los corazones brotan de las pantallas y el contador pasa el medio millón.</em></p>
         <p>“Lo viral está en el ADN de la marca. Su primera sudadera, con la frase <i>pretty girls like trap music</i>, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.</p>
         <p>La campaña que elegimos es <b>Out of Office</b>, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, <i>Heading to work because I was too shy to dance on TikTok in 2020</i>. Superó el medio millón de likes en Instagram en menos de 24 horas.</p>
         <p>¿Por qué funcionó? Por el <b>tono</b>: ironía y humor. Por el <b>mensaje</b>: le habla a la frustración de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la <b>estética</b>: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el <b>contexto</b>: salió justo cuando todos volvían de vacaciones. Y porque el <b>producto es el mensaje</b>: quien se pone la remera comparte el chiste.</p>
@@ -133,7 +165,7 @@
         <span class="marcador np-capa__entra">Pendiente · Fotos de la Nude House y del Château (fase 5)</span>
       </div>
       <aside class="notas">
-        <p><em>La sudadera se cuelga de una percha y aparece el rincón de la Nude House.</em></p>
+        <p><em>La sudadera queda colgada de una percha en el salón de la Nude House.</em></p>
         <p>“Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la <b>Nude House</b> de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.</p>
         <p>El evento más ambicioso es el <b>Nude Project Château</b>, en una mansión de Ibiza. Empezó en 2024 y ya va por su tercera edición. En 2025 reunió a más de 30 artistas, actores, deportistas e influencers que sumaban más de 70 millones de seguidores, con una regla: lo que pasa en la mansión se queda en la mansión. Eso genera misterio y exclusividad, y funciona casi como un reality de marca. Además, en la web se pueden comprar los looks que aparecen en las imágenes: el contenido se conecta directo con la venta. Las dos primeras ediciones superaron los 100 millones de interacciones.</p>
         <p>Esa lógica la llevaron a Estados Unidos, con pop-ups en Miami, Los Ángeles y Nueva York. La de Nueva York reunió a unas 400 personas en la apertura y fue la pop-up más vendida de su historia, con moda, música, cine, deporte y hasta una carrera en ropa interior de la marca.</p>
@@ -154,14 +186,33 @@
       </div>
       <!-- Etiquetas de la vista desarmada: el motor las proyecta desde cada pieza de la sudadera. -->
       <div class="np-etiquetas" aria-hidden="true">
-        <div class="np-etiqueta-3d" data-pieza="capucha" style="--i: 0"><span class="np-etiqueta-3d__valor">1,6 M</span><span class="np-etiqueta-3d__texto">Instagram</span></div>
-        <div class="np-etiqueta-3d" data-pieza="mangaDerecha" style="--i: 1"><span class="np-etiqueta-3d__valor">1 M</span><span class="np-etiqueta-3d__texto">TikTok</span></div>
-        <div class="np-etiqueta-3d" data-pieza="bolsillo" style="--i: 2"><span class="np-etiqueta-3d__valor">950 mil</span><span class="np-etiqueta-3d__texto">YouTube</span></div>
-        <div class="np-etiqueta-3d" data-pieza="cuerpo" style="--i: 3"><span class="np-etiqueta-3d__valor">275 mil</span><span class="np-etiqueta-3d__texto">Podcast</span></div>
+        <div class="np-etiqueta-3d" data-pieza="capucha" data-punto="0.8 0.35 0" style="--i: 0"><span class="np-etiqueta-3d__valor">1,6 M</span><span class="np-etiqueta-3d__texto">Instagram</span></div>
+        <div class="np-etiqueta-3d" data-pieza="mangaDerecha" data-punto="0.5 -0.1 0" style="--i: 1"><span class="np-etiqueta-3d__valor">1 M</span><span class="np-etiqueta-3d__texto">TikTok</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-pieza="bolsillo" data-punto="0 -1.1 0" style="--i: 2"><span class="np-etiqueta-3d__valor">950 mil</span><span class="np-etiqueta-3d__texto">YouTube</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--izquierda" data-pieza="mangaIzquierda" data-punto="-0.5 -0.1 0" style="--i: 3"><span class="np-etiqueta-3d__valor">275 mil</span><span class="np-etiqueta-3d__texto">Podcast</span></div>
       </div>
       <aside class="notas">
-        <p><em>Vista desarmada: capucha → Instagram 1,6 M · manga → TikTok 1 M · bolsillo → YouTube 950 mil · cuerpo → podcast 275 mil. Después, las pilas de sudaderas comparan comienzos de 2024 con hoy.</em></p>
-        <p>“Veamos los números, con datos a octubre de 2026. Nude Project tiene 1,6 millones de seguidores en Instagram, un millón en TikTok, 950 mil en YouTube y 275 mil solo en la cuenta de su podcast. Y crecen rápido: a comienzos de 2024, Instagram y YouTube tenían la mitad de seguidores que hoy, y el podcast, menos de la mitad.</p>
+        <p><em>Vista desarmada: capucha → Instagram 1,6 M · manga derecha → TikTok 1 M · bolsillo → YouTube 950 mil · manga izquierda → podcast 275 mil.</em></p>
+        <p>“Veamos los números, con datos a octubre de 2026. Nude Project tiene 1,6 millones de seguidores en Instagram, un millón en TikTok, 950 mil en YouTube y 275 mil solo en la cuenta de su podcast.”</p>
+      </aside>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="metricas" data-pose="pilas">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">05 — Crecimiento</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>En dos años,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>el doble.</span></span>
+        </h2>
+        <p class="np-capa__entra">Cada sudadera doblada, 100 mil seguidores: comienzos de 2024 (claras) contra hoy.</p>
+      </div>
+      <div class="np-etiquetas" aria-hidden="true">
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="metricas-instagram" style="--i: 0"><span class="np-etiqueta-3d__valor">×2</span><span class="np-etiqueta-3d__texto">Instagram · 1,6 M</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="metricas-youtube" style="--i: 1"><span class="np-etiqueta-3d__valor">×2</span><span class="np-etiqueta-3d__texto">YouTube · 950 mil</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="metricas-podcast" style="--i: 2"><span class="np-etiqueta-3d__valor">+×2</span><span class="np-etiqueta-3d__texto">Podcast · 275 mil</span></div>
+      </div>
+      <aside class="notas">
+        <p><em>La sudadera se arma y corona la pila de Instagram; las pilas claras son comienzos de 2024 y las marino, hoy.</em></p>
+        <p>“Y crecen rápido: a comienzos de 2024, Instagram y YouTube tenían la mitad de seguidores que hoy, y el podcast, menos de la mitad.</p>
         <p>Pero hay números que dicen más que los seguidores. En TikTok suman 51 millones de me gusta: unos 51 por cada seguidor. Su conversación con Maluma en YouTube superó el millón de visualizaciones, más que los suscriptores del canal, con unos 22 mil me gusta y 800 comentarios: el contenido llegó más allá de su propia comunidad. Y Out of Office pasó el medio millón de likes en un día.</p>
         <p>También hay medidas externas: en <i>The Hype List</i> de Modaes, Nude Project lideró ocho meses seguidos entre las marcas jóvenes españolas, y Spotify destacó su podcast entre los más relevantes de España.</p>
         <p>¿Qué interpretamos? Que su comunicación es muy eficaz: lograron una comunidad enorme con poca publicidad paga, porque el contenido lo producen ellos y su gente. Un estudio de la Universidad Complutense sobre su TikTok llega a la misma idea: importa más integrarse en la lógica de la plataforma y conectar emocionalmente que invertir en promoción. Y esa comunidad se traduce en ventas: en 2023, el canal online fue el 62 % del negocio.”</p>
@@ -196,7 +247,11 @@
           <span class="np-revelar__linea" style="--i: 1"><span>vs. acceso.</span></span>
         </h2>
         <p class="np-capa__entra">Autenticidad al crecer, sostenibilidad, dependencia de las redes y exclusividad.</p>
-        <span class="marcador np-capa__entra">Pendiente · Resultado de la votación y balanza (fase 4)</span>
+        <span class="marcador np-capa__entra">Pendiente · Resultado de la votación: inclina la balanza (fase 4)</span>
+      </div>
+      <div class="np-etiquetas" aria-hidden="true">
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="exclusividad" style="--i: 0"><span class="np-etiqueta-3d__valor">Exclusividad</span><span class="np-etiqueta-3d__texto">Una sola</span></div>
+        <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="accesibilidad" style="--i: 1"><span class="np-etiqueta-3d__valor">Accesibilidad</span><span class="np-etiqueta-3d__texto">Para todos</span></div>
       </div>
       <aside class="notas">
         <p><em>La balanza: exclusividad contra accesibilidad.</em></p>

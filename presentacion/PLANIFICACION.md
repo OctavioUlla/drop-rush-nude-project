@@ -125,13 +125,13 @@ Se arma en Three.js con piezas redondeadas (ver [`escena/sudadera.js`](../design
 | Estación | Qué pasa | Colorway |
 |---|---|---|
 | **0. Portada + hype colectivo** | Estudio cacao. Pedestal bajo un foco con su haz y polvo; sudaderas crema, arena y piedra flotan alrededor; *DROP 001* gigante detrás. Al terminar el cargador, la sudadera **cae al pedestal con un rebote**. En el hype: en la cuenta regresiva la luz se apaga y la sudadera sube fuera de cuadro; mientras se llena el medidor, el foco vuelve y la sudadera baja en proporción al hype; al 100 % cae entre papelitos con los colores de los grupos. | Cacao |
-| **1. La historia** | **La habitación**: cama, ventana con luz y pilas de cajas de envío. La sudadera sale de una caja abierta (la de los primeros pedidos). | Crema |
-| **2. EGC vs. UGC** | Dos **celulares gigantes** a los lados con los feeds; la sudadera, en el centro sobre un pedestal, gira hacia el lado que se está comentando. | Arena |
-| **3. Marketing viral** | Una **pared de celulares** con el mismo video y **corazones *clay*** que orbitan alrededor de la prenda mientras sube el contador de vistas. | Rosa |
-| **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón detrás de la prenda, piso de madera, alfombra, sillón, perchero con sudaderas, planta, vinilos y una lámpara cálida. La sudadera, colgada de una percha. | Bosque |
-| **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una **etiqueta flotante** con un dato. Detrás, un **gráfico de barras hecho con pilas de sudaderas dobladas**. | Marino |
-| **6. Objetivo comunicacional** | **Primer plano** del logo bordado, a la derecha; la frase de Bruno en la columna libre de la izquierda. | Cacao |
-| **7. Desafíos** | Una **balanza** *clay*: de un lado, una sola sudadera (*exclusividad*); del otro, una pila (*accesibilidad*). Se inclina según la votación en vivo. | Mostaza |
+| **1. La historia** | **La habitación**: ventana con luz, cama y una pila de cajas de envío. La sudadera levita sobre la caja abierta del pedido #0001 (solapas abiertas, papel de seda, etiqueta de envío y una luz cálida que sale de adentro). En la segunda diapositiva, los hitos 600 € → 26 M€ en la columna del texto. | Crema |
+| **2. EGC vs. UGC** | Dos **celulares gigantes** en su soporte, con feeds verticales que pasan solos (contenido de prueba hasta la fase 3) y una etiqueta debajo de cada uno; la sudadera, en el centro sobre un pedestal, gira hacia uno y otro. | Arena |
+| **3. Marketing viral** | Una **pared de 24 celulares** con la publicación de *Out of Office* y su contador de likes, y **corazones *clay*** que brotan de las pantallas como likes en vivo. La prenda se corre hacia el texto y tapa apenas una esquina de la pared. En el texto, la cifra cuenta hasta +500.000. | Rosa |
+| **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón con el neón *Nude House*, piso de madera, alfombra, perchero con sudaderas (cada una en su percha), estante con vinilos y tocadiscos, planta y lámpara de pie. La sudadera cuelga de frente en un perchero de exhibición: la percha sale por el escote y el gancho abraza la barra. | Bosque |
+| **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una **etiqueta flotante** con un dato. En la segunda diapositiva la cámara se corre a un **gráfico de barras hecho con pilas de sudaderas dobladas** (100 mil seguidores cada una, 2024 contra hoy) y la sudadera, armada, corona la más alta. | Marino |
+| **6. Objetivo comunicacional** | **Plano medio** de la sudadera sola, girada hacia la frase de Bruno, con el logo bordado bien grande; la frase en la columna libre de la izquierda. | Cacao |
+| **7. Desafíos** | Una **balanza** *clay*: cada plato cuelga de un aro con tres hilos que quedan por fuera de lo que lleva. De un lado, una sola sudadera (*exclusividad*); del otro, una pila (*accesibilidad*), con una etiqueta debajo de cada plato. Se inclina según la votación en vivo. | Mostaza |
 | **8. Drop Rush** | **La calle y la vidriera** de la tienda, de noche, con el cartel *Nude® Project*. Adentro, la última sudadera bajo un foco. Cartel **QUEDA 1** latiendo → juego. | Cacao |
 
 ### 3.4 Técnica
@@ -235,7 +235,7 @@ presentacion/
 │   ├── votacion.json    # Pregunta y opciones
 │   └── feeds.json       # Publicaciones de cada feed (archivo, cuenta, cifra)
 ├── media/               # Fotos y clips de video comprimidos
-└── renders/             # Imágenes pre-renderizadas de cada escena (respaldo sin WebGL y PDF)
+└── renders/             # Imágenes pre-renderizadas de cada encuadre (sin WebGL, PDF y miniaturas del presentador)
 ```
 La escena 3D **no se copia**: la presentación importa [`design-system/escena/`](../design-system/escena/) (motor, sudadera y las 9 estaciones), así la maqueta y la presentación nunca se separan.
 
@@ -285,9 +285,11 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 
 ### Fase 2: Escenas 3D
 - [x] Primera versión de las 9 estaciones (sección 3.3) y del viaje ida y vuelta entre todas
-- [ ] Pulir cada estación con el contenido real (feeds en los celulares, cifras, frase final)
-- [ ] Coreografía del hype en la portada (luz que se apaga, sudadera que sube y baja con el medidor, papelitos)
-- [ ] Imágenes pre-renderizadas de respaldo
+- [x] Pulir cada estación con el contenido real: feeds que pasan solos en los celulares, contador de likes, hitos de la historia, etiquetas de las métricas y de la balanza, frase final
+- [x] Sin solapes: ningún texto ni etiqueta queda sobre un objeto, y ningún objeto atraviesa otro (la sudadera levita sobre los apoyos, cuelga de una percha real, descansa en el plato de la balanza con los hilos por fuera y entra y sale de la percha y del plato por delante)
+- [x] Poses dentro de una estación (`data-pose`): la cámara se acomoda sin viajar (pilas de las métricas)
+- [x] Coreografía del hype en la portada (`H`): luz que se apaga, sudadera que sube y baja con el medidor, papelitos con los colores de los grupos. Hasta la fase 4 los toques se simulan
+- [x] Imágenes pre-renderizadas de respaldo (`renders/`, `npm run renders:presentacion`): sin WebGL, en el PDF y en las miniaturas del modo presentador
 
 ### Fase 3: Interacciones sin servidor
 - [ ] Cola de la tienda (avance por bloque y apertura de la puerta)

@@ -29,11 +29,13 @@ npm run dev
 | Inicio / Fin | Primera / última |
 | `P` | Modo presentador |
 | `B` (o `.` del control) | Pantalla en cacao (pausa) |
+| `H` | Hype colectivo: cuenta regresiva, medidor y drop (ensayo sin celulares hasta la fase 4; con el medidor corriendo, lo completa) |
 | `M` | Medidor de fps |
 
 - `#3` en la URL abre directo en la diapositiva 3.
 - `?medir` hace un recorrido de prueba por las 9 estaciones y muestra los fps; `?escala=1` baja la resolución interna si la notebook no llega a 60 fps.
-- `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página.
+- `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página, sobre la imagen pre-renderizada de su escena.
+- `renders/` guarda esas imágenes (una por encuadre): también se ven si la notebook no tiene WebGL y como miniaturas del modo presentador. Después de cambiar la escena, `npm run renders:presentacion` en `juego/` las vuelve a generar (necesita Playwright).
 - Las diapositivas están en [`index.html`](index.html): cada `<section data-escena>` es una diapositiva, con sus notas en `<aside class="notas">`.
 
 ---

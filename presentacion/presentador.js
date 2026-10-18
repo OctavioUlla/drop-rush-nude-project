@@ -15,7 +15,7 @@ let estado = null; // el último que mandó el proyector
 let recibido = 0;
 let mostrada = null;
 
-/** Copia de la diapositiva sobre un escenario 16:9 del color de su estudio, sin la escena 3D. */
+/** Copia de la diapositiva sobre un escenario 16:9, con la imagen pre-renderizada de la escena de fondo. */
 function miniatura(contenedor, d) {
   if (!d) { contenedor.innerHTML = '<p class="miniatura__fin">Fin de la presentación</p>'; return; }
   const escenario = document.createElement('div');
@@ -25,8 +25,10 @@ function miniatura(contenedor, d) {
   const capas = document.createElement('div');
   capas.className = 'np-capas';
   const capa = document.importNode(d.el, true);
-  capa.querySelectorAll('aside.notas, .np-etiquetas').forEach((x) => x.remove());
+  capa.querySelectorAll('aside.notas, .np-etiquetas, .hype').forEach((x) => x.remove());
   capa.classList.add('np-diapo--activa');
+  // Fondo: la imagen pre-renderizada de su encuadre (renders/), así la miniatura muestra la escena.
+  capa.style.setProperty('--respaldo', `url("${new URL(`./renders/${d.escena}${d.pose ? `-${d.pose}` : ''}.jpg`, location.href)}")`);
   capas.append(capa);
   escenario.append(capas);
   contenedor.replaceChildren(escenario);
