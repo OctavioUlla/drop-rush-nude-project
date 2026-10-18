@@ -242,12 +242,12 @@ function conectar() {
   }
 }
 
-/** Antes de que arranque la partida el grupo se puede soltar para elegir otro número (por si se eligió mal). */
+/** Antes de que arranque la presentación el grupo se puede soltar para elegir otro número (por si se eligió mal). */
 async function cambiarGrupo() {
-  if (guion || grupo == null) return;
+  if (!puedeCambiarGrupo()) return;
   const r = await red.salirDeGrupo();
   if (!r.ok) {
-    cartel(r.reason === 'game_started' ? 'La partida ya arrancó: ya no se puede cambiar de grupo.' : 'No se pudo cambiar de grupo. Probá de nuevo.', 2500);
+    cartel(r.reason === 'started' ? 'Ya arrancó: no se puede cambiar de grupo.' : 'No se pudo cambiar de grupo. Probá de nuevo.', 2500);
     return;
   }
   grupo = null;
@@ -256,9 +256,13 @@ async function cambiarGrupo() {
   mostrarPasoGrupo(red.sala);
 }
 
-/** El botón para cambiar de grupo solo aparece mientras no hay partida. */
+/** Hasta el hype de apertura (o, sin presentación, hasta la partida): después el grupo queda fijo. */
+function puedeCambiarGrupo() {
+  return !SOLO && grupo != null && !guion && presentacion?.hype.fase === 'reposo';
+}
+
 function actualizarCambioGrupo() {
-  const oculto = SOLO || Boolean(guion) || grupo == null;
+  const oculto = !puedeCambiarGrupo();
   for (const id of ['btn-cambiar-grupo', 'pres-cambiar-grupo']) if ($(id).hidden !== oculto) $(id).hidden = oculto;
 }
 

@@ -164,12 +164,13 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       socket.emit('pres:estado', sala.presentacion.estadoCelular(r.grupo));
     });
 
-    // El celular eligió mal su número: antes de que arranque la partida lo suelta y vuelve a la grilla.
+    // El celular eligió mal su número: antes de que arranque la presentación (el hype de apertura) lo suelta
+    // y vuelve a la grilla. En una sala sin presentación se puede hasta que arranque la partida.
     socket.on('player:leave', (_datos, ack) => {
       const sala = salaDe(socket);
       const grupo = grupoDe(socket);
       if (!sala || !grupo || grupo.socketId !== socket.id) return responder(ack, { ok: false, reason: 'no_group' });
-      if (sala.partida.guion) return responder(ack, { ok: false, reason: 'game_started' });
+      if (sala.presentacion.comenzo || sala.partida.guion) return responder(ack, { ok: false, reason: 'started' });
       sala.liberar(grupo.numero);
       salirDeGrupo(socket);
       avisarGrupos(sala);

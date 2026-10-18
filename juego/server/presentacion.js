@@ -40,6 +40,11 @@ export class Presentacion {
     return true;
   }
 
+  /** La presentación arranca con el hype de apertura: desde ahí los grupos ya no se cambian. */
+  get comenzo() {
+    return this.hype.fase !== 'reposo';
+  }
+
   // ---------- Hype colectivo ----------
 
   /**
