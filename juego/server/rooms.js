@@ -141,11 +141,11 @@ export class Grupo {
     this.libre = false;
     this.conectado = false;
     this.socketId = null;
-    this.ultimoDato = 0;
     this.reiniciarPartida();
   }
 
   reiniciarPartida() {
+    this.ultimoDato = 0; // hora del último run:progress (para predecir su marcador si deja de llegar)
     this.distanciaCorrida = 0;
     this.velocidad = 0;
     this.bonus = 0;
@@ -157,6 +157,17 @@ export class Grupo {
     this.respuestas = new Map();
     /** índice de pregunta → último carril informado mientras corre la pregunta */
     this.carriles = new Map();
+    // Ventajas y poderes (Fase 3).
+    this.racha = 0;
+    this.poder = null; // poder guardado (uno a la vez)
+    this.poderesUsados = 0;
+    this.usos = new Set(); // ids de uso ya aplicados (el celular reintenta hasta el ack)
+    this.hype = false; // la próxima respuesta correcta vale el doble
+    this.cincuenta = false; // Pase 50/50 esperando una pregunta de 3 opciones
+    /** índice de pregunta → carril incorrecto que se cerró con el Pase 50/50 */
+    this.cerradas = new Map();
+    this.ventaja = null; // { id, desde, hasta } en hora del servidor
+    this.algoritmoHasta = 0; // hasta cuándo le aparecen más obstáculos (Cambio de algoritmo de otro grupo)
   }
 
   /** Corrida (la calcula el celular) + bonus de las respuestas (el servidor) + likes juntados. */

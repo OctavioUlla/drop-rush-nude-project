@@ -1,6 +1,7 @@
 import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
 import { FASES, PASOS_POR_SEGUNDO, VELOCIDAD_BASE, INTERVALO_PROGRESO, VALOR_LIKE } from '../shared/constantes.js';
 import { recorridoIdeal } from '../shared/carrera.js';
+import { VENTAJAS, PODERES, DURACION_ARRANQUE_LENTO } from '../shared/poderes.js';
 import { Guion } from '../shared/guion.js';
 import { Corredor } from './runner.js';
 import { Pista } from './track.js';
@@ -54,6 +55,17 @@ let aciertosSolo = 0;
 let arcos = null; // { index, opciones, z } de la última pregunta (se quedan donde se cruzaron)
 let tiendaZ = null; // distancia de la puerta de la tienda (sprint final y llegada)
 const carteles = LETRAS.map((letra) => ({ letra, texto: '', activo: false, cerrado: false }));
+// Ventajas y poderes (Fase 3). Las horas son del servidor.
+let ventaja = null; // { id, hasta }: activa desde que llega el resultado hasta el final del tramo
+let poder = null; // poder guardado, listo para usar
+let usoPendiente = null; // poder usado que todavía no confirmó el servidor
+let hype = false; // la próxima respuesta correcta vale el doble
+let cincuentaPendiente = false; // Pase 50/50 esperando la próxima pregunta de 3 opciones
+let cerrada = null; // { index, lane }: arco cerrado por el Pase 50/50
+let algoritmoHasta = 0; // Cambio de algoritmo de otro grupo: más obstáculos hasta esta hora
+let extrasHasta = 0; // distancia hasta la que ya se agregaron obstáculos extra
+let impulso = false; // último cuarto de la tabla (emparejar): se aplica desde la próxima fase
+const resultadosVistos = new Set(); // índices de pregunta cuyo resultado ya se aplicó
 
 const ahora = () => (red ? red.ahora() : Date.now());
 
@@ -88,6 +100,10 @@ function iniciar() {
   });
   $('calidad-texto').textContent = calidad.preferencia;
   $('btn-debug').addEventListener('click', () => ($('debug').hidden = !$('debug').hidden));
+  $('poder').addEventListener('click', usarPoder);
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyE' || e.code === 'Enter') usarPoder();
+  });
   $('btn-medir').addEventListener('click', empezarMedicion);
   $('btn-corte').addEventListener('click', () => red?.simularCorte(5));
   $('btn-corte-largo').addEventListener('click', () => red?.simularCorte(20));
@@ -145,7 +161,10 @@ function conectar() {
     red.entrarSala(red.sala);
   });
   red.addEventListener('game:script', (e) => {
-    if (guion?.id !== e.detail.id) bonusPorPregunta.clear();
+    if (guion?.id !== e.detail.id) {
+      bonusPorPregunta.clear();
+      reiniciarEfectos();
+    }
     guion = new Guion(e.detail);
     resultadoFinal = null;
   });
@@ -169,10 +188,16 @@ function conectar() {
     if (s.final) resultadoFinal = s.final;
     // Si se recargó la página en plena carrera, se retoma desde la distancia que tenía el servidor.
     if (guion && guionIniciado === s.scriptId && s.runDistance > corredor.distancia + 5) corredor.distancia = s.runDistance;
+    sincronizarEfectos(s);
   });
   red.addEventListener('question:start', (e) => (pregunta = e.detail));
   red.addEventListener('question:result', (e) => mostrarResultado(e.detail));
-  red.addEventListener('run:rank', (e) => (rango = e.detail));
+  red.addEventListener('question:closed', (e) => cerrarArco(e.detail));
+  red.addEventListener('run:modifiers', (e) => recibirAlgoritmo(e.detail));
+  red.addEventListener('run:rank', (e) => {
+    rango = e.detail;
+    impulso = Boolean(e.detail.catchUp);
+  });
   red.addEventListener('game:end', (e) => (resultadoFinal = e.detail));
 
   $('form-codigo').addEventListener('submit', async (e) => {
@@ -208,8 +233,45 @@ function reiniciarPartida() {
   arcos = null;
   tiendaZ = null;
   bonusPorPregunta.clear();
+  reiniciarEfectos();
   corredor.limitarCarriles(2);
   corredor.corriendo = true;
+}
+
+function reiniciarEfectos() {
+  ventaja = null;
+  poder = null;
+  usoPendiente = null;
+  hype = false;
+  cincuentaPendiente = false;
+  cerrada = null;
+  algoritmoHasta = 0;
+  extrasHasta = 0;
+  impulso = false;
+  resultadosVistos.clear();
+  Object.assign(corredor, { turbo: false, iman: false, escudos: 0, impulso: false, lenta: 0 });
+  corredor.cerrarCarril(null);
+}
+
+/**
+ * Al reconectar o recargar, el servidor manda el estado de las ventajas y los poderes.
+ * Un resultado revelado mientras no había conexión se muestra ahora (solo el último).
+ */
+function sincronizarEfectos(s) {
+  const nuevos = (s.answers ?? []).filter((r) => !resultadosVistos.has(r.index));
+  const ultimo = nuevos.reduce((a, r) => (!a || r.index > a.index ? r : a), null);
+  for (const r of nuevos) if (r !== ultimo) resultadosVistos.add(r.index);
+  if (ultimo) mostrarResultado(ultimo);
+
+  if (s.advantage && s.advantage.until !== ventaja?.hasta) activarVentaja(s.advantage.id, s.advantage.until);
+  if (s.power !== usoPendiente) poder = s.power ?? null;
+  if (!usoPendiente) {
+    hype = Boolean(s.hype);
+    cincuentaPendiente = Boolean(s.fiftyFifty);
+  }
+  if (s.closed) cerrada = s.closed;
+  if (s.extraObstacles > algoritmoHasta) algoritmoHasta = s.extraObstacles;
+  impulso = Boolean(s.catchUp);
 }
 
 function volverAlIngreso() {
@@ -269,6 +331,7 @@ function partidaLocal() {
   guion = new Guion({ id: Math.random(), startsAt: inicio, phases: fases, difficulty: 'facil', questions: 3 });
   resultadoFinal = null;
   bonusPorPregunta.clear();
+  reiniciarEfectos();
   aciertosSolo = 0;
   $('btn-partida').hidden = true;
 }
@@ -291,7 +354,12 @@ function actualizarFase() {
     tiendaZ = null;
   }
   if (anterior?.type === FASES.PREGUNTA && anterior.numero === f.numero - 1) responder(anterior);
-  if (f.type !== FASES.PREGUNTA) corredor.limitarCarriles(2);
+  if (f.type !== FASES.PREGUNTA) {
+    corredor.limitarCarriles(2);
+    corredor.cerrarCarril(null);
+  }
+  // El impulso de emparejar se fija al empezar cada fase: así los arcos y la tienda no saltan.
+  corredor.impulso = impulso && f.type !== FASES.CUENTA && f.type !== FASES.FIN;
 
   switch (f.type) {
     case FASES.CUENTA:
@@ -303,6 +371,9 @@ function actualizarFase() {
       const d = corredor.distancia;
       const largo = VELOCIDAD_BASE * (f.restante / 1000);
       pista.agregarTramo(f.seed, d + 30, d + Math.max(40, largo - 15), guion.datos.difficulty);
+      extrasHasta = 0;
+      // Ruta VIP Château que ya estaba activa (por ejemplo, si se recargó en pleno tramo).
+      if (ventaja?.id === 'vip' && ventaja.hasta > ahora()) pista.aclarar(d + 12);
       if (f.type === FASES.SPRINT) cartel('<span class="cartel__caja">¡Sprint final!</span>', 2000);
       break;
     }
@@ -312,7 +383,11 @@ function actualizarFase() {
       // Con 2 opciones el tercer carril es una pared: el corredor solo puede elegir A o B.
       corredor.limitarCarriles((f.options ?? 3) - 1);
       respuestaPendiente = { index: f.index, desde: Math.max(ahora(), f.startsAt), carril: corredor.carril };
-      if (SOLO) pregunta = { index: f.index, shortOptions: CORTAS_SOLO };
+      if (SOLO) {
+        pregunta = { index: f.index, shortOptions: CORTAS_SOLO };
+        if (cincuentaPendiente) cerrarArco({ index: f.index, lane: Math.floor(Math.random() * 3) });
+      }
+      if (cerrada?.index === f.index) corredor.cerrarCarril(cerrada.lane);
       break;
     case FASES.FIN:
       corredor.corriendo = false;
@@ -337,15 +412,39 @@ function responder(fase) {
   const datos = { index: fase.index, lane: corredor.carril, serverTime: fase.startsAt + fase.duration, since: r.desde };
   cartel('<span class="cartel__caja">✔ Respuesta guardada</span>', 1500);
   if (SOLO) {
-    const correct = Math.random() < 0.6;
-    const premio = calcularPremio(fase, r.desde);
-    setTimeout(() => mostrarResultado({ index: fase.index, correct, bonus: correct ? premio.total : 0, speedBonus: premio.rapidez }), 600);
+    setTimeout(() => mostrarResultado(resultadoSolo(fase, r.desde)), 600);
     return;
   }
   red.encolar(`q${fase.index}:${guion.id}`, 'question:answer', datos);
 }
 
-function mostrarResultado({ index, correct, bonus: b, speedBonus }) {
+/** Partida simulada (?solo): acierta al azar (más seguido con el 50/50) y reparte ventajas y poderes como el servidor. */
+let rachaSolo = 0;
+function resultadoSolo(fase, desde) {
+  const index = fase.index;
+  const correct = Math.random() < (cerrada?.index === index ? 0.8 : 0.6) && corredor.carril !== cerrada?.lane;
+  const premio = calcularPremio(fase, desde);
+  if (!correct) {
+    rachaSolo = 0;
+    return { index, correct, bonus: 0, speedBonus: 0, slowStart: DURACION_ARRANQUE_LENTO };
+  }
+  const r = { index, correct, bonus: premio.total, speedBonus: premio.rapidez, hype: hype || undefined };
+  const ids = Object.keys(VENTAJAS);
+  r.advantageId = ids[Math.floor(Math.random() * ids.length)];
+  const siguiente = guion.fases[guion.fases.findIndex((x) => x.type === FASES.PREGUNTA && x.index === index) + 1];
+  r.advantageUntil = siguiente.startsAt + siguiente.duration;
+  if (++rachaSolo >= 2) {
+    rachaSolo = 0;
+    const poderes = Object.keys(PODERES);
+    if (!poder) r.powerId = poderes[Math.floor(Math.random() * poderes.length)];
+  }
+  return r;
+}
+
+function mostrarResultado(r) {
+  const { index, correct, bonus: b, speedBonus } = r;
+  if (resultadosVistos.has(index)) return; // el mismo resultado puede llegar por question:result y por state:sync
+  resultadosVistos.add(index);
   bonusPorPregunta.set(index, correct ? b : 0);
   if (SOLO && correct) aciertosSolo++;
   const d = document.createElement('div');
@@ -353,8 +452,111 @@ function mostrarResultado({ index, correct, bonus: b, speedBonus }) {
   document.body.append(d);
   setTimeout(() => d.remove(), 1200);
   navigator.vibrate?.(correct ? 60 : [40, 60, 40]);
-  const rapidez = correct && speedBonus ? ` <small>· ⚡ ${speedBonus} por rapidez</small>` : '';
-  cartel(correct ? `<span class="cartel__caja">✅ +${b} m${rapidez}</span>` : '<span class="cartel__caja">❌ Incorrecta</span>', 2000);
+
+  const lineas = [];
+  if (correct) {
+    if (r.hype) hype = false;
+    const extra = r.hype ? ' <small>· 🔥 x2 por el Hype</small>' : speedBonus ? ` <small>· ⚡ ${speedBonus} por rapidez</small>` : '';
+    lineas.push(`✅ +${b} m${extra}`);
+    if (r.advantageId) {
+      const v = VENTAJAS[r.advantageId];
+      activarVentaja(r.advantageId, r.advantageUntil);
+      lineas.push(`<small>${v.icono} <b>${v.nombre}</b>: ${v.efecto.toLowerCase()}</small>`);
+    }
+  } else {
+    lineas.push('❌ Incorrecta');
+    // Pierde impulso: arranca el tramo un poco más lento (sección 3.5).
+    corredor.lenta = r.slowStart ?? DURACION_ARRANQUE_LENTO;
+  }
+  if (r.powerId && r.powerId !== usoPendiente) {
+    poder = r.powerId;
+    const p = PODERES[r.powerId];
+    lineas.push(`<small>🎁 ¡Racha! Nuevo poder: ${p.icono} <b>${p.nombre}</b></small>`);
+    setTimeout(() => navigator.vibrate?.([30, 40, 30, 40, 80]), 400);
+  }
+  cartel(`<span class="cartel__caja">${lineas.join('<br>')}</span>`, lineas.length > 1 ? 3200 : 2000);
+}
+
+/** Ventaja del tramo que empieza: dura hasta `hasta` (hora del servidor). */
+function activarVentaja(id, hasta) {
+  if (!VENTAJAS[id] || !(hasta > ahora())) return;
+  ventaja = { id, hasta };
+  corredor.escudos = id === 'escudo' ? 1 : 0;
+  // Ruta VIP: se despejan los obstáculos que todavía no se ven de cerca.
+  if (id === 'vip') pista.aclarar(corredor.distancia + 12);
+}
+
+/** Pase 50/50: se cierra un arco incorrecto (si la pregunta está en curso, enseguida). */
+function cerrarArco({ index, lane }) {
+  cerrada = { index, lane };
+  cincuentaPendiente = false;
+  if (faseActual?.type === FASES.PREGUNTA && faseActual.index === index) corredor.cerrarCarril(lane);
+  cartel(`<span class="cartel__caja">🎟️ Se cerró el arco ${LETRAS[lane]}</span>`, 1800);
+}
+
+/** Otro grupo usó Cambio de algoritmo: más obstáculos durante unos segundos. */
+function recibirAlgoritmo({ extraObstacles, by }) {
+  if (!(extraObstacles > algoritmoHasta)) return;
+  algoritmoHasta = extraObstacles;
+  navigator.vibrate?.([80, 50, 80]);
+  const quien = by ? `El grupo ${by}` : 'Alguien';
+  cartel(`<span class="cartel__caja">📉 ¡${quien} cambió el algoritmo!<br><small>Más obstáculos por unos segundos</small></span>`, 2500);
+}
+
+/** Usa el poder guardado. Se reintenta hasta el ack: aunque se corte la red, se aplica una sola vez. */
+function usarPoder() {
+  if (!poder || !enPartida()) return;
+  const id = poder;
+  const p = PODERES[id];
+  poder = null;
+  navigator.vibrate?.(40);
+  if (id === 'hype') hype = true;
+  if (id === 'cincuenta') cincuentaPendiente = true;
+  cartel(`<span class="cartel__caja">${p.icono} ¡${p.nombre}!<br><small>${p.efecto}</small></span>`, 2200);
+  if (SOLO) {
+    // En la práctica no hay otros grupos: el Cambio de algoritmo se ve en la propia calle.
+    if (id === 'algoritmo') recibirAlgoritmo({ extraObstacles: ahora() + 5000, by: null });
+    if (id === 'cincuenta' && faseActual?.type === FASES.PREGUNTA) cerrarArco({ index: faseActual.index, lane: Math.floor(Math.random() * 3) });
+    return;
+  }
+  usoPendiente = id;
+  const useId = `${guion.id}:${id}:${Math.round(ahora())}`;
+  red.encolar(`poder:${useId}`, 'player:use_power', { powerId: id, useId }, (r) => {
+    usoPendiente = null;
+    if (!r?.ok) {
+      if (id === 'hype') hype = false;
+      if (id === 'cincuenta') cincuentaPendiente = false;
+      return;
+    }
+    if (r.closed) cerrarArco(r.closed);
+    if (id === 'algoritmo' && r.targets?.length) {
+      cartel(`<span class="cartel__caja">📉 Más obstáculos para ${r.targets.length === 1 ? 'el grupo' : 'los grupos'} ${r.targets.join(', ')}</span>`, 2500);
+    }
+  });
+}
+
+/** Ventajas, impulso y obstáculos extra: se aplican en cada paso de la simulación. */
+function aplicarEfectos() {
+  const t = ahora();
+  if (ventaja && t >= ventaja.hasta) {
+    ventaja = null;
+    corredor.escudos = 0;
+  }
+  const corriendo = enPartida() && (faseActual.type === FASES.TRAMO || faseActual.type === FASES.SPRINT || faseActual.type === FASES.PREGUNTA);
+  corredor.turbo = corriendo && ventaja?.id === 'turbo';
+  corredor.iman = corriendo && ventaja?.id === 'iman';
+
+  // Cambio de algoritmo: obstáculos extra para los próximos segundos, nunca en las preguntas ni sobre la meta.
+  if (algoritmoHasta > t && (faseActual?.type === FASES.TRAMO || faseActual?.type === FASES.SPRINT) && enPartida()) {
+    const d = corredor.distancia;
+    const finFase = d + recorrido(Math.max(0, faseActual.startsAt + faseActual.duration - t) / 1000) - 12;
+    const hasta = Math.min(finFase, d + 22 + corredor.velocidad * ((algoritmoHasta - t) / 1000));
+    const desde = Math.max(extrasHasta, d + 22);
+    if (hasta > desde + 6) {
+      pista.agregarExtra(Math.floor(algoritmoHasta + desde), desde, hasta);
+      extrasHasta = hasta;
+    }
+  }
 }
 
 /**
@@ -365,7 +567,8 @@ function calcularPremio(fase, desde) {
   const { base, speedMax } = guion?.datos.bonus ?? { base: 150, speedMax: 100 };
   const t = Math.min(Math.max(desde, fase.startsAt), fase.startsAt + fase.duration);
   const rapidez = Math.round(speedMax * (1 - (t - fase.startsAt) / fase.duration));
-  return { total: base + rapidez, rapidez, maximo: base + speedMax };
+  const x = hype ? 2 : 1;
+  return { total: (base + rapidez) * x, rapidez, maximo: (base + speedMax) * x };
 }
 
 function cartel(html, ms) {
@@ -407,6 +610,7 @@ function bucle(t) {
   while (acumulado >= PASO && pasos < 8) {
     actualizarFase();
     if (!enPartida() && !(guion && faseActual?.type === FASES.FIN)) practicar();
+    aplicarEfectos();
     if (respuestaPendiente && corredor.carril !== respuestaPendiente.carril) {
       respuestaPendiente.carril = corredor.carril;
       respuestaPendiente.desde = ahora();
@@ -426,8 +630,12 @@ function bucle(t) {
   estado.x = ant.x + (corredor.x - ant.x) * a;
   estado.y = ant.y + (corredor.y - ant.y) * a;
 
-  ubicarDecorados(estado.distancia);
+  ubicarDecorados(estado.distancia, dt);
   vista.dibujar(estado, corredor, pista, dt, tiempo);
+  for (const e of corredor.eventos) {
+    if (e === 'choque') navigator.vibrate?.(35);
+    if (e === 'escudo') navigator.vibrate?.([15, 30, 15]);
+  }
   corredor.eventos.length = 0;
   calidad.registrar(dt);
   if (medicion) registrarMedicion(dt);
@@ -452,7 +660,7 @@ function bucle(t) {
 // ---------- Arcos y tienda ----------
 /** Metros que va a correr el corredor en los próximos `s` segundos si no choca. */
 function recorrido(s) {
-  return recorridoIdeal(corredor.tiempoCarrera + s) - recorridoIdeal(corredor.tiempoCarrera);
+  return (recorridoIdeal(corredor.tiempoCarrera + s) - recorridoIdeal(corredor.tiempoCarrera)) * corredor.multiplicador;
 }
 
 /**
@@ -460,28 +668,32 @@ function recorrido(s) {
  * justo cuando termina la fase (la respuesta la decide el guion, no el choque con el arco).
  * Al terminar la fase quedan fijos donde se cruzaron.
  */
-function ubicarDecorados(distancia) {
+function ubicarDecorados(distancia, dt) {
   const f = guion && guionIniciado === guion.id ? faseActual : null;
   const restante = f ? Math.max(0, f.startsAt + f.duration - ahora()) / 1000 : 0;
+  // Si cambia la velocidad (turbo, impulso), arcos y tienda se reacomodan de a poco, sin saltos.
+  const suave = (actual, objetivo) => (actual == null ? objetivo : actual + (objetivo - actual) * Math.min(1, dt * 3));
 
   if (f?.type === FASES.PREGUNTA) {
+    const nuevo = arcos?.index !== f.index;
     arcos ??= {}; // se reutiliza el mismo objeto en cada cuadro
     arcos.index = f.index;
     arcos.opciones = f.options ?? 3;
-    arcos.z = distancia + recorrido(restante);
+    arcos.z = suave(nuevo ? null : arcos.z, distancia + recorrido(restante));
   } else if (arcos && (!f || distancia > arcos.z + 15)) arcos = null;
   if (arcos) {
     const cortas = pregunta?.index === arcos.index ? pregunta.shortOptions : null;
     const respondiendo = f?.type === FASES.PREGUNTA;
+    const cerradaAca = cerrada?.index === arcos.index ? cerrada.lane : null;
     carteles.forEach((c, i) => {
-      c.cerrado = i >= arcos.opciones;
+      c.cerrado = i >= arcos.opciones || i === cerradaAca;
       c.texto = cortas?.[i] ?? '';
       c.activo = respondiendo && !c.cerrado && i === corredor.carril;
     });
   }
   vista.ubicarArcos(arcos?.z ?? null, carteles);
 
-  if (f?.type === FASES.SPRINT) tiendaZ = distancia + recorrido(restante) + FRENADA_TIENDA;
+  if (f?.type === FASES.SPRINT) tiendaZ = suave(tiendaZ, distancia + recorrido(restante) + FRENADA_TIENDA);
   else if (f?.type === FASES.FIN) tiendaZ ??= distancia + FRENADA_TIENDA; // si recargó ya en la llegada
   else tiendaZ = null;
   vista.ubicarTienda(tiendaZ);
@@ -505,7 +717,7 @@ function actualizarHud() {
   const premio = f?.type === FASES.PREGUNTA && respuestaPendiente?.index === f.index ? calcularPremio(f, respuestaPendiente.desde) : null;
   $('premio').hidden = !premio;
   if (premio) {
-    $('premio').innerHTML = `⚡ Si es la correcta: <b>+${premio.total} m</b>`;
+    $('premio').innerHTML = `${hype ? '🔥' : '⚡'} Si es la correcta: <b>+${premio.total} m</b>${hype ? ' <small>x2</small>' : ''}`;
     $('premio').classList.toggle('juego__premio--baja', premio.total < premio.maximo);
   }
   $('carriles').hidden = f?.type !== FASES.PREGUNTA;
@@ -514,7 +726,7 @@ function actualizarHud() {
     $('temporizador').classList.toggle('np-temporizador--urgente', restante < 4000);
     const cortas = pregunta?.index === f.index ? pregunta.shortOptions : [];
     [...$('carriles').children].forEach((s, i) => {
-      const abierta = i < (f.options ?? 3);
+      const abierta = i < (f.options ?? 3) && !(cerrada?.index === f.index && cerrada.lane === i);
       const texto = abierta ? `${LETRAS[i]}${cortas?.[i] ? `<small>${escapar(cortas[i])}</small>` : ''}` : '✕';
       if (s.dataset.texto !== texto) {
         s.innerHTML = texto;
@@ -525,6 +737,7 @@ function actualizarHud() {
     });
   }
   actualizarFinal(f);
+  actualizarEfectos(f, t);
 
   if (performance.now() < cartelHasta) {
     // Un cartel temporal (respuesta guardada, resultado) tiene prioridad.
@@ -551,6 +764,37 @@ function actualizarHud() {
   $('sin-red').hidden = !red || red.segundosSinRed < 5;
 
   if (!$('debug').hidden) $('debug-datos').textContent = textoDebug();
+}
+
+/** Chips de ventaja, impulso y efectos, y el botón del poder guardado. */
+function actualizarEfectos(f, t) {
+  const enCarrera = enPartida() && f?.type !== FASES.CUENTA;
+  const chips = [];
+  if (enCarrera && ventaja) {
+    const v = VENTAJAS[ventaja.id];
+    const extra = ventaja.id === 'escudo' && !corredor.escudos ? ' (usado)' : '';
+    chips.push(`${v.icono} ${v.nombre}${extra} · ${Math.ceil((ventaja.hasta - t) / 1000)} s`);
+  }
+  if (enCarrera && corredor.impulso) chips.push('💨 Impulso +10 %');
+  if (enCarrera && corredor.lenta > 0) chips.push('🐢 Arranque lento');
+  if (enCarrera && algoritmoHasta > t) chips.push(`📉 Más obstáculos · ${Math.ceil((algoritmoHasta - t) / 1000)} s`);
+  if (enCarrera && hype) chips.push('🔥 Hype: la próxima vale x2');
+  if (enCarrera && cincuentaPendiente) chips.push('🎟️ 50/50 en la próxima');
+  const html = chips.map((c) => `<span class="np-insignia">${c}</span>`).join('');
+  if ($('efectos').dataset.html !== html) {
+    $('efectos').innerHTML = html;
+    $('efectos').dataset.html = html;
+  }
+
+  const mostrar = Boolean(poder) && enCarrera && f?.type !== FASES.FIN;
+  $('poder').hidden = !mostrar;
+  if (mostrar && $('poder').dataset.id !== poder) {
+    const p = PODERES[poder];
+    $('poder').dataset.id = poder;
+    $('poder-icono').textContent = p.icono;
+    $('poder-nombre').textContent = p.nombre;
+    $('poder-efecto').textContent = p.efecto;
+  }
 }
 
 function actualizarFinal(f) {

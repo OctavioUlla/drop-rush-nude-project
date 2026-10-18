@@ -19,6 +19,10 @@ export const CONFIG_POR_DEFECTO = {
   toleranciaRespuestaTardia: 10,
   bonusAcierto: 150,
   bonusRapidezMax: 100,
+  poderesActivos: true,
+  rachaParaPoder: 2,
+  emparejar: true,
+  sonido: true,
 };
 
 function leerJson(nombre) {

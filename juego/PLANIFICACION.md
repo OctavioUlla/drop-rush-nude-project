@@ -402,19 +402,21 @@ El objetivo es que un corte de unos segundos **no se note**: el juego sigue corr
 | player ↔ server | `time:ping` / `time:pong` | `{ clientTime }` / `{ clientTime, serverTime }` (sincronización de reloj) |
 | host → server | `host:start` | `{ settings }` |
 | server → todos | `game:script` | `{ startsAt, phases: [{ type, index, startsAt, duration, seed? }], difficulty }` |
-| server → player | `run:modifiers` | `{ advantage?, slowStart?, extraObstacles? }` |
+| server → player | `run:modifiers` | `{ extraObstacles, by }`: hora hasta la que aparecen más obstáculos (Cambio de algoritmo del grupo `by`) |
 | player → server | `run:progress` | `{ runDistance, hits, jumps, likes }` |
-| server → host | `run:positions` | `[[id, distance, advantage, connected]]` |
-| server → player | `run:rank` | `{ position, total }` |
+| server → host | `run:positions` | `[[id, distance, advantage, connected]]` (distancia con predicción si el grupo dejó de mandar datos; `connected` = 0 tras 5 s sin datos) |
+| server → player | `run:rank` | `{ position, total, catchUp }` (`catchUp`: impulso de emparejar) |
 | server → todos | `question:start` | `{ index, text, options, shortOptions, timeLimit, closedOption? }` |
 | player → server | `question:lane` | `{ index, lane }` (para el contador "posicionados") |
 | server → host | `question:positioned` | `{ index, count, total }` (grupos que ya se movieron de carril) |
 | player → server | `question:answer` | `{ index, lane, serverTime }` (con reintento hasta el `ack`) |
 | server → player | `question:answer_ack` | `{ index }` |
-| server → player | `question:result` | `{ index, correct, bonus, advantageId?, powerId? }` |
+| server → player | `question:result` | `{ index, correct, bonus, speedBonus, advantageId?, advantageUntil?, powerId?, hype?, slowStart? }` |
+| server → player | `question:closed` | `{ index, lane }`: arco cerrado por el Pase 50/50 |
 | server → host | `question:reveal` | `{ index, correctIndex, correctCount, total, distribution }` |
-| player → server | `player:use_power` | `{ powerId }` |
-| server → player | `state:sync` | `{ phase, bonusDistance, advantage, power, position, answeredIndexes }` |
+| player → server | `player:use_power` | `{ powerId, useId }` (con reintento hasta el `ack`: `{ ok, targets?, closed? }`; el mismo `useId` se aplica una sola vez) |
+| server → host | `power:used` | `{ group, powerId, targets }` (aviso en el proyector) |
+| server → player | `state:sync` | `{ runDistance, bonusDistance, answers, answeredIndexes, question, position, total, catchUp, final, advantage, power, hype, fiftyFifty, closed, extraObstacles, streak }` |
 | server → todos | `game:end` | `{ winner, queue, stats }` (un solo ganador; `queue` es el orden de llegada del resto) |
 | host → server | `host:review` | ack: `[{ index, text, options, correctIndex, distribution, correctCount, answered, total, topic, explanation }]` (preguntas con más errores) |
 | host → server | `host:pause` / `host:skip` / `host:end` | — |
@@ -597,13 +599,15 @@ juego/
 - [x] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto
 
 ### Fase 3: Red robusta, ventajas y poderes
-- [ ] Cola de salida con `ack`, `state:sync` y recuperación de estado de Socket.io
-- [ ] Predicción de marcadores en el host para grupos sin datos
+> Implementada: ver [`README.md`](README.md#qué-hay-en-la-fase-3).
+
+- [x] Cola de salida con `ack`, `state:sync` y recuperación de estado de Socket.io *(respuestas y poderes con reintento hasta el `ack` y aplicados una sola vez; `state:sync` trae también ventaja, poder, Hype, 50/50 y efectos)*
+- [x] Predicción de marcadores en el host para grupos sin datos *(hasta 4 s con la última velocidad; a los 5 s sin datos, atenuado)*
 - [x] Liberar grupo desde el host *(adelantado en la Fase 1: desde el lobby o tocando la ficha en el ranking)*
-- [ ] Ventajas por respuesta correcta (turbo, escudo, imán, ruta VIP)
-- [ ] Rachas y poderes (Cambio de algoritmo, 50/50, Hype)
-- [ ] Mecanismo para emparejar
-- [ ] Sonidos, música y vibración
+- [x] Ventajas por respuesta correcta (turbo, escudo, imán, ruta VIP) *(se sortean)*
+- [x] Rachas y poderes (Cambio de algoritmo, 50/50, Hype)
+- [x] Mecanismo para emparejar
+- [x] Sonidos, música y vibración *(música y efectos sintetizados en el proyector; los celulares solo vibran)*
 
 ### Fase 4: Gráficos, pulido y prueba
 - [ ] Modelos finales generados por código: corredor animado, obstáculos, calles de Madrid, tienda, arcos (ver 5.3.1)

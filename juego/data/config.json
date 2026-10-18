@@ -12,5 +12,9 @@
   "dificultadObstaculos": "facil",
   "toleranciaRespuestaTardia": 10,
   "bonusAcierto": 150,
-  "bonusRapidezMax": 100
+  "bonusRapidezMax": 100,
+  "poderesActivos": true,
+  "rachaParaPoder": 2,
+  "emparejar": true,
+  "sonido": true
 }

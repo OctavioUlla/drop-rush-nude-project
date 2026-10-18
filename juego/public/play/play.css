@@ -119,6 +119,50 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .juego__carriles .activo { color: var(--np-acento-mostaza); }
 .juego__carriles .pared { color: color-mix(in srgb, var(--np-marca-crema) 45%, transparent); }
 
+/* ---------- Ventajas y poderes ---------- */
+.juego__efectos {
+  position: absolute;
+  left: var(--np-espacio-3);
+  right: var(--np-espacio-3);
+  top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 3.4rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--np-espacio-1);
+  pointer-events: none;
+}
+.juego__efectos:empty { display: none; }
+.juego__efectos .np-insignia { background: var(--np-marca-cacao); color: var(--np-marca-crema); font-variant-numeric: tabular-nums; }
+/* Durante la pregunta, el temporizador y el premio ocupan ese lugar: los chips bajan. */
+#juego:has(#temporizador:not([hidden])) .juego__efectos { top: calc(max(var(--np-espacio-3), env(safe-area-inset-top)) + 7rem); }
+
+.juego__poder {
+  position: absolute;
+  left: 50%;
+  bottom: calc(max(var(--np-espacio-3), env(safe-area-inset-bottom)) + 56px);
+  transform: translateX(-50%);
+  width: min(92vw, 26rem);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--np-espacio-3);
+  padding: var(--np-espacio-3) var(--np-espacio-4);
+  border: var(--np-borde-grueso) solid var(--np-marca-cacao);
+  background: var(--np-acento-mostaza);
+  color: var(--np-marca-cacao);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  animation: poder-latido 1.2s ease-in-out infinite;
+}
+.juego__poder-icono { font-size: var(--np-texto-3xl); line-height: 1; }
+.juego__poder-texto { display: grid; gap: 2px; }
+.juego__poder-texto b { font: var(--np-peso-black) var(--np-texto-lg) / 1.1 var(--np-fuente-display); }
+.juego__poder-texto small { font-size: var(--np-texto-xs); line-height: 1.2; }
+.juego__poder-accion { padding: var(--np-espacio-2) var(--np-espacio-3); background: var(--np-marca-cacao); color: var(--np-marca-crema); font: var(--np-peso-black) var(--np-texto-base) / 1 var(--np-fuente-display); text-transform: uppercase; }
+.juego__poder:active { transform: translateX(-50%) scale(0.97); }
+@keyframes poder-latido { 50% { transform: translateX(-50%) scale(1.03); } }
+@media (prefers-reduced-motion: reduce) { .juego__poder { animation: none; } }
+
 /* ---------- Llegada ---------- */
 .final {
   position: absolute;

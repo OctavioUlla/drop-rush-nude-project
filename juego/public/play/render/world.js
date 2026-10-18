@@ -12,6 +12,8 @@ import { xObstaculo } from '../track.js';
 const LARGO_BLOQUE = 24;
 const CAPACIDAD = { valla: 24, caja: 24, bache: 16, fan: 24, bot: 10, camion: 10 };
 const CAPACIDAD_LIKES = 80;
+// Con el imán, los likes que están a menos de esta distancia vuelan hacia el corredor.
+const ALCANCE_IMAN = 9;
 
 const m = new Matrix4();
 const pos = new Vector3();
@@ -63,7 +65,8 @@ export class Mundo {
     this.triangulosBloque = triangulos(this.bloques[0].geometry);
   }
 
-  actualizar(distancia, pista, tiempo) {
+  /** `iman`: { x, y } del corredor si tiene el Imán de comunidad, o null. */
+  actualizar(distancia, pista, tiempo, iman = null) {
     // Bloques: el que queda atrás pasa adelante.
     const primero = Math.floor((distancia - 12) / LARGO_BLOQUE);
     const n = this.bloques.length;
@@ -103,6 +106,12 @@ export class Mundo {
       if (l.tomado && l.z < distancia - 1.5) continue;
       const s = l.tomado ? Math.max(0.01, 1 - (distancia - l.z + 1.5) / 3) : 1;
       pos.set(CARRILES[l.carril], l.y + Math.sin(tiempo * 4 + l.z) * 0.08 - l.hundido * 2 + (l.tomado ? 1 : 0), -l.z);
+      const cerca = l.z - distancia;
+      if (iman && !l.tomado && !l.hundido && cerca < ALCANCE_IMAN && cerca > -1) {
+        const t = (1 - Math.max(0, cerca) / ALCANCE_IMAN) ** 2;
+        pos.x += (iman.x - pos.x) * t;
+        pos.y += (iman.y + 0.6 - pos.y) * t;
+      }
       esc.setScalar(s);
       this.likes.setMatrixAt(i++, m.compose(pos, rot, esc));
     }
