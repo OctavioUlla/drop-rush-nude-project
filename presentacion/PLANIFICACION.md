@@ -64,7 +64,7 @@
 
 **Qué es.** Una sola pregunta que la clase responde desde el celular, con el resultado en vivo en el proyector.
 
-**Pregunta provisoria (falta confirmarla, ver sección 8):** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
+**Pregunta:** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
 
 **Cuándo.**
 - Se **abre** en el bloque de la historia y los drops, durante ~20 s, mientras se sigue hablando. El proyector solo muestra cuántos grupos votaron: el resultado se guarda.
@@ -336,7 +336,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
 - [x] Campaña o publicación viral a analizar: *Out of Office* (agosto de 2025)
 - [ ] Métricas públicas actualizadas, con sus fuentes (relevadas a octubre de 2026; falta citar las fuentes)
-- [ ] Pregunta definitiva de la votación y sus opciones
+- [x] Pregunta definitiva de la votación y sus opciones (90 €, el precio habitual de una sudadera de Nude Project)
 - [ ] Quién presenta cada bloque (las notas del orador ya están en cada diapositiva)
 
 ---

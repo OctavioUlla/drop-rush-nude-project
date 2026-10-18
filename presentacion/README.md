@@ -93,7 +93,7 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 - [x] Elegir la campaña viral a analizar: *Out of Office* (agosto de 2025).
 - [ ] Relevar métricas públicas actualizadas y citar las fuentes (relevadas a octubre de 2026; falta citar las fuentes).
 - [ ] Fotos de la Nude House y del Château para el bloque 4 (hoy se ve el cartel *Pendiente*).
-- [ ] Confirmar la pregunta de la votación ([`datos/votacion.json`](datos/votacion.json); la actual es provisoria).
+- [x] Confirmar la pregunta de la votación ([`datos/votacion.json`](datos/votacion.json)): queda la de 90 €.
 - [ ] Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7).
 - [x] Revisar el banco de preguntas del juego ([`juego/data/preguntas.json`](../juego/data/preguntas.json)): todas salen del guion y las diapositivas. Si cambia el guion, revisar las que dependen de ese bloque.
 - [ ] Repartir los bloques entre los oradores.
