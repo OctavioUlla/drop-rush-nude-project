@@ -4,11 +4,14 @@ import { Reloj } from '../shared/reloj.js';
 import { Guion } from '../shared/guion.js';
 import { FASES, esProfe, etiquetaGrupo } from '../shared/constantes.js';
 import { PODERES, VENTAJAS } from '../shared/poderes.js';
+import { urlFoto } from '../shared/fotos.js';
 import { Mapa } from './map.js';
 import { Sonido } from './sonido.js';
 
 // Pantalla del proyector: lobby con código y QR, mapa de la carrera, pregunta con revelado, ranking en vivo
 // de hasta 40 grupos, ganador, repaso de errores y debate (secciones 2 y 4.1).
+// La foto de cada grupo (selfie o fit check, la sacan en la espera de la presentación) es su foto de perfil en el
+// lobby, el ranking, el ganador y la cola; el mapa sigue con números y colores.
 // ?debug abre el panel técnico (carga del servidor y FPS de los celulares).
 
 const $ = (id) => document.getElementById(id);
@@ -81,6 +84,7 @@ async function abrirSala(nueva = false) {
   sala = r;
   guardarSesion({ code: r.code, hostKey: r.hostKey });
   aplicarAjustes(r.settings);
+  dibujarGrupos(); // room:groups llegó antes que la clave: ahora se pueden pedir las fotos
   $('codigo').textContent = r.code;
   $('barra-sala').textContent = `Sala ${r.code}`;
   $('barra-sala').hidden = false;
@@ -393,11 +397,53 @@ function ficha(numero, tomado = false) {
   return s;
 }
 
+/** URL de la foto del grupo (room:groups trae su versión), o null si no sacó. */
+function fotoDe(numero) {
+  const g = grupos.find((x) => x.number === numero);
+  return urlFoto(sala?.code, numero, g?.photo, sala?.hostKey);
+}
+
+function imagen(url, clase) {
+  const img = document.createElement('img');
+  img.className = clase ?? '';
+  img.alt = '';
+  img.src = url;
+  return img;
+}
+
+/** Ficha con la foto del grupo adentro y el número en la esquina (la grilla del lobby). */
+function fichaConFoto(f, url) {
+  const numero = document.createElement('b');
+  numero.textContent = f.textContent;
+  f.classList.add('np-ficha--foto');
+  f.replaceChildren(imagen(url), numero);
+  return f;
+}
+
+/** Ficha y, al lado, la foto chica en círculo (el ranking en vivo). */
+function quien(numero) {
+  const s = document.createElement('span');
+  s.className = 'quien';
+  s.append(ficha(numero, true));
+  ponerAvatar(s, numero);
+  return s;
+}
+
+function ponerAvatar(contenedor, numero) {
+  const url = fotoDe(numero);
+  let img = contenedor.querySelector('.avatar');
+  if (!url) return img?.remove();
+  if (!img) contenedor.append((img = imagen(url, 'avatar')));
+  else if (img.getAttribute('src') !== url) img.src = url;
+}
+
 /** Grilla de los grupos de alumnos y, al final, los profes que ya entraron (fuera de concurso). */
 function dibujarGrupos() {
   $('grilla').replaceChildren(
     ...grupos.filter((g) => !g.teacher || g.taken).map((g) => {
       const f = ficha(g.number, g.taken);
+      const url = g.taken && fotoDe(g.number);
+      if (url) fichaConFoto(f, url);
       if (!g.taken) f.classList.add('np-ficha--libre');
       else if (!g.connected) f.classList.add('np-ficha--desconectada');
       f.title = !g.taken ? 'Libre' : g.connected ? 'Conectado · tocar para liberar' : 'Desconectado · tocar para liberar';
@@ -451,7 +497,7 @@ function filaTop(numero) {
   pista.append(barra);
   const metros = document.createElement('span');
   metros.className = 'metros';
-  li.append(puesto, ficha(numero, true), pista, metros);
+  li.append(puesto, quien(numero), pista, metros);
   li.hidden = true;
   $('top').append(li);
   filas.set(numero, li);
@@ -491,11 +537,14 @@ function dibujarPosiciones() {
     li.classList.toggle('primero', textos[i] === '1.');
     li.classList.toggle('desconectado', !conectado);
     li.children[0].textContent = textos[i];
+    ponerAvatar(li.children[1], numero);
     li.children[2].firstChild.style.width = `${(distancia / maximo) * 100}%`;
     li.children[3].textContent = `${distancia} m`;
   });
   for (const [numero, li] of filas) if (!enTop.has(numero)) li.hidden = true;
   $('top').style.setProperty('--filas', Math.max(1, top.length));
+  // Con fotos, la columna del grupo se ensancha para la ficha y el círculo.
+  $('top').classList.toggle('top--fotos', grupos.some((g) => g.photo));
 
   $('resto').replaceChildren(
     ...posiciones.slice(EN_TOP).map(([numero, distancia, , conectado], i) => {
@@ -506,7 +555,7 @@ function dibujarPosiciones() {
       puesto.textContent = textos[EN_TOP + i];
       const metros = document.createElement('span');
       metros.textContent = `${distancia} m`;
-      li.append(puesto, ficha(numero, true), metros);
+      li.append(puesto, quien(numero), metros);
       return li;
     }),
   );
@@ -683,9 +732,18 @@ function dibujarFinal() {
     $('cola').replaceChildren();
     return;
   }
-  if ($('ganador-ficha').dataset.grupo === String(ganador.group) && $('cola').childElementCount === final.stats.length - 1) return;
-  $('ganador-ficha').dataset.grupo = ganador.group;
-  $('ganador-ficha').replaceChildren(ficha(ganador.group));
+  // Las fotos pueden llegar después del final (si se recargó el proyector): también cuentan para redibujar.
+  const clave = `${ganador.group}:${grupos.map((g) => g.photo).join()}`;
+  if ($('ganador-ficha').dataset.clave === clave && $('cola').childElementCount === final.stats.length - 1) return;
+  $('ganador-ficha').dataset.clave = clave;
+  // Con foto, la foto en grande y la ficha en la esquina; sin foto, la ficha gigante de siempre.
+  const foto = fotoDe(ganador.group);
+  if (foto) {
+    const marco = document.createElement('span');
+    marco.className = 'final__foto';
+    marco.append(imagen(foto), ficha(ganador.group));
+    $('ganador-ficha').replaceChildren(marco);
+  } else $('ganador-ficha').replaceChildren(ficha(ganador.group));
   $('ganador-nombre').textContent = `Grupo ${ganador.group}`;
   const datos = [
     ['Aciertos', `${ganador.correct}/${final.questions}`],
@@ -708,6 +766,7 @@ function dibujarFinal() {
       return d;
     }),
   );
+  $('cola').classList.toggle('cola--fotos', grupos.some((g) => g.photo));
   $('cola').replaceChildren(
     ...final.stats.filter((s) => s !== ganador).map((s) => {
       const li = document.createElement('li');
@@ -717,7 +776,19 @@ function dibujarFinal() {
       if (s.teacher) li.title = 'Profe · fuera de concurso';
       const datos = document.createElement('span');
       datos.textContent = `${s.correct}/${final.questions} · ${s.distance} m`;
-      li.append(puesto, ficha(s.group), datos);
+      li.append(puesto);
+      // Los que no llegaron, con su foto y el sello de SOLD OUT (para el debate de exclusividad vs. accesibilidad).
+      const foto = fotoDe(s.group);
+      if (foto) {
+        const marco = document.createElement('span');
+        marco.className = 'cola__foto';
+        const sello = document.createElement('span');
+        sello.className = 'cola__agotado';
+        sello.textContent = 'Sold out';
+        marco.append(imagen(foto), sello);
+        li.append(marco);
+      }
+      li.append(ficha(s.group), datos);
       return li;
     }),
   );

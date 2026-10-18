@@ -236,6 +236,7 @@ canal?.addEventListener('message', ({ data }) => {
   else if (data.tipo === 'anterior') anterior();
   else if (data.tipo === 'pausa') alternarPausa();
   else if (data.tipo === 'feeds') alternarFeeds();
+  else if (data.tipo === 'clase') alternarClase();
   else if (data.tipo === 'hype') lanzarHype();
   else if (data.tipo === 'qr') alternarQr();
   else if (data.tipo === 'votacion') votacion?.alternar();
@@ -250,6 +251,24 @@ function alternarFeeds() {
   feedsPausados = motor.pausarFeeds(!feedsPausados);
   avisar();
 }
+
+/**
+ * Tecla U, en EGC vs. UGC (después de los clips reales): el celular de UGC muestra las fotos que se sacaron los grupos
+ * en la espera, como publicaciones (@grupo7, @grupo12…), unos 15 s; otra U las saca antes. Sin servidor o sin fotos,
+ * las de ensayo (lo dice la cabecera del feed).
+ */
+function alternarClase() {
+  if (!motor || diapos[actual].escena !== 'egc-ugc' || motor.viajando) return;
+  if (motor.claseEnFeed()) motor.mostrarClase(null);
+  else motor.mostrarClase(fotosDeLaClase());
+  avisar();
+}
+const fotosDeLaClase = () =>
+  (servidor === 'conectado' ? sala.fotos : []).map((f) => ({
+    cuenta: f.profe ? '@profes' : `@grupo${f.numero}`,
+    url: f.url,
+    color: f.profe ? colores.marca.cacao : colorDeGrupo(f.numero).color,
+  }));
 
 function alternarPausa() {
   pausa = !pausa;
@@ -357,6 +376,8 @@ function estadoInteractivo() {
     max: sala?.max ?? 40,
     hype: hype?.estado ?? null,
     votacion: votacion?.estado ?? null,
+    fotos: servidor === 'conectado' ? sala.fotos.length : 0,
+    clase: motor?.claseEnFeed() ?? null,
   };
 }
 
@@ -389,6 +410,7 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'v') votacion?.alternar();
   else if (tecla === 'j') abrirJuego();
   else if (tecla === 'f') alternarFeeds();
+  else if (tecla === 'u') alternarClase();
 });
 addEventListener('hashchange', () => ir(Number.parseInt(location.hash.slice(1), 10) || 0));
 // La rueda recorre la presentación solo a pantalla completa: dentro de un iframe tiene que seguir bajando la página.

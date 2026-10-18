@@ -404,6 +404,9 @@ function estacionEgcUgc(g, { feeds: datos } = {}) {
     actualizar(dt, t, presencia) { for (const f of feeds) if (presencia > 0.3) f.avanzar(dt); else f.dormir(); },
     /** El presentador frena los dos feeds para comentar una publicación (tecla F). */
     pausarFeeds: (si) => feeds.map((f) => f.pausar(si))[0],
+    /** Las fotos de la clase en el celular de UGC (tecla U); null las saca antes de tiempo. */
+    mostrarClase: (fotos) => feeds[1].mostrarClase(fotos),
+    enClase: () => feeds[1].enClase(),
   };
 }
 

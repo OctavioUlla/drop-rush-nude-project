@@ -74,6 +74,9 @@ function insigniasInteractivas(i) {
   const v = i.votacion;
   if (v?.estado === 'abierta') lista.push(`<span class="np-insignia np-insignia--rosa">Votación abierta · ${v.votaron}/${v.conectados}${ensayo(v)} · ${v.resumen}</span>`);
   if (v?.estado === 'cerrada') lista.push(`<span class="np-insignia">Votación${ensayo(v)} · ${v.votaron} votos · ${v.resumen}</span>`);
+  // Fotos de la clase (selfies y fit checks de la espera) para el feed de UGC del bloque 2.
+  if (i.clase) lista.push(`<span class="np-insignia np-insignia--rosa">Feed UGC: ${i.clase.fotos} fotos de la clase${i.clase.ensayo ? ' (ensayo)' : ''} · U las saca</span>`);
+  else if (i.servidor === 'conectado') lista.push(`<span class="np-insignia">📸 ${i.fotos} ${i.fotos === 1 ? 'foto' : 'fotos'} de la clase${i.fotos ? '' : ': U muestra las de ensayo'}</span>`);
   return lista;
 }
 
@@ -128,6 +131,7 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'b' || tecla === '.') enviar('pausa');
   else if (tecla === 't') reloj();
   else if (tecla === 'f') enviar('feeds');
+  else if (tecla === 'u') enviar('clase');
   else if (tecla === 'h') enviar('hype');
   else if (tecla === 'q') enviar('qr');
   else if (tecla === 'v') enviar('votacion');

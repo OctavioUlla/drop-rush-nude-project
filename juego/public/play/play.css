@@ -247,6 +247,50 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .pres[data-fase="hype"] .pres__hype { display: block; padding: 0; }
 
 .pres__grupo { font-size: var(--np-texto-2xl); }
+.pres__espera { overflow-y: auto; }
+
+/* Foto del grupo (foto.js): oferta en la espera, foto lista y la cámara a pantalla completa. */
+.pres__foto { display: flex; flex-direction: column; gap: var(--np-espacio-2); padding: var(--np-espacio-4); border: var(--np-borde-fino) solid color-mix(in srgb, var(--np-tinta) 35%, transparent); }
+.pres__foto[hidden], .pres__foto-nota[hidden] { display: none; }
+.pres__foto > *, .pres__foto-lista-texto > * { margin: 0; }
+.pres__foto-texto { font-size: var(--np-texto-sm); line-height: 1.35; }
+.pres__foto-aviso { font: var(--np-peso-bold) var(--np-texto-sm) / 1.35 var(--np-fuente-texto); color: var(--np-acento-mostaza); }
+.pres__foto-botones { display: grid; grid-template-columns: 1fr 1fr; gap: var(--np-espacio-2); }
+.pres__foto-botones .np-boton { padding-inline: var(--np-espacio-2); }
+.pres__foto-saltear { align-self: flex-start; padding: var(--np-espacio-2) 0; border: 0; background: none; color: var(--np-tinta); font: var(--np-peso-medio) var(--np-texto-sm) / 1 var(--np-fuente-texto); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.pres__foto--lista { flex-direction: row; align-items: center; gap: var(--np-espacio-4); }
+.pres__foto-mini { flex: none; width: 5.5rem; height: 5.5rem; object-fit: cover; border-radius: 50%; background: var(--np-fondo-alterno); }
+.pres__foto-lista-texto { display: flex; flex-direction: column; gap: var(--np-espacio-1); min-width: 0; }
+.pres__foto-acciones { display: flex; flex-wrap: wrap; gap: 0 var(--np-espacio-4); }
+.pres__foto-nota { font-size: var(--np-texto-sm); color: var(--np-tinta-suave); }
+
+.camara {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--np-espacio-3);
+  padding: max(var(--np-espacio-5), env(safe-area-inset-top)) var(--np-espacio-5) max(var(--np-espacio-5), env(safe-area-inset-bottom));
+  background: var(--np-fondo);
+  color: var(--np-tinta);
+}
+.camara[hidden] { display: none; }
+.camara > * { margin: 0; flex: none; }
+.camara__visor { position: relative; width: min(100%, 60dvh); aspect-ratio: 1; align-self: center; overflow: hidden; background: #000; }
+.camara__video, .camara__foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* La selfie se ve como un espejo (como en cualquier cámara); la foto que se sube va derecha, con los logos legibles. */
+.camara[data-modo="selfie"] .camara__video { transform: scaleX(-1); }
+.camara[data-paso="visor"] .camara__foto, .camara[data-paso="revision"] .camara__video { visibility: hidden; }
+.camara__aviso { font: var(--np-peso-bold) var(--np-texto-base) / 1.35 var(--np-fuente-texto); color: var(--np-acento-mostaza); }
+.camara__error { padding: var(--np-espacio-3); background: var(--np-acento-ladrillo); color: var(--np-marca-crema); }
+.camara__botones { display: none; align-items: center; justify-content: space-between; gap: var(--np-espacio-3); }
+.camara[data-paso="visor"] .camara__botones--visor, .camara[data-paso="revision"] .camara__botones--revision { display: flex; }
+.camara__botones--revision .np-boton { flex: 1; }
+.camara .np-boton--secundario { color: var(--np-marca-crema); border-color: var(--np-marca-crema); }
+.camara__disparo { width: 76px; height: 76px; border-radius: 50%; border: 6px solid var(--np-marca-crema); background: var(--np-acento-mostaza); cursor: pointer; touch-action: manipulation; }
+.camara__disparo:active { transform: scale(0.92); }
 .pres__drop .np-cartel { align-self: flex-start; }
 
 /* Botón HYPE a pantalla completa (np-hype-boton) con el aporte del grupo y el medidor de toda la clase arriba. */

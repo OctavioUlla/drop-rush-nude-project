@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { io } from 'socket.io-client';
-import { Salas, normalizarCodigo } from '../server/rooms.js';
+import { Salas, normalizarCodigo, FOTO_MAX_BYTES } from '../server/rooms.js';
 import { elegirRepaso, ordenarLlegada } from '../server/stats.js';
 import { prepararPreguntas } from '../server/game.js';
 import { cargarConfig, cargarPreguntas } from '../server/config.js';
@@ -297,6 +297,91 @@ test('en una sala sin presentación el grupo se puede cambiar hasta que arranca 
     host.emit('host:start', {});
     await celu.esperar('game:script');
     assert.deepEqual(await celu.emitWithAck('player:leave', {}), { ok: false, reason: 'started' });
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+// Foto del grupo (issue #42): selfie o fit check sacada en la espera, foto de perfil en el juego y UGC en la presentación.
+const JPEG = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(2000, 7)]);
+
+test('foto del grupo: solo un JPEG chico, room:groups lleva su versión y la imagen la ven el proyector y el grupo', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno' });
+  const sockets = [];
+  try {
+    const pres = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    const otro = await conectar(servidor.url);
+    sockets.push(pres, celu, otro);
+    const { code, hostKey } = await pres.emitWithAck('host:create_room', {});
+    assert.ok((await pres.emitWithAck('pres:conectar', {})).ok);
+    const unido = await celu.emitWithAck('player:join', { code, groupId: 4 });
+    const otroUnido = await otro.emitWithAck('player:join', { code, groupId: 5 });
+
+    // Solo JPEG, no vacío y hasta 48 KB.
+    const invalida = { ok: false, reason: 'invalid' };
+    assert.deepEqual(await celu.emitWithAck('player:photo', { image: Buffer.from('<svg onload="x()"/>') }), invalida);
+    assert.deepEqual(await celu.emitWithAck('player:photo', { image: Buffer.concat([JPEG, Buffer.alloc(FOTO_MAX_BYTES)]) }), invalida);
+    assert.deepEqual(await celu.emitWithAck('player:photo', {}), invalida);
+
+    const r = await celu.emitWithAck('player:photo', { image: JPEG });
+    assert.ok(r.ok && r.photo > 0, JSON.stringify(r));
+    const grupos = await pres.esperar('room:groups', (g) => g[3].photo === r.photo);
+    assert.equal(grupos[4].photo, 0, 'el grupo 5 no sacó foto');
+
+    // La imagen se pide con la clave del proyector o el token del celular del grupo; el código de la sala solo no alcanza.
+    const url = (clave) => `${servidor.url}/api/fotos/${code}/4?v=${r.photo}&clave=${encodeURIComponent(clave)}`;
+    const res = await fetch(url(hostKey));
+    assert.equal(res.status, 200);
+    assert.equal(res.headers.get('content-type'), 'image/jpeg');
+    assert.deepEqual(Buffer.from(await res.arrayBuffer()), JPEG);
+    assert.equal((await fetch(url(unido.deviceToken))).status, 200);
+    assert.equal((await fetch(url(otroUnido.deviceToken))).status, 404);
+    assert.equal((await fetch(url(''))).status, 404);
+
+    // Se puede quitar, y una foto nueva lleva otra versión (otra URL: el navegador no usa la vieja).
+    assert.deepEqual(await celu.emitWithAck('player:photo', { image: null }), { ok: true, photo: 0 });
+    await pres.esperar('room:groups', (g) => g[3].photo === 0);
+    assert.equal((await fetch(url(hostKey))).status, 404);
+    const r2 = await celu.emitWithAck('player:photo', { image: JPEG });
+    assert.ok(r2.photo > r.photo);
+
+    // Si el grupo se suelta para elegir otro número, la foto se va con él.
+    assert.ok((await celu.emitWithAck('player:leave', {})).ok);
+    await celu.emitWithAck('player:join', { code, groupId: 4 });
+    assert.equal([...servidor.salas][0].resumen()[3].photo, 0);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+test('la foto del grupo vale hasta el hype de apertura (o, sin presentación, hasta la partida)', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno', config: { duracionCuenta: 1, duracionTramo: 20 } });
+  const sockets = [];
+  try {
+    const pres = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    const host = await conectar(servidor.url);
+    const jugador = await conectar(servidor.url);
+    sockets.push(pres, celu, host, jugador);
+    const { code } = await pres.emitWithAck('host:create_room', {});
+    assert.ok((await pres.emitWithAck('pres:conectar', {})).ok);
+    await celu.emitWithAck('player:join', { code, groupId: 2 });
+    const { photo } = await celu.emitWithAck('player:photo', { image: JPEG });
+    assert.ok((await pres.emitWithAck('pres:hype:preparar', { segundos: 0 })).ok);
+    assert.deepEqual(await celu.emitWithAck('player:photo', { image: JPEG }), { ok: false, reason: 'started' });
+    assert.deepEqual(await celu.emitWithAck('player:photo', { image: null }), { ok: false, reason: 'started' });
+    assert.equal([...servidor.salas][0].grupos.get(2).foto.version, photo, 'la foto queda para el juego');
+
+    // Sala sin presentación: hasta que arranca la partida.
+    const otra = await host.emitWithAck('host:create_room', {});
+    await jugador.emitWithAck('player:join', { code: otra.code, groupId: 7 });
+    assert.ok((await jugador.emitWithAck('player:photo', { image: JPEG })).ok);
+    host.emit('host:start', {});
+    await jugador.esperar('game:script');
+    assert.deepEqual(await jugador.emitWithAck('player:photo', { image: JPEG }), { ok: false, reason: 'started' });
   } finally {
     sockets.forEach((s) => s.disconnect());
     await servidor.cerrar();

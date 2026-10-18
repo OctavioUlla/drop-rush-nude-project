@@ -6,7 +6,7 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
 - **Visual:** lanzamiento de producto en **un solo plano secuencia**: la cámara recorre una Nude House en miniatura estilo *clay* y la **sudadera 3D** viaja con ella por cada bloque (gira, cambia de color, se desarma en piezas con datos). Ver la [maqueta viva](../design-system/escena.html).
-- **Formato:** HTML interactivo, con hype colectivo de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
+- **Formato:** HTML interactivo, con hype colectivo de apertura, cola de la tienda como barra de progreso, votación en vivo, feeds de EGC vs. UGC y la foto de cada grupo (selfie o *fit check*) como UGC en vivo. Ver la [planificación de la presentación](PLANIFICACION.md).
 - **Guion:** [GUION.md](GUION.md), el texto hablado de cada bloque.
 - **Cierre interactivo:** el juego [Drop Rush](../juego/PLANIFICACION.md).
 
@@ -21,7 +21,7 @@ npm run dev
 
 - **Proyector:** `http://localhost:3000/presentacion/` (pantalla completa con F11).
 - **Modo presentador:** tecla `P` desde el proyector (abre otra ventana con las notas, la próxima diapositiva, el cronómetro, los grupos conectados y el estado del hype y de la votación).
-- **Celulares:** el QR de la portada abre `/play/` con la sala ya elegida; cada grupo toca su número **una sola vez** y queda adentro hasta el final del juego. Mientras dura la presentación, el celular muestra una espera quieta, el botón **HYPE** y la votación; al llegar al bloque de Drop Rush pasa solo al lobby del juego.
+- **Celulares:** el QR de la portada abre `/play/` con la sala ya elegida; cada grupo toca su número **una sola vez** y queda adentro hasta el final del juego. Mientras dura la presentación, el celular muestra una espera quieta (donde, antes del hype, el grupo se puede sacar la **foto del grupo**: selfie o *fit check*, solo con la cámara), el botón **HYPE** y la votación; al llegar al bloque de Drop Rush pasa solo al lobby del juego.
 
 | Tecla | Acción |
 |---|---|
@@ -34,6 +34,7 @@ npm run dev
 | `Q` | QR a pantalla completa (también tocando el QR chico de la portada), con el código de la sala para escribirlo a mano. Sirve en cualquier diapositiva para los que llegan tarde; se cierra con `Q`, `Esc` o al cambiar de diapositiva |
 | `V` | Abrir o cerrar la votación en vivo (en la historia solo se ve cuántos grupos votaron; el resultado se revela en los desafíos, con la balanza) |
 | `F` | Pausar o reanudar los feeds de EGC vs. UGC (para comentar una publicación) |
+| `U` | En EGC vs. UGC, después de los clips reales: el celular de UGC muestra unos 15 s las fotos que se sacaron los grupos (*@grupo7*, *@grupo12*…) y vuelve solo a los clips; otra `U` lo corta antes. Sin servidor o sin fotos, fotos de ensayo |
 | `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana, con la misma sala y los mismos celulares |
 | `M` | Medidor de fps |
 
@@ -44,6 +45,7 @@ npm run dev
 - Las publicaciones de los feeds de EGC vs. UGC están en [`datos/feeds.json`](datos/feeds.json); las fotos y los clips van en [`media/`](media/README.md). Si un archivo falta, se ve la ilustración de prueba.
 - La **cola de la tienda** (abajo a la derecha) es la barra de progreso: *"N personas adelante"* = bloques que faltan. En cada bloque entra una persona; en el último nos toca y aparece *Queda 1*. La forman los grupos conectados: cada persona toma el color de su grupo.
 - La pregunta de la **votación** y sus opciones están en [`datos/votacion.json`](datos/votacion.json) (cada opción dice hacia dónde inclina la balanza de los desafíos). El resultado queda guardado en el servidor: se ve en los desafíos, en el modo presentador y en el debate del juego.
+- **Fotos de la clase:** cada grupo se saca, en la espera del celular y antes del hype, una selfie o un *fit check* (opcional; con el aviso de que se ve en el proyector). Es su foto de perfil en Drop Rush (lobby, ranking, ganador y la cola con *SOLD OUT*) y la que muestra `U` en el bloque 2. Ver la [planificación](PLANIFICACION.md#25-la-foto-del-grupo-ugc-en-vivo-).
 - **Sin servidor o sin celulares conectados**, `H` y `V` hacen un ensayo con 40 grupos simulados (lo dice el medidor y la votación), así se puede ensayar en casa. Abriendo la presentación con un servidor cualquiera (sin el del juego), la portada avisa *"Sin servidor"* en lugar del QR.
 - La presentación vuelve a la sala que tenía (la guarda el navegador, igual que `/host/`); `?nueva-sala` crea otra. Después de un ensayo, *Reiniciar hype y votación* en el modo presentador borra lo guardado.
 - **Ensayo con bots:** con la presentación abierta, `npm run bots -- --sala ABCD --bots 39 --desde 2` (en `juego/`) suma 39 grupos que tocan HYPE, votan y después juegan; `npm run bots -- --presentacion` hace la prueba completa sola (40 bots, hype y votación) y verifica los resultados.

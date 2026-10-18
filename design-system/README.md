@@ -236,6 +236,7 @@ const { color3d } = colorDeGrupo(numeroDeGrupo); // tinte del corredor
 | `np-insignia`, `np-cartel`, `np-sello` | Etiquetas, "QUEDA 1", "SOLD OUT" |
 | `np-tarjeta`, `np-dato` | Bloques y métricas grandes |
 | `np-ficha` | Número de grupo con su color: `style="--g: var(--np-grupo-7); --gt: var(--np-grupo-7-texto)"` |
+| `np-ficha--foto` | La ficha con la foto del grupo (selfie o *fit check*) adentro y el número en la esquina: `<span class="np-ficha np-ficha--foto" style="--g: …; --gt: …"><img src="…" alt=""><b>7</b></span>` |
 | `np-grilla-grupos`, `np-ranking` | Lobby de 40 grupos y ranking en vivo |
 | `np-opcion` (+ `--correcta`, `--incorrecta`), `np-temporizador`, `np-hud`, `np-destello` | Pantallas de pregunta y runner |
 | `np-diapo` (+ `__cuerpo`, `__columnas`, `__datos`, `__pie`) | Diapositivas 16:9 que escalan con su ancho |

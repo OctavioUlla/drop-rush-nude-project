@@ -119,9 +119,17 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .top .metros { text-align: right; }
 .top .desconectado, .resto .desconectado { opacity: 0.4; }
 
+/* Foto del grupo junto al número: chica y en círculo (ranking en vivo). */
+.quien { display: flex; align-items: center; gap: 0.3em; }
+.avatar { flex: none; width: 2.25em; height: 2.25em; border-radius: 50%; object-fit: cover; background: var(--np-fondo-alterno); }
+.top .avatar { font-size: var(--np-texto-lg); }
+.resto .avatar { font-size: var(--np-texto-xs); }
+.top--fotos li { grid-template-columns: 2.4rem 5.6rem 1fr 6.5rem; }
+
 /* En la carrera el ranking ocupa la columna derecha (al lado del mapa o de la pregunta): versión compacta. */
 .carrera .top { --fila: 2.5rem; }
 .carrera .top li { font-size: var(--np-texto-lg); grid-template-columns: 2rem 2.2rem 1fr 5rem; }
+.carrera .top--fotos li { grid-template-columns: 2rem 4.8rem 1fr 5rem; }
 .carrera .resto { grid-template-columns: repeat(4, 1fr); gap: 2px var(--np-espacio-2); }
 .carrera .resto li { font-size: var(--np-texto-xs); gap: var(--np-espacio-1); }
 .carrera .resto .puesto { width: 1.5rem; }
@@ -174,6 +182,27 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .cola li { display: flex; align-items: center; gap: var(--np-espacio-2); font: var(--np-peso-medio) var(--np-texto-base) / 1 var(--np-fuente-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .cola .puesto { width: 2rem; text-align: right; color: var(--np-tinta-suave); }
 .cola .np-ficha { font-size: var(--np-texto-sm); }
+/* Ganador con foto: la foto en grande y su ficha en la esquina. */
+.final__foto { position: relative; display: inline-block; }
+.final__foto img { display: block; width: 15rem; height: 15rem; object-fit: cover; border: 6px solid var(--np-marca-crema); }
+.final__ficha .final__foto .np-ficha { position: absolute; right: -1.4rem; bottom: -1.4rem; font-size: 2.6rem; }
+/* La cola con fotos: en gris, con el sello de SOLD OUT cruzado (los que se quedaron sin sudadera). */
+.cola--fotos { grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
+.cola__foto { position: relative; flex: none; width: 3.6rem; height: 3.6rem; overflow: hidden; border-radius: 50%; }
+.cola__foto img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: 0.85; }
+.cola__agotado {
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  top: 50%;
+  transform: translateY(-50%) rotate(-14deg);
+  background: var(--np-acento-ladrillo);
+  color: var(--np-marca-crema);
+  font: var(--np-peso-black) 0.62rem / 1.4 var(--np-fuente-display);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
 
 /* ---------- Repaso ---------- */
 .repaso { display: flex; flex-direction: column; gap: var(--np-espacio-4); padding: var(--np-espacio-6) var(--np-espacio-7); max-width: 80rem; width: 100%; margin: 0 auto; }

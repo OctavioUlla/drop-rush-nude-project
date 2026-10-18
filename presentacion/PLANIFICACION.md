@@ -17,7 +17,7 @@
 
 ---
 
-## 2. Las 4 ideas elegidas
+## 2. Las 5 ideas elegidas
 
 ### 2.1 Hype colectivo de apertura 🔥
 
@@ -91,6 +91,27 @@
 - Se ve la diferencia antes de explicarla: quién habla, cómo se ve, qué se muestra.
 - ✅ **Contenido:** 4 publicaciones por lado, clips reales de TikTok (ver [`media/`](media/README.md)).
 
+### 2.5 La foto del grupo: UGC en vivo 📸
+
+**Qué es.** Cada grupo se saca una **foto con el celular**: una **selfie del grupo** o un ***fit check*** (la ropa o las zapatillas). La foto aparece en el feed de UGC del bloque 2 y queda como **foto de perfil del grupo en Drop Rush**.
+
+**Para qué.** El hype muestra el **hype** y el juego la **escasez**; esto muestra el **UGC**, que es el punto 1 y el bloque más largo. La clase no solo ve UGC: lo **produce en vivo**, y el bloque 2 lo dice con todas las letras: *"Ustedes acaban de crear contenido para la marca sin que nadie les pague"*. El *fit check* conecta con los de @nataliesmirnakos y @santiabarzaa del guion y sirve para los grupos que no quieren mostrar la cara.
+
+| Dónde | Qué se ve |
+|---|---|
+| 📱 **Celular, en la espera** | Después de elegir el número: *"Foto del grupo · opcional"* con **🤳 Selfie** (cámara frontal), **👟 Fit check** (cámara trasera) y *Saltear*. El aviso *"Su foto va a aparecer en la pantalla del aula, junto a las de los demás grupos"* está en la oferta, en la cámara y otra vez al confirmar (*"¿Usamos esta?"*). Vista en vivo, disparo y **Otra vez / Usar esta**; con la foto lista, se ve en un círculo y se puede cambiar o quitar |
+| 📽️ **Presentación, bloque 2** | Después de los clips reales de UGC, `U` pasa el **celular gigante de la derecha** a las fotos de la clase como publicaciones (*@grupo7*, *@grupo12*…) bajo *"Creado por la clase · N publicaciones · 0 € en publicidad"*, unos 15 s, y vuelve solo a los clips (otra `U` lo corta antes; `F` también lo pausa). No va en la pared viral del bloque 3: ese bloque es sobre *Out of Office* |
+| 🏃 **Drop Rush** | **Lobby:** la foto en la ficha del grupo, con el número en la esquina. **Ranking en vivo:** la foto chica, en círculo, junto al número. **Ganador:** la foto en grande con su ficha. **La cola:** las fotos de los que no llegaron, en gris y con *SOLD OUT*. El **mapa** sigue con número y color: con 40 marcadores, una cara diminuta se lee peor que el número |
+
+**Reglas.**
+- Se hace **mientras la clase se acomoda**, antes del hype: no hay un "momento selfie" que le quite minutos a la exposición. Vale lo mismo que el cambio de grupo: hasta que arranca la presentación (el hype), o la partida en una sala sin presentación. Si el hype arranca con la cámara abierta, se cierra sola.
+- **Solo con la cámara**, sin galería: `getUserMedia` con vista previa en vivo (`<input capture>` no alcanza, porque algunos navegadores igual dejan elegir de la galería). Así no hace falta moderar: solo se puede subir lo que hay en el aula.
+- Es **opcional**: un grupo sin foto se ve con su número y su color de siempre, sin ningún hueco que lo delate. Si el navegador no da permiso de cámara (o no hay HTTPS), se saltea sin trabarse.
+- La selfie se ve como un espejo mientras se encuadra, pero se sube derecha: los logos de la ropa se leen bien.
+- Sin fotos o sin servidor, `U` muestra fotos **de ensayo** (dibujadas con los colores de los grupos; lo dice la cabecera del feed y el modo presentador), así se ensaya en casa. El modo presentador dice cuántas fotos hay.
+
+**Técnica.** El celular recorta al centro un cuadrado de **256 px** y lo manda como **JPEG de ~20 KB** (si pasa de 48 KB, baja la calidad): las 40 juntas pesan menos de 1 MB. El servidor la guarda en memoria con el grupo de la sala: sobrevive a recargas del celular y del proyector (no a un reinicio del servidor, y está bien); se borra si el grupo se suelta para elegir otro número. `room:groups` solo lleva la **versión** de la foto de cada grupo y la imagen se pide aparte, con la clave del proyector o el token del celular del grupo: con el código de la sala no alcanza para bajar las caras de la clase. `getUserMedia` necesita HTTPS: el deploy ya lo tiene y `localhost` sirve para probar.
+
 ---
 
 ## 3. Dirección visual: un plano secuencia por la Nude House
@@ -159,10 +180,10 @@ La interactividad se come minutos de la exposición, así que va **dentro** de l
 
 | Bloque | Tiempo | Interacción |
 |---|---|---|
-| **Antes de empezar** (mientras la clase se acomoda) | — | QR en pantalla: los grupos entran y eligen su número |
+| **Antes de empezar** (mientras la clase se acomoda) | — | QR en pantalla: los grupos entran, eligen su número y se sacan la **foto del grupo** (opcional) |
 | 0. Portada | 1 min | **Hype colectivo** (~40 s con la cuenta y el drop) |
 | 1. La historia y los drops | 2 min | **Votación** abierta (~20 s) |
-| 2. EGC vs. UGC | 3 min | **Feeds** |
+| 2. EGC vs. UGC | 3 min | **Feeds** y, al cerrar el UGC, las **fotos de la clase** (~15 s; el guion del bloque se recortó para que siga en 3:00) |
 | 3 a 6 | 7,5 min | — |
 | 7. Desafíos | 1,5 min | Se retoma la votación |
 | 8. Drop Rush | 8 min | La **cola** llega a la puerta → juego |
@@ -268,8 +289,9 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 | server → proyectores | `pres:votacion:conteo` | `{ id, pregunta, opciones, abierta, votos: [n, n, n], votaron, conectados }` |
 | server → celular o proyector | `pres:estado` | Todo lo anterior al entrar o reconectar: la etapa, el hype en curso (con el aporte del grupo) y la votación (con su voto) |
 | presentación → server | `pres:reiniciar` | `{}` (después de un ensayo: borra el hype y la votación guardados) |
+| celular → server | `player:photo` | `{ image }` con ack: el JPEG de la foto del grupo (binario, hasta 48 KB) o `null` para quitarla. Hasta que arranca la presentación o la partida (`reason: 'started'`); responde `{ ok, photo }` con la versión nueva |
 
-- Los grupos conectados (para el contador, la cola y la meta del hype) son el mismo `room:groups` del juego.
+- Los grupos conectados (para el contador, la cola y la meta del hype) son el mismo `room:groups` del juego. Cada grupo trae `photo`, la versión de su foto (0 si no tiene); la imagen se pide a `GET /api/fotos/:sala/:grupo?v=…&clave=…` con la clave del proyector (o el token del celular del grupo).
 - El servidor guarda el resultado del hype y de la votación para retomarlos en el debate, aunque se recargue la página: el proyector del juego los muestra en la pantalla del debate.
 - Un celular que se reconecta recibe el estado actual (por ejemplo, la votación abierta) con `pres:estado`, junto al `state:sync` del juego.
 
@@ -318,8 +340,9 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [x] Cola formada por los grupos conectados
 - [x] Modo presentador: sala y grupos conectados, estado del hype y de la votación, y botones para lanzarlos y para reiniciarlos después de un ensayo
 - [x] Versión de respaldo si el servidor no responde (o no hay celulares): hype y votación de ensayo con grupos simulados
+- [x] Foto del grupo (sección 2.5): pantalla de foto en la espera del celular ([`juego/public/play/foto.js`](../juego/public/play/foto.js)), guardada por grupo en la sala, en el feed de UGC con `U` (con fotos de ensayo sin servidor) y como foto de perfil en el lobby, el ranking, el ganador y la cola de Drop Rush
 - [x] Prueba con los 40 bots del juego (`npm run bots -- --presentacion`, también en `npm test`): drop con los 40 grupos, ningún celular pasa el tope (aunque 22 tocan más rápido) y el conteo coincide con el último voto de cada bot
-- [ ] Probarlo con celulares reales en el Wi-Fi del aula (con la prueba del juego, ver [Ensayo en el aula](../juego/README.md#ensayo-en-el-aula))
+- [ ] Probarlo con celulares reales en el Wi-Fi del aula (con la prueba del juego, ver [Ensayo en el aula](../juego/README.md#ensayo-en-el-aula)), incluida la foto del grupo en iPhone y Android: permiso de cámara, cámara frontal y trasera
 
 ### Fase 5: Contenido y ensayo
 - [ ] Cargar el contenido de cada bloque (sección 8): el texto y las notas ya están; faltan las fotos del bloque 4 (las fuentes de las métricas ya están en `GUION.md`)
@@ -350,7 +373,8 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 | La interactividad se come los 15 minutos | Tiempos fijos por interacción (sección 4) y cronómetro en el modo presentador |
 | El servidor o el Wi-Fi fallan | La presentación funciona sola, con versiones estáticas y PDF de respaldo |
 | Videos pesados o que se traban | Clips cortos y comprimidos, guardados en el repositorio y precargados |
-| Distracción con el celular | El celular solo muestra algo durante el hype y la votación; el resto del tiempo, una pantalla de espera quieta |
+| Distracción con el celular | El celular solo muestra algo durante el hype y la votación; el resto del tiempo, una pantalla de espera quieta. La foto del grupo se saca antes del hype y la cámara se cierra sola cuando arranca |
+| Una foto inapropiada en el proyector | Solo con la cámara (sin galería), con el aviso de que se ve en el aula, y el presentador decide cuándo mostrarlas con `U` (y las saca con otra `U`) |
 | La sudadera por código no queda creíble | Prototipo visual primero (Fase 0) con un visor para ajustar proporciones; si no alcanza, usar un modelo 3D libre (GLTF con licencia abierta) con el mismo material clay |
 | La notebook no mueve bien el 3D | Medir en la Fase 0; bajar la resolución interna o usar las imágenes pre-renderizadas |
 | El 3D distrae del contenido | La sudadera acompaña, no explica: cada escena refuerza el mensaje del bloque y se mueve solo en las transiciones |
