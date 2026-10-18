@@ -4,18 +4,18 @@ import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
 // Juego en la notebook + Cloudflare Tunnel (sección Deploy del README): levanta el servidor en modo producción,
-// abre un túnel rápido de Cloudflare (https://….trycloudflare.com, gratis y sin cuenta) y abre el proyector en esa
-// dirección, así el QR del lobby y de la presentación apunta al túnel y los celulares entran por Wi-Fi o por datos.
-// La dirección cambia cada vez que se corre: no hace falta anotarla, el QR la toma solo.
+// abre un túnel rápido de Cloudflare (https://….trycloudflare.com, gratis y sin cuenta) y muestra sus direcciones.
+// El proyector y la presentación se abren con esa dirección: así el QR apunta al túnel y los celulares entran por
+// Wi-Fi o por datos. La dirección cambia cada vez que se corre: no hace falta anotarla, el QR la toma solo.
 //
-//   npm run tunel                          (compila si falta dist/ y abre /host/)
-//   npm run tunel -- --abrir presentacion  (abre /presentacion/)
+//   npm run tunel                          (compila si falta dist/; no abre el navegador)
+//   npm run tunel -- --abrir host          (además abre /host/; --abrir presentacion abre /presentacion/)
 //   npm run tunel -- --build --puerto 3001 (compila igual y usa otro puerto)
 
 const { values: op } = parseArgs({
   options: {
     puerto: { type: 'string', default: '3000' },
-    abrir: { type: 'string', default: 'host' }, // host | presentacion | no
+    abrir: { type: 'string', default: 'no' }, // no | host | presentacion
     build: { type: 'boolean', default: false },
   },
 });
