@@ -15,7 +15,7 @@ import { PantallaPresentacion } from './presentacion.js';
 // ?sala=ABCD   → entra directo a esa sala (es lo que trae el QR del proyector).
 // ?solo        → sin servidor: práctica y partida simulada en el propio celular.
 // ?calidad=baja|media|alta → fija la calidad (para comparar mediciones).
-// ?debug       → abre el panel de pruebas al cargar.
+// ?debug       → abre el panel de pruebas al cargar (es la única forma de abrirlo).
 
 const PASO = 1 / PASOS_POR_SEGUNDO;
 const LETRAS = ['A', 'B', 'C'];
@@ -106,7 +106,6 @@ function iniciar() {
     $('calidad-texto').textContent = calidad.preferencia;
   });
   $('calidad-texto').textContent = calidad.preferencia;
-  $('btn-debug').addEventListener('click', () => ($('debug').hidden = !$('debug').hidden));
   // En el celu se usa apenas se apoya el dedo: el click se pierde si el dedo se mueve un poco
   // o si hay otro dedo en la pantalla (por ejemplo, deslizando de carril). El click queda para el teclado.
   $('poder').addEventListener('pointerdown', (e) => {

@@ -22,7 +22,7 @@ npm run dev          # servidor + Vite en un solo proceso, en http://localhost:3
 | `/play/?solo` | Celular sin servidor: práctica y una partida simulada de 3 preguntas con arcos, sprint y tienda (botón *Probar partida*). |
 | `/dev/models/` | Visor de los modelos 3D generados por código, con sus triángulos contra el presupuesto y exportación a `.glb`. |
 
-Parámetros extra: `/play/?debug` abre el panel de pruebas, `/play/?calidad=alta|media|baja` fija la calidad gráfica y `/host/?debug` (o 🐞) muestra la carga del servidor, las mediciones de FPS y el botón para terminar la partida.
+Parámetros extra: `/play/?debug` abre el panel de pruebas (en el celular no hay botón para abrirlo), `/play/?calidad=alta|media|baja` fija la calidad gráfica y `/host/?debug` (o 🐞) muestra la carga del servidor, las mediciones de FPS y el botón para terminar la partida.
 
 Para producción: `npm run build` y después `npm start`. El build deja junto a cada archivo su versión Brotli y gzip, y el servidor manda la que acepte el navegador (los archivos con *hash* con caché `immutable` de un año). En producción el celular registra un **Service Worker** (`/sw.js`) que guarda el juego: si recarga, no vuelve a descargar nada. Todo lo que baja un celular pesa **~250 kB** con Brotli (Three.js ~116 kB, el juego ~30 kB y las dos tipografías ~93 kB). Para subirlo a la nube, ver [Deploy](#deploy).
 
@@ -49,7 +49,7 @@ Para producción: `npm run build` y después `npm start`. El build deja junto a 
 
 ### 1. FPS en celulares reales
 1. Correr el servidor en una notebook y conectar los celulares a la **misma red**. Abrir `/host/` en la notebook: el QR ya apunta a la IP de la red local. También sirve `/play/?solo` publicado en cualquier hosting estático después de `npm run build`.
-2. En cada celular: entrar a un grupo, tocar 🐞 y después **Medir 20 s** mientras se juega normalmente.
+2. En cada celular: abrir `/play/?debug`, entrar a un grupo y después tocar **Medir 20 s** mientras se juega normalmente.
 3. El resultado aparece en el celular y en la tabla *Mediciones de FPS* del panel técnico del proyector (`/host/?debug`), con el modelo de GPU, la resolución, las *draw calls* y los triángulos. También se puede bajar en JSON desde `/api/informes`.
 4. Repetir con `?calidad=alta`, `media` y `baja` para comparar.
 
@@ -58,7 +58,7 @@ Qué mirar: **FPS medio ≥ 30 y "% > 34 ms" bajo** en gama baja (objetivo de la
 Medido en Chromium sin GPU (render por software, el peor caso): **~25 draw calls y ~14.000 triángulos** por cuadro en un tramo (con los árboles, toldos y efectos de la Fase 4), dentro del presupuesto de 80 llamadas y 60.000 triángulos. Las partículas y las líneas de velocidad suman una llamada cada una.
 
 ### 2. Reconexión
-- **Manual**: en plena partida, cortar el Wi-Fi del celular unos segundos (o tocar 🐞 → **Cortar red 5 s / 20 s**). El corredor tiene que seguir corriendo sin carteles; si el corte dura más de 5 s aparece solo un 📶 chico. Al volver, el panel muestra *sesiones recuperadas* y el proyector suma la respuesta si se dio a tiempo.
+- **Manual**: en plena partida, cortar el Wi-Fi del celular unos segundos (o, con `/play/?debug`, tocar **Cortar red 5 s / 20 s**). El corredor tiene que seguir corriendo sin carteles; si el corte dura más de 5 s aparece solo un 📶 chico. Al volver, el panel muestra *sesiones recuperadas* y el proyector suma la respuesta si se dio a tiempo.
 - **Automática**: `npm test` levanta un servidor con fases cortas y 40 bots que sufren un corte de 1 a 4 s cada uno, y verifica que **todas las respuestas llegan y se cuentan una sola vez**. También prueba las salas, el token de cada celular, liberar un grupo en plena partida, el revelado, el ganador, el desempate y la elección del repaso, (Fase 2) los obstáculos nuevos, el cruce del bot revendedor, los likes y la ubicación de la tienda en el mapa, (Fase 3) cada ventaja y cada poder, la racha, el tope del Cambio de algoritmo, emparejar, la predicción del proyector y que un poder reintentado se aplique una sola vez, (Fase 4) pausar, seguir, saltar y terminar, las reglas del balanceo y los archivos comprimidos, y (la presentación) el hype colectivo con su tope de toques, la votación y la prueba con 40 bots.
 
 ### 3. 40 bots contra el servidor
@@ -119,9 +119,9 @@ Conclusiones:
 Lo que queda de la Fase 4 solo se puede hacer con celulares y la red reales. Lista para el ensayo (idealmente en el aula, unos días antes):
 
 1. **Deploy** en la nube (ver [Deploy](#deploy)) y abrir `/api/health` desde la red de la facultad.
-2. **Wi-Fi de la facultad**: conectar un celular, ver si aparece un **portal cautivo** (hay que iniciar sesión antes de escanear el QR) y abrir `/play/?debug`. En el panel 🐞 la línea `red` tiene que decir `websocket`; si dice `polling`, la red bloquea WebSocket pero el juego funciona igual (más lento el mapa).
+2. **Wi-Fi de la facultad**: conectar un celular, ver si aparece un **portal cautivo** (hay que iniciar sesión antes de escanear el QR) y abrir `/play/?debug`. En el panel de pruebas la línea `red` tiene que decir `websocket`; si dice `polling`, la red bloquea WebSocket pero el juego funciona igual (más lento el mapa).
 3. **Velocidad de descarga**: con 5 a 10 celulares a la vez, cronometrar cuánto tarda en aparecer el corredor la primera vez (son ~250 kB) y después recargar: con el Service Worker tiene que ser instantáneo.
-4. **FPS** en 2 o 3 celulares de gama baja: 🐞 → *Medir 20 s* jugando normalmente (ver [prueba 1](#1-fps-en-celulares-reales)). Objetivo: FPS medio ≥ 30.
+4. **FPS** en 2 o 3 celulares de gama baja: `/play/?debug` → *Medir 20 s* jugando normalmente (ver [prueba 1](#1-fps-en-celulares-reales)). Objetivo: FPS medio ≥ 30.
 5. **Carga mixta**: `npm run bots -- --url https://TU-APP --sala ABCD --bots 35 --desde 6 --cortes 2` mientras 5 celulares reales juegan los grupos 1 a 5, con el proyector conectado. Mirar en `/host/?debug` la demora del *event loop* (< 20 ms) y que el mapa se mueva fluido.
 6. **Corte de red** con un celular real: apagar el Wi-Fi 5 s en plena pregunta y volver; la respuesta tiene que contar.
 7. **Controles**: pausar, seguir, saltar una pregunta y terminar, mirando que los celulares sigan al proyector.
