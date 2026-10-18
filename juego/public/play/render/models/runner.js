@@ -17,10 +17,22 @@ function parte(geometria, x, y, z) {
   return pivote;
 }
 
-/** Miembro de dos tramos (brazo o pierna): pivote superior → tramo → pivote medio → tramo. */
+/**
+ * Miembro de dos tramos (brazo o pierna): pivote superior → tramo → pivote medio → tramo.
+ * Los tramos son cilindros y la articulación del medio (codo, rodilla) es una esfera, así al
+ * doblarse no queda un hueco ni una esquina.
+ */
 function miembro(x, y, largo, ancho, colorArriba, colorAbajo, extremo) {
-  const arriba = parte(caja(ancho, largo, ancho, colorArriba, { y: -largo / 2 }), x, y, 0);
-  const medio = parte(unir([caja(ancho * 0.9, largo, ancho * 0.9, colorAbajo, { y: -largo / 2 }), extremo]), 0, -largo, 0);
+  const r = ancho / 2;
+  const arriba = parte(cilindro(r, r * 0.92, largo, 8, colorArriba, { y: -largo / 2 }), x, y, 0);
+  const medio = parte(
+    unir([
+      esfera(r * 0.92, 6, colorArriba),
+      cilindro(r * 0.9, r * 0.8, largo, 8, colorAbajo, { y: -largo / 2 }),
+      extremo,
+    ]),
+    0, -largo, 0,
+  );
   arriba.add(medio);
   return { arriba, medio };
 }
@@ -50,35 +62,42 @@ export function crearCorredor(numeroGrupo) {
 
   const torso = parte(
     unir([
-      caja(0.62, 0.66, 0.34, buzo, { y: 0.33 }),
-      caja(0.5, 0.14, 0.06, M['cacao-profundo'], { y: 0.12, z: -0.18 }), // bolsillo canguro
-      caja(0.56, 0.12, 0.32, M.cacao, { y: -0.02 }), // cintura del pantalón
-      caja(0.64, 0.08, 0.36, M.crema, { y: 0.05 }), // puño elástico del buzo
+      // Buzo holgado: cilindro achatado (más ancho que profundo) con hombros redondos.
+      cilindro(0.3, 0.29, 0.56, 12, buzo, { y: 0.36, s: [1, 1, 0.58] }),
+      cilindro(0.21, 0.3, 0.12, 12, buzo, { y: 0.7, s: [1, 1, 0.58] }),
+      esfera(0.13, 6, buzo, { x: -0.25, y: 0.6 }),
+      esfera(0.13, 6, buzo, { x: 0.25, y: 0.6 }),
+      caja(0.46, 0.14, 0.05, M['cacao-profundo'], { y: 0.16, z: -0.17 }), // bolsillo canguro
+      cilindro(0.27, 0.27, 0.12, 12, M.cacao, { y: -0.02, s: [1, 1, 0.6] }), // cintura del pantalón
+      cilindro(0.305, 0.305, 0.08, 12, M.crema, { y: 0.07, s: [1, 1, 0.6] }), // puño elástico del buzo
       // Cordones de la capucha.
-      caja(0.03, 0.2, 0.03, M.crema, { x: -0.08, y: 0.55, z: -0.18 }),
-      caja(0.03, 0.2, 0.03, M.crema, { x: 0.08, y: 0.55, z: -0.18 }),
+      caja(0.03, 0.2, 0.03, M.crema, { x: -0.07, y: 0.58, z: -0.17 }),
+      caja(0.03, 0.2, 0.03, M.crema, { x: 0.07, y: 0.58, z: -0.17 }),
     ]),
     0, 0, 0,
   );
   cadera.add(torso);
 
   // Cabeza redonda con la capucha puesta: una esfera abierta hacia adelante (−z) que la envuelve,
-  // con el pelo asomando en la frente y la capucha cayendo sobre la espalda.
+  // rellena por dentro con el pelo, y la capucha cayendo sobre la espalda.
   const cabeza = parte(
     unir([
       cilindro(0.08, 0.09, 0.12, 6, PIEL, { y: 0.02 }), // cuello
-      esfera(0.18, 10, PIEL, { y: 0.24 }),
-      casquete(0.187, 10, M['cacao-profundo'], { abertura: 1.5, rx: 0.9, y: 0.25, z: 0.005, ry: Math.PI }),
+      esfera(0.18, 9, PIEL, { y: 0.24 }),
+      esfera(0.205, 9, M['cacao-profundo'], { y: 0.25, z: 0.05 }), // pelo y sombra dentro de la capucha
       casquete(0.235, 12, buzo, { abertura: 1.05, rx: 0.4, y: 0.25, z: 0.03, ry: Math.PI }),
-      caja(0.36, 0.2, 0.1, buzo, { y: 0.04, z: 0.15 }),
+      esfera(0.15, 8, buzo, { y: 0.05, z: 0.14, s: [1.25, 0.75, 0.55] }), // capucha cayendo sobre la espalda
     ]),
     0, 0.66, 0,
   );
   torso.add(cabeza);
 
-  const mano = esfera(0.08, 5, PIEL, { y: -0.36 });
-  const brazoI = miembro(-0.38, 0.6, 0.32, 0.16, buzo, buzo, mano.clone());
-  const brazoD = miembro(0.38, 0.6, 0.32, 0.16, buzo, buzo, mano);
+  const mano = () => unir([
+    cilindro(0.075, 0.075, 0.05, 8, M.crema, { y: -0.31 }), // puño del buzo
+    esfera(0.07, 6, PIEL, { y: -0.38 }),
+  ]);
+  const brazoI = miembro(-0.33, 0.6, 0.3, 0.15, buzo, buzo, mano());
+  const brazoD = miembro(0.33, 0.6, 0.3, 0.15, buzo, buzo, mano());
   torso.add(brazoI.arriba, brazoD.arriba);
 
   // Zapatilla crema con suela cacao (se lee bien desde la cámara de atrás).
@@ -93,7 +112,7 @@ export function crearCorredor(numeroGrupo) {
     new PlaneGeometry(0.42, 0.42),
     curvarMaterial(new MeshBasicMaterial({ map: texturaNumero(numeroGrupo, g.texto), transparent: true })),
   );
-  numero.position.set(0, 0.36, 0.175);
+  numero.position.set(0, 0.38, 0.185);
   torso.add(numero);
 
   return { raiz, cadera, torso, cabeza, brazoI, brazoD, piernaI, piernaD };
