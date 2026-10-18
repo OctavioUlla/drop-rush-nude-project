@@ -8,13 +8,13 @@ const { juego: J, marca: M, acento: A } = colores3d;
 
 export function valla() {
   const partes = [
-    caja(0.1, 0.9, 0.1, M.cacao, { x: -0.85, y: 0.45, z: -0.25 }),
-    caja(0.1, 0.9, 0.1, M.cacao, { x: 0.85, y: 0.45, z: -0.25 }),
+    caja(0.1, 1.2, 0.1, M.cacao, { x: -0.85, y: 0.6, z: -0.25 }),
+    caja(0.1, 1.2, 0.1, M.cacao, { x: 0.85, y: 0.6, z: -0.25 }),
     caja(0.5, 0.06, 0.5, M.cacao, { x: -0.85, y: 0.03, z: -0.25 }),
     caja(0.5, 0.06, 0.5, M.cacao, { x: 0.85, y: 0.03, z: -0.25 }),
   ];
   // Barras con franjas mostaza y cacao.
-  for (const y of [0.55, 0.8]) {
+  for (const y of [0.75, 1.1]) {
     for (let i = 0; i < 4; i++) {
       partes.push(caja(0.425, 0.16, 0.08, i % 2 ? M.cacao : J['obstaculo-bajo'], { x: -0.6375 + i * 0.425, y, z: -0.25 }));
     }
@@ -25,11 +25,11 @@ export function valla() {
 export function cajaStock() {
   const c = J['obstaculo-bajo'];
   return unir([
-    caja(0.9, 0.55, 0.9, c, { x: -0.35, y: 0.275, z: -0.5 }),
-    caja(0.8, 0.5, 0.85, c, { x: 0.45, y: 0.25, z: -0.5, ry: 0.15 }),
-    caja(0.75, 0.45, 0.75, c, { x: 0.0, y: 0.775, z: -0.5, ry: -0.2 }),
-    caja(0.92, 0.04, 0.12, M.cacao, { x: -0.35, y: 0.56, z: -0.5 }),
-    caja(0.12, 0.04, 0.77, M.cacao, { x: 0.0, y: 1.0, z: -0.5, ry: -0.2 }),
+    caja(0.9, 0.7, 0.9, c, { x: -0.35, y: 0.35, z: -0.5 }),
+    caja(0.8, 0.65, 0.85, c, { x: 0.45, y: 0.325, z: -0.5, ry: 0.15 }),
+    caja(0.75, 0.6, 0.75, c, { x: 0.0, y: 1.0, z: -0.5, ry: -0.2 }),
+    caja(0.92, 0.04, 0.12, M.cacao, { x: -0.35, y: 0.71, z: -0.5 }),
+    caja(0.12, 0.04, 0.77, M.cacao, { x: 0.0, y: 1.3, z: -0.5, ry: -0.2 }),
   ]);
 }
 

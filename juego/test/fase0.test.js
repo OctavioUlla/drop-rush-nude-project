@@ -34,7 +34,7 @@ function correrHasta(corredor, pista, distancia, alPaso) {
 
 test('un obstáculo bajo se salta y uno alto hace tropezar', () => {
   const pista = new Pista();
-  pista.obstaculos.push({ tipo: 'valla', carril: 1, z: 30, alto: false, altura: 0.9, largo: 0.5, golpeado: false, pasado: false, hundido: 0 });
+  pista.obstaculos.push({ tipo: 'valla', carril: 1, z: 30, alto: false, altura: 1.2, largo: 0.5, golpeado: false, pasado: false, hundido: 0 });
   const saltando = new Corredor();
   correrHasta(saltando, pista, 40, (c) => c.distancia > 27.5 && c.saltos === 0 && c.gesto('saltar'));
   assert.equal(saltando.choques, 0);

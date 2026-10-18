@@ -102,6 +102,20 @@ test('hay muchos likes, como las monedas de Subway Surfers', () => {
   assert.ok(total / 50 >= 30, `${total / 50} likes por tramo`);
 });
 
+test('la caja de stock se salta a tiempo, pero no saltando tarde', () => {
+  const saltar = (antes) => {
+    const pista = new Pista();
+    pista.obstaculos.push(obstaculo('caja', 1, 30));
+    const c = new Corredor();
+    c.velocidad = VELOCIDAD_BASE;
+    // `antes`: metros antes del centro de la caja en los que despega.
+    correrHasta(c, pista, 40, (k) => k.saltos === 0 && k.distancia >= 30.5 - antes && k.gesto('saltar'));
+    return c.choques;
+  };
+  assert.equal(saltar((VELOCIDAD_BASE * DURACION_SALTO) / 2), 0);
+  assert.equal(saltar(1), 1);
+});
+
 test('el arco de likes sobre un obstáculo bajo se junta entero con un salto a tiempo', () => {
   let probados = 0;
   for (let semilla = 0; semilla < 40 && probados < 10; semilla++) {

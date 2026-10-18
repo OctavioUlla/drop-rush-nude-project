@@ -113,7 +113,7 @@ Con 6 preguntas, la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 
   2. los **bonus de distancia** por acertar preguntas, que calcula y guarda el servidor.
 
 ### 3.2 Salto
-- Se activa deslizando hacia arriba. Es alto y "flotado", como en Subway Surfers: dura unos **0,75 s**, sube **1,9 m** (pasa holgado por encima de los obstáculos **bajos**) y su cima queda por debajo de la cabeza del fan, para que no parezca que lo alto se puede saltar.
+- Se activa deslizando hacia arriba. Es alto y "flotado", como en Subway Surfers: dura unos **0,75 s**, sube **1,9 m** y pasa por encima de los obstáculos **bajos** (la valla y la caja llegan a la cintura del corredor, como las barreras de Subway Surfers: hay que saltarlas a tiempo) y su cima queda por debajo de la cabeza del fan, para que no parezca que lo alto se puede saltar.
 - Los obstáculos **altos** no se pueden saltar: hay que cambiar de carril.
 - Se puede cambiar de carril en el aire, como en Subway Surfers.
 - Saltar no afecta la elección del arco durante las preguntas: cuenta el carril.

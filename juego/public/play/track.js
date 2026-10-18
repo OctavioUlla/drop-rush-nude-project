@@ -5,8 +5,10 @@ import { CARRILES, VELOCIDAD_BASE, DURACION_SALTO, ALTURA_SALTO } from '../share
 // enfrentan la misma calle en cada tramo (sección 3.3).
 
 export const TIPOS = {
-  valla: { alto: false, altura: 0.9, largo: 0.5 },
-  caja: { alto: false, altura: 1.0, largo: 1.0 },
+  // Las vallas y las cajas llegan a la cintura del corredor, como las barreras de Subway Surfers:
+  // con el salto alto hay que saltarlas a tiempo, no basta con saltar "más o menos".
+  valla: { alto: false, altura: 1.2, largo: 0.5 },
+  caja: { alto: false, altura: 1.3, largo: 1.0 },
   bache: { alto: false, altura: 0.5, largo: 1.4 },
   fan: { alto: true, altura: 2.0, largo: 0.6 },
   bot: { alto: true, altura: 2.2, largo: 0.8 },

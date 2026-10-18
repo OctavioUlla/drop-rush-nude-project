@@ -12,8 +12,8 @@ export const ACELERACION = 0.012;
 export const VELOCIDAD_MAX = 13;
 
 /**
- * Salto alto y "flotado", como en Subway Surfers: pasa holgado sobre los obstáculos bajos
- * (los pies quedan ~1 m por encima de una caja) y da más margen para elegir cuándo saltar.
+ * Salto alto y "flotado", como en Subway Surfers: pasa sobre las vallas y cajas (a la cintura del corredor)
+ * si se salta a tiempo, con unos 0,3 s de margen para elegir cuándo.
  * La cima queda por debajo de la cabeza del fan, para que no parezca que lo alto se puede saltar.
  */
 export const DURACION_SALTO = 0.75;
