@@ -1,5 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
@@ -8,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 // El proyector y la presentación se abren con esa dirección: así el QR apunta al túnel y los celulares entran por
 // Wi-Fi o por datos. La dirección cambia cada vez que se corre: no hace falta anotarla, el QR la toma solo.
 //
-//   npm run tunel                          (compila si falta dist/; no abre el navegador)
+//   npm run tunel                          (compila si falta dist/ o si el código cambió; no abre el navegador)
 //   npm run tunel -- --abrir host          (además abre /host/; --abrir presentacion abre /presentacion/)
 //   npm run tunel -- --build --puerto 3001 (compila igual y usa otro puerto)
 
@@ -41,9 +42,19 @@ if (spawnSync('cloudflared', ['--version'], { stdio: 'ignore' }).error) {
   process.exit(1);
 }
 
-// 2. Build (el modo producción sirve dist/).
-if (op.build || !existsSync(`${RAIZ}dist/play/index.html`)) {
-  console.log('  Compilando el juego…');
+// 2. Build (el modo producción sirve dist/). Se recompila si falta o si el código es más nuevo: si no, después de un
+// pull los celulares reciben el juego viejo (pasó con la foto del grupo, #42).
+/** Fecha de modificación más nueva de un archivo o carpeta (recorriéndola), 0 si no existe. */
+function masNuevo(ruta) {
+  if (!existsSync(ruta)) return 0;
+  const info = statSync(ruta);
+  if (!info.isDirectory()) return info.mtimeMs;
+  return Math.max(0, ...readdirSync(ruta).map((nombre) => masNuevo(join(ruta, nombre))));
+}
+const compilado = masNuevo(`${RAIZ}dist/play/index.html`);
+const fuentes = ['public', 'estaticos', 'vite.config.js', 'package-lock.json', '../design-system'].map((p) => masNuevo(join(RAIZ, p)));
+if (op.build || !compilado || Math.max(...fuentes) > compilado) {
+  console.log(compilado ? '  El código cambió desde la última compilación: compilando el juego…' : '  Compilando el juego…');
   const r = spawnSync('npm', ['run', 'build'], { cwd: RAIZ, stdio: 'inherit', shell: true });
   if (r.status !== 0) salir(1);
 }
