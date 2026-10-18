@@ -7,6 +7,7 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
 - **Visual:** lanzamiento de producto en **un solo plano secuencia**: la cámara recorre una Nude House en miniatura estilo *clay* y la **sudadera 3D** viaja con ella por cada bloque (gira, cambia de color, se desarma en piezas con datos). Ver la [maqueta viva](../design-system/escena.html).
 - **Formato:** HTML interactivo, con hype colectivo de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
+- **Guion:** [GUION.md](GUION.md), el texto hablado de cada bloque.
 - **Cierre interactivo:** el juego [Drop Rush](../juego/PLANIFICACION.md).
 
 ---
@@ -48,8 +49,8 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 
 ## Pendientes
 - [x] Herramienta: **HTML** con el design system (ver [PLANIFICACION.md](PLANIFICACION.md))
-- [ ] Definir los contenidos de cada bloque (ver la sección 8 de [PLANIFICACION.md](PLANIFICACION.md#8-contenido-pendiente-a-cargo-del-equipo))
+- [x] Definir los contenidos de cada bloque (ver el [guion](GUION.md))
 - [ ] Juntar ejemplos reales de EGC y UGC (Instagram, TikTok, YouTube, podcast).
-- [ ] Elegir la campaña viral a analizar.
-- [ ] Relevar métricas públicas actualizadas y citar las fuentes.
-- [ ] Ensayar con cronómetro: 15 min de exposición + 8 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).
+- [x] Elegir la campaña viral a analizar: *Out of Office* (agosto de 2025).
+- [ ] Relevar métricas públicas actualizadas y citar las fuentes (relevadas a octubre de 2026; falta citar las fuentes).
+- [ ] Ensayar con cronómetro: 15 min de exposición + 7 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).
