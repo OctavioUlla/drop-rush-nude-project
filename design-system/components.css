@@ -385,7 +385,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
-/* "QUEDA 1" latiendo durante el drop. */
+/* "QUEDA 1" latiendo antes del juego; también el botón HYPE en cada toque. */
 .np-latido { animation: np-latido var(--np-movimiento-latido) var(--np-movimiento-curva) infinite; }
 @keyframes np-latido { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.06); } }
 
@@ -546,7 +546,7 @@
   text-transform: uppercase;
 }
 
-/* ============ Presentación: drop falso ============ */
+/* ============ Presentación: hype colectivo ============ */
 /* Cuenta regresiva gigante (proyector y celular). */
 .np-cuenta {
   font: var(--np-peso-black) clamp(6rem, 40vw, 18rem) / 0.85 var(--np-fuente-display);
@@ -556,8 +556,38 @@
 .np-diapo .np-cuenta { font-size: 26cqw; }
 .np-cuenta--ya { color: var(--np-acento-mostaza); }
 
-/* Botón COMPRAR del celular: ocupa toda la pantalla y es mostaza. Al tocarlo pasa a --enviado. */
-.np-comprar {
+/* Medidor de hype del proyector. El motor cambia --valor (0% a 100%) con cada pres:hype:nivel.
+   <div class="np-hype" style="--valor: 72%">
+     <div class="np-hype__barra"></div><p class="np-hype__cifra">72 % · 1.320 toques</p>
+   </div>
+   Debajo, los grupos con np-grilla-grupos: np-ficha si ya sumó, np-ficha--libre si todavía no. */
+.np-hype { display: grid; gap: 0.6em; }
+.np-hype__barra {
+  position: relative;
+  height: 1.8em;
+  background: var(--np-fondo-alterno);
+  border: var(--np-borde-grueso) solid var(--np-tinta);
+}
+.np-hype__barra::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--valor, 0%);
+  background: var(--np-acento-mostaza);
+  transition: width var(--np-movimiento-rapido) linear;
+}
+.np-hype__cifra {
+  margin: 0;
+  font: var(--np-peso-black) 1.6em / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  font-variant-numeric: tabular-nums;
+}
+.np-diapo .np-hype { font-size: 2.1cqw; }
+.np-diapo .np-hype + .np-grilla-grupos { grid-template-columns: repeat(20, 1fr); gap: 0.5cqw; }
+.np-diapo .np-hype + .np-grilla-grupos .np-ficha { font-size: 1.1cqw; }
+
+/* Botón HYPE del celular: ocupa toda la pantalla y es mostaza. Cada toque agrega --toque (un latido corto). */
+.np-hype-boton {
   display: grid;
   place-items: center;
   width: 100%;
@@ -571,9 +601,11 @@
   text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
+  user-select: none;
 }
-.np-comprar:active { background: #f2d900; }
-.np-comprar--enviado { background: var(--np-marca-cacao); color: var(--np-marca-crema); pointer-events: none; }
+.np-hype-boton:active { background: #f2d900; }
+.np-hype-boton--toque { animation: np-latido var(--np-movimiento-base) var(--np-movimiento-curva); }
+.np-hype-boton--lleno { background: var(--np-marca-cacao); color: var(--np-marca-crema); pointer-events: none; }
 
 /* ============ Presentación: etiquetas flotantes de la escena 3D ============ */
 /* El motor proyecta la posición de cada pieza de la sudadera a la pantalla y la pasa como --x, --y (en %).

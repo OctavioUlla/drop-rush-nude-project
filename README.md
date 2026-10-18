@@ -6,7 +6,7 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 
 | | Qué es | Dónde |
 |---|---|---|
-| 🎤 **Presentación** | Exposición interactiva en HTML de 15 minutos sobre la estrategia de comunicación y marketing de Nude Project, según la consigna de la cátedra. Una sudadera 3D estilo *clay* es la protagonista de cada bloque, y la exposición arranca con un *drop* falso en los celulares de la clase. | [`presentacion/`](presentacion/README.md) |
+| 🎤 **Presentación** | Exposición interactiva en HTML de 15 minutos sobre la estrategia de comunicación y marketing de Nude Project, según la consigna de la cátedra. Una sudadera 3D estilo *clay* es la protagonista de cada bloque, y la exposición arranca con un hype colectivo: la clase llena entre todos un medidor desde los celulares para que salga el drop. | [`presentacion/`](presentacion/README.md) |
 | 🏃 **Drop Rush** | Juego multijugador de 7 minutos para el cierre de la presentación (22 minutos en total): hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
 | 🎨 **Design System** | Colores, tipografía y componentes basados en la identidad real de la marca, para que la presentación y el juego se vean como una sola cosa. | [`design-system/`](design-system/README.md) |
 

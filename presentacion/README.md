@@ -6,7 +6,7 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
 - **Visual:** lanzamiento de producto con una **sudadera 3D estilo *clay*** que protagoniza cada bloque (gira, cambia de color, se desarma en piezas con datos).
-- **Formato:** HTML interactivo, con drop falso de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
+- **Formato:** HTML interactivo, con hype colectivo de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
 - **Cierre interactivo:** el juego [Drop Rush](../juego/PLANIFICACION.md).
 
 ---
@@ -17,7 +17,7 @@ Cada punto de la consigna es un bloque; los separadores de bloque usan el tema *
 
 | # | Bloque | Consigna | Tiempo aprox. |
 |---|---|---|---|
-| 0 | **Portada** + QR + **drop falso** de apertura | — | 1 min |
+| 0 | **Portada** + QR + **hype colectivo** de apertura | — | 1 min |
 | 1 | **La historia:** de 600 € en una habitación a +25 M€; *nude* = autenticidad; modelo D2C y drops + **votación en vivo** | Introducción | 2 min |
 | 2 | **EGC vs. UGC:** diferencia y ejemplos reales de sus redes; impacto en identidad y autenticidad. **Feeds** EGC vs. UGC | Punto 1 | 3 min |
 | 3 | **Marketing viral:** una campaña o publicación viral; qué la hizo funcionar (tono, mensaje, estética, contexto) | Punto 2 | 2 min |
@@ -41,7 +41,7 @@ Todas están en la guía visual del [design system](../design-system/index.html)
 - **Votación**: barras en vivo (`np-votacion`) con el contador de grupos que votaron.
 - **Métricas**: vista desarmada de la sudadera con **etiquetas flotantes** (`np-etiqueta-3d`) o `np-diapo__datos` con hasta 3 cifras grandes.
 - **Cita** (tema cacao): frase de Bruno con un subrayado mostaza, con la sudadera desenfocada al fondo.
-- **Drop falso**: cuenta regresiva (`np-cuenta`), cartel *QUEDA 1* latiendo y sello *SOLD OUT*; en el celular, el botón `np-comprar`.
+- **Hype colectivo**: cuenta regresiva (`np-cuenta`) y medidor de hype (`np-hype`) con las fichas de los grupos que suman; en el celular, el botón `np-hype-boton`.
 - **Juego** (tema cacao): cartel *QUEDA 1*, logo Drop Rush y QR.
 
 En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas planas (sin escena) quedan para el PDF de respaldo.
