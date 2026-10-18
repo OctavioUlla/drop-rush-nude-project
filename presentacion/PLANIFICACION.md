@@ -337,7 +337,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [x] Campaña o publicación viral a analizar: *Out of Office* (agosto de 2025)
 - [x] Métricas públicas actualizadas, con sus fuentes (perfiles oficiales al 18/10/2026; ver las notas de respaldo de [`GUION.md`](GUION.md)). Falta verificar las cifras de Instagram de comienzos de 2024.
 - [x] Pregunta definitiva de la votación y sus opciones (90 €, el precio habitual de una sudadera de Nude Project)
-- [ ] Quién presenta cada bloque (las notas del orador ya están en cada diapositiva)
+- [x] Quién presenta cada bloque: cinco oradores, A a E (ver el [reparto](GUION.md#reparto-de-oradores); el modo presentador muestra el orador de cada bloque)
 
 ---
 

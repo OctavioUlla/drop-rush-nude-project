@@ -39,7 +39,11 @@ function mostrarDiapositiva(i) {
   const d = diapos[i];
   const b = bloques[d.bloque];
   $('#donde').textContent = `${dosDigitos(b.indice)} — ${b.nombre}`;
-  $('#cual').textContent = `Diapositiva ${i + 1} de ${diapos.length}${b.diapos.length > 1 ? ` · ${b.diapos.indexOf(i) + 1}/${b.diapos.length} del bloque` : ''}`;
+  // Orador del bloque y, en su última diapositiva, a quién le pasa la palabra.
+  const proximo = diapos[i + 1] && bloques[diapos[i + 1].bloque];
+  const orador = b.orador ? ` · 🎤 Orador ${b.orador}` : '';
+  const pasa = proximo && proximo !== b && proximo.orador && proximo.orador !== b.orador ? ` → pasa a ${proximo.orador}` : '';
+  $('#cual').textContent = `Diapositiva ${i + 1} de ${diapos.length}${b.diapos.length > 1 ? ` · ${b.diapos.indexOf(i) + 1}/${b.diapos.length} del bloque` : ''}${orador}${pasa}`;
   miniatura($('#actual'), d);
   miniatura($('#siguiente'), diapos[i + 1]);
   $('#notas').innerHTML = d.notas || '<p><em>Sin notas.</em></p>';

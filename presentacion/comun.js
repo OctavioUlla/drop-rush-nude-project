@@ -39,7 +39,7 @@ export function leerDiapositivas(doc) {
     if (d.estacion < 0) throw new Error(`La escena "${d.escena}" no está en tokens.escena.recorrido`);
     let b = bloques.at(-1);
     if (!b || b.escena !== d.escena) {
-      b = { indice: bloques.length, escena: d.escena, estacion: d.estacion, nombre: d.el.dataset.bloque ?? d.escena, tiempo: aSegundos(d.el.dataset.tiempo), diapos: [] };
+      b = { indice: bloques.length, escena: d.escena, estacion: d.estacion, nombre: d.el.dataset.bloque ?? d.escena, tiempo: aSegundos(d.el.dataset.tiempo), orador: d.el.dataset.orador ?? null, diapos: [] };
       bloques.push(b);
     }
     d.bloque = b.indice;

@@ -4,24 +4,45 @@
 >
 > - Datos propios a **octubre de 2026**.
 > - Las líneas *[entre corchetes y en cursiva]* son indicaciones de escena o de teclado, no se leen.
-> - La división por orador queda pendiente.
+> - Somos **cinco oradores (A a E)**; cada bloque lo presenta uno solo, de principio a fin (ver [reparto](#reparto-de-oradores)).
 
-| # | Bloque | Consigna | Tiempo |
-|---|---|---|---|
-| 0 | Portada y hype colectivo | — | 1:00 |
-| 1 | La historia, el modelo y la votación | Introducción | 2:00 |
-| 2 | EGC vs. UGC | Punto 1 | 3:00 |
-| 3 | Marketing viral | Punto 2 | 2:00 |
-| 4 | Marketing experiencial | Punto 3 | 2:00 |
-| 5 | Métricas | Punto 4 | 2:00 |
-| 6 | Objetivo comunicacional | Punto 5 | 1:30 |
-| 7 | Desafíos y puente al juego | Cierre | 1:30 |
-| | **Exposición** | | **15:00** |
-| 8 | Drop Rush | Punto 6 | 8:00 |
+| # | Bloque | Consigna | Tiempo | Orador |
+|---|---|---|---|---|
+| 0 | Portada y hype colectivo | — | 1:00 | A |
+| 1 | La historia, el modelo y la votación | Introducción | 2:00 | A |
+| 2 | EGC vs. UGC | Punto 1 | 3:00 | B |
+| 3 | Marketing viral | Punto 2 | 2:00 | C |
+| 4 | Marketing experiencial | Punto 3 | 2:00 | C |
+| 5 | Métricas | Punto 4 | 2:00 | D |
+| 6 | Objetivo comunicacional | Punto 5 | 1:30 | D |
+| 7 | Desafíos y puente al juego | Cierre | 1:30 | E |
+| | **Exposición** | | **15:00** | |
+| 8 | Drop Rush | Punto 6 | 8:00 | E |
+
+## Reparto de oradores
+
+Se reparte por **bloques enteros**: nadie corta un bloque al medio y los cambios de orador caen siempre entre bloques. Con bloques seguidos para cada uno quedan **4 traspasos**, el mínimo posible para cinco personas.
+
+| Orador | Nombre | Bloques | Tiempo | Palabras habladas | Además |
+|---|---|---|---|---|---|
+| **A** | | 0 Portada · 1 Historia y votación | 3:00 | ~260 | Maneja la notebook en los bloques 7 y 8 (controles del juego) |
+| **B** | | 2 EGC vs. UGC | 3:00 | ~345 | Recorre el aula en el juego: ayuda con el QR y avisa si un grupo se quedó sin celular |
+| **C** | | 3 Viral · 4 Experiencial | 4:00 | ~470 | — |
+| **D** | | 5 Métricas · 6 Objetivo | 3:30 | ~345 | — |
+| **E** | | 7 Desafíos · 8 Drop Rush | 1:30 + 8:00 | ~225 + el juego | Maneja la notebook en los bloques 0 a 6 |
+
+- **Palabras**: se contó solo lo que se dice, sin las indicaciones de escena (en total, unas 1.650 en la exposición). El promedio es de ~330 por orador.
+- **Por qué E habla menos en la exposición**: conduce los 8 minutos de Drop Rush (instrucciones, carrera, repaso y debate), que no están escritos y son la parte más exigente. Hace el puente del bloque 7 al juego sin traspaso.
+- **C es el que más texto tiene** (~470 palabras en 4:00, unas 118 por minuto): entra en su tiempo, pero es el primero a cronometrar. No se puede aliviar sin cortar un bloque: los bloques 2 a 5 son los cuatro más largos y están seguidos.
+- **La notebook la maneja alguien fijo que no está hablando**: así el orador mira a la clase y no al teclado. En los bloques 0 a 6, **E** (todavía no habla) pasa las diapositivas y toca `H` (hype), `V` (votación, dos veces) y `F` (frenar los feeds) cuando el orador lo pide o lo marca el guion. Desde el bloque 7, **A** toma la notebook: pasa al juego y maneja los controles del presentador (`P` pausar, `S` saltar, `F` terminar) y libera los grupos que se queden sin celular (tocando su número en el lobby o su ficha en el ranking), cuando B se lo avisa.
+- Si entra [#42](https://github.com/OctavioUlla/drop-rush-nude-project/issues/42) (fotos de los grupos), la tecla extra del bloque 2 también la toca E.
+- En el modo presentador, cada diapositiva muestra el orador del bloque y, en la última del bloque, a quién le pasa la palabra (`data-orador` en [`index.html`](index.html)).
 
 ---
 
 ## 0. Portada y hype colectivo (~1:00)
+
+**Orador A**
 
 *[Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.]*
 
@@ -32,6 +53,8 @@
 "Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo."
 
 ## 1. La historia, el modelo y la votación (~2:00)
+
+**Orador A**
 
 *[La sudadera levita sobre la caja de envío del pedido #0001. En la segunda diapositiva aparecen los hitos: 600 € · 600 mil € · 11,5 M€ · 26 M€.]*
 
@@ -51,6 +74,8 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 ## 2. EGC vs. UGC (~3:00)
 
+**Orador B**
+
 *[Los dos celulares pasan su feed solos, con clips reales de TikTok; la sudadera en el centro gira hacia un lado y el otro. `F` frena los feeds para comentar una publicación.]*
 
 "Empecemos por el contenido. El **EGC** es el que crean los dueños y el equipo de la marca; el **UGC**, el que crean los usuarios. En Nude Project el EGC es la base, y el UGC lo amplifica.
@@ -62,6 +87,8 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 ¿Qué impacto tiene en su identidad? El EGC hace que la historia sea genuina pero no improvisada: lo que el caso llama **autenticidad controlada**. El UGC aporta **validación social**: ya no lo dice la marca, lo dice su gente. Juntos logran que la marca hable como un amigo y que la comunidad le responda."
 
 ## 3. Marketing viral (~2:00)
+
+**Orador C**
 
 *[La pared de 24 celulares repite el TikTok de la campaña (la remera en el metro); los corazones brotan de las pantallas y el contador pasa el medio millón.]*
 
@@ -79,6 +106,8 @@ La lección: la viralidad parece casual, pero está diseñada. Eligen el momento
 
 ## 4. Marketing experiencial (~2:00)
 
+**Orador C**
+
 *[La sudadera queda colgada de una percha en el salón de la Nude House; detrás, la pared de cuadros. Después de la primera frase (“…es un espacio de encuentro”), la cámara se acerca a los cuadros (“Del salón al feed”): la Nude House de Madrid en el centro, la pared de las llaves a la izquierda y la Mansion de Ibiza a la derecha.]*
 
 "Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la **Nude House** de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.
@@ -90,6 +119,8 @@ Esa lógica la llevaron a Estados Unidos, con pop-ups en Miami, Los Ángeles y N
 ¿Cómo fortalece esto a la comunidad digital? Es un círculo: el evento genera contenido, el contenido atrae gente a la comunidad y esa comunidad vuelve a las tiendas y a los drops. Hoy el canal físico ya es el 35 % de la facturación."
 
 ## 5. Métricas (~2:00)
+
+**Orador D**
 
 *[Vista desarmada: capucha → Instagram 1,6 M · manga derecha → TikTok 1 M · bolsillo → YouTube 950 mil · manga izquierda → podcast 275 mil. En la segunda diapositiva (“Y crecen rápido”), la sudadera se arma y corona las pilas que comparan comienzos de 2024 con hoy.]*
 
@@ -103,6 +134,8 @@ También hay medidas externas: en *The Hype List* de Modaes, Nude Project lider�
 
 ## 6. Objetivo comunicacional (~1:30)
 
+**Orador D**
+
 *[Plano medio de la sudadera, girada hacia la frase de Bruno.]*
 
 "¿Cuál es su objetivo comunicacional principal? Construir **pertenencia**. Lo dijo Bruno: *'El mundo no necesita más sudaderas, pero la gente sí necesita pertenecer a algo'*.
@@ -112,6 +145,8 @@ No buscan convencerte de que la sudadera es mejor, sino de que ser parte de la c
 Por eso Nude Project no vende ropa: vende una identidad compartida. Y lo logra porque su comunicación, antes que publicidad, es una conversación."
 
 ## 7. Desafíos y puente al juego (~1:30)
+
+**Orador E**
 
 *[La balanza: exclusividad contra accesibilidad.]*
 
@@ -130,6 +165,8 @@ Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora l
 *[La cola llega a la puerta: cartel QUEDA 1 → Drop Rush.]*
 
 ## 8. Drop Rush (~8:00)
+
+**Orador E**
 
 Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min) (ver [`juego/PLANIFICACION.md`](../juego/PLANIFICACION.md)). En el debate se retoman el hype, la votación y el resultado: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera."*
 
@@ -171,5 +208,5 @@ Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repas
 ## Pendientes
 
 - [x] ~~Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7) antes de usarlo.~~ Episodio del 20/10/2024 (ver notas de respaldo).
-- [ ] Repartir los bloques entre los oradores.
+- [x] Repartir los bloques entre los oradores (ver [reparto](#reparto-de-oradores)). Falta anotar el nombre de cada uno.
 - [ ] Ensayar con cronómetro: los tiempos suponen unas 130 palabras por minuto.
