@@ -91,7 +91,7 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 - [x] Definir los contenidos de cada bloque (ver el [guion](GUION.md))
 - [x] Juntar ejemplos reales de EGC y UGC: 4 y 4 clips de TikTok en los feeds (ver [`media/`](media/README.md)).
 - [x] Elegir la campaña viral a analizar: *Out of Office* (agosto de 2025).
-- [ ] Relevar métricas públicas actualizadas y citar las fuentes (relevadas a octubre de 2026; falta citar las fuentes).
+- [x] Relevar métricas públicas actualizadas y citar las fuentes (perfiles oficiales al 18/10/2026; ver las notas de respaldo de [`GUION.md`](GUION.md)). Falta verificar las cifras de Instagram de comienzos de 2024.
 - [ ] Fotos de la Nude House y del Château para el bloque 4 (hoy se ve el cartel *Pendiente*).
 - [x] Confirmar la pregunta de la votación ([`datos/votacion.json`](datos/votacion.json)): queda la de 90 €.
 - [ ] Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7).

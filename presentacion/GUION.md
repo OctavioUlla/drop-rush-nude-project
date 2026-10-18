@@ -141,7 +141,7 @@ Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repas
 |---|---|---|---|
 | Instagram | 1,6 M | 840 mil | casi el doble |
 | TikTok | 1 M | 765 mil | cerca de +30 % |
-| YouTube | 950 mil | más de 500 mil | casi el doble |
+| YouTube | 950 mil | más de 500 mil (abril) | casi el doble |
 | Instagram del podcast | 275 mil | 117 mil | más del doble |
 
 - Entre las cuatro cuentas pasan los **3,8 millones** de seguidores, aunque hay audiencias que se superponen.
@@ -151,6 +151,17 @@ Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repas
 - Presentar las cifras como lo que son, **acumulados y picos**, no como "engagement actual". En TikTok las vistas por video varían muchísimo, así que un video con pocas vistas no es una tendencia.
 
 ## Notas de respaldo (fuentes)
+
+- **Métricas (bloque 5), cifras de hoy:** perfiles oficiales, consultados el **18 de octubre de 2026**. En pantalla se cita *"Fuente: perfiles oficiales, 18/10/2026"*.
+  - Instagram [@nudeproject](https://www.instagram.com/nudeproject/): 1.658.381 seguidores (1,6 M).
+  - Instagram [@nudeprojectpodcast](https://www.instagram.com/nudeprojectpodcast/): 274.990 seguidores (275 mil).
+  - TikTok [@nudeproject](https://www.tiktok.com/@nudeproject): 1 M de seguidores y 51 M de me gusta (la plataforma solo muestra el redondeo).
+  - YouTube [@NudeProject](https://www.youtube.com/@NudeProject): 950 mil suscriptores (redondeo de YouTube).
+  - Episodio con Maluma, [*Una charla con Juan Luis, Maluma*](https://www.youtube.com/watch?v=72cUCOGGPk0) (publicado el 26/10/2025): 1.118.556 vistas, 22.269 me gusta y 829 comentarios.
+- **Métricas (bloque 5), comienzos de 2024:** capturas de los perfiles en la [Wayback Machine](https://web.archive.org/) de Internet Archive.
+  - TikTok: 760 mil seguidores y 38,5 M de me gusta el [27/02/2024](https://web.archive.org/web/20240227185242/https://www.tiktok.com/@nudeproject) (la tabla redondea a 765 mil); 781,7 mil en junio de 2024.
+  - YouTube: 366 mil suscriptores el [24/01/2024](https://web.archive.org/web/20240124084927/https://www.youtube.com/@NUDEPROJECT) y 501 mil el [03/04/2024](https://web.archive.org/web/20240403084717/https://www.youtube.com/@NUDEPROJECT). Los "más de 500 mil" son de **abril**; en enero tenían menos de 400 mil, así que el crecimiento desde comienzos de año es todavía mayor (×2,6).
+  - Instagram (840 mil) y el Instagram del podcast (117 mil): **sin fuente verificada**. Wayback no tiene capturas de esos perfiles y el historial de Social Blade pide una cuenta. Si alguien del equipo tiene la fuente original, anotarla acá; si no, decirlas como aproximadas.
 
 - **Anécdota de Álex (bloque 7):** Nude Project Podcast, episodio *¿Cuál es el futuro de Nude Project?*, publicado el **20 de octubre de 2024** (1 h 27 min). [Spotify](https://podcasters.spotify.com/pod/show/alex-benlloch--bruno-casa/episodes/Cul-es-el-futuro-de-Nude-Project-e3697o9) · [YouTube](https://www.youtube.com/watch?v=Dc2-N9v8_hA).
   - La descripción del episodio dice que fue un **correo** de Álex (CEO) a Bruno (director creativo), una madrugada de principios de año, y que el asunto era *"Lo que nos trajo aquí no nos llevará más allá"*: una llamada de atención para hacer cambios en todos los departamentos (campañas, plan de tiendas, oficinas y el propio podcast).
