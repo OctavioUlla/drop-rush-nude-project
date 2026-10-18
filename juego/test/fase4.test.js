@@ -219,3 +219,16 @@ test('el servidor manda la versión .br o .gz si el navegador la acepta, y nunca
     rmSync(dir, { recursive: true });
   }
 });
+
+test('las páginas sin barra final redirigen a su carpeta (si no, quedan en blanco)', async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno' });
+  try {
+    for (const [desde, hacia] of [['/dev/models', '/dev/models/'], ['/play?sala=ABCD', '/play/?sala=ABCD'], ['/host', '/host/']]) {
+      const r = await fetch(servidor.url + desde, { redirect: 'manual' });
+      assert.equal(r.status, 301, desde);
+      assert.equal(r.headers.get('location'), hacia);
+    }
+  } finally {
+    await servidor.cerrar();
+  }
+});

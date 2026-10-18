@@ -17,6 +17,7 @@ import { esPrincipal } from './principal.js';
 const RAIZ = fileURLToPath(new URL('..', import.meta.url));
 const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
 const SALA_ABANDONADA = 12 * 60 * 60 * 1000;
+const PAGINAS = new Set(['/play', '/host', '/dev/models']);
 
 export async function iniciarServidor({ puerto = 3000, host, config: extra = {}, archivos = 'auto' } = {}) {
   const config = cargarConfig(extra);
@@ -362,6 +363,14 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
 
   // Direcciones de la notebook en la red local: el QR las usa si el proyector abrió localhost.
   app.get('/api/red', (_req, res) => res.json({ ips: direccionesLocales() }));
+
+  // Las páginas son carpetas: sin la barra final, Vite responde 404 y los ./archivos relativos no cargan.
+  // Se redirige `/dev/models` a `/dev/models/` (conservando ?sala=, ?solo, etc.).
+  app.use((req, res, next) => {
+    if (!PAGINAS.has(req.path)) return next();
+    const consulta = req.originalUrl.slice(req.path.length);
+    res.redirect(301, `${req.path}/${consulta}`);
+  });
 
   // `--produccion` en vez de NODE_ENV=production: así `npm start` anda igual en Windows.
   const produccion = process.env.NODE_ENV === 'production' || process.argv.includes('--produccion');
