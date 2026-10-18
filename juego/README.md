@@ -158,7 +158,7 @@ Sobre la Fase 3:
 | Modelo | Triángulos | Presupuesto |
 |---|---|---|
 | Corredor | 340 | 1.500 |
-| Fan · valla · caja · bache | 156 · 144 · 60 · 104 | 600 · 150 · 150 · ~100 |
+| Fan · valla · caja · bache | 156 · 144 · 60 · 92 | 600 · 150 · 150 · ~100 |
 | Bot revendedor · camión | 192 · 272 | 500 · 600 |
 | Like · arco de respuesta | 84 · 122 | 100 · 200 |
 | Tienda Nude Project (con la cola) | 1.216 | 2.000 |
@@ -228,7 +228,7 @@ juego/
 
 Sobre la base de la Fase 1:
 
-- **Obstáculos**: además de la valla, la caja de stock, el fan y el camión, están el **bache del algoritmo** (bajo, se salta) y el **bot revendedor** (alto), que cruza despacio al carril vecino cuando el corredor se acerca. Su posición depende solo de la distancia del corredor, así que todos los grupos lo ven igual y el choque coincide con el dibujo a cualquier FPS. Va siempre solo en su fila: siempre queda un carril libre.
+- **Obstáculos**: además de la valla, la caja de stock, el fan y el camión, están el **bache del algoritmo** (bajo, se salta: un pozo del que asoman las barras de un gráfico que baja, con una flecha roja que se hunde en el pozo) y el **bot revendedor** (alto), que cruza despacio al carril vecino cuando el corredor se acerca. Su posición depende solo de la distancia del corredor, así que todos los grupos lo ven igual y el choque coincide con el dibujo a cualquier FPS. Va siempre solo en su fila: siempre queda un carril libre.
 - **Likes**: en el piso y en el aire (sobre los obstáculos bajos, para atraparlos saltando). Cada uno suma 1 m al total oficial, poco a propósito para que no compitan con las preguntas.
 - **Arcos de respuesta** en la calle (`render/models/props.js`): uno por carril, con la letra y el texto corto dibujados en un `CanvasTexture` que solo se regenera cuando cambia; el del carril elegido se pinta de mostaza y, en las preguntas de 2 opciones, el tercero es una pared ✕. Se ubican para que el corredor los cruce justo cuando termina el tiempo (la respuesta la decide el guion, no el choque con el arco).
 - **Sprint y meta** (`render/models/store.js`): la tienda Nude Project (fachada blanca y negra, vidrieras con sudaderas, cartel *DROP · QUEDA 1* y la cola de fans) aparece al final de la calle durante el sprint y el corredor frena frente a su puerta. Ganador único y SOLD OUT para el resto, como en la Fase 1.

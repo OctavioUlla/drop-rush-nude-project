@@ -76,24 +76,31 @@ export function camion() {
   return unir(partes);
 }
 
-/** Bache del algoritmo: pozo en el piso con un gráfico que cae (bajo: se salta). */
+/**
+ * Bache del algoritmo: pozo en el piso del que asoma un gráfico de barras que baja, cruzado por
+ * una flecha roja que se hunde en el pozo (bajo: se salta). Las barras y la flecha están paradas
+ * de frente al corredor para que se lean desde lejos y no solo un manchón en el piso.
+ */
 export function bache() {
   const borde = J['obstaculo-bajo'];
   const partes = [
     caja(1.5, 0.04, 1.2, M['cacao-profundo'], { y: 0.02, z: -0.7 }),
-    caja(1.7, 0.14, 0.12, borde, { y: 0.07, z: -0.06 }),
-    caja(1.7, 0.14, 0.12, borde, { y: 0.07, z: -1.34 }),
-    caja(0.12, 0.14, 1.2, borde, { x: -0.8, y: 0.07, z: -0.7 }),
-    caja(0.12, 0.14, 1.2, borde, { x: 0.8, y: 0.07, z: -0.7 }),
+    caja(1.7, 0.12, 0.14, borde, { y: 0.06, z: -0.07 }),
+    caja(1.7, 0.12, 0.14, borde, { y: 0.06, z: -1.33 }),
   ];
-  // Línea de gráfico en zigzag hacia abajo, con la punta de flecha.
-  const tramos = [
-    [-0.55, 0.42, -0.5],
-    [-0.2, 0.32, 0.5],
-    [0.15, 0.3, -0.7],
-  ];
-  for (const [x, y, rz] of tramos) partes.push(caja(0.42, 0.08, 0.06, A.ladrillo, { x, y, z: -0.7, rz }));
-  partes.push(cono(0.13, 0.22, 4, A.ladrillo, { x: 0.42, y: 0.12, z: -0.7, rz: -Math.PI * 0.72 }));
+  // Barras del gráfico, cada una más baja que la anterior.
+  for (const [x, alto] of [[-0.48, 0.62], [0, 0.42], [0.48, 0.22]]) {
+    partes.push(caja(0.34, alto, 0.2, M.crema, { x, y: alto / 2, z: -0.8 }));
+  }
+  // Flecha que cae de arriba a la izquierda hacia el pozo, delante de las barras.
+  const [x0, y0, x1, y1] = [-0.68, 0.78, 0.36, 0.34];
+  const largo = Math.hypot(x1 - x0, y1 - y0);
+  const angulo = Math.atan2(y1 - y0, x1 - x0);
+  const [dx, dy] = [Math.cos(angulo), Math.sin(angulo)];
+  partes.push(caja(largo, 0.11, 0.08, A.ladrillo, { x: (x0 + x1) / 2, y: (y0 + y1) / 2, z: -0.5, rz: angulo }));
+  partes.push(cono(0.17, 0.28, 4, A.ladrillo, {
+    x: x1 + dx * 0.12, y: y1 + dy * 0.12, z: -0.5, rz: angulo - Math.PI / 2, s: [1, 1, 0.45],
+  }));
   return unir(partes);
 }
 
