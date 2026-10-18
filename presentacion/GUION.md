@@ -63,7 +63,7 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 ## 3. Marketing viral (~2:00)
 
-*[La pared de 24 celulares repite la publicación; los corazones brotan de las pantallas y el contador pasa el medio millón.]*
+*[La pared de 24 celulares repite el TikTok de la campaña (la remera en el metro); los corazones brotan de las pantallas y el contador pasa el medio millón.]*
 
 "Lo viral está en el ADN de la marca. Su primera sudadera, con la frase *pretty girls like trap music*, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.
 

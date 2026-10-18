@@ -334,21 +334,49 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
   return tex;
 }
 
-/** Publicación viral para la pared de celulares, con el contador de likes (poner(n) la redibuja, 15 veces por segundo como mucho). */
-export function publicacionViral() {
+/**
+ * Publicación viral para la pared de celulares, con el contador de likes (poner(n) la redibuja, 15 veces por segundo
+ * como mucho). Con `archivo` (foto o clip, como en los feeds) lo muestra arriba del contador; si no hay o no carga,
+ * la ilustración de Out of Office. Con un clip:
+ * - avanzar(dt): en cada cuadro, con la estación en pantalla. El clip arranca desde el principio al llegar.
+ * - dormir(): con la estación fuera de cuadro (frena el clip).
+ */
+export function publicacionViral({ archivo } = {}) {
   const formato = new Intl.NumberFormat('es-AR');
-  let likes = 0, ultimo = 0;
-  const base = lienzo(360, 756, (ctx, w, h) => { outOfOffice(ctx, w, h * 0.86, M.arena); barraEstado(ctx, w, M.cacao); });
-  const tex = lienzo(360, 756, (ctx, w, h) => {
-    ctx.drawImage(base.image, 0, 0);
-    ctx.fillStyle = M.crema; ctx.fillRect(0, h * 0.86, w, h * 0.14);
+  let likes = 0, ultimo = 0, cuadro = 0, despierto = false;
+  const alto = 0.86; // fracción de la pantalla para la publicación; el resto es la barra de likes
+  const base = lienzo(360, 756, (ctx, w, h) => { outOfOffice(ctx, w, h * alto, M.arena); barraEstado(ctx, w, M.cacao); });
+  let tex = null; // lienzo() ya dibuja una vez al crearla, antes de que tex exista
+  tex = lienzo(360, 756, (ctx, w, h) => {
+    if (tex?.media?.listo) {
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, w, h * alto); ctx.clip();
+      cubrir(ctx, tex.media, w, h * alto);
+      ctx.restore();
+      barraEstado(ctx, w, M.crema);
+    } else ctx.drawImage(base.image, 0, 0);
+    ctx.fillStyle = M.crema; ctx.fillRect(0, h * alto, w, h * (1 - alto));
     ctx.fillStyle = A.ladrillo; corazon(ctx, w * 0.11, h * 0.928, w * 0.1);
     ctx.fillStyle = M.cacao; ctx.textAlign = 'left'; ctx.font = fuente(800, w * 0.085); espaciado(ctx, -w * 0.003);
     ctx.fillText(formato.format(Math.round(likes)), w * 0.2, h * 0.948);
   });
+  tex.media = cargarMedia(archivo, () => tex.redibujar());
   tex.poner = (n, t) => { // t: tiempo de la escena, en segundos
     if (Math.round(n) === Math.round(likes) || Math.abs(t - ultimo) < 1 / 15) return;
     likes = n; ultimo = t; tex.redibujar();
+  };
+  const clip = () => (tex.media?.listo && 'play' in tex.media ? tex.media : null);
+  tex.avanzar = (dt) => {
+    const v = clip();
+    if (!v) return;
+    if (!despierto) { despierto = true; v.currentTime = 0; }
+    if (v.paused) v.play().catch(() => {});
+    cuadro += dt;
+    if (cuadro >= 1 / 30) { cuadro = 0; tex.redibujar(); }
+  };
+  tex.dormir = () => {
+    despierto = false;
+    const v = clip();
+    if (v && !v.paused) v.pause();
   };
   return tex;
 }

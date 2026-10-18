@@ -42,14 +42,14 @@ if (!imprimiendo) {
   }
 }
 /**
- * Publicaciones de los feeds de EGC vs. UGC (datos/feeds.json). Las rutas de fotos y clips son relativas al
+ * Publicaciones de los feeds de EGC vs. UGC y de la pared viral (datos/feeds.json). Las rutas de fotos y clips son relativas al
  * archivo. Si no se puede leer, el motor usa las publicaciones de prueba del design system.
  */
 async function leerFeeds() {
   const url = new URL('./datos/feeds.json', location.href);
   try {
     const datos = await (await fetch(url)).json();
-    for (const lado of ['egc', 'ugc']) for (const pub of datos[lado] ?? []) if (pub.archivo) pub.archivo = new URL(pub.archivo, url).href;
+    for (const pub of [...(datos.egc ?? []), ...(datos.ugc ?? []), datos.viral]) if (pub?.archivo) pub.archivo = new URL(pub.archivo, url).href;
     return datos;
   } catch (error) {
     console.warn('No se pudo leer datos/feeds.json: se usan las publicaciones de prueba', error);

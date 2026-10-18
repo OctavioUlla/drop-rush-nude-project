@@ -1,6 +1,6 @@
 # Medios de la presentación
 
-Fotos y clips que usan los feeds de EGC vs. UGC ([`../datos/feeds.json`](../datos/feeds.json), campo `archivo`, por ejemplo `"../media/egc-dia1.mp4"`).
+Fotos y clips que usan los feeds de EGC vs. UGC y la pared viral ([`../datos/feeds.json`](../datos/feeds.json), campo `archivo`, por ejemplo `"../media/egc-dia1.mp4"`).
 
 - **Clips:** MP4 (H.264), 720p o menos, vertical 9:16, 5 a 10 s, sin audio; menos de 2 MB cada uno. Se reproducen en silencio y en bucle solo mientras se ven.
 - **Fotos:** JPG o WebP de 1600 px como máximo, verticales.
@@ -27,3 +27,4 @@ Recortados de TikTok (8 s aprox., sin audio). Las vistas se tomaron el 18/10/202
 | UGC | `ugc-apertura-miami.mp4` | @christianrodr_ | 15,5 a 23,5 s | [TikTok](https://www.tiktok.com/@christianrodr_/video/7560100068821437727) |
 | UGC | `ugc-outfit-tank.mp4` | @nataliesmirnakos | 2 a 10 s | [TikTok](https://www.tiktok.com/@nataliesmirnakos/video/7647728671951817991) |
 | UGC | `ugc-outfit-pullover.mp4` | @santiabarzaa | 10,5 a 18,5 s | [TikTok](https://www.tiktok.com/@santiabarzaa/video/7497715567646870790) |
+| Viral | `viral-out-of-office.mp4` | @nudeproject | completo (6 s) | [TikTok](https://www.tiktok.com/@nudeproject/video/7540362569878424854) |

@@ -418,11 +418,11 @@ function corazonGeo() {
   geo.center();
   return geo;
 }
-function estacionViral(g) {
+function estacionViral(g, { feeds: datos } = {}) {
   g.add(pisoSombra());
   // Pared de celulares con la misma publicación, como cuando algo se hace viral. La prenda queda a la izquierda,
-  // junto al texto, y la pared ocupa el resto: la tapa apenas en una esquina.
-  const tex = publicacionViral();
+  // junto al texto, y la pared ocupa el resto: la tapa apenas en una esquina. El clip sale de datos/feeds.json (viral).
+  const tex = publicacionViral({ archivo: datos?.viral?.archivo });
   const panel = new THREE.Group();
   const cols = 8, filas = 3, pw = 0.48, ph = 1.0, sx = 0.6, sy = 1.12;
   panel.add(caja(cols * sx + 0.24, (filas - 1) * sy + ph + 0.4, 0.14, C.marca.arena, 0, 0, -0.07, 0.07));
@@ -461,6 +461,7 @@ function estacionViral(g) {
       reloj = presencia > 0.95 ? reloj + dt : presencia < 0.05 ? 0 : reloj;
       const u = Math.min(reloj / 3.2, 1);
       tex.poner(500000 * (1 - (1 - u) ** 4) + Math.max(0, reloj - 3.2) * 37, t); // superó el medio millón en menos de 24 h
+      if (presencia > 0.3) tex.avanzar(dt); else tex.dormir();
       const crecer = smoothstep(presencia, 0.3, 1);
       for (const m of corazones) {
         const d = m.userData;
