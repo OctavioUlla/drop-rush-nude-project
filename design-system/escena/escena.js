@@ -1,5 +1,6 @@
 // Motor del plano secuencia: renderer, luz de cine, la sudadera protagonista y el viaje de cámara entre estaciones.
-// iniciar({ lienzo, escenario, eventos }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, estaciones }
+// iniciar({ lienzo, escenario, eventos, escalaMaxima }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, estaciones }
+// escalaMaxima: tope de la resolución interna (por defecto tokens.escena.render['escala-maxima']); bajarlo si la notebook no llega a 60 fps.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { tokens, colores3d, colorways, segundos } from '../tokens.js';
@@ -36,7 +37,7 @@ const rebote = (u) => {
   return n * (u -= 2.625 / d) * u + 0.984375;
 };
 
-export function iniciar({ lienzo, escenario, eventos = {} }) {
+export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.render['escala-maxima'] }) {
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
@@ -212,7 +213,7 @@ export function iniciar({ lienzo, escenario, eventos = {} }) {
   // ---------- Tamaño, puntero y arranque ----------
   function medir() {
     const { width, height } = escenario.getBoundingClientRect();
-    renderer.setPixelRatio(Math.min(devicePixelRatio, esc.render['escala-maxima']));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, escalaMaxima));
     renderer.setSize(width, height, false);
     camara.aspect = width / height;
     camara.updateProjectionMatrix();

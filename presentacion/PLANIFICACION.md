@@ -222,11 +222,10 @@ presentacion/
 ├── presentador.html     # Modo presentador (notas, próxima, cronómetro)
 ├── estilos.css          # Solo layout propio; importa el design system
 ├── deck.js              # Navegación, teclado, escalado, cronómetro, BroadcastChannel, impresión
-├── escena/
-│   ├── escena.js        # Renderer, luz de cine, protagonista y viaje de cámara (desde design-system/escena/)
-│   ├── sudadera.js      # Modelo de la sudadera por piezas (por código)
-│   └── mundo.js         # Las 9 estaciones: habitación, celulares, Nude House, balanza, vidriera…
-├── vendor/              # three.js y GSAP guardados localmente
+├── presentador.js       # Modo presentador: lee las diapositivas del mismo index.html
+├── comun.js             # Lo que comparten las dos ventanas (canal, lectura de diapositivas, formato del reloj)
+├── medidor.js           # Medidor de fps y recorrido de prueba (fase 0)
+├── vendor/              # three.js guardado localmente (npm run vendor:presentacion en juego/); GSAP, si se suma
 ├── interactivo/
 │   ├── hype.js          # Hype colectivo (proyector)
 │   ├── votacion.js      # Votación en vivo (proyector)
@@ -238,6 +237,8 @@ presentacion/
 ├── media/               # Fotos y clips de video comprimidos
 └── renders/             # Imágenes pre-renderizadas de cada escena (respaldo sin WebGL y PDF)
 ```
+La escena 3D **no se copia**: la presentación importa [`design-system/escena/`](../design-system/escena/) (motor, sudadera y las 9 estaciones), así la maqueta y la presentación nunca se separan.
+
 Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el hype y la votación.
 
 ### 6.4 Eventos de Socket.io (borrador)
@@ -272,12 +273,15 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 ### Fase 0: Prototipo visual (riesgo primero)
 - [x] Sudadera clay por código, con todos los colorways ([maqueta viva](../design-system/escena.html))
 - [x] Plano secuencia por las 9 estaciones, con texto animado encima
-- [ ] Medir fps en la notebook que se va a usar y validar que se vea bien en el proyector
+- [x] Medidor de rendimiento: tecla `M` (fps en vivo, resolución interna, placa de video) y `?medir` (recorrido de prueba ida y vuelta con informe para copiar). Si no llega, `?escala=1` baja la resolución interna
+- [x] Primera medición: 59,6 fps de media en una notebook con Intel Arc integrada, a 1920×1080 internos (×1,5), sin trabas en los viajes
+- [ ] Medir con `?medir` en la notebook que se va a usar el día de la presentación y validar que se vea bien en el proyector del aula
 
 ### Fase 1: Motor y plantilla
-- [ ] `deck.js`: navegación, teclado, escalado 16:9, modo impresión
-- [ ] Plantilla con una diapositiva vacía por bloque (títulos provisorios y marcadores de contenido)
-- [ ] Modo presentador: notas, próxima diapositiva y cronómetro por bloque
+- [x] `deck.js`: navegación (teclado, control de diapositivas, índice, rueda y deslizar), escalado 16:9, `#n` en la URL, pantalla en pausa (`B`) y modo impresión (`?imprimir` para revisarlo en pantalla)
+- [x] Plantilla con una diapositiva por bloque: títulos provisorios, marcadores de contenido pendiente y el [guion](GUION.md) como notas del orador
+- [x] Modo presentador (`P`): diapositiva actual y siguiente, notas, cronómetro por bloque (mostaza a 20 s, ladrillo al pasarse) y total, y controles; se sincroniza con `BroadcastChannel`
+- [x] El servidor del juego sirve la presentación en `/presentacion/`, y three.js queda guardado en `vendor/` (`npm run vendor:presentacion`)
 
 ### Fase 2: Escenas 3D
 - [x] Primera versión de las 9 estaciones (sección 3.3) y del viaje ida y vuelta entre todas

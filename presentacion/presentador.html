@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es" data-np-tema="cacao">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Presentador · Nude Project</title>
+  <link rel="stylesheet" href="../design-system/tokens.css">
+  <link rel="stylesheet" href="../design-system/components.css">
+  <link rel="stylesheet" href="./estilos.css">
+  <style>
+    /* Ventana de la notebook: no hereda el escalado 16:9 del proyector. */
+    html, body { height: auto; min-height: 100%; overflow: auto; display: block; background: var(--np-fondo); }
+    .np-presentador { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: 100vh; box-sizing: border-box; }
+    .np-presentador__actual, .lado { display: flex; flex-direction: column; gap: var(--np-espacio-4); min-height: 0; }
+    .np-presentador__actual { grid-row: auto; }
+    .np-presentador__notas { flex: 1; min-height: 0; padding-right: var(--np-espacio-3); }
+    .np-presentador__notas p { margin: 0 0 0.8em; max-width: 70ch; }
+    .np-presentador__notas em { color: var(--np-tinta-suave); font-size: 0.8em; }
+    .np-presentador__notas kbd, .atajos kbd { font: var(--np-peso-bold) 0.8em / 1 var(--np-fuente-texto); padding: 0.15em 0.4em; border: 1px solid currentColor; }
+    .titulo { display: flex; justify-content: space-between; align-items: baseline; gap: var(--np-espacio-3); }
+    .titulo .np-subtitulo { margin: 0; }
+    /* Miniaturas: la misma diapositiva del proyector, sin la escena 3D ni animaciones. */
+    .miniatura { border: var(--np-borde-fino) solid var(--np-linea); }
+    .miniatura .np-escenario { width: 100%; }
+    .np-presentador__actual .miniatura { width: min(100%, 46vh * 16 / 9); flex: none; }
+    .miniatura .np-capa { visibility: visible; }
+    .miniatura .np-capa * { animation: none !important; transition: none !important; }
+    .miniatura .np-capa .np-capa__entra { opacity: 1; transform: none; }
+    .miniatura .np-capa .marcador { opacity: 0.75; }
+    .miniatura__fin { aspect-ratio: 16 / 9; display: grid; place-items: center; margin: 0; color: var(--np-tinta-suave); }
+    .lado .miniatura { opacity: 0.85; }
+    .acciones { display: flex; flex-wrap: wrap; gap: var(--np-espacio-2); }
+    .acciones .np-boton { min-height: 40px; padding: var(--np-espacio-2) var(--np-espacio-4); }
+    .atajos { margin: auto 0 0; font-size: var(--np-texto-xs); color: var(--np-tinta-suave); line-height: 2; }
+    .np-insignia--alerta { background: var(--np-acento-ladrillo); border-color: var(--np-acento-ladrillo); color: var(--np-marca-crema); }
+  </style>
+</head>
+<body class="np-base">
+<main class="np-presentador">
+  <section class="np-presentador__actual">
+    <div class="titulo">
+      <h1 class="np-subtitulo" id="donde">Cargando…</h1>
+      <span class="np-etiqueta" id="cual"></span>
+    </div>
+    <div class="miniatura" id="actual"></div>
+    <div class="np-presentador__notas" id="notas"></div>
+  </section>
+
+  <section class="lado">
+    <div class="np-cronometro" id="crono-bloque"><span>—</span><small>Bloque</small></div>
+    <div class="np-cronometro" id="crono-total"><span>—</span><small>Total</small></div>
+    <div class="np-presentador__estado" id="estado"></div>
+    <div class="acciones">
+      <button class="np-boton np-boton--secundario" data-accion="anterior">← Anterior</button>
+      <button class="np-boton" data-accion="siguiente">Siguiente →</button>
+      <button class="np-boton np-boton--secundario" data-accion="pausa">Pausa</button>
+      <button class="np-boton np-boton--acento" data-accion="reloj" id="boton-reloj">Empezar cronómetro</button>
+    </div>
+    <span class="np-etiqueta">Siguiente</span>
+    <div class="miniatura" id="siguiente"></div>
+    <p class="atajos"><kbd>→</kbd> <kbd>Espacio</kbd> siguiente · <kbd>←</kbd> anterior · <kbd>B</kbd> pausa · <kbd>T</kbd> empezar o reiniciar el cronómetro</p>
+  </section>
+</main>
+<script type="module" src="./presentador.js"></script>
+</body>
+</html>
