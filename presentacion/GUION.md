@@ -117,7 +117,7 @@ Por eso Nude Project no vende ropa: vende una identidad compartida. Y lo logra p
 
 "Pero crecer así tiene sus desafíos, y el caso marca cuatro.
 
-El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada Álex le escribió a Bruno que lo que los trajo hasta aquí no los iba a llevar más allá, y planteó cambios en todos los departamentos.
+El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada de principios de 2024 Álex le mandó un correo a Bruno con un asunto que lo resume: «Lo que nos trajo aquí no nos llevará más allá». Fue la llamada de atención para hacer cambios en todos los departamentos.
 
 El segundo, **la sostenibilidad**: prometen prendas duraderas, pero la demanda y el ritmo del mercado ponen a prueba esa promesa.
 
@@ -150,8 +150,15 @@ Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repas
 - **Instagram:** los 200 comentarios de una publicación, sin los likes, no dicen mucho. Mejor no usarlos.
 - Presentar las cifras como lo que son, **acumulados y picos**, no como "engagement actual". En TikTok las vistas por video varían muchísimo, así que un video con pocas vistas no es una tendencia.
 
+## Notas de respaldo (fuentes)
+
+- **Anécdota de Álex (bloque 7):** Nude Project Podcast, episodio *¿Cuál es el futuro de Nude Project?*, publicado el **20 de octubre de 2024** (1 h 27 min). [Spotify](https://podcasters.spotify.com/pod/show/alex-benlloch--bruno-casa/episodes/Cul-es-el-futuro-de-Nude-Project-e3697o9) · [YouTube](https://www.youtube.com/watch?v=Dc2-N9v8_hA).
+  - La descripción del episodio dice que fue un **correo** de Álex (CEO) a Bruno (director creativo), una madrugada de principios de año, y que el asunto era *"Lo que nos trajo aquí no nos llevará más allá"*: una llamada de atención para hacer cambios en todos los departamentos (campañas, plan de tiendas, oficinas y el propio podcast).
+  - "Principios de 2024" se deduce de que el episodio salió en octubre de ese año y habla de "principios de año".
+  - En YouTube el video se titula con otra variante: *"Lo que hace 5 años nos trajo aquí, no será lo que nos lleve más allá"*. En el guion usamos la del asunto del correo.
+
 ## Pendientes
 
-- [ ] Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7) antes de usarlo.
+- [x] ~~Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7) antes de usarlo.~~ Episodio del 20/10/2024 (ver notas de respaldo).
 - [ ] Repartir los bloques entre los oradores.
 - [ ] Ensayar con cronómetro: los tiempos suponen unas 130 palabras por minuto.
