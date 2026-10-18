@@ -12,6 +12,7 @@
     <span id="barra-sala" class="np-insignia" hidden></span>
     <span id="barra-fase" class="barra__fase"></span>
     <span id="red" class="barra__red" title="Celulares conectados">–</span>
+    <button id="btn-sonido" class="barra__boton" title="Música y efectos" aria-label="Música y efectos" aria-pressed="true">🔊</button>
     <button id="btn-debug" class="barra__boton" title="Panel técnico" aria-label="Panel técnico">🐞</button>
   </header>
 
@@ -46,6 +47,8 @@
               <option value="caotico">Caótico</option>
             </select>
           </label>
+          <label class="ajustes__check"><input id="cfg-poderes" type="checkbox" checked> Rachas y poderes</label>
+          <label class="ajustes__check"><input id="cfg-emparejar" type="checkbox" checked> Emparejar (+10 % al último cuarto)</label>
         </div>
         <div class="ajustes__acciones">
           <button id="btn-liberar" class="np-boton np-boton--secundario">Liberar todos los grupos</button>
@@ -87,6 +90,8 @@
     </section>
 
     <div id="cuenta" class="cuenta" hidden></div>
+    <!-- Poderes que usan los grupos (Cambio de algoritmo, 50/50, Hype). -->
+    <div id="avisos" class="avisos" aria-live="polite"></div>
   </main>
 
   <!-- Llegada: un único ganador; el resto queda en la cola. -->

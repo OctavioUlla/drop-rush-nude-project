@@ -10,7 +10,7 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 | 🏃 **Drop Rush** | Juego multijugador de 7 minutos para el cierre de la presentación (22 minutos en total): hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
 | 🎨 **Design System** | Colores, tipografía y componentes basados en la identidad real de la marca, para que la presentación y el juego se vean como una sola cosa. | [`design-system/`](design-system/README.md) |
 
-> 🚧 **Estado:** design system listo; juego en la Fase 2 (runner 3D con obstáculos, arcos de respuesta, tienda de la meta y mapa en vivo; ver [`juego/README.md`](juego/README.md)); presentación en planificación.
+> 🚧 **Estado:** design system listo; juego en la Fase 3 (runner 3D con obstáculos, arcos de respuesta, tienda de la meta, mapa en vivo, ventajas, poderes, música y red robusta; ver [`juego/README.md`](juego/README.md)); presentación en planificación.
 
 ## Estructura
 

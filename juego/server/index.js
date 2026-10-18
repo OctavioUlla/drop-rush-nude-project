@@ -174,6 +174,12 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       responder(ack, { index: datos?.index, ...r });
     });
 
+    // Poder guardado: el celular lo reintenta hasta el ack y el servidor lo aplica una sola vez.
+    socket.on('player:use_power', (datos, ack) => {
+      const grupo = grupoDe(socket);
+      responder(ack, grupo ? salaDe(socket).partida.usarPoder(grupo, datos) : { ok: false, motivo: 'no_group' });
+    });
+
     socket.on('debug:report', (datos) => {
       informes.unshift({ ...datos, room: socket.data.sala ?? null, group: socket.data.grupo ?? null, receivedAt: Date.now() });
       informes.length = Math.min(informes.length, 100);
@@ -278,7 +284,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
         if (ticks % 5 === 0) {
           const ranking = partida.ranking();
           ranking.forEach((g, i) => {
-            if (g.conectado) enviar(g.numero, 'run:rank', { position: i + 1, total: ranking.length });
+            if (g.conectado) enviar(g.numero, 'run:rank', partida.rango(i + 1, ranking.length));
           });
         }
       }
@@ -320,6 +326,9 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       tiempoPorDefecto: c.tiempoPorDefecto,
       dificultadObstaculos: c.dificultadObstaculos,
       preguntasEnRepaso: c.preguntasEnRepaso,
+      poderesActivos: c.poderesActivos,
+      emparejar: c.emparejar,
+      sonido: c.sonido,
     };
   };
 

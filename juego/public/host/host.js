@@ -3,7 +3,9 @@ import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
 import { Reloj } from '../shared/reloj.js';
 import { Guion } from '../shared/guion.js';
 import { FASES } from '../shared/constantes.js';
+import { PODERES } from '../shared/poderes.js';
 import { Mapa } from './map.js';
+import { Sonido } from './sonido.js';
 
 // Pantalla del proyector: lobby con código y QR, mapa de la carrera, pregunta con revelado, ranking en vivo
 // de hasta 40 grupos, ganador, repaso de errores y debate (secciones 2 y 4.1).
@@ -13,6 +15,8 @@ const $ = (id) => document.getElementById(id);
 const LETRAS = ['A', 'B', 'C'];
 const EN_TOP = 10;
 const CLAVE_SESION = 'dropRush.host';
+const CLAVE_SONIDO = 'dropRush.sonido';
+const DURACION_AVISO = 5000;
 const NOMBRES_FASE = {
   [FASES.CUENTA]: 'Cuenta regresiva',
   [FASES.TRAMO]: 'Tramo',
@@ -36,6 +40,8 @@ let repaso = [];
 let vista = 'auto'; // 'auto' (según el guion) | 'repaso' | 'debate'
 let repasoIndice = 0;
 const mapa = new Mapa({ lienzo: $('mapa-lienzo'), falta: $('mapa-falta'), progreso: $('mapa-progreso') });
+const sonido = new Sonido(leerPreferenciaSonido() ?? true);
+let ultimoSonido = { fase: null, segundo: null, final: false }; // para no repetir efectos en cada vuelta de actualizar()
 
 // ---------- Sesión del proyector ----------
 function leerSesion() {
@@ -50,6 +56,15 @@ function guardarSesion(datos) {
     localStorage.setItem(CLAVE_SESION, JSON.stringify(datos));
   } catch {
     /* modo privado: al recargar se crea otra sala */
+  }
+}
+
+function leerPreferenciaSonido() {
+  try {
+    const v = localStorage.getItem(CLAVE_SONIDO);
+    return v == null ? null : v === '1';
+  } catch {
+    return null;
   }
 }
 
@@ -88,6 +103,10 @@ function aplicarAjustes(a) {
   $('cfg-pregunta').value = a.tiempoPorDefecto;
   $('cfg-repaso').value = a.preguntasEnRepaso;
   $('cfg-dificultad').value = a.dificultadObstaculos;
+  $('cfg-poderes').checked = a.poderesActivos !== false;
+  $('cfg-emparejar').checked = a.emparejar !== false;
+  // config.json decide si suena; lo que elija el presentador con 🔊 tiene prioridad.
+  if (leerPreferenciaSonido() == null) mostrarSonido(a.sonido !== false);
 }
 
 function limpiarPartida() {
@@ -101,6 +120,9 @@ function limpiarPartida() {
   vista = 'auto';
   mapa.reiniciar();
   dibujarPosiciones();
+  sonido.pararMusica();
+  ultimoSonido = { fase: null, segundo: null, final: false };
+  $('avisos').replaceChildren();
 }
 
 // ---------- Red ----------
@@ -134,8 +156,12 @@ socket.on('question:positioned', (p) => (posicionados = p));
 socket.on('question:reveal', (r) => {
   // Una respuesta que llegó tarde (por un corte) solo actualiza el número de aciertos.
   if (r.late && revelado?.index === r.index) Object.assign(revelado, r, { hasta: revelado.hasta });
-  else if (!r.late) revelado = { ...r, hasta: performance.now() + (guion?.datos.revealDuration ?? 3000) };
+  else if (!r.late) {
+    revelado = { ...r, hasta: performance.now() + (guion?.datos.revealDuration ?? 3000) };
+    sonido.revelado();
+  }
 });
+socket.on('power:used', mostrarPoder);
 socket.on('run:positions', (p) => {
   posiciones = ordenEstable(p);
   dibujarPosiciones();
@@ -163,8 +189,27 @@ $('btn-empezar').addEventListener('click', () =>
     tiempoPorDefecto: Number($('cfg-pregunta').value),
     preguntasEnRepaso: Number($('cfg-repaso').value),
     dificultadObstaculos: $('cfg-dificultad').value,
+    poderesActivos: $('cfg-poderes').checked,
+    emparejar: $('cfg-emparejar').checked,
   }),
 );
+
+// El navegador habilita el audio recién con un gesto: cualquier clic o tecla del presentador sirve.
+for (const evento of ['pointerdown', 'keydown']) document.addEventListener(evento, () => sonido.desbloquear());
+function mostrarSonido(activo) {
+  sonido.activar(activo);
+  $('btn-sonido').textContent = activo ? '🔊' : '🔇';
+  $('btn-sonido').setAttribute('aria-pressed', String(activo));
+}
+mostrarSonido(sonido.activo);
+$('btn-sonido').addEventListener('click', () => {
+  mostrarSonido(!sonido.activo);
+  try {
+    localStorage.setItem(CLAVE_SONIDO, sonido.activo ? '1' : '0');
+  } catch {
+    /* modo privado */
+  }
+});
 $('btn-terminar').addEventListener('click', () => {
   if (confirm('¿Terminar la partida y volver al lobby?')) socket.emit('host:end');
 });
@@ -345,6 +390,7 @@ function actualizar() {
       otros > 0 ? `¿Cómo se sintieron los ${otros} ${otros === 1 ? 'grupo que quedó' : 'grupos que quedaron'} sin sudadera?` : '¿Cómo se siente quedarse sin la sudadera?';
     return mostrarPantalla('pantalla-debate');
   }
+  sonar(f, t);
   if (f?.type === FASES.FIN && final) {
     $('barra-fase').textContent = 'Sold out';
     dibujarFinal();
@@ -355,6 +401,58 @@ function actualizar() {
   $('barra-fase').textContent = textoFase(f, t);
   dibujarCuenta(f, t);
   dibujarPregunta(f, t);
+}
+
+/** Efectos y música según el guion (se llama 10 veces por segundo: cada efecto suena una sola vez). */
+function sonar(f, t) {
+  if (!f) return;
+  const u = ultimoSonido;
+  const segundo = Math.ceil(f.restante / 1000);
+  const nuevaFase = u.fase !== f.numero;
+  if (f.type === FASES.CUENTA && segundo !== u.segundo && segundo <= 3 && segundo > 0) sonido.cuenta(segundo);
+  if (nuevaFase) {
+    // Al recargar el proyector en plena carrera no suena el "¡DROP!" de una largada que ya pasó.
+    const reciente = t - f.startsAt < 1000;
+    if (f.type === FASES.TRAMO || f.type === FASES.SPRINT) {
+      if (reciente && f.numero === 1) sonido.cuenta(0);
+      sonido.tocarMusica(f.type === FASES.SPRINT ? sonido.tempoSprint : undefined);
+    }
+    if (f.type === FASES.PREGUNTA) {
+      sonido.tocarMusica();
+      sonido.pregunta();
+    }
+    if (f.type === FASES.FIN) sonido.pararMusica();
+  }
+  if (f.type === FASES.PREGUNTA && segundo !== u.segundo && segundo <= 5 && segundo > 0) sonido.tic(segundo <= 3);
+  if (f.type === FASES.FIN && final && !u.final) {
+    u.final = true;
+    sonido.ganador();
+  }
+  u.fase = f.numero;
+  u.segundo = segundo;
+}
+
+/** Aviso en el proyector cuando un grupo usa un poder. */
+function mostrarPoder({ group, powerId, targets }) {
+  const p = PODERES[powerId];
+  if (!p) return;
+  sonido.poder(powerId);
+  const aviso = document.createElement('div');
+  aviso.className = 'aviso';
+  const icono = document.createElement('span');
+  icono.className = 'aviso__icono';
+  icono.textContent = p.icono;
+  const texto = document.createElement('span');
+  texto.append(ficha(group), ` usó ${p.nombre}`);
+  if (powerId === 'algoritmo' && targets?.length) {
+    texto.append(document.createElement('br'), 'Más obstáculos para ');
+    targets.forEach((n, i) => texto.append(i ? ' ' : '', ficha(n)));
+  }
+  aviso.append(icono, texto);
+  $('avisos').append(aviso);
+  while ($('avisos').childElementCount > 3) $('avisos').firstChild.remove();
+  setTimeout(() => aviso.classList.add('aviso--sale'), DURACION_AVISO);
+  setTimeout(() => aviso.remove(), DURACION_AVISO + 500);
 }
 
 function textoFase(f, t) {
@@ -444,6 +542,7 @@ function dibujarFinal() {
     ['Distancia', `${ganador.distance} m`],
     ['Esquivados', ganador.dodged],
     ['Likes', ganador.likes],
+    ['Poderes', ganador.powers ?? 0],
   ];
   $('ganador-datos').replaceChildren(
     ...datos.map(([etiqueta, valor]) => {

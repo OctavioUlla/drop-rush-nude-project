@@ -71,6 +71,8 @@ test('40 bots con microcortes: todas las respuestas llegan y se cuentan una sola
     assert.equal(resumen.resultadosRecibidos, 120, JSON.stringify(resumen));
     assert.equal(resumen.respuestasRechazadas, 0);
     assert.ok(resumen.cortes >= 40);
+    // Los poderes ganados por racha también se usan con reintento hasta el ack (Fase 3).
+    assert.equal(resumen.poderesUsados + resumen.poderesRechazados, resumen.poderesGanados, JSON.stringify(resumen));
     // Ningún grupo quedó contado dos veces ni perdido.
     const [sala] = servidor.salas;
     for (const g of sala.grupos.values()) assert.equal(g.respuestas.size, 3);

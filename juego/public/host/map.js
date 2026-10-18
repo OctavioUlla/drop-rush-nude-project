@@ -1,6 +1,7 @@
 import { colores, grupos as coloresGrupos } from '../../../design-system/tokens.js';
 import { crearRng } from '../shared/rng.js';
 import { proyectarMeta } from '../shared/carrera.js';
+import { VENTAJAS } from '../shared/poderes.js';
 
 // Mapa de la carrera en el proyector (sección 4.1): una calle de Madrid vista de costado,
 // de la salida a la tienda Nude Project, con una ficha por grupo (número grande y su color).
@@ -93,7 +94,7 @@ export class Mapa {
     const ultimaX = new Array(FILAS).fill(Infinity);
     const agrupados = new Map(); // número de la ficha visible → cuántas se agruparon en ella
     const ubicados = [];
-    for (const [numero, distancia, , conectado] of posiciones) {
+    for (const [numero, distancia, ventaja, conectado] of posiciones) {
       const x = x0 + Math.min(1, distancia / this.meta) * (x1 - x0);
       let m = this.marcadores.get(numero);
       if (!m) {
@@ -101,6 +102,7 @@ export class Mapa {
         this.marcadores.set(numero, m);
       }
       m.conectado = conectado;
+      m.ventaja = ventaja;
       const antes = m.x;
       m.x += (x - m.x) * suave;
       m.vx += ((m.x - antes) / Math.max(dt, 1e-3) - m.vx) * Math.min(1, dt * 3);
@@ -308,6 +310,16 @@ export class Mapa {
       ctx.font = `900 ${tamano}px ${FUENTE}`;
       const ancho = ctx.measureText('1.º').width + tamano * 0.9;
       cartelito(ctx, '1.º', x + s + 3 + ancho / 2, m.y + tamano * 0.72, tamano, C.acento.mostaza, C.marca.cacao);
+    }
+    if (m.ventaja && VENTAJAS[m.ventaja]) {
+      // Ventaja activa (turbo, escudo, imán o ruta VIP): su ícono en una burbuja arriba a la izquierda.
+      const r = s * 0.3;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = C.marca.crema;
+      ctx.fill();
+      ctx.font = `${r * 1.25}px ${FUENTE}`;
+      ctx.fillText(VENTAJAS[m.ventaja].icono, x, y + r * 0.08);
     }
     if (agrupados) {
       const r = s * 0.3;

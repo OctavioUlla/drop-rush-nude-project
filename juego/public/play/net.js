@@ -92,7 +92,10 @@ export class Red extends EventTarget {
       this.olvidarGrupo();
       this.emitir('liberado');
     });
-    for (const evento of ['room:groups', 'game:script', 'game:reset', 'game:end', 'state:sync', 'question:start', 'question:result', 'run:rank']) {
+    for (const evento of [
+      'room:groups', 'game:script', 'game:reset', 'game:end', 'state:sync',
+      'question:start', 'question:result', 'question:closed', 'run:rank', 'run:modifiers',
+    ]) {
       s.on(evento, (datos) => this.emitir(evento, datos));
     }
 

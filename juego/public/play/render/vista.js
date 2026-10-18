@@ -1,7 +1,9 @@
+import { Mesh, IcosahedronGeometry, MeshBasicMaterial } from 'three';
+import { colores3d } from '../../../../design-system/tokens.js';
 import { crearEscena } from './scene.js';
 import { Mundo } from './world.js';
 import { Personaje } from './character.js';
-import { curvatura } from './models/kit.js';
+import { curvatura, curvarMaterial } from './models/kit.js';
 import { crearArco } from './models/props.js';
 import { crearTienda } from './models/store.js';
 import { CARRILES } from '../../shared/constantes.js';
@@ -26,6 +28,15 @@ export class Vista {
       this.escena.add(arco.raiz);
       return arco;
     });
+    // Escudo (UGC viral): una burbuja alrededor del corredor mientras le quede un choque.
+    this.burbuja = new Mesh(
+      new IcosahedronGeometry(1.05, 1),
+      curvarMaterial(new MeshBasicMaterial({ color: colores3d.acento.mostaza, transparent: true, opacity: 0.3, depthWrite: false })),
+    );
+    this.burbuja.visible = false;
+    this.escena.add(this.burbuja);
+    this.fovExtra = 0; // el turbo abre un poco el campo de visión
+    this.imanPos = { x: 0, y: 0 };
     this.tienda = crearTienda();
     this.tienda.visible = false;
     this.escena.add(this.tienda);
@@ -41,6 +52,10 @@ export class Vista {
     this.renderer.setPixelRatio(this.calidad.dpr);
     this.dprAplicado = this.calidad.dpr;
     this.ajustarTamano();
+    if (this.fovExtra) {
+      this.camara.fov += this.fovExtra;
+      this.camara.updateProjectionMatrix();
+    }
   }
 
   /** Al cambiar de nivel se regeneran los bloques con más o menos detalle. */
@@ -78,10 +93,28 @@ export class Vista {
   dibujar(estado, corredor, pista, dt, tiempo) {
     if (this.dprAplicado !== this.calidad.dpr) this.redimensionar();
 
-    this.mundo.actualizar(estado.distancia, pista, tiempo);
+    this.imanPos.x = estado.x;
+    this.imanPos.y = estado.y;
+    this.mundo.actualizar(estado.distancia, pista, tiempo, corredor.iman ? this.imanPos : null);
     this.personaje.actualizar(estado, corredor, dt, tiempo);
 
-    for (const e of corredor.eventos) if (e === 'choque') this.sacudida = 1;
+    for (const e of corredor.eventos) {
+      if (e === 'choque') this.sacudida = 1;
+      if (e === 'escudo') this.sacudida = 0.5;
+    }
+    this.burbuja.visible = corredor.escudos > 0 || corredor.invulnerable > 0 && this.burbuja.visible;
+    if (this.burbuja.visible) {
+      this.burbuja.position.set(estado.x, estado.y + 0.95, -estado.distancia);
+      this.burbuja.rotation.y = tiempo * 0.8;
+      this.burbuja.scale.setScalar(1 + Math.sin(tiempo * 6) * 0.04);
+    }
+    const fov = corredor.turbo ? 8 : 0;
+    if (Math.abs(fov - this.fovExtra) > 0.01) {
+      const paso = (fov - this.fovExtra) * Math.min(1, dt * 3);
+      this.camara.fov += paso;
+      this.fovExtra += paso;
+      this.camara.updateProjectionMatrix();
+    }
     this.sacudida = Math.max(0, this.sacudida - dt * 3);
     const temblor = this.sacudida * this.sacudida * 0.25;
 

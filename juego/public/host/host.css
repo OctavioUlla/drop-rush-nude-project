@@ -39,6 +39,8 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .ajustes summary { cursor: pointer; padding: var(--np-espacio-2) 0; }
 .ajustes__campos, .ajustes__acciones { display: flex; flex-wrap: wrap; gap: var(--np-espacio-3); align-items: end; margin-top: var(--np-espacio-3); }
 .ajustes label { display: grid; gap: var(--np-espacio-1); font-size: var(--np-texto-sm); }
+.ajustes .ajustes__check { display: flex; align-items: center; gap: var(--np-espacio-2); min-height: 40px; }
+.ajustes .ajustes__check input { width: auto; min-height: 0; }
 .ajustes input, .ajustes select { width: 7rem; min-height: 40px; padding: 0 var(--np-espacio-2); border: var(--np-borde-fino) solid var(--np-linea); background: var(--np-fondo); color: var(--np-tinta); font: inherit; }
 
 /* ---------- Carrera ---------- */
@@ -131,7 +133,7 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .final__ganador > * { margin: 0; }
 .final__ficha .np-ficha { font-size: 7rem; }
 .final__nombre { font: var(--np-peso-black) var(--np-texto-4xl) / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
-.final__datos { display: grid; grid-template-columns: repeat(4, auto); gap: var(--np-espacio-5); margin: var(--np-espacio-3) 0; }
+.final__datos { display: grid; grid-template-columns: repeat(5, auto); gap: var(--np-espacio-5); margin: var(--np-espacio-3) 0; }
 .final__datos .np-dato__valor { font-size: var(--np-texto-3xl); margin: 0; }
 .final__datos dt { order: 2; }
 .final__ganador .np-boton--grande { width: auto; }
@@ -191,3 +193,21 @@ th, td { padding: var(--np-espacio-1) var(--np-espacio-2); border-bottom: var(--
   .top li, .top .pista div, .mapa__barra div { transition: none; }
   .mapa__vivo::before { animation: none; }
 }
+
+/* ---------- Avisos de poderes ---------- */
+.avisos { position: absolute; left: var(--np-espacio-6); bottom: var(--np-espacio-5); display: flex; flex-direction: column; gap: var(--np-espacio-2); pointer-events: none; max-width: 55%; }
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: var(--np-espacio-3);
+  padding: var(--np-espacio-3) var(--np-espacio-4);
+  background: var(--np-marca-cacao);
+  color: var(--np-marca-crema);
+  font: var(--np-peso-bold) var(--np-texto-lg) / 1.2 var(--np-fuente-display);
+  animation: aviso-entra 0.35s ease-out;
+}
+.aviso__icono { font-size: var(--np-texto-3xl); line-height: 1; }
+.aviso .np-ficha { font-size: var(--np-texto-base); }
+.aviso--sale { opacity: 0; transition: opacity 0.4s; }
+@keyframes aviso-entra { from { transform: translateX(-1.5rem); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .aviso { animation: none; } }

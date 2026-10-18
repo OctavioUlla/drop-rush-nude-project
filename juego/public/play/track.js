@@ -21,6 +21,7 @@ const DIFICULTAD = {
 };
 
 const BAJOS = ['valla', 'caja', 'bache'];
+const EXTRA = ['valla', 'caja', 'bache', 'fan'];
 const ALTOS = ['fan', 'fan', 'camion'];
 
 // El bot revendedor cruza al carril vecino mientras el corredor está entre 28 y 14 m de él:
@@ -118,9 +119,40 @@ export class Pista {
     for (const l of t.likes) this.likes.push({ ...l, tomado: false, hundido: 0 });
   }
 
+  /**
+   * Ruta VIP Château: se hunde una de cada dos filas que todavía no se alcanzaron.
+   * Se elige por la posición de la fila, así no depende de cuándo llegó la ventaja.
+   */
+  aclarar(desde) {
+    const filas = [...new Set(this.obstaculos.filter((o) => o.z > desde && !o.hundido).map((o) => o.z))].sort((a, b) => a - b);
+    const quitar = new Set(filas.filter((_, i) => i % 2 === 0));
+    for (const o of this.obstaculos) if (quitar.has(o.z)) o.hundido = 0.0001;
+  }
+
+  /**
+   * Cambio de algoritmo (poder de otro grupo): obstáculos extra entre `desde` y `hasta`, que salen del piso.
+   * Van de a uno por fila y lejos de los que ya hay, así siempre queda por dónde pasar.
+   */
+  agregarExtra(semilla, desde, hasta) {
+    const rng = crearRng(semilla);
+    let z = desde;
+    while (z < hasta) {
+      const cerca = this.obstaculos.some((o) => !o.hundido && z > o.z - (o.tipo === 'bot' ? 30 : 6) && z < o.z + o.largo + 6);
+      if (!cerca) {
+        const tipo = rng.elegir(EXTRA);
+        this.obstaculos.push({ tipo, carril: rng.entero(0, 2), z, ...TIPOS[tipo], golpeado: false, pasado: false, hundido: 0.999, surgiendo: true });
+      }
+      z += rng.entre(7, 10);
+    }
+  }
+
   /** Los obstáculos que todavía no se alcanzaron se hunden en el piso (al empezar una pregunta). */
   hundirDesde(distancia) {
-    for (const o of this.obstaculos) if (o.z > distancia && !o.hundido) o.hundido = 0.0001;
+    for (const o of this.obstaculos) {
+      if (o.z <= distancia) continue;
+      o.surgiendo = false;
+      if (!o.hundido) o.hundido = 0.0001;
+    }
     for (const l of this.likes) if (l.z > distancia && !l.hundido) l.hundido = 0.0001;
   }
 
@@ -131,7 +163,12 @@ export class Pista {
 
   /** Descarta lo que quedó muy atrás o terminó de hundirse. */
   limpiar(distancia, dt) {
-    for (const o of this.obstaculos) if (o.hundido) o.hundido = Math.min(1, o.hundido + dt * 2.5);
+    for (const o of this.obstaculos) {
+      if (o.surgiendo) {
+        o.hundido = Math.max(0, o.hundido - dt * 2.5);
+        if (!o.hundido) o.surgiendo = false;
+      } else if (o.hundido) o.hundido = Math.min(1, o.hundido + dt * 2.5);
+    }
     for (const l of this.likes) if (l.hundido) l.hundido = Math.min(1, l.hundido + dt * 2.5);
     compactar(this.obstaculos, (o) => o.z + o.largo > distancia - 15 && o.hundido < 1);
     compactar(this.likes, (l) => l.z > distancia - 15 && l.hundido < 1);

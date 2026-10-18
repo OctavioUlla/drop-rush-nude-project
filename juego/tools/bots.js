@@ -8,6 +8,7 @@ import { FASES, VELOCIDAD_BASE, INTERVALO_PROGRESO } from '../public/shared/cons
 // Simulador de grupos (sección 9, Fase 0): N celulares falsos que entran a la sala,
 // sincronizan el reloj, siguen el guion, mandan su distancia y responden las preguntas.
 // Con --cortes, cada bot sufre microcortes al azar para probar la reconexión.
+// Si gana un poder por racha, lo usa a los pocos segundos (también se reintenta hasta el ack).
 //
 //   node tools/bots.js --bots 40 --empezar --cortes 2               (crea su propia sala y la arranca)
 //   node tools/bots.js --url https://mi-servidor --sala ABCD --bots 40   (entran a la sala del proyector)
@@ -30,7 +31,7 @@ class Bot {
     this.cola = new Map();
     this.resultados = new Map();
     this.rtts = [];
-    this.m = { cortes: 0, recuperadas: 0, reingresos: 0, rechazos: 0, respuestasEnviadas: 0, respuestasOk: 0, respuestasRechazadas: 0, progresos: 0, rangos: 0 };
+    this.m = { cortes: 0, recuperadas: 0, reingresos: 0, rechazos: 0, respuestasEnviadas: 0, respuestasOk: 0, respuestasRechazadas: 0, progresos: 0, rangos: 0, poderesGanados: 0, poderesOk: 0, poderesRechazados: 0, modificadores: 0 };
     this.terminado = false;
 
     this.socket = io(opciones.url, {
@@ -66,7 +67,11 @@ class Bot {
       this.terminado = false;
       this.programarCortes();
     });
-    s.on('question:result', (r) => this.resultados.set(r.index, r));
+    s.on('question:result', (r) => {
+      this.resultados.set(r.index, r);
+      if (r.powerId) this.usarPoder(r.powerId, r.index);
+    });
+    s.on('run:modifiers', () => this.m.modificadores++);
     s.on('state:sync', (e) => {
       for (const r of e.answers ?? []) this.resultados.set(r.index, r);
       if (e.runDistance > this.distancia) this.distancia = e.runDistance;
@@ -97,10 +102,15 @@ class Bot {
     }, segundos * 1000);
   }
 
-  encolar(clave, evento, datos) {
-    this.cola.set(clave, { evento, datos, enviando: false });
-    this.m.respuestasEnviadas++;
+  encolar(clave, evento, datos, tipo = 'respuesta') {
+    this.cola.set(clave, { evento, datos, tipo, enviando: false });
+    if (tipo === 'respuesta') this.m.respuestasEnviadas++;
     this.vaciarCola();
+  }
+
+  usarPoder(powerId, index) {
+    this.m.poderesGanados++;
+    setTimeout(() => this.encolar(`p${index}`, 'player:use_power', { powerId, useId: `${this.numero}:${index}` }, 'poder'), azar(300, 1500));
   }
 
   vaciarCola() {
@@ -112,7 +122,8 @@ class Bot {
         item.enviando = false;
         if (error) return;
         this.cola.delete(clave);
-        if (r?.ok) this.m.respuestasOk++;
+        if (item.tipo === 'poder') this.m[r?.ok ? 'poderesOk' : 'poderesRechazados']++;
+        else if (r?.ok) this.m.respuestasOk++;
         else this.m.respuestasRechazadas++;
       });
     }
@@ -247,6 +258,10 @@ export async function correrBots(opciones) {
     reingresosConToken: suma('reingresos'),
     rechazos: suma('rechazos'),
     progresosEnviados: suma('progresos'),
+    poderesGanados: suma('poderesGanados'),
+    poderesUsados: suma('poderesOk'),
+    poderesRechazados: suma('poderesRechazados'),
+    efectosDeAlgoritmo: suma('modificadores'),
     rttMedianaMs: percentil(rtts, 0.5)?.toFixed(1),
     rttP95Ms: percentil(rtts, 0.95)?.toFixed(1),
     preguntasEnRepaso: repaso?.length ?? null,

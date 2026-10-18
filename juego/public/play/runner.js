@@ -2,6 +2,7 @@ import {
   CARRILES, VELOCIDAD_BASE, ACELERACION, VELOCIDAD_MAX, DURACION_SALTO, ALTURA_SALTO,
   TIEMPO_CAMBIO_CARRIL, BUFFER_GESTO, FRENADO_CHOQUE, INVULNERABLE_CHOQUE,
 } from '../shared/constantes.js';
+import { TURBO, IMPULSO_EMPAREJAR, ARRANQUE_LENTO } from '../shared/poderes.js';
 import { xObstaculo } from './track.js';
 
 // Lógica del corredor a paso fijo (60 pasos por segundo, sin importar los FPS):
@@ -26,8 +27,14 @@ export class Corredor {
     this.tiempoCarrera = 0;
     this.frenado = 0;
     this.invulnerable = 0;
-    this.lenta = 0; // arranque lento tras una respuesta incorrecta (fase 3)
+    this.lenta = 0; // segundos de arranque lento tras una respuesta incorrecta
     this.carrilMax = 2; // en una pregunta de 2 opciones el tercer carril es una pared
+    this.cerrado = null; // carril cerrado por el Pase 50/50 (no se puede entrar)
+    // Ventajas y emparejar (Fase 3).
+    this.turbo = false;
+    this.escudos = 0; // choques que no frenan
+    this.iman = false;
+    this.impulso = false; // último cuarto de la tabla: +10 %
     this.corriendo = false;
     this.pendiente = null; // gesto guardado en el buffer
     this.tPendiente = 0;
@@ -46,6 +53,19 @@ export class Corredor {
     if (this.carril > max) this.carril = max;
   }
 
+  /** Pase 50/50: cierra un carril; si el corredor estaba ahí, pasa al abierto más cercano. */
+  cerrarCarril(carril) {
+    this.cerrado = carril;
+    if (carril == null || this.carril !== carril) return;
+    const abiertos = [0, 1, 2].filter((c) => c !== carril && c <= this.carrilMax);
+    this.carril = abiertos.sort((a, b) => Math.abs(a - carril) - Math.abs(b - carril) || b - a)[0];
+  }
+
+  /** Velocidad a la que tiende el corredor ahora, relativa a la base: turbo, impulso y arranque lento. */
+  get multiplicador() {
+    return (this.turbo ? TURBO : 1) * (this.impulso ? IMPULSO_EMPAREJAR : 1);
+  }
+
   gesto(accion) {
     this.pendiente = accion;
     this.tPendiente = BUFFER_GESTO;
@@ -55,7 +75,10 @@ export class Corredor {
     if (!this.pendiente) return;
     const a = this.pendiente;
     if (a === 'izq' || a === 'der') {
-      const nuevo = Math.max(0, Math.min(this.carrilMax, this.carril + (a === 'izq' ? -1 : 1)));
+      const paso = a === 'izq' ? -1 : 1;
+      let nuevo = Math.max(0, Math.min(this.carrilMax, this.carril + paso));
+      // El carril cerrado se saltea: se pasa al de más allá (si hay).
+      if (nuevo === this.cerrado) nuevo = nuevo + paso >= 0 && nuevo + paso <= this.carrilMax ? nuevo + paso : this.carril;
       if (nuevo !== this.carril) {
         this.carril = nuevo;
         this.ultimoCambioCarril = this.tiempoCarrera;
@@ -102,8 +125,9 @@ export class Corredor {
     if (this.corriendo) {
       this.tiempoCarrera += dt;
       let objetivoV = Math.min(VELOCIDAD_MAX, VELOCIDAD_BASE + ACELERACION * this.tiempoCarrera);
+      objetivoV *= this.multiplicador;
       if (this.frenado > 0) objetivoV *= 0.4;
-      if (this.lenta > 0) objetivoV *= 0.8;
+      if (this.lenta > 0) objetivoV *= ARRANQUE_LENTO;
       this.velocidad += (objetivoV - this.velocidad) * Math.min(1, dt * (this.frenado > 0 ? 8 : 2.5));
     } else {
       this.velocidad += (0 - this.velocidad) * Math.min(1, dt * 4);
@@ -131,6 +155,13 @@ export class Corredor {
       if (this.invulnerable > 0) continue;
       o.golpeado = true;
       o.pasado = true;
+      if (this.escudos > 0) {
+        // Escudo (UGC viral): el obstáculo cae, pero el corredor no frena.
+        this.escudos--;
+        this.invulnerable = 0.5;
+        this.eventos.push('escudo');
+        continue;
+      }
       this.choques++;
       this.frenado = FRENADO_CHOQUE;
       this.invulnerable = INVULNERABLE_CHOQUE;
@@ -139,8 +170,9 @@ export class Corredor {
     for (const l of pista.likes) {
       if (l.tomado || l.hundido) continue;
       if (Math.abs(l.z - d) > 0.7) continue;
-      if (Math.abs(this.x - CARRILES[l.carril]) > 0.9) continue;
-      if (Math.abs(this.y + 0.6 - l.y) > 1.0) continue;
+      // Con el imán se juntan los de cualquier carril y altura (se ven volar hacia el corredor).
+      if (!this.iman && Math.abs(this.x - CARRILES[l.carril]) > 0.9) continue;
+      if (!this.iman && Math.abs(this.y + 0.6 - l.y) > 1.0) continue;
       l.tomado = true;
       this.likes++;
       this.eventos.push('like');

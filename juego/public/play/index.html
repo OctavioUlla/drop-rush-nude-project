@@ -42,6 +42,9 @@
       <span id="hud-distancia">0 m</span>
     </header>
 
+    <!-- Ventaja activa, impulso y efectos de los poderes. -->
+    <div id="efectos" class="juego__efectos" aria-live="polite"></div>
+
     <div id="cartel" class="juego__cartel" aria-live="polite"></div>
     <div id="temporizador" class="np-temporizador juego__temporizador" hidden><div class="np-temporizador__barra"></div></div>
     <p id="premio" class="juego__premio" aria-live="polite" hidden></p>
@@ -59,6 +62,13 @@
       </dl>
       <p class="np-texto-suave final__nota">Mirá el proyector para el repaso de las preguntas.</p>
     </section>
+
+    <!-- Poder guardado (se gana con 2 aciertos seguidos): se usa cuando el grupo quiere. -->
+    <button id="poder" class="juego__poder" hidden>
+      <span id="poder-icono" class="juego__poder-icono"></span>
+      <span class="juego__poder-texto"><b id="poder-nombre"></b><small id="poder-efecto"></small></span>
+      <span class="juego__poder-accion">Usar</span>
+    </button>
 
     <span id="sin-red" class="juego__sin-red" title="Sin conexión: el juego sigue igual" hidden>📶</span>
 
