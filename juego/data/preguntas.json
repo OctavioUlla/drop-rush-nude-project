@@ -1,100 +1,140 @@
 {
   "titulo": "Caso Nude Project",
-  "nota": "Borrador redactado a partir del caso de la cátedra (docs/caso-nude-project.pdf): revisarlo en equipo antes de la clase. Las 6 principales cubren un tema cada una; las 4 de \"reserva\" completan las 8 que se juegan por defecto (2 de ellas, al azar) o más si se sube la cantidad; con 6, sale una por tema.",
+  "nota": "Todas se responden con lo que se dijo en la exposición (presentacion/GUION.md y las diapositivas). Son difíciles a propósito: las opciones incorrectas salen de otros datos de la misma exposición, para que haya diferencia entre los grupos que prestaron atención. Las 6 principales cubren un tema cada una; las de \"reserva\" completan las 8 que se juegan por defecto (2 de ellas, al azar) o más si se sube la cantidad; con 6, sale una por tema.",
   "preguntas": [
     {
       "id": 1,
       "tema": "EGC vs UGC",
-      "pregunta": "¿Qué es el EGC, el contenido en el que más se apoya Nude Project?",
-      "opciones": ["Contenido creado por los fundadores y el equipo", "Contenido creado por los clientes y seguidores", "Publicidad paga en redes sociales"],
-      "opcionesCortas": ["Del equipo", "De los clientes", "Publicidad paga"],
+      "pregunta": "Según la exposición, ¿qué aporta el UGC a la identidad de Nude Project?",
+      "opciones": ["Validación social: lo dice su gente, no la marca", "Autenticidad controlada: genuino, no improvisado", "Misterio y exclusividad, como un reality"],
+      "opcionesCortas": ["Validación social", "Autent. controlada", "Misterio"],
       "correcta": 0,
-      "explicacion": "EGC (Employee/Owner Generated Content) es el contenido que generan los propios fundadores y el equipo: Bruno muestra reuniones, viajes de producción, fracasos y éxitos. Mantiene una «autenticidad controlada»: es genuino, pero no improvisado. El UGC (lo que publican los usuarios) también existe, pero la marca lo usa como validación social."
+      "explicacion": "El UGC aporta validación social: ya no lo dice la marca, lo dice su gente (la fila en Miami, los fit checks). La «autenticidad controlada» la aporta el EGC, la base del contenido: genuino, pero no improvisado. El misterio y la exclusividad son del Château. Juntos, la marca habla como un amigo y la comunidad le responde."
     },
     {
       "id": 2,
       "tema": "Marketing viral",
-      "pregunta": "Las colaboraciones con Victoria Federica o Belén Esteban, ¿qué buscaban según el caso?",
-      "opciones": ["Bajar los precios de las prendas", "Generar conversación y debate", "Mostrar una imagen perfecta de la marca"],
-      "opcionesCortas": ["Bajar precios", "Conversación", "Imagen perfecta"],
+      "pregunta": "Out of Office se fotografió en el metro. ¿Cuál de los factores de su éxito explica esa elección?",
+      "opciones": ["El tono: ironía y humor", "La estética: un escenario cotidiano", "El contexto: la vuelta de vacaciones"],
+      "opcionesCortas": ["Tono", "Estética", "Contexto"],
       "correcta": 1,
-      "explicacion": "Lejos de buscar la perfección, estas colaboraciones apuntan a generar conversación y debate. Un tono provocador, fresco y cercano, con personajes de la cultura pop española, hace que la gente lo comparta: eso es lo que vuelve viral una pieza, más que la inversión en publicidad."
+      "explicacion": "Fueron cuatro factores: el tono (ironía y humor), el mensaje (la frustración de quien no hizo TikToks en 2020), la estética (el metro, cotidiano y nada glamoroso) y el contexto (fines de agosto, la vuelta de vacaciones). Y el producto es el mensaje: quien se pone la remera comparte el chiste. La viralidad parece casual, pero está diseñada."
     },
     {
       "id": 3,
       "tema": "Marketing experiencial",
-      "pregunta": "¿Qué fue el «Nude Project Château»?",
-      "opciones": ["Una colección de ropa de lujo", "Una tienda online solo para socios", "Una experiencia inmersiva en una mansión de Ibiza"],
-      "opcionesCortas": ["Ropa de lujo", "Tienda online", "Mansión en Ibiza"],
-      "correcta": 2,
-      "explicacion": "Artistas, creadores e influencers convivieron varios días en una mansión de Ibiza ambientada al estilo Nude Project. Cada publicación que hacían funcionaba como comunicación viral: la experiencia física fideliza a la comunidad y, a la vez, amplifica el alcance de la marca en redes."
+      "pregunta": "¿Cómo conecta el Nude Project Château el contenido con la venta?",
+      "opciones": ["En la web se compran los looks de las imágenes", "Los invitados venden la ropa con un código", "Solo los invitados compran el próximo drop"],
+      "opcionesCortas": ["Looks en la web", "Código de invitado", "Solo invitados"],
+      "correcta": 0,
+      "explicacion": "En la web se pueden comprar los looks de las imágenes del Château: el contenido lleva directo a la venta. En 2025 reunió a más de 30 artistas e influencers con más de 70 millones de seguidores. Es el círculo experiencial: el evento genera contenido, el contenido atrae comunidad y la comunidad vuelve a las tiendas y a los drops."
     },
     {
       "id": 4,
       "tema": "Métricas y rendimiento digital",
-      "pregunta": "Nude Project empezó con 600 € de inversión. ¿Cuánto llegó a facturar en menos de cuatro años?",
-      "opciones": ["Más de 250 millones de euros al año", "Más de 25 millones de euros al año", "Unos 2 millones de euros al año"],
-      "opcionesCortas": ["+250 M€", "+25 M€", "2 M€"],
-      "correcta": 1,
-      "explicacion": "Superó los 25 millones de euros anuales sin depender de grandes inversiones en publicidad: los lanzamientos se agotan en minutos y las campañas suman millones de visualizaciones. Es un indicador de que su comunicación orgánica en redes es muy eficaz."
+      "pregunta": "La charla con Maluma tuvo más vistas que suscriptores tiene su canal de YouTube. ¿Qué indica?",
+      "opciones": ["Que llegó más allá de su propia comunidad", "Que pagaron publicidad para el video", "Que casi todos sus suscriptores lo vieron"],
+      "opcionesCortas": ["Más allá de la base", "Publicidad paga", "Lo vieron todos"],
+      "correcta": 0,
+      "explicacion": "Superó el millón de visualizaciones con unos 950 mil suscriptores: lo vio gente que no seguía al canal, así que llegó más allá de su comunidad. Eso no dice que lo vieran todos sus suscriptores ni que hubiera publicidad: la lectura fue que lograron una comunidad enorme con poca publicidad paga, porque el contenido lo producen ellos y su gente."
     },
     {
       "id": 5,
       "tema": "Objetivo comunicacional",
-      "pregunta": "Completá la frase de Bruno: «El mundo no necesita más sudaderas, pero la gente sí necesita…»",
-      "opciones": ["…pertenecer a algo", "…precios más bajos", "…más publicidad"],
-      "opcionesCortas": ["Pertenecer", "Precios bajos", "Más publicidad"],
+      "pregunta": "Según la exposición, ¿por qué el podcast muestra que el objetivo de la marca es la pertenencia?",
+      "opciones": ["Porque habla de emprendimiento y no de ropa", "Porque adelanta cada drop antes de que salga", "Porque lo conducen clientes de la comunidad"],
+      "opcionesCortas": ["Emprendimiento", "Adelanta drops", "Lo hacen clientes"],
       "correcta": 0,
-      "explicacion": "El objetivo comunicacional de la marca no es vender una prenda sino construir una identidad compartida y una comunidad: «Nude Project no vende ropa: vende una identidad compartida». Por eso muestra su día a día, sus valores y el proceso, más que el producto."
+      "explicacion": "El objetivo es construir pertenencia: no convencerte de que la sudadera es mejor, sino de que ser parte de la comunidad lo es. Se ve en el podcast, que habla de emprendimiento y no de ropa; en el Château y en su lema, «by artists, for artists». La venta es la consecuencia: Nude Project no vende ropa, vende una identidad compartida."
     },
     {
       "id": 6,
-      "tema": "Modelo D2C, drops y comunidad",
-      "pregunta": "Nude Project trabaja con un modelo D2C. ¿Qué significa?",
-      "opciones": ["Vende a través de tiendas multimarca", "Vende solo en temporada de rebajas", "Vende directo al consumidor, sin intermediarios"],
-      "opcionesCortas": ["Multimarca", "Solo rebajas", "Directo"],
-      "correcta": 2,
-      "explicacion": "Direct-to-consumer: vende por canales propios (web, tiendas y redes sociales). Así controla la experiencia de compra y los márgenes y, sobre todo, mantiene un vínculo emocional directo con su comunidad, sin depender de tiendas multimarca."
+      "tema": "Modelo D2C, drops y desafíos",
+      "pregunta": "¿Cuál de estos NO es uno de los cuatro desafíos que marca el caso?",
+      "opciones": ["Depender de los algoritmos de Instagram y TikTok", "Competir en precio con el fast fashion", "Sostener la autenticidad al crecer"],
+      "opcionesCortas": ["Algoritmos", "Precio fast fashion", "Autenticidad"],
+      "correcta": 1,
+      "explicacion": "Los cuatro desafíos son la autenticidad (con 250 empleados, el riesgo de volverse corporativa), la sostenibilidad (prendas duraderas contra el ritmo del mercado), la dependencia de las redes (un cambio de algoritmo pega en la visibilidad y las ventas) y la exclusividad contra la accesibilidad. Competir en precio no está: su modelo son drops limitados que generan deseo."
     },
     {
       "id": 7,
       "tema": "EGC vs UGC",
       "reserva": true,
-      "pregunta": "Los seguidores suben fotos con las prendas y videos haciendo fila en las tiendas. ¿Qué tipo de contenido es?",
-      "opciones": ["UGC: contenido creado por los usuarios", "EGC: contenido creado por el equipo", "Publicidad tradicional"],
-      "opcionesCortas": ["UGC", "EGC", "Publicidad"],
-      "correcta": 0,
-      "explicacion": "Es UGC (User Generated Content). Nude Project lo fomenta como validación social: amplifica el mensaje de forma orgánica y convierte a la marca en una conversación constante entre quienes la crean (EGC) y quienes la consumen (UGC)."
+      "pregunta": "¿Cuál de estas piezas de los feeds es UGC?",
+      "opciones": ["La apertura de Barcelona con los corredores", "La llegada de @andrewponch a la fila de Miami", "El semáforo con Colapinto en el podcast"],
+      "opcionesCortas": ["Apertura Barcelona", "Fila en Miami", "Podcast Colapinto"],
+      "correcta": 1,
+      "explicacion": "UGC es lo que crean los usuarios, donde la marca no controla la escena: @andrewponch se filmó llegando a la fila del primer pop-up en Estados Unidos (113.000 vistas). La apertura de Barcelona también muestra a la multitud, pero la filmó la marca: es EGC, igual que el podcast con Colapinto y la serie con Gary Vee."
     },
     {
       "id": 8,
-      "tema": "Modelo D2C, drops y comunidad",
+      "tema": "Marketing viral",
       "reserva": true,
-      "pregunta": "Los «drops» limitados que se agotan en minutos generan sensación de…",
-      "opciones": ["Abundancia y descuentos", "Exclusividad, urgencia y deseo"],
-      "opcionesCortas": ["Descuentos", "Exclusividad"],
-      "correcta": 1,
-      "explicacion": "A diferencia del fast fashion, no lanza colecciones masivas ni compite en precio: los drops pequeños y por tiempo limitado generan exclusividad, urgencia y deseo, propios del fenómeno del «hype». El desafío es que esa exclusividad no se convierta en frustración o elitismo."
+      "pregunta": "Su primera sudadera viral, «pretty girls like trap music», ¿qué les trajo en 24 horas?",
+      "opciones": ["60.000 seguidores", "Medio millón de likes", "600.000 € en ventas"],
+      "opcionesCortas": ["60.000 seguidores", "Medio millón likes", "600.000 € en ventas"],
+      "correcta": 0,
+      "explicacion": "Se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas. El medio millón de likes en menos de un día es de Out of Office (agosto de 2025) y los 600.000 € son lo que facturó su primera colección. Lo viral está en el ADN de la marca desde el comienzo."
     },
     {
       "id": 9,
-      "tema": "Métricas y rendimiento digital",
+      "tema": "Marketing viral",
       "reserva": true,
-      "pregunta": "Ventas agotadas en minutos y millones de visualizaciones, sin grandes inversiones en publicidad. ¿Qué indica?",
-      "opciones": ["Que depende de la publicidad paga", "Que vende sobre todo en tiendas multimarca", "Que su comunicación orgánica es muy eficaz"],
-      "opcionesCortas": ["Publicidad paga", "Multimarca", "Orgánica eficaz"],
-      "correcta": 2,
-      "explicacion": "Los resultados llegan sin grandes campañas pagas: el alcance viene del contenido propio (EGC), de lo que comparte la comunidad (UGC) y de la conversación que generan sus acciones. Por eso la confianza y la pertenencia valen más que la publicidad tradicional."
+      "pregunta": "¿Para qué lanzamiento eligieron a Belén Esteban y a Victoria Federica, dos perfiles opuestos?",
+      "opciones": ["La línea de mujer", "La campaña Out of Office", "La pop-up de Nueva York"],
+      "opcionesCortas": ["Línea de mujer", "Out of Office", "Pop-up Nueva York"],
+      "correcta": 0,
+      "explicacion": "Para lanzar la línea de mujer eligieron a Belén Esteban y a Victoria Federica: el contraste entre dos perfiles opuestos genera conversación. No buscan una imagen perfecta, buscan que se hable. Es otra forma de diseñar la viralidad, como la remera irónica de Out of Office."
     },
     {
       "id": 10,
       "tema": "Marketing experiencial",
       "reserva": true,
-      "pregunta": "Según el caso, los pop-ups y eventos físicos de Nude Project cumplen una doble función. ¿Cuál?",
-      "opciones": ["Liquidar stock y bajar costos", "Fidelizar a la comunidad y amplificar el alcance", "Reemplazar a la tienda online y a las redes"],
-      "opcionesCortas": ["Liquidar stock", "Fidelizar + alcance", "Reemplazar redes"],
-      "correcta": 1,
-      "explicacion": "Las experiencias físicas fidelizan a la comunidad existente y, al mismo tiempo, amplifican el alcance de la marca: cada una está pensada para ser fotografiable, compartible y deseable. Así Nude Project convierte el marketing en entretenimiento y la publicidad en cultura."
+      "pregunta": "La pop-up de Nueva York fue la más vendida de su historia. ¿Qué incluyó la apertura?",
+      "opciones": ["Una carrera en ropa interior de la marca", "Un recital de Drake en la puerta", "Una llave metálica para cada asistente"],
+      "opcionesCortas": ["Carrera", "Recital de Drake", "Llave para todos"],
+      "correcta": 0,
+      "explicacion": "Reunió a unas 400 personas, con moda, música, cine, deporte y hasta una carrera en ropa interior de la marca (por eso Drop Rush se define con una carrera, «por suerte, con ropa puesta»). Drake aparece en el UGC, en fotos con la ropa, y la llave metálica solo la reciben los primeros 60 de cada apertura."
+    },
+    {
+      "id": 11,
+      "tema": "Métricas y rendimiento digital",
+      "reserva": true,
+      "pregunta": "Desde comienzos de 2024, ¿qué cuenta más que duplicó sus seguidores?",
+      "opciones": ["El Instagram del podcast", "TikTok", "El Instagram de la marca"],
+      "opcionesCortas": ["Podcast", "TikTok", "Instagram"],
+      "correcta": 0,
+      "explicacion": "El Instagram del podcast pasó de unos 117 mil a 275 mil seguidores: más del doble. Instagram (de 840 mil a 1,6 M) y YouTube casi se duplicaron, y TikTok creció cerca de un 30 %. Aun así, en TikTok suman 51 millones de me gusta: unos 51 por cada seguidor."
+    },
+    {
+      "id": 12,
+      "tema": "Métricas y rendimiento digital",
+      "reserva": true,
+      "pregunta": "Según la exposición, ¿qué parte del negocio fue el canal online en 2023?",
+      "opciones": ["El 62 %", "El 35 %", "El 90 %"],
+      "opcionesCortas": ["62 %", "35 %", "90 %"],
+      "correcta": 0,
+      "explicacion": "En 2023 el canal online fue el 62 % del negocio: la comunidad que construyen en redes se traduce en ventas. El 35 % es lo que hoy representa el canal físico (tiendas y pop-ups), que crece con el marketing experiencial."
+    },
+    {
+      "id": 13,
+      "tema": "Objetivo comunicacional",
+      "reserva": true,
+      "pregunta": "¿Cuál es el lema de Nude Project que la exposición asoció a la pertenencia?",
+      "opciones": ["By artists, for artists", "Too shy to dance on TikTok in 2020", "Pretty girls like trap music"],
+      "opcionesCortas": ["By artists…", "Too shy to dance", "Pretty girls…"],
+      "correcta": 0,
+      "explicacion": "«By artists, for artists» resume la idea de comunidad: como dice Bruno, cada cliente es un embajador potencial. «Too shy to dance on TikTok in 2020» es la frase de la remera Out of Office, y «pretty girls like trap music», la de su primera sudadera viral."
+    },
+    {
+      "id": 14,
+      "tema": "Modelo D2C, drops y desafíos",
+      "reserva": true,
+      "pregunta": "¿Cuánto facturó la primera colección de Nude Project?",
+      "opciones": ["Unos 600.000 €", "Unos 600 €", "Unos 11,5 M€"],
+      "opcionesCortas": ["600 mil €", "600 €", "11,5 M€"],
+      "correcta": 0,
+      "explicacion": "Los 600 € fueron la inversión inicial (300 € cada uno, en 2019). La primera colección facturó unos 600.000 €; en 2022 llegaron a 11,5 M€ y en 2023, a 26 M€, con venta directa (D2C) y drops limitados que se agotan y generan urgencia y deseo."
     }
   ]
 }
