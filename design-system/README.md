@@ -98,7 +98,7 @@ La presentación es el **lanzamiento de un producto contado en una sola toma** (
 | 0 | Portada + hype | Pedestal bajo un foco, sudaderas flotando y *Drop 001* gigante detrás. En el hype la luz se apaga, la prenda sube y baja con el medidor y cae entre papelitos con los colores de los grupos | cacao | cacao | centro |
 | 1 | La historia | La habitación: ventana, cama y pila de cajas; la sudadera levita sobre la caja abierta del pedido #0001 (solapas abiertas, papel de seda y etiqueta de envío) | crema | crema | editorial |
 | 2 | EGC vs. UGC | Dos celulares en su soporte con feeds verticales que pasan solos; la prenda gira hacia uno y otro | arena | crema | centro |
-| 3 | Marketing viral | Panel de celulares con la publicación de *Out of Office* y su contador de likes; corazones *clay* que suben a los costados | rosa | crema | editorial |
+| 3 | Marketing viral | Pared de 24 celulares con la publicación de *Out of Office* y su contador de likes, con corazones *clay* que brotan de las pantallas; la prenda se corre a la izquierda para dejarla ver | rosa | crema | editorial |
 | 4 | Marketing experiencial | Salón de la Nude House: pared de acento con neón, perchero con sudaderas en sus perchas, estante con vinilos, planta y lámpara; la prenda cuelga de frente en un perchero de exhibición | bosque | crema | editorial |
 | 5 | Métricas | Vista desarmada con etiquetas flotantes; en la pose *pilas*, barras hechas con sudaderas dobladas (2024 contra hoy) y la prenda arriba de la más alta | marino | crema | editorial |
 | 6 | Objetivo comunicacional | Plano medio de la prenda girada hacia la frase de Bruno, con el logo bordado bien grande | cacao | crema | macro |

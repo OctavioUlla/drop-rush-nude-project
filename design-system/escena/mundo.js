@@ -415,34 +415,42 @@ function corazonGeo() {
 }
 function estacionViral(g) {
   g.add(pisoSombra());
-  // Panel con la misma publicación en todos los celulares, como cuando algo se hace viral.
+  // Pared de celulares con la misma publicación, como cuando algo se hace viral. La prenda queda a la izquierda,
+  // junto al texto, y la pared ocupa el resto: la tapa apenas en una esquina.
   const tex = publicacionViral();
   const panel = new THREE.Group();
-  const cols = 5, filas = 2, pw = 0.66, ph = pw * 2.1, sx = 0.9, sy = ph + 0.2;
-  panel.add(caja(cols * sx + 0.24, filas * sy + 0.3, 0.16, C.marca.arena, 0, 0, -0.08, 0.08));
-  for (let i = 0; i < cols; i++) for (let j = 0; j < filas; j++) {
+  const cols = 8, filas = 3, pw = 0.48, ph = 1.0, sx = 0.6, sy = 1.12;
+  panel.add(caja(cols * sx + 0.24, (filas - 1) * sy + ph + 0.4, 0.14, C.marca.arena, 0, 0, -0.07, 0.07));
+  const pantallas = [];
+  for (let j = 0; j < filas; j++) for (let i = 0; i < cols; i++) {
     const c = celular(tex, pw, ph, false);
-    c.position.set((i - (cols - 1) / 2) * sx, 0.25 + j * sy, 0.08);
+    c.position.set((i - (cols - 1) / 2) * sx, 0.2 + j * sy, 0.08);
     panel.add(c);
+    pantallas.push(c.position.clone());
   }
-  panel.position.set(1.5, 0, -3.6);
+  panel.position.set(2.25, 0, -3.2);
+  panel.rotation.y = -0.1;
   g.add(panel);
-  // Corazones que suben a los costados de la prenda (nunca la cruzan por delante).
+  // Corazones que brotan de los celulares (likes en vivo): suben un poco delante de su pantalla y se apagan.
   const geo = corazonGeo();
   const mat = clay(C.acento.rosa, { roughness: 0.8 });
-  const corazones = Array.from({ length: 12 }, (_, i) => {
+  const corazones = Array.from({ length: 14 }, (_, i) => {
     const m = malla(geo, mat);
-    const lado = i % 2 ? 1 : -1;
-    m.userData = { lado, x: lado * (lado > 0 ? 1.55 + (i % 3) * 0.22 : 1.5 + (i % 3) * 0.12), z: -0.35 + ((i * 7) % 5) * 0.16, fase: (Math.floor(i / 2) / 6), s: 0.24 + (i % 3) * 0.05 };
+    const origen = pantallas[(i * 11) % pantallas.length].clone().add(V(0, 0.3, 0.22)).applyAxisAngle(V(0, 1, 0), panel.rotation.y).add(panel.position);
+    m.userData = { origen, fase: i / 14, s: 0.15 + (i % 3) * 0.03 };
     g.add(m);
     return m;
   });
   const ancla = new THREE.Object3D();
-  ancla.position.set(0, 0.32 + LEVITA, 0);
-  g.add(ancla, pedestal(P['pedestal-crema'], 0.9));
+  ancla.position.set(0, 0.3 + LEVITA, 0.3);
+  const ped = pedestal(P['pedestal-crema'], 0.75, 0.3);
+  ped.position.z = 0.3;
+  g.add(ancla, ped);
   let reloj = 0;
   return {
-    tema: 'crema', encuadre: 'editorial', ancla, escala: 0.9,
+    tema: 'crema', encuadre: 'editorial', ancla, escala: 0.72,
+    // La prenda a ~57 % del ancho (no al 72 % de siempre), para dejarle lugar a la pared.
+    mira: V(1.2, 1.6, 0),
     actualizar(dt, t, presencia) {
       // Contador de likes: arranca cuando llega la cámara y sube hasta pasar el medio millón.
       reloj = presencia > 0.95 ? reloj + dt : presencia < 0.05 ? 0 : reloj;
@@ -451,10 +459,10 @@ function estacionViral(g) {
       const crecer = smoothstep(presencia, 0.3, 1);
       for (const m of corazones) {
         const d = m.userData;
-        const v = (t / 6 + d.fase) % 1; // 0 → 1 mientras sube
-        m.position.set(d.x + Math.sin((t + d.fase * 9) * 1.3) * 0.08, 0.5 + v * 3.0, d.z);
-        m.rotation.set(0, Math.sin(t + d.fase * 6) * 0.5, d.lado * -0.15);
-        m.scale.setScalar(d.s * crecer * Math.sin(Math.PI * Math.min(v * 1.15, 1)));
+        const v = (t / 2.6 + d.fase) % 1; // 0 → 1 mientras sube
+        m.position.copy(d.origen).add(V(Math.sin((t + d.fase * 9) * 2) * 0.04, v * 0.6, 0));
+        m.rotation.set(0, Math.sin(t + d.fase * 6) * 0.4, 0);
+        m.scale.setScalar(d.s * crecer * Math.sin(Math.PI * v));
       }
     },
   };
@@ -464,7 +472,7 @@ function estacionExperiencial(g) {
   // Piso de madera, pared clara detrás del texto y pared de acento marrón (el tono de la tienda) detrás de la prenda.
   habitacion(g, { x0: -7, x1: 7, piso: P['casa-piso'], pared: C.juego['fachada-1'] });
   g.add(fondo(caja(8.6, 6, 0.32, P['casa-pared'], 2.7, -0.3, -4.24, 0.04)));
-  g.add(fondo(caja(8.6, 0.14, 0.05, C.marca.crema, 2.7, 0, -4.06, 0.02)));
+  g.add(fondo(caja(8.6, 0.16, 0.07, C.marca.crema, 2.7, 0, -4.045, 0.02))); // más alto y profundo que el de la pared clara: no comparten caras
   const neon = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.6), new THREE.MeshBasicMaterial({ map: neonNudeHouse(), transparent: true, toneMapped: false, depthWrite: false }));
   neon.position.set(0.9, 3.35, -4.06);
   g.add(fondo(neon));
@@ -661,13 +669,15 @@ function estacionDropRush(g) {
   g.add(fondo(caja(18, 0.4, 3.2, C.juego.vereda, 0, -0.4, 0.4, 0.06)));
   const tienda = C.juego.tienda;
   const fachada = new THREE.Group();
+  // El zócalo de la vidriera sobresale 10 cm del piso interior, y cada pieza termina donde empieza la otra:
+  // dos caras a la misma altura que se pisan titilan (z-fighting).
   fachada.add(caja(1.0, 4.8, 0.5, tienda, -2.7, 0, -1.1, 0.05), caja(1.0, 4.8, 0.5, tienda, 2.7, 0, -1.1, 0.05),
-    caja(6.4, 1.2, 0.5, tienda, 0, 3.6, -1.1, 0.05), caja(4.4, 0.4, 0.5, tienda, 0, 0, -1.1, 0.05));
+    caja(6.4, 1.2, 0.5, tienda, 0, 3.6, -1.1, 0.05), caja(4.4, 0.5, 0.5, tienda, 0, 0, -1.1, 0.05));
   // Paredes vecinas, más oscuras, para que la vidriera sea la única luz de la calle.
   fachada.add(caja(5, 6, 0.4, C.marca['cacao-profundo'], -5.7, 0, -1.3, 0.04), caja(5, 6, 0.4, C.marca['cacao-profundo'], 5.7, 0, -1.3, 0.04));
   // Interior de la vidriera: fondo cálido iluminado.
-  fachada.add(caja(4.4, 3.4, 0.2, C.juego['fachada-1'], 0, 0.2, -3.0, 0.03), caja(4.4, 0.2, 2.0, C.marca.arena, 0, 0.2, -2.1, 0.03));
-  fachada.add(caja(0.2, 3.4, 2.0, C.marca.arena, -2.2, 0.2, -2.1, 0.03), caja(0.2, 3.4, 2.0, C.marca.arena, 2.2, 0.2, -2.1, 0.03));
+  fachada.add(caja(4.6, 3.4, 0.2, C.juego['fachada-1'], 0, 0.2, -3.0, 0.03), caja(4.2, 0.2, 1.55, C.marca.arena, 0, 0.2, -2.125, 0.03));
+  fachada.add(caja(0.2, 3.4, 1.55, C.marca.arena, -2.2, 0.2, -2.125, 0.03), caja(0.2, 3.4, 1.55, C.marca.arena, 2.2, 0.2, -2.125, 0.03));
   const cartel = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 0.78), new THREE.MeshBasicMaterial({ toneMapped: false, map: cartelTienda() }));
   cartel.position.set(0, 4.2, -0.84);
   fachada.add(cartel);
@@ -679,17 +689,17 @@ function estacionDropRush(g) {
     gr.addColorStop(0.5, 'rgba(255,255,255,.05)'); gr.addColorStop(0.62, 'rgba(255,255,255,.14)'); gr.addColorStop(0.75, 'rgba(255,255,255,0)');
     ctx.clearRect(0, 0, w, h); ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
   });
-  const vidrio = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.2), new THREE.MeshBasicMaterial({ map: reflejo, transparent: true, depthWrite: false, opacity: 0.55 }));
-  vidrio.position.set(0, 2.0, -0.9);
+  const vidrio = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.1), new THREE.MeshBasicMaterial({ map: reflejo, transparent: true, depthWrite: false, opacity: 0.55 }));
+  vidrio.position.set(0, 2.05, -0.9);
   vidrio.renderOrder = 3;
   g.add(fondo(vidrio));
   const ped = pedestal(P['pedestal-cacao'], 0.7, 0.28);
-  ped.position.set(0, 0.4, -2.0);
+  ped.position.set(0, 0.4, -2.15); // a 10 cm del zócalo y de la pared del fondo
   g.add(ped);
   const ancla = new THREE.Object3D();
-  ancla.position.set(0, 0.68 + LEVITA, -2.0);
+  ancla.position.set(0, 0.68 + LEVITA, -2.15);
   g.add(ancla);
-  const f = foco(g, 0, 3.5, -2.0, 2.9, 1.0);
+  const f = foco(g, 0, 3.5, -2.15, 2.9, 1.0);
   const interior = new THREE.PointLight(P['luz-principal'], 6, 6, 2);
   interior.position.set(0, 2.6, -0.6);
   g.add(interior);
