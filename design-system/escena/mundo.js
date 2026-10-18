@@ -14,7 +14,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { colores3d, grupos, tokens } from '../tokens.js';
 import { crearSudadera } from './sudadera.js';
-import { feed, publicacionViral, cartelTienda, neonNudeHouse, etiquetaEnvio, lienzo } from './pantallas.js';
+import { feed, publicacionViral, cartelTienda, neonNudeHouse, etiquetaEnvio, copiaEnmarcada, lienzo } from './pantallas.js';
 
 const C = colores3d;
 const P = C.presentacion;
@@ -483,14 +483,65 @@ function estacionViral(g, { feeds: datos } = {}) {
   };
 }
 
-function estacionExperiencial(g) {
+/** Reflejo diagonal suave para los vidrios (la vidriera de Drop Rush y los cuadros). */
+let texturaReflejo;
+function reflejo() {
+  texturaReflejo ??= lienzo(256, 256, (ctx, w, h) => {
+    const gr = ctx.createLinearGradient(0, 0, w, h);
+    gr.addColorStop(0.25, 'rgba(255,255,255,0)'); gr.addColorStop(0.42, 'rgba(255,255,255,.22)');
+    gr.addColorStop(0.5, 'rgba(255,255,255,.05)'); gr.addColorStop(0.62, 'rgba(255,255,255,.14)'); gr.addColorStop(0.75, 'rgba(255,255,255,0)');
+    ctx.clearRect(0, 0, w, h); ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
+  });
+  return texturaReflejo;
+}
+
+/**
+ * Cuadro colgado: marco de varillas con relieve (proyectan sombra sobre la copia), la copia con su paspartú y un
+ * vidrio con reflejo. w × h es el tamaño exterior; el frente de la pared queda en z = 0 del grupo.
+ */
+function cuadro(foto, w, h, { marco = C.marca.cacao, perfil = 0.07, fondoMarco = 0.06 } = {}) {
+  const g = new THREE.Group();
+  g.add(caja(w, h, 0.02, marco, 0, -h / 2, 0.01, 0.01)); // fondo
+  for (const lado of [-1, 1]) {
+    g.add(caja(w, perfil, fondoMarco, marco, 0, lado * (h - perfil) / 2 - perfil / 2, fondoMarco / 2, 0.018));
+    g.add(caja(perfil, h - 2 * perfil + 0.002, fondoMarco, marco, lado * (w - perfil) / 2, -h / 2 + perfil - 0.001, fondoMarco / 2, 0.018));
+  }
+  const iw = w - 2 * perfil, ih = h - 2 * perfil;
+  const copia = new THREE.Mesh(new THREE.PlaneGeometry(iw, ih), new THREE.MeshStandardMaterial({ map: copiaEnmarcada(foto, iw, ih), roughness: 0.62 }));
+  copia.position.z = 0.021;
+  copia.receiveShadow = true;
+  const vidrio = new THREE.Mesh(new THREE.PlaneGeometry(iw, ih), new THREE.MeshBasicMaterial({ map: reflejo(), transparent: true, depthWrite: false, opacity: 0.4 }));
+  vidrio.position.z = fondoMarco - 0.012;
+  vidrio.renderOrder = 3;
+  g.add(copia, vidrio);
+  return g;
+}
+
+/** Fotos de los cuadros del salón; la presentación las reemplaza por las de datos/feeds.json (experiencial). */
+const fotosCasa = [
+  { lugar: 'Nude House · Madrid' },
+  { lugar: 'La pared de las llaves' },
+  { lugar: 'Nude Mansion · Ibiza' },
+];
+
+function estacionExperiencial(g, { feeds: datos } = {}) {
   // Piso de madera, pared clara detrás del texto y pared de acento marrón (el tono de la tienda) detrás de la prenda.
   habitacion(g, { x0: -7, x1: 7, piso: P['casa-piso'], pared: C.juego['fachada-1'] });
   g.add(fondo(caja(8.6, 6, 0.32, P['casa-pared'], 2.7, -0.3, -4.24, 0.04)));
   g.add(fondo(caja(8.6, 0.16, 0.07, C.marca.crema, 2.7, 0, -4.045, 0.02))); // más alto y profundo que el de la pared clara: no comparten caras
   const neon = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.6), new THREE.MeshBasicMaterial({ map: neonNudeHouse(), transparent: true, toneMapped: false, depthWrite: false }));
-  neon.position.set(0.9, 3.35, -4.06);
+  neon.position.set(0.05, 3.78, -4.06); // corona la pared de cuadros
   g.add(fondo(neon));
+  // Pared de cuadros: la Nude House de Madrid, la pared de las llaves y la Mansion de Ibiza (pose "fotos").
+  const fotos = (datos?.experiencial?.fotos?.length ? datos.experiencial.fotos : fotosCasa).slice(0, 3);
+  const colgar = [[1.56, 1.02, 0, 3.0], [0.7, 0.9, -1.2, 3.0], [1.0, 0.82, 1.33, 3.0]]; // ancho, alto, x, y (centro)
+  fotos.forEach((foto, i) => {
+    const [w, h, x, y] = colgar[i];
+    const c = cuadro(foto, w, h);
+    c.position.set(x, y, -4.08);
+    c.rotation.z = [0.004, -0.01, 0.008][i]; // apenas torcidos, colgados a mano
+    g.add(fondo(c)); // decoran la pared, como el neón
+  });
   // Alfombra redonda bajo el perchero de la protagonista.
   const alfombra = cilindro(1.9, 0.03, C.marca.arena, 0, 0, 0.1, 96);
   alfombra.scale.z = 0.62;
@@ -551,7 +602,7 @@ function estacionExperiencial(g) {
   estante.add(disco);
   estante.add(caja(0.42, 0.14, 0.34, C.marca['cacao-suave'], 0.5, 0.07, 0, 0.03)); // tocadiscos
   estante.add(cilindro(0.13, 0.02, metal, 0.47, 0.21, 0, 48));
-  estante.position.set(2.5, 2.75, -3.87);
+  estante.position.set(3.0, 2.75, -3.87);
   g.add(estante);
   // Planta en maceta en el rincón y lámpara de pie con luz cálida.
   const planta = new THREE.Group();
@@ -563,12 +614,21 @@ function estacionExperiencial(g) {
   lampara.add(pedestal(metal, 0.22, 0.05, 0.02), varilla(V(0, 0.04, 0), V(0, 2.3, 0), 0.025, metal));
   const pantalla = malla(new THREE.CylinderGeometry(0.22, 0.34, 0.4, 48, 1, true), clay(C.marca.crema, { side: THREE.DoubleSide, emissive: P.foco, emissiveIntensity: 0.35 }), 0, 2.45, 0);
   lampara.add(pantalla);
-  lampara.position.set(-1.25, 0, -3.5);
+  lampara.position.set(-1.9, 0, -3.5); // en la esquina, fuera de la pared de cuadros
   g.add(lampara);
   const luz = new THREE.PointLight(P.foco, 6, 6, 2);
-  luz.position.set(-1.25, 2.4, -3.3);
+  luz.position.set(-1.9, 2.4, -3.3);
   g.add(luz);
-  return { tema: 'crema', encuadre: 'editorial', ancla, escala, calida: true, giroReposo: giro, percha: { pivote, gancho }, entradaFrontal: true, actualizar() {} };
+  return {
+    tema: 'crema', encuadre: 'editorial', ancla, escala, calida: true, giroReposo: giro, percha: { pivote, gancho }, entradaFrontal: true,
+    poses: {
+      // La cámara sube por encima del perchero y queda de frente a la pared de cuadros, con el neón arriba; la
+      // prenda queda detrás de la cámara. Desvíos desde el encuadre editorial: mira en (-1.75, 1.32, 0) y cámara en
+      // (-1.75, 1.92, 8.5).
+      fotos: { mira: V(1.35, 1.53, -4.09), camara: V(1.35, 1.13, -7.09) },
+    },
+    actualizar() {},
+  };
 }
 
 function estacionMetricas(g) {
@@ -698,13 +758,7 @@ function estacionDropRush(g) {
   fachada.add(cartel);
   g.add(fondo(fachada));
   // Vidrio con un reflejo diagonal suave.
-  const reflejo = lienzo(256, 256, (ctx, w, h) => {
-    const gr = ctx.createLinearGradient(0, 0, w, h);
-    gr.addColorStop(0.25, 'rgba(255,255,255,0)'); gr.addColorStop(0.42, 'rgba(255,255,255,.22)');
-    gr.addColorStop(0.5, 'rgba(255,255,255,.05)'); gr.addColorStop(0.62, 'rgba(255,255,255,.14)'); gr.addColorStop(0.75, 'rgba(255,255,255,0)');
-    ctx.clearRect(0, 0, w, h); ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
-  });
-  const vidrio = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.1), new THREE.MeshBasicMaterial({ map: reflejo, transparent: true, depthWrite: false, opacity: 0.55 }));
+  const vidrio = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 3.1), new THREE.MeshBasicMaterial({ map: reflejo(), transparent: true, depthWrite: false, opacity: 0.55 }));
   vidrio.position.set(0, 2.05, -0.9);
   vidrio.renderOrder = 3;
   g.add(fondo(vidrio));

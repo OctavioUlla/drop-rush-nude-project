@@ -11,18 +11,6 @@ body { display: grid; place-items: center; }
 /* Etiquetas de la vista desarmada dentro de su diapositiva: se ubican sobre todo el escenario. */
 .np-capa .np-etiquetas { position: absolute; inset: 0; }
 
-/* Marcador de contenido pendiente (plantilla de la fase 1): se reemplaza por el componente real. */
-.marcador {
-  align-self: flex-start;
-  padding: 0.7em 1em;
-  border: 1px dashed currentColor;
-  font: var(--np-peso-medio) 0.95cqw / 1.3 var(--np-fuente-texto);
-  letter-spacing: var(--np-interletra-etiqueta);
-  text-transform: uppercase;
-  color: var(--np-tinta-suave);
-}
-.np-capa.np-diapo--activa .marcador.np-capa__entra { opacity: 0.75; }
-
 /* ============ Portada: título abajo a la izquierda y lugar del QR abajo a la derecha ============ */
 .portada__pie { display: flex; justify-content: space-between; align-items: flex-end; gap: 4cqw; }
 .np-capa .portada__titulo .np-titulo { font-size: 4.6cqw; }
@@ -166,6 +154,5 @@ body { display: grid; place-items: center; }
 [data-impresion] :is(.hype, .ingreso, .votacion, .votacion-estado, .sala-juego) { display: none; }
 [data-impresion] .np-capa * { animation: none !important; transition: none !important; }
 [data-impresion] .np-capa .np-capa__entra { opacity: 1; transform: none; }
-[data-impresion] .np-capa .marcador { opacity: 0.75; }
 [data-impresion] .np-etiquetas { display: none; } /* ya están en la imagen de respaldo */
 @media print { [data-impresion] .np-capas { gap: 0; } }

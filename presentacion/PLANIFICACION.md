@@ -133,7 +133,7 @@ Se arma en Three.js con piezas redondeadas (ver [`escena/sudadera.js`](../design
 | **1. La historia** | **La habitación**: ventana con luz, cama y una pila de cajas de envío. La sudadera levita sobre la caja abierta del pedido #0001 (solapas abiertas, papel de seda, etiqueta de envío y una luz cálida que sale de adentro). En la segunda diapositiva, los hitos 600 € → 26 M€ en la columna del texto. | Crema |
 | **2. EGC vs. UGC** | Dos **celulares gigantes** en su soporte, con feeds verticales que pasan solos (publicaciones de `datos/feeds.json`, `F` los pausa) y una etiqueta debajo de cada uno; la sudadera, en el centro sobre un pedestal, gira hacia uno y otro. | Arena |
 | **3. Marketing viral** | Una **pared de 24 celulares** con la publicación de *Out of Office* y su contador de likes, y **corazones *clay*** que brotan de las pantallas como likes en vivo. La prenda se corre hacia el texto y tapa apenas una esquina de la pared. En el texto, la cifra cuenta hasta +500.000. | Rosa |
-| **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón con el neón *Nude House*, piso de madera, alfombra, perchero con sudaderas (cada una en su percha), estante con vinilos y tocadiscos, planta y lámpara de pie. La sudadera cuelga de frente en un perchero de exhibición: la percha sale por el escote y el gancho abraza la barra. | Bosque |
+| **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón con el neón *Nude House* sobre una pared de cuadros (fotos reales de la Nude House de Madrid y de la Mansion de Ibiza, enmarcadas, con su crédito en el paspartú; la segunda diapositiva acerca la cámara hasta ellas), piso de madera, alfombra, perchero con sudaderas (cada una en su percha), estante con vinilos y tocadiscos, planta y lámpara de pie. La sudadera cuelga de frente en un perchero de exhibición: la percha sale por el escote y el gancho abraza la barra. | Bosque |
 | **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una **etiqueta flotante** con un dato. En la segunda diapositiva la cámara se corre a un **gráfico de barras hecho con pilas de sudaderas dobladas** (100 mil seguidores cada una, 2024 contra hoy) y la sudadera, armada, corona la más alta. | Marino |
 | **6. Objetivo comunicacional** | **Plano medio** de la sudadera sola, girada hacia la frase de Bruno, con el logo bordado bien grande; la frase en la columna libre de la izquierda. | Cacao |
 | **7. Desafíos** | Una **balanza** *clay*: cada plato cuelga de un aro con tres hilos que quedan por fuera de lo que lleva. De un lado, una sola sudadera (*exclusividad*); del otro, una pila (*accesibilidad*), con una etiqueta debajo de cada plato. Se inclina según la votación en vivo. | Mostaza |
@@ -332,7 +332,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 ## 8. Contenido pendiente (a cargo del equipo)
 
 - [x] Texto de cada bloque y notas del orador (ver el [guion](GUION.md))
-- [ ] Fotos de la Nude House y del Château (bloque 4)
+- [x] Fotos de la Nude House y del Château (bloque 4) *(tres cuadros en la pared del salón; fuentes en [media/README.md](media/README.md))*
 - [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
 - [x] Campaña o publicación viral a analizar: *Out of Office* (agosto de 2025)
 - [ ] Métricas públicas actualizadas, con sus fuentes (relevadas a octubre de 2026; falta citar las fuentes)

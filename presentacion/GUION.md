@@ -79,7 +79,7 @@ La lección: la viralidad parece casual, pero está diseñada. Eligen el momento
 
 ## 4. Marketing experiencial (~2:00)
 
-*[La sudadera queda colgada de una percha en el salón de la Nude House.]*
+*[La sudadera queda colgada de una percha en el salón de la Nude House; detrás, la pared de cuadros. Después de la primera frase (“…es un espacio de encuentro”), la cámara se acerca a los cuadros (“Del salón al feed”): la Nude House de Madrid en el centro, la pared de las llaves a la izquierda y la Mansion de Ibiza a la derecha.]*
 
 "Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la **Nude House** de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.
 

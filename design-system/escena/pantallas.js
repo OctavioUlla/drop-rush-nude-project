@@ -381,6 +381,52 @@ export function publicacionViral({ archivo } = {}) {
   return tex;
 }
 
+/**
+ * Copia enmarcada para los cuadros de la Nude House: la foto con un revelado cálido (para que conviva con el clay sin
+ * parecer pegada encima) y, debajo, el paspartú crema con el lugar y el crédito impresos, como en una galería.
+ * foto: { lugar, credito, archivo }. Si no hay archivo o no carga, el nombre del lugar sobre marrón.
+ * ancho × alto es el tamaño de la copia en metros: el margen, el pie y la letra miden lo mismo en todos los cuadros.
+ */
+export function copiaEnmarcada(foto, ancho, alto, { px = 1024 } = {}) {
+  const k = px / ancho; // píxeles por metro
+  const w = px, h = Math.round(alto * k);
+  const m = 0.045 * k, pie = 0.17 * k; // margen del paspartú y alto del pie
+  const fw = w - 2 * m, fh = h - m - pie; // la foto
+  let t = null; // lienzo() ya dibuja una vez al crearla, antes de que t exista
+  t = lienzo(w, h, (ctx) => {
+    ctx.fillStyle = M.crema; ctx.fillRect(0, 0, w, h);
+    ctx.save(); ctx.translate(m, m); ctx.beginPath(); ctx.rect(0, 0, fw, fh); ctx.clip();
+    if (t?.media?.listo) {
+      ctx.filter = 'saturate(.86) contrast(.94) brightness(1.03)';
+      cubrir(ctx, t.media, fw, fh);
+      ctx.filter = 'none';
+      // Revelado: un velo cálido en multiplicar y una viñeta suave, la misma luz de la lámpara del salón.
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.fillStyle = 'rgba(255,226,190,.32)'; ctx.fillRect(0, 0, fw, fh);
+      ctx.globalCompositeOperation = 'source-over';
+      const v = ctx.createRadialGradient(fw / 2, fh / 2, Math.min(fw, fh) * 0.35, fw / 2, fh / 2, Math.hypot(fw, fh) * 0.62);
+      v.addColorStop(0, 'rgba(46,25,20,0)'); v.addColorStop(1, 'rgba(46,25,20,.32)');
+      ctx.fillStyle = v; ctx.fillRect(0, 0, fw, fh);
+    } else {
+      ctx.fillStyle = M['cacao-suave']; ctx.fillRect(0, 0, fw, fh);
+      ctx.fillStyle = M.arena; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = fuente(800, 0.06 * k); espaciado(ctx, -0.002 * k); ctx.fillText(foto.lugar ?? '', fw / 2, fh / 2);
+    }
+    ctx.restore();
+    // Bisel del paspartú: una línea de sombra alrededor del corte.
+    ctx.strokeStyle = 'rgba(46,25,20,.18)'; ctx.lineWidth = 0.003 * k; ctx.strokeRect(m, m, fw, fh);
+    // Pie: el lugar y, debajo, el crédito.
+    ctx.fillStyle = M.cacao; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    ctx.font = fuente(800, 0.05 * k); espaciado(ctx, -0.001 * k); ctx.fillText(foto.lugar ?? '', m, m + fh + 0.074 * k);
+    if (foto.credito) {
+      ctx.globalAlpha = 0.7; ctx.font = fuenteTexto(500, 0.03 * k); espaciado(ctx, 0);
+      ctx.fillText(foto.credito, m, m + fh + 0.122 * k); ctx.globalAlpha = 1;
+    }
+  });
+  t.media = cargarMedia(foto.archivo, () => t.redibujar());
+  return t;
+}
+
 export function cartelTienda() {
   return lienzo(1024, 220, (ctx, w, h) => {
     ctx.fillStyle = M.cacao; ctx.fillRect(0, 0, w, h);
