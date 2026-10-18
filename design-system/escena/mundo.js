@@ -379,8 +379,10 @@ function celular(textura_, w = 1.5, h = 3.0, soporte = true) {
 }
 function estacionEgcUgc(g, { feeds: datos } = {}) {
   g.add(fondo(caja(13, 0.3, 7, C.marca.arena, 0, -0.3, -0.6, 0.1)));
-  // Publicaciones de datos/feeds.json (si la presentación las pasa) o las de prueba de pantallas.js.
-  const feeds = [feed('egc', { publicaciones: datos?.egc }), feed('ugc', { publicaciones: datos?.ugc, desfase: 2 })];
+  // Publicaciones de datos/feeds.json (si la presentación las pasa) o las de prueba de pantallas.js. `cada` (segundos
+  // por publicación) también sale de ahí; el feed de UGC cambia a mitad de ciclo del de EGC, nunca a la vez.
+  const cada = datos?.cada ?? 4;
+  const feeds = [feed('egc', { publicaciones: datos?.egc, cada }), feed('ugc', { publicaciones: datos?.ugc, cada, desfase: -cada / 2 })];
   const anclas = {};
   [[-1, feeds[0], 'egc'], [1, feeds[1], 'ugc']].forEach(([lado, tex, clave]) => {
     const c = celular(tex);

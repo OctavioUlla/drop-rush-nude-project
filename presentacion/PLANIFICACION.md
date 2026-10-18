@@ -84,7 +84,7 @@
 | Contenido de Bruno, Álex y el equipo: reuniones, viajes de producción, procesos, podcast | Contenido de la comunidad: filas en las tiendas, outfits, eventos, reacciones |
 
 **Detalles.**
-- Cada feed pasa una publicación cada ~4 s con una transición de desplazamiento vertical. Los videos se reproducen **en silencio y en bucle** (clips de 5 a 10 s).
+- Cada feed pasa una publicación cada 8 s (`cada` en `datos/feeds.json`, lo que dura un clip) con una transición de desplazamiento vertical; el de UGC cambia a mitad de tiempo del de EGC. Cada clip arranca desde el principio al entrar y se reproduce **en silencio y en bucle**.
 - Cada publicación muestra la cuenta (@usuario) y, si suma, la cifra de likes o vistas.
 - El presentador puede **pausar** un feed para comentar una publicación puntual.
 - Se ve la diferencia antes de explicarla: quién habla, cómo se ve, qué se muestra.

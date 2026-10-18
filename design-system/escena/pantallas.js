@@ -307,16 +307,21 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
       if (pausado && f.i > i) reloj = (i + 1) * cada; // el pase terminó: se queda en la publicación nueva
       ({ i, u } = fase());
     }
-    // Los clips visibles corren (a ~30 cuadros por segundo) y los demás se frenan.
+    // Los clips visibles corren (a ~30 cuadros por segundo) y los demás se frenan. Un clip que entra en pantalla
+    // arranca desde el principio, así se ve entero aunque la vuelta anterior lo haya frenado a la mitad.
     const visibles = u > 0 ? [i % n, (i + 1) % n] : [i % n];
     let clip = false;
     capas.forEach((c, k) => {
       const v = c.media;
       if (!v?.listo || !('play' in v)) return;
       if (visibles.includes(k)) {
+        if (!c.enPantalla) { c.enPantalla = true; v.currentTime = 0; }
         if (v.paused) v.play().catch(() => {});
         clip = true;
-      } else if (!v.paused) v.pause();
+      } else {
+        c.enPantalla = false;
+        if (!v.paused) v.pause();
+      }
     });
     if (clip) { cuadro += dt; if (cuadro >= 1 / 30) { cuadro = 0; for (const k of visibles) if (capas[k].media?.listo) capas[k].redibujar(); estado = null; } }
     const clave = `${i}:${Math.round(suave(u) * 400)}:${pausado}`;
