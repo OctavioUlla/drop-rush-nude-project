@@ -174,6 +174,11 @@ export class Corredor {
       if (!this.iman && Math.abs(this.x - CARRILES[l.carril]) > 0.9) continue;
       if (!this.iman && Math.abs(this.y + 0.6 - l.y) > 1.0) continue;
       l.tomado = true;
+      // El imán ya lo trajo hasta el corredor: el "pop" sigue ahí y no en su carril.
+      if (this.iman) {
+        l.xTomado = this.x;
+        l.yTomado = this.y + 0.6;
+      }
       this.likes++;
       this.eventos.push('like');
     }
