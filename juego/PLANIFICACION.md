@@ -492,7 +492,7 @@ En `data/config.json`, o desde el lobby del host:
 | `duracionTramo` | 15 | Segundos de cada tramo de carrera |
 | `duracionRevelado` | 3 | Segundos que el proyector resalta la respuesta correcta (el juego no se frena) |
 | `preguntasEnRepaso` | 2 | Cuántas de las preguntas más erradas se explican al final |
-| `dificultadObstaculos` | `"facil"` | `"facil"`, `"normal"` o `"caotico"` |
+| `dificultadObstaculos` | `"caotico"` | `"facil"`, `"normal"` o `"caotico"` |
 | `saltoActivo` | true | Salto con deslizar hacia arriba (si se desactiva, no aparecen obstáculos que obliguen a saltar) |
 | `calidadGrafica` | `"auto"` | `"auto"`, `"alta"`, `"media"` o `"baja"` |
 | `toleranciaRespuestaTardia` | 10 | Segundos durante los que se acepta una respuesta que llega tarde por un corte (si se dio a tiempo) |
@@ -684,7 +684,7 @@ La presentación es interactiva y usa **el mismo servidor** ([plan de la present
 | Celular sin WebGL | Aviso en el lobby para usar otro celular del grupo |
 | Esquivar distrae de las preguntas | Sin obstáculos durante las preguntas y aviso de "mirá el proyector"; roles dentro del grupo |
 | Los grupos hábiles esquivando ganan aunque no sepan | Balanceo: el acierto vale más que un tramo entero; choques con castigo bajo |
-| Obstáculos demasiado difíciles | Dificultad "fácil" por defecto, siempre un carril libre o saltable, práctica en el lobby |
+| Obstáculos demasiado difíciles | Dificultad "fácil" disponible en Ajustes (por defecto es "caótico": las otras resultaron muy fáciles), siempre un carril libre o saltable, práctica en el lobby |
 | 40 grupos no se leen en el proyector | Marcadores con número grande, top 10 destacado, agrupación de marcadores cercanos |
 | Proyector de baja resolución | Tipografías grandes y alto contraste; probar antes en el aula |
 | Servidor gratuito dormido | Abrirlo antes de la clase |

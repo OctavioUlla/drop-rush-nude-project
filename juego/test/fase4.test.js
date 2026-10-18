@@ -173,8 +173,8 @@ test('terminar en plena pregunta: la pregunta sin revelar no cuenta y la partida
 
 // ---------- Balanceo (sección 7) ----------
 
-test('balanceo: con la configuración por defecto, saber del caso pesa más que esquivar', () => {
-  const b = medirBalance({ semillas: 60 });
+test('balanceo: en fácil, saber del caso pesa más que esquivar en toda la carrera', () => {
+  const b = medirBalance({ dificultad: 'facil', semillas: 60 });
   for (const r of reglasDeBalance(b)) assert.ok(r.ok, `${r.regla}: ${r.detalle}`);
 });
 

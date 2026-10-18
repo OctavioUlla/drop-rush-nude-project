@@ -89,13 +89,13 @@ Al final muestra un resumen (respuestas confirmadas, cortes, sesiones recuperada
 ### 4. Balanceo
 
 ```bash
-npm run balanceo                                  # dificultad fácil (la de config.json)
-npm run balanceo -- --dificultad normal           # o caotico; --semillas 400 para más precisión
+npm run balanceo                                  # dificultad caótica (la de config.json)
+npm run balanceo -- --dificultad facil            # o normal; --semillas 400 para más precisión
 ```
 
 Corre cientos de tramos con la simulación real del corredor (`runner.js` + `track.js`) y dos jugadores extremos: uno que nunca choca y otro que se queda en el carril del medio sin saltar (choca con todo lo que aparece ahí). La diferencia es lo máximo que se puede perder por no saber esquivar, y se compara con lo que vale responder bien (sección 7). `npm test` comprueba las mismas reglas.
 
-| Con 8 preguntas | Fácil (por defecto) | Normal | Caótico |
+| Con 8 preguntas | Fácil | Normal | Caótico (por defecto) |
 |---|---|---|---|
 | Tramo completo (el primero / el más largo) | 142 / 180 m | 142 / 180 m | 142 / 180 m |
 | Respuesta correcta | **150 a 250 m** | 150 a 250 m | 150 a 250 m |
@@ -110,7 +110,7 @@ Las reglas que miran **toda la carrera** (no esquivar nada, juntar todos los lik
 
 Conclusiones:
 - **En fácil, se cumplen todas las reglas**: una respuesta correcta vale más que cualquier tramo, cada choque cuesta ~8 m y un grupo que no esquiva **nada** en toda la carrera pierde 158 m, menos que el tope de 200 m (apenas más que **una** respuesta correcta, en una carrera de 8).
-- En *normal* y *caótico* no esquivar nada cuesta entre 1,6 y 2,2 respuestas: siguen pesando más las preguntas (8 preguntas valen 1200 a 2000 m), pero por eso *fácil* queda como dificultad por defecto.
+- En *normal* y *caótico* no esquivar nada cuesta entre 1,6 y 2,2 respuestas: siguen pesando más las preguntas (8 preguntas valen 1200 a 2000 m), y una respuesta sigue valiendo más que cualquier tramo. Aun así *caótico* es la dificultad por defecto: en las pruebas, *fácil* y *normal* resultaron demasiado fáciles. *Fácil* sigue disponible en *Ajustes*.
 - El **impulso de emparejar** (+10 % al último cuarto) suma hasta ~235 m en toda la carrera: es a propósito, para que los de atrás no se desenganchen, y solo lo reciben mientras están en el último cuarto.
 - El **Cambio de algoritmo** molesta (vibración, cartel y obstáculos que salen del piso) pero cuesta pocos metros, porque los obstáculos extra nunca se ponen cerca de los que ya hay.
 
