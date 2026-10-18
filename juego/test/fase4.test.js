@@ -9,7 +9,7 @@ import { io } from 'socket.io-client';
 import { Guion } from '../public/shared/guion.js';
 import { FASES } from '../public/shared/constantes.js';
 import { iniciarServidor, servirComprimidos } from '../server/index.js';
-import { medirBalance, reglasDeBalance, likesAlcanzables } from '../tools/balanceo.js';
+import { medirBalance, reglasDeBalance, likesAlcanzables, topeCarrera } from '../tools/balanceo.js';
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -190,7 +190,7 @@ test('balanceo: en cualquier dificultad un choque cuesta poco y una respuesta va
     assert.ok(b.costoPorChoque >= 5 && b.costoPorChoque <= 20, `${dificultad}: ${b.costoPorChoque} m por choque`);
     assert.ok(b.acierto.minimo >= b.tramoPrimero);
     assert.ok(b.peorPerdidaTramo < b.acierto.minimo / 2, `${dificultad}: el peor tramo cuesta ${b.peorPerdidaTramo} m`);
-    assert.ok(b.likesMaximo < b.acierto.minimo, `${dificultad}: los likes alcanzables valen ${b.likesMaximo} m`);
+    assert.ok(b.likesMaximo < topeCarrera(b), `${dificultad}: los likes alcanzables valen ${b.likesMaximo} m`);
   }
 });
 

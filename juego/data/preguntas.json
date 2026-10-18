@@ -1,6 +1,6 @@
 {
   "titulo": "Caso Nude Project",
-  "nota": "Borrador redactado a partir del caso de la cátedra (docs/caso-nude-project.pdf): revisarlo en equipo antes de la clase. Las 6 principales cubren un tema cada una; las de \"reserva\" solo se usan si se juega con más de 6 preguntas.",
+  "nota": "Borrador redactado a partir del caso de la cátedra (docs/caso-nude-project.pdf): revisarlo en equipo antes de la clase. Las 6 principales cubren un tema cada una; las 4 de \"reserva\" completan las 8 que se juegan por defecto (2 de ellas, al azar) o más si se sube la cantidad; con 6, sale una por tema.",
   "preguntas": [
     {
       "id": 1,
@@ -85,6 +85,16 @@
       "opcionesCortas": ["Publicidad paga", "Multimarca", "Orgánica eficaz"],
       "correcta": 2,
       "explicacion": "Los resultados llegan sin grandes campañas pagas: el alcance viene del contenido propio (EGC), de lo que comparte la comunidad (UGC) y de la conversación que generan sus acciones. Por eso la confianza y la pertenencia valen más que la publicidad tradicional."
+    },
+    {
+      "id": 10,
+      "tema": "Marketing experiencial",
+      "reserva": true,
+      "pregunta": "Según el caso, los pop-ups y eventos físicos de Nude Project cumplen una doble función. ¿Cuál?",
+      "opciones": ["Liquidar stock y bajar costos", "Fidelizar a la comunidad y amplificar el alcance", "Reemplazar a la tienda online y a las redes"],
+      "opcionesCortas": ["Liquidar stock", "Fidelizar + alcance", "Reemplazar redes"],
+      "correcta": 1,
+      "explicacion": "Las experiencias físicas fidelizan a la comunidad existente y, al mismo tiempo, amplifican el alcance de la marca: cada una está pensada para ser fotografiable, compartible y deseable. Así Nude Project convierte el marketing en entretenimiento y la publicidad en cultura."
     }
   ]
 }

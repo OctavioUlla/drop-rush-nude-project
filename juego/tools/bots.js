@@ -287,7 +287,7 @@ if (esPrincipal(import.meta.url)) {
       'corte-min': { type: 'string', default: '2' },
       'corte-max': { type: 'string', default: '8' },
       empezar: { type: 'boolean', default: false },
-      preguntas: { type: 'string', default: '6' },
+      preguntas: { type: 'string', default: '8' },
       tramo: { type: 'string', default: '15' },
       pregunta: { type: 'string', default: '15' },
       polling: { type: 'boolean', default: false },

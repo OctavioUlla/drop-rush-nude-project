@@ -2,7 +2,7 @@
 
 Exposición del caso de éxito de Nude Project para la materia **Comercialización** (Licenciatura en Administración).
 
-- **Duración:** **22 minutos en total**: 15 de exposición + 7 del juego Drop Rush (la consigna pide entre 20 y 30).
+- **Duración:** **23 minutos en total**: 15 de exposición + 8 del juego Drop Rush (la consigna pide entre 20 y 30).
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
 - **Visual:** lanzamiento de producto en **un solo plano secuencia**: la cámara recorre una Nude House en miniatura estilo *clay* y la **sudadera 3D** viaja con ella por cada bloque (gira, cambia de color, se desarma en piezas con datos). Ver la [maqueta viva](../design-system/escena.html).
@@ -27,8 +27,8 @@ Cada punto de la consigna es un bloque; los separadores de bloque usan el tema *
 | 6 | **Objetivo comunicacional:** cuál es y con qué ejemplos se fundamenta | Punto 5 | 1,5 min |
 | 7 | **Desafíos:** autenticidad al crecer, sostenibilidad, dependencia de las redes, exclusividad vs. accesibilidad (se retoma la votación) | Cierre | 1,5 min |
 | | **Subtotal exposición** | | **15 min** |
-| 8 | **Drop Rush:** instrucciones (1 min), carrera con 6 preguntas (~3,5 min), repaso de errores y debate final (2,5 min) | Punto 6 (creatividad) | **7 min** |
-| | **Total** | | **22 min** |
+| 8 | **Drop Rush:** instrucciones (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min) | Punto 6 (creatividad) | **8 min** |
+| | **Total** | | **23 min** |
 
 > El punto 6 de la consigna (*presentar de forma creativa, con coherencia estética*) se cubre con el design system en toda la presentación y con el juego como cierre.
 

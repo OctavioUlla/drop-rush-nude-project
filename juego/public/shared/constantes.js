@@ -28,7 +28,7 @@ export const INVULNERABLE_CHOQUE = 1.5;
 /**
  * Metros extra que suma cada like. Hay muchos (como las monedas de Subway Surfers), así que cada uno
  * vale medio metro: aun juntando todos los que se pueden en la carrera (no se pueden tomar todos,
- * hay likes en más de un carril a la vez) suman menos que una respuesta correcta (sección 3.7).
+ * hay likes en más de un carril a la vez) suman menos que una respuesta correcta cada 6 preguntas (sección 3.7).
  */
 export const VALOR_LIKE = 0.5;
 

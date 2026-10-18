@@ -75,7 +75,7 @@ npm run bots -- --sala ABCD --bots 39 --desde 2      # o: entran a la sala del p
 | `--bots` | Cantidad de grupos simulados (40) |
 | `--desde` | Primer número de grupo (para mezclar bots con celulares reales, por ejemplo `--desde 11`) |
 | `--empezar` | El script hace de proyector: crea una sala, la arranca y al final pide el repaso |
-| `--preguntas`, `--tramo`, `--pregunta` | Largo de la partida (6, 15 s y 15 s) |
+| `--preguntas`, `--tramo`, `--pregunta` | Largo de la partida (8, 15 s y 15 s) |
 | `--cortes`, `--corte-min`, `--corte-max` | Microcortes por bot y su duración en segundos |
 | `--polling` | Fuerza *long-polling*, como si la red bloqueara WebSocket |
 
@@ -92,21 +92,23 @@ npm run balanceo -- --dificultad normal           # o caotico; --semillas 400 pa
 
 Corre cientos de tramos con la simulación real del corredor (`runner.js` + `track.js`) y dos jugadores extremos: uno que nunca choca y otro que se queda en el carril del medio sin saltar (choca con todo lo que aparece ahí). La diferencia es lo máximo que se puede perder por no saber esquivar, y se compara con lo que vale responder bien (sección 7). `npm test` comprueba las mismas reglas.
 
-| Con 6 preguntas | Fácil (por defecto) | Normal | Caótico |
+| Con 8 preguntas | Fácil (por defecto) | Normal | Caótico |
 |---|---|---|---|
-| Tramo completo (el primero / el más largo) | 142 / 169 m | 142 / 169 m | 142 / 169 m |
+| Tramo completo (el primero / el más largo) | 142 / 180 m | 142 / 180 m | 142 / 180 m |
 | Respuesta correcta | **150 a 250 m** | 150 a 250 m | 150 a 250 m |
-| Choques por tramo sin esquivar nada | 2,2 | 3,4 | 4,8 |
+| Choques por tramo sin esquivar nada | 2,2 | 3,4 | 4,9 |
 | Costo de cada choque | ~8 m | ~8 m | ~8 m |
-| Pérdida en **toda la carrera** sin esquivar nada | **116 m** | 175 m | 239 m |
+| Pérdida en **toda la carrera** sin esquivar nada | **158 m** | 237 m | 328 m |
 | Turbo durante un tramo | +57 m | +57 m | +57 m |
 | Cambio de algoritmo recibido | −6 m | −3 m | −2 m |
-| Likes de toda la carrera | ~28 m | ~31 m | ~31 m |
+| Likes de toda la carrera (sin buscarlos / todos los que se pueden) | ~49 / 157 m | ~53 / 168 m | ~55 / 160 m |
+
+Las reglas que miran **toda la carrera** (no esquivar nada, juntar todos los likes) se calibraron con 6 preguntas: con más preguntas hay más tramos, así que el tope crece en proporción y se comparan con **una respuesta correcta cada 6 preguntas** (con 8, 200 m).
 
 Conclusiones:
-- **En fácil, se cumplen todas las reglas**: una respuesta correcta vale más que cualquier tramo, cada choque cuesta ~8 m y un grupo que no esquiva **nada** en toda la carrera pierde menos que lo que vale **una** respuesta correcta.
-- En *normal* y *caótico* no esquivar nada cuesta entre 1 y 1,6 respuestas: siguen pesando más las preguntas (6 preguntas valen 900 a 1500 m), pero por eso *fácil* queda como dificultad por defecto.
-- El **impulso de emparejar** (+10 % al último cuarto) suma hasta ~180 m en toda la carrera: es a propósito, para que los de atrás no se desenganchen, y solo lo reciben mientras están en el último cuarto.
+- **En fácil, se cumplen todas las reglas**: una respuesta correcta vale más que cualquier tramo, cada choque cuesta ~8 m y un grupo que no esquiva **nada** en toda la carrera pierde 158 m, menos que el tope de 200 m (apenas más que **una** respuesta correcta, en una carrera de 8).
+- En *normal* y *caótico* no esquivar nada cuesta entre 1,6 y 2,2 respuestas: siguen pesando más las preguntas (8 preguntas valen 1200 a 2000 m), pero por eso *fácil* queda como dificultad por defecto.
+- El **impulso de emparejar** (+10 % al último cuarto) suma hasta ~235 m en toda la carrera: es a propósito, para que los de atrás no se desenganchen, y solo lo reciben mientras están en el último cuarto.
 - El **Cambio de algoritmo** molesta (vibración, cartel y obstáculos que salen del piso) pero cuesta pocos metros, porque los obstáculos extra nunca se ponen cerca de los que ya hay.
 
 ## Ensayo en el aula

@@ -1,6 +1,6 @@
 {
   "maxGrupos": 40,
-  "cantidadPreguntas": 6,
+  "cantidadPreguntas": 8,
   "ordenAleatorio": true,
   "mezclarOpciones": true,
   "tiempoPorDefecto": 15,

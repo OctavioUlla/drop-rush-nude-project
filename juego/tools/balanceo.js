@@ -12,7 +12,7 @@ import { TURBO, IMPULSO_EMPAREJAR, DURACION_ALGORITMO } from '../public/shared/p
 //   - "torpe": se queda en el carril del medio y no salta nunca (choca con todo lo que aparece ahí).
 // La diferencia entre los dos es lo máximo que se puede perder por no saber esquivar.
 //
-//   npm run balanceo                       (6 preguntas, dificultad fácil)
+//   npm run balanceo                       (8 preguntas, dificultad fácil)
 //   npm run balanceo -- --dificultad normal --semillas 400
 
 const PASO = 1 / PASOS_POR_SEGUNDO;
@@ -131,8 +131,18 @@ export function medirBalance({ config = CONFIG_POR_DEFECTO, dificultad = config.
   };
 }
 
+/** Las reglas de la carrera entera se calibraron con 6 preguntas: con más, el tope crece en proporción. */
+const PREGUNTAS_REFERENCIA = 6;
+
+/** Cuánto pueden valer, como máximo, los choques o los likes de toda la carrera: una respuesta cada 6 preguntas. */
+export function topeCarrera(b) {
+  return Math.round(b.acierto.minimo * Math.max(1, b.preguntas / PREGUNTAS_REFERENCIA) * 10) / 10;
+}
+
 /** Las reglas de la sección 7, como condiciones que se pueden comprobar (las usa el test). */
 export function reglasDeBalance(b) {
+  const tope = topeCarrera(b);
+  const respuestas = tope === b.acierto.minimo ? 'una respuesta correcta' : `una respuesta correcta cada ${PREGUNTAS_REFERENCIA} preguntas`;
   return [
     {
       regla: 'Una respuesta correcta (con el extra por rapidez a la mitad) vale más que el tramo más largo',
@@ -150,9 +160,9 @@ export function reglasDeBalance(b) {
       detalle: `${b.costoPorChoque} m por choque`,
     },
     {
-      regla: 'No esquivar nada en toda la carrera cuesta menos que una respuesta correcta',
-      ok: b.perdidaCarrera < b.acierto.minimo,
-      detalle: `${b.perdidaCarrera} m perdidos vs ${b.acierto.minimo} m`,
+      regla: `No esquivar nada en toda la carrera cuesta menos que ${respuestas}`,
+      ok: b.perdidaCarrera < tope,
+      detalle: `${b.perdidaCarrera} m perdidos vs ${tope} m`,
     },
     {
       regla: 'Una ventaja (turbo) vale menos que la respuesta que la dio',
@@ -165,9 +175,9 @@ export function reglasDeBalance(b) {
       detalle: `${b.algoritmo} m`,
     },
     {
-      regla: 'Juntar todos los likes que se pueden en la carrera vale menos que una respuesta correcta',
-      ok: b.likesMaximo < b.acierto.minimo,
-      detalle: `${b.likesAlcanzables} likes = ${b.likesMaximo} m vs ${b.acierto.minimo} m`,
+      regla: `Juntar todos los likes que se pueden en la carrera vale menos que ${respuestas}`,
+      ok: b.likesMaximo < tope,
+      detalle: `${b.likesAlcanzables} likes = ${b.likesMaximo} m vs ${tope} m`,
     },
   ];
 }
