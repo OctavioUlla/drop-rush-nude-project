@@ -1,5 +1,6 @@
-// Votación en vivo (PLANIFICACION, sección 2.3), del lado del proyector. Se abre en el bloque de la historia (tecla V)
-// y se retoma en los desafíos: el resultado inclina la balanza y queda en la diapositiva.
+// Votación en vivo (PLANIFICACION, sección 2.3), del lado del proyector. Se abre en el bloque de la historia (tecla V),
+// donde solo se ve cuántos grupos votaron, y el resultado se revela recién en los desafíos: inclina la balanza y las
+// barras aparecen en la diapositiva.
 // - En vivo: un voto por grupo desde el celular, que se puede cambiar mientras está abierta; el servidor manda el
 //   conteo (pres:votacion:conteo) y lo guarda aunque se recargue la página.
 // - Ensayo: sin servidor o sin celulares conectados, votan 40 grupos simulados.
@@ -11,13 +12,14 @@ const PESOS_ENSAYO = [0.55, 0.2, 0.25, 0.1];
 /**
  * @param {object} p
  * @param {{ id: string, pregunta: string, opciones: { texto: string, balanza?: number }[] }} p.datos
- * @param {HTMLElement[]} p.contenedores  cada [data-votacion] de las diapositivas
+ * @param {HTMLElement[]} p.contenedores  cada [data-votacion] de las diapositivas (las barras con el resultado)
+ * @param {HTMLElement[]} p.estados       cada [data-votacion-estado] (solo cuántos votaron, sin el resultado)
  * @param {HTMLElement} p.escenario       recibe data-votacion (sin-abrir | abierta | cerrada) y data-votos
  * @param {object|null} p.motor
  * @param {() => object|null} p.sala
  * @param {() => void} p.alCambiar
  */
-export function crearVotacion({ datos, contenedores, escenario, motor, sala, alCambiar = () => {} }) {
+export function crearVotacion({ datos, contenedores, estados = [], escenario, motor, sala, alCambiar = () => {} }) {
   const opciones = datos.opciones.map((o) => o.texto);
   const balanza = motor?.estaciones.find((e) => e.nombre === 'desafios');
   const e = { estado: 'sin-abrir', modo: 'ensayo', votos: opciones.map(() => 0), votaron: 0, conectados: 0 };
@@ -53,6 +55,13 @@ export function crearVotacion({ datos, contenedores, escenario, motor, sala, alC
       });
       c.querySelector('.np-votacion__estado').textContent = estado;
     }
+    // En la historia, sin porcentajes: el resultado se guarda para la balanza.
+    const prueba = e.modo === 'ensayo' ? ' (ensayo)' : '';
+    const avance =
+      e.estado === 'abierta'
+        ? `Votación en el celular · ${e.votaron}/${e.conectados} grupos votaron${prueba}`
+        : `Votación cerrada · ${e.votaron} ${e.votaron === 1 ? 'voto' : 'votos'} · resultado al final${prueba}`;
+    for (const el of estados) el.textContent = avance;
     // La balanza de los desafíos: de -1 (gana la accesibilidad) a 1 (gana la exclusividad).
     if (balanza) balanza.valor = e.votaron ? datos.opciones.reduce((s, o, i) => s + (o.balanza ?? 0) * e.votos[i], 0) / e.votaron : 0;
     alCambiar();

@@ -267,7 +267,7 @@ const etapaDe = (i) => (diapos[i].bloque === ultimoBloque ? 'juego' : 'presentac
 let hype = null, votacion = null;
 if ($('#hype')) hype = crearHype({ $, escenario, motor, sala: () => sala, alCambiar: avisar });
 const datosVotacion = imprimiendo ? null : await leerVotacion();
-if (datosVotacion) votacion = crearVotacion({ datos: datosVotacion, contenedores: [...document.querySelectorAll('[data-votacion]')], escenario, motor, sala: () => sala, alCambiar: avisar });
+if (datosVotacion) votacion = crearVotacion({ datos: datosVotacion, contenedores: [...document.querySelectorAll('[data-votacion]')], estados: [...document.querySelectorAll('[data-votacion-estado]')], escenario, motor, sala: () => sala, alCambiar: avisar });
 
 if (!imprimiendo) {
   abrirSala({ etapa: etapaDe(actual), nueva: params.has('nueva-sala') })

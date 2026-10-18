@@ -67,14 +67,14 @@
 **Pregunta sugerida (a confirmar con el contenido):** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
 
 **Cuándo.**
-- Se **abre** en el bloque de la historia y los drops, durante ~20 s, y las barras se llenan en vivo mientras se sigue hablando.
+- Se **abre** en el bloque de la historia y los drops, durante ~20 s, mientras se sigue hablando. El proyector solo muestra cuántos grupos votaron: el resultado se guarda.
 - Se **retoma** en el bloque de desafíos y en el debate final, junto al hype de apertura y al resultado del juego: *"El 70 % dijo que sí; al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera"*.
 
 **Detalles.**
 - Un voto por grupo, se puede cambiar mientras la votación está abierta.
 - Barras horizontales grandes (cacao sobre crema) con el porcentaje y la cantidad de votos; se ve cuántos grupos votaron (*"31/40"*).
 - La pregunta y las opciones se definen en [`datos/votacion.json`](datos/votacion.json), así se cambian sin tocar código; cada opción dice hacia dónde inclina la **balanza** de los desafíos (exclusividad, accesibilidad o nada).
-- En el proyector, las barras reemplazan a los hitos de la historia mientras se vota y quedan con el resultado (la más votada en mostaza); en los desafíos, el resultado aparece más chico debajo del texto y la balanza se inclina.
+- En la historia, debajo de los hitos, una línea dice cuántos grupos votaron (*"Votación abierta · 31/40 grupos votaron"*), sin porcentajes. El resultado se **revela en los desafíos**: las barras aparecen debajo del texto (la más votada en mostaza) y la balanza se inclina. El presentador lo ve antes en su ventana.
 
 ### 2.4 Feeds de EGC vs. UGC 📱📱
 
