@@ -105,7 +105,9 @@ export class Mundo {
       if (l.z < desde || l.z > hasta || i >= CAPACIDAD_LIKES) continue;
       if (l.tomado && l.z < distancia - 1.5) continue;
       const s = l.tomado ? Math.max(0.01, 1 - (distancia - l.z + 1.5) / 3) : 1;
-      pos.set(CARRILES[l.carril], l.y + Math.sin(tiempo * 4 + l.z) * 0.08 - l.hundido * 2 + (l.tomado ? 1 : 0), -l.z);
+      const x = l.xTomado ?? CARRILES[l.carril];
+      const y = l.yTomado ?? l.y;
+      pos.set(x, y + Math.sin(tiempo * 4 + l.z) * 0.08 - l.hundido * 2 + (l.tomado ? 1 : 0), -l.z);
       const cerca = l.z - distancia;
       if (iman && !l.tomado && !l.hundido && cerca < ALCANCE_IMAN && cerca > -1) {
         const t = (1 - Math.max(0, cerca) / ALCANCE_IMAN) ** 2;
