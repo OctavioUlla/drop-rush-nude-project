@@ -77,7 +77,7 @@ function llave(ctx, x, y, s, color) {
   for (const dx of [0.22, 0.38]) { ctx.beginPath(); ctx.moveTo(x + s * dx, y); ctx.lineTo(x + s * dx, y + s * 0.14); ctx.stroke(); }
 }
 
-// ---------- Ilustraciones de las publicaciones (contenido de prueba: la fase 3 trae los clips reales) ----------
+// ---------- Ilustraciones de las publicaciones (contenido de prueba, mientras no haya foto o clip real) ----------
 const artes = {
   dia1(ctx, w, h) { // vlog de Nueva York
     ctx.fillStyle = M.cacao; ctx.fillRect(0, 0, w, h);
@@ -124,7 +124,7 @@ const artes = {
     const tonos = [M.cacao, A.marino, M['cacao-suave'], A.bosque, M.cacao, A.ladrillo, M['cacao-suave']];
     tonos.forEach((c, i) => persona(ctx, w * (0.08 + i * 0.075), h * 0.66, w * (0.2 - i * 0.008), c));
     ctx.fillStyle = M.cacao; ctx.font = fuente(900, w * 0.2); ctx.textAlign = 'left'; espaciado(ctx, -w * 0.01);
-    ctx.fillText('6:00', w * 0.07, h * 0.82); ctx.font = fuente(800, w * 0.06); espaciado(ctx, 0); ctx.fillText('a. m. · apertura', w * 0.08, h * 0.88);
+    ctx.fillText('6:00', w * 0.07, h * 0.3); ctx.font = fuente(800, w * 0.06); espaciado(ctx, 0); ctx.fillText('a. m. · apertura', w * 0.08, h * 0.36);
   },
   llave(ctx, w, h) {
     ctx.fillStyle = A.bosque; ctx.fillRect(0, 0, w, h);
@@ -175,6 +175,7 @@ function outOfOffice(ctx, w, h, fondo = M.arena) {
 
 /** Interfaz de un video vertical (estilo Reels/TikTok) encima de la ilustración. */
 function interfazVideo(ctx, w, h, pub) {
+  espaciado(ctx, 0); // la ilustración puede haber dejado el interletrado de su título
   const g = ctx.createLinearGradient(0, h * 0.62, 0, h);
   g.addColorStop(0, 'rgba(46,25,20,0)'); g.addColorStop(1, 'rgba(46,25,20,.72)');
   ctx.fillStyle = g; ctx.fillRect(0, h * 0.62, w, h * 0.38);
@@ -183,12 +184,34 @@ function interfazVideo(ctx, w, h, pub) {
   ctx.font = fuenteTexto(500, w * 0.038); ctx.globalAlpha = 0.92;
   parrafo(ctx, pub.texto, w * 0.06, h * 0.925, w * 0.7, w * 0.048);
   ctx.globalAlpha = 1;
-  // Acciones a la derecha.
+  // Acciones a la derecha; la cifra (likes o vistas) va debajo de su ícono.
   const x = w * 0.9;
   ctx.fillStyle = M.crema;
-  corazon(ctx, x, h * 0.66, w * 0.08);
-  ctx.beginPath(); ctx.arc(x, h * 0.735, w * 0.035, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(x - w * 0.04, h * 0.81); ctx.lineTo(x + w * 0.04, h * 0.795); ctx.lineTo(x - w * 0.01, h * 0.83); ctx.fill();
+  if (pub.icono === 'vistas') { ctx.beginPath(); ctx.moveTo(x - w * 0.03, h * 0.64); ctx.lineTo(x + w * 0.045, h * 0.66); ctx.lineTo(x - w * 0.03, h * 0.68); ctx.fill(); }
+  else corazon(ctx, x, h * 0.66, w * 0.08);
+  if (pub.cifra) { ctx.textAlign = 'center'; ctx.font = fuente(800, w * 0.045); ctx.fillText(pub.cifra, x, h * 0.702); }
+  ctx.beginPath(); ctx.arc(x, h * 0.75, w * 0.035, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x - w * 0.04, h * 0.815); ctx.lineTo(x + w * 0.04, h * 0.8); ctx.lineTo(x - w * 0.01, h * 0.835); ctx.fill();
+}
+/** Foto o cuadro de video que cubre toda la pantalla (como object-fit: cover). */
+function cubrir(ctx, media, w, h) {
+  const mw = media.videoWidth || media.naturalWidth, mh = media.videoHeight || media.naturalHeight;
+  const k = Math.max(w / mw, h / mh);
+  ctx.drawImage(media, (w - mw * k) / 2, (h - mh * k) / 2, mw * k, mh * k);
+}
+/** Publicación sin foto ni ilustración: su texto en grande sobre cacao. */
+function sinArte(ctx, w, h, pub) {
+  ctx.fillStyle = M.cacao; ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = M.crema; ctx.textAlign = 'left'; ctx.font = fuente(900, w * 0.1); espaciado(ctx, -w * 0.004);
+  parrafo(ctx, pub.texto ?? '', w * 0.08, h * 0.3, w * 0.84, w * 0.11);
+  espaciado(ctx, 0);
+}
+/** Cartel de pausa arriba de la publicación (el presentador frenó el feed para comentarla). */
+function cartelPausa(ctx, w) {
+  ctx.fillStyle = 'rgba(46,25,20,.78)'; rect(ctx, w * 0.33, w * 0.14, w * 0.34, w * 0.085, w * 0.042); ctx.fill();
+  ctx.fillStyle = M.crema; ctx.fillRect(w * 0.375, w * 0.163, w * 0.014, w * 0.04); ctx.fillRect(w * 0.397, w * 0.163, w * 0.014, w * 0.04);
+  ctx.textAlign = 'left'; ctx.font = fuente(800, w * 0.036); espaciado(ctx, w * 0.002); ctx.fillText('PAUSADO', w * 0.43, w * 0.198);
+  espaciado(ctx, 0);
 }
 function barraEstado(ctx, w, tinta) {
   ctx.fillStyle = tinta; ctx.textAlign = 'left'; ctx.font = fuente(700, w * 0.04); espaciado(ctx, 0);
@@ -197,13 +220,17 @@ function barraEstado(ctx, w, tinta) {
   rect(ctx, w * 0.34, w * 0.035, w * 0.32, w * 0.06, w * 0.03); ctx.fillStyle = '#000'; ctx.fill(); // isla
 }
 
-/** Publicaciones de prueba de cada feed (la fase 3 las reemplaza por datos/feeds.json con los clips reales). */
+/**
+ * Publicaciones de prueba de cada feed. La presentación las reemplaza por presentacion/datos/feeds.json, con el
+ * mismo formato: { cuenta, texto, cifra, icono: 'like' | 'vistas', archivo (foto o clip), arte (ilustración de
+ * prueba si no hay archivo o no carga), claro (barra de estado en cacao, para fondos claros) }.
+ */
 export const publicaciones = {
   egc: [
     { cuenta: '@brunocasanovas', texto: 'Day 1 of making our brand known in the US', arte: 'dia1' },
     { cuenta: '@nudeproject', texto: 'House Rules: las reglas de la casa.', arte: 'reglas', claro: true },
     { cuenta: '@nudeproject.podcast', texto: 'Episodio 1: de 0 a 200.000 seguidores.', arte: 'podcast' },
-    { cuenta: '@nudeproject', texto: 'Out of Office: la campaña la protagoniza el equipo.', arte: 'oficina' },
+    { cuenta: '@nudeproject', texto: 'Out of Office: la campaña la protagoniza el equipo.', arte: 'oficina', cifra: '+500 k' },
   ],
   ugc: [
     { cuenta: '@cola.madrid', texto: 'Cola desde las 6 de la mañana para la apertura.', arte: 'cola', claro: true },
@@ -213,33 +240,92 @@ export const publicaciones = {
   ],
 };
 
+const esVideo = (archivo) => /\.(mp4|webm|mov|m4v)(\?|$)/i.test(archivo);
+/** Carga la foto o el clip de una publicación; listo() se llama cuando hay algo para dibujar. */
+function cargarMedia(archivo, listo) {
+  if (!archivo) return null;
+  if (esVideo(archivo)) {
+    const v = Object.assign(document.createElement('video'), { muted: true, loop: true, playsInline: true, preload: 'auto', crossOrigin: 'anonymous' });
+    v.addEventListener('loadeddata', () => { v.listo = true; listo(); }, { once: true });
+    v.addEventListener('error', () => console.warn(`Feed: no se pudo cargar ${archivo}; se usa la ilustración de prueba`));
+    v.src = archivo;
+    return v;
+  }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => { img.listo = true; listo(); };
+  img.onerror = () => console.warn(`Feed: no se pudo cargar ${archivo}; se usa la ilustración de prueba`);
+  img.src = archivo;
+  return img;
+}
+
 /**
  * Feed vertical que pasa solo: una publicación a pantalla completa cada `cada` segundos, con un desplazamiento
- * hacia arriba. Devuelve la textura y avanzar(t) para llamar en cada cuadro (solo redibuja durante el pase).
+ * hacia arriba. Cada publicación muestra su foto o clip (en silencio y en bucle) o, si no tiene, su ilustración.
+ * Devuelve la textura con:
+ * - avanzar(dt): en cada cuadro, con la estación en pantalla. Solo redibuja durante el pase o si hay un clip.
+ * - dormir(): con la estación fuera de cuadro (frena los clips).
+ * - pausar(si): el presentador frena el feed para comentar la publicación visible (si estaba pasando, termina el pase).
  */
-export function feed(tipo, { ancho = 540, alto = 1134, cada = 4, pase = 0.7, desfase = 0 } = {}) {
-  const pubs = publicaciones[tipo];
-  const capa = (pub) => lienzo(ancho, alto, (ctx, w, h) => { artes[pub.arte](ctx, w, h); interfazVideo(ctx, w, h, pub); });
-  const capas = pubs.map(capa); // cada publicación se dibuja una vez y el feed las compone
-  let estado = -1;
+export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada = 4, pase = 0.7, desfase = 0 } = {}) {
+  if (!pubs?.length) pubs = publicaciones[tipo];
+  let estado = null;
+  const capas = pubs.map((pub) => {
+    let t = null; // lienzo() ya dibuja una vez al crearla, antes de que t exista
+    t = lienzo(ancho, alto, (ctx, w, h) => {
+      if (t?.media?.listo) cubrir(ctx, t.media, w, h);
+      else if (artes[pub.arte]) artes[pub.arte](ctx, w, h);
+      else sinArte(ctx, w, h, pub);
+      interfazVideo(ctx, w, h, pub);
+    });
+    t.media = cargarMedia(pub.archivo, () => { t.redibujar(); estado = null; });
+    return t;
+  }); // cada publicación se dibuja una vez y el feed las compone
+  const n = capas.length;
+  let reloj = desfase, pausado = false, cuadro = 0;
   const tex = lienzo(ancho, alto, (ctx, w, h, i = 0, u = 0) => {
-    const a = capas[i % capas.length].image, b = capas[(i + 1) % capas.length].image;
+    const a = capas[i % n].image, b = capas[(i + 1) % n].image;
     const y = -h * u;
     ctx.drawImage(a, 0, y);
     if (u > 0) ctx.drawImage(b, 0, y + h);
-    barraEstado(ctx, w, pubs[(u > 0.5 ? i + 1 : i) % pubs.length].claro ? M.cacao : M.crema); // la barra de estado no se desplaza
+    barraEstado(ctx, w, pubs[(u > 0.5 ? i + 1 : i) % n].claro ? M.cacao : M.crema); // la barra de estado no se desplaza
+    if (pausado && u === 0) cartelPausa(ctx, w);
   });
-  fuentesListas.then(() => { estado = -1; });
+  fuentesListas.then(() => { estado = null; });
   const suave = (x) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2);
-  tex.avanzar = (t) => {
-    const ciclo = Math.max(0, t + desfase) / cada;
+  const fase = () => {
+    const ciclo = Math.max(0, reloj) / cada;
     const i = Math.floor(ciclo);
-    const u = THREE.MathUtils.clamp((ciclo - i - (1 - pase / cada)) / (pase / cada), 0, 1);
-    const clave = i * 1000 + Math.round(suave(u) * 400);
+    return { i, u: THREE.MathUtils.clamp((ciclo - i - (1 - pase / cada)) / (pase / cada), 0, 1) };
+  };
+  tex.avanzar = (dt) => {
+    let { i, u } = fase();
+    // En pausa el reloj solo corre para terminar un pase empezado; la publicación queda quieta en pantalla.
+    if (!pausado || u > 0) {
+      reloj += dt;
+      const f = fase();
+      if (pausado && f.i > i) reloj = (i + 1) * cada; // el pase terminó: se queda en la publicación nueva
+      ({ i, u } = fase());
+    }
+    // Los clips visibles corren (a ~30 cuadros por segundo) y los demás se frenan.
+    const visibles = u > 0 ? [i % n, (i + 1) % n] : [i % n];
+    let clip = false;
+    capas.forEach((c, k) => {
+      const v = c.media;
+      if (!v?.listo || !('play' in v)) return;
+      if (visibles.includes(k)) {
+        if (v.paused) v.play().catch(() => {});
+        clip = true;
+      } else if (!v.paused) v.pause();
+    });
+    if (clip) { cuadro += dt; if (cuadro >= 1 / 30) { cuadro = 0; for (const k of visibles) if (capas[k].media?.listo) capas[k].redibujar(); estado = null; } }
+    const clave = `${i}:${Math.round(suave(u) * 400)}:${pausado}`;
     if (clave === estado) return;
     estado = clave;
     tex.redibujar(i, suave(u));
   };
+  tex.dormir = () => { for (const c of capas) if (c.media && 'pause' in c.media && !c.media.paused) c.media.pause(); };
+  tex.pausar = (si = !pausado) => { pausado = si; estado = null; return pausado; };
   return tex;
 }
 

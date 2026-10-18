@@ -47,14 +47,18 @@
 
 ### 2.2 La cola de la tienda como barra de progreso 🚶🚶🚶🏬
 
-**Qué es.** Una franja fina al pie de cada diapositiva: una **fila de personitas** que avanza hacia la puerta de la **Nude House** a medida que pasan los bloques.
+**Qué es.** Abajo a la derecha, junto al número de bloque: una **fila de personas** que espera en la puerta de la **Nude House**. Es la barra de progreso de la presentación, contada como una cola de verdad.
 
-**Detalles.**
-- Siluetas planas en cacao (o crema sobre fondo cacao). Una de ellas, la que "somos nosotros", va en mostaza.
-- Avanza **por bloque**, no por diapositiva, para que el salto se note. Muestra discretamente el número de bloque.
-- **Opcional:** la cola la forman los **grupos conectados**, cada personita con el color de su grupo (los 40 colores del design system). Así la clase se ve a sí misma esperando.
-- En el **último bloque** la fila llega a la puerta, la puerta se abre y aparece el cartel **QUEDA 1**: es la transición directa a Drop Rush.
-- No compite con el contenido: altura máxima ~5 % de la diapositiva y sin animación mientras se habla, solo al cambiar de bloque.
+**Cómo se lee.**
+- Delante nuestro (la persona en **mostaza**, con una marca arriba) hay **tantas personas como bloques faltan**, y el texto lo dice: *"Cola del drop · 6 personas adelante"*. No hace falta explicarla.
+- En cada **bloque** (no en cada diapositiva) la puerta de la tienda se abre con su luz cálida, **entra la primera** y la fila da un paso: la primera arranca enseguida y las de atrás la siguen escalonadas, con las piernas en movimiento. Para atrás, la última que entró sale.
+- Detrás nuestro la fila sigue y se pierde a la izquierda: se ve larga sin ocupar más lugar.
+- La tienda es una fachada con el cartel *Nude® Project*, la puerta y una vidriera con **la última sudadera**.
+- En el **último bloque** nos toca: la puerta queda abierta, la luz cae sobre la vereda, el texto pasa a *"Puerta abierta · Nos toca"* y aparece el cartel **QUEDA 1** latiendo. Es la transición directa a Drop Rush.
+- Las personas tienen tonos de la tinta del tema (cacao sobre crema, crema sobre cacao), así se lee como gente distinta sin sumar colores; un velo del color del tema al pie asegura el contraste aunque el piso de la escena sea claro u oscuro.
+- **Opcional (fase 4):** la cola la forman los **grupos conectados**, cada persona con el color de su grupo (`--g`, los 40 colores del design system). Así la clase se ve a sí misma esperando.
+- No compite con el contenido: ~8 % de alto, al pie, y **nada se mueve mientras se habla**: solo camina al cambiar de bloque.
+- Técnica: el componente `np-cola` del design system; [`design-system/cola.js`](../design-system/cola.js) arma el HTML y `--bloque` mueve la fila con CSS.
 
 ### 2.3 Una votación en vivo 🗳️
 
@@ -107,7 +111,7 @@
 | **Tipografía sándwich** | En la portada, *DROP 001* gigante va **detrás** de la sudadera y el título va **delante**. Las letras entran de a una. |
 | **Luz de cine** | Luz cálida de estudio con sombras suaves reales, un **foco con su haz visible y polvo flotando** en la portada y en la vidriera, niebla, viñeta y grano de película. |
 | **Texto coreografiado** | El texto de la estación que se va sube y desaparece al arrancar la cámara; el nuevo entra línea por línea cuando la cámara ya está llegando. |
-| **Interfaz de marca** | Arriba, el logo, el **índice de los 9 bloques** (el actual subrayado, se puede hacer clic) y *Drop 001*. Abajo, el número de bloque, una barra de avance y la **cola de la tienda**. |
+| **Interfaz de marca** | Arriba, el logo, el **índice de los 9 bloques** (el actual subrayado, se puede hacer clic) y *Drop 001*. Abajo, el número de bloque y la **cola de la tienda**, que hace de barra de avance. |
 | **Cargador** | Antes de empezar, *Preparando el drop* cuenta del 0 al 100 % mientras se compila la escena, y se abre como un telón. |
 
 ### 3.2 La sudadera, por código
@@ -126,7 +130,7 @@ Se arma en Three.js con piezas redondeadas (ver [`escena/sudadera.js`](../design
 |---|---|---|
 | **0. Portada + hype colectivo** | Estudio cacao. Pedestal bajo un foco con su haz y polvo; sudaderas crema, arena y piedra flotan alrededor; *DROP 001* gigante detrás. Al terminar el cargador, la sudadera **cae al pedestal con un rebote**. En el hype: en la cuenta regresiva la luz se apaga y la sudadera sube fuera de cuadro; mientras se llena el medidor, el foco vuelve y la sudadera baja en proporción al hype; al 100 % cae entre papelitos con los colores de los grupos. | Cacao |
 | **1. La historia** | **La habitación**: ventana con luz, cama y una pila de cajas de envío. La sudadera levita sobre la caja abierta del pedido #0001 (solapas abiertas, papel de seda, etiqueta de envío y una luz cálida que sale de adentro). En la segunda diapositiva, los hitos 600 € → 26 M€ en la columna del texto. | Crema |
-| **2. EGC vs. UGC** | Dos **celulares gigantes** en su soporte, con feeds verticales que pasan solos (contenido de prueba hasta la fase 3) y una etiqueta debajo de cada uno; la sudadera, en el centro sobre un pedestal, gira hacia uno y otro. | Arena |
+| **2. EGC vs. UGC** | Dos **celulares gigantes** en su soporte, con feeds verticales que pasan solos (publicaciones de `datos/feeds.json`, `F` los pausa) y una etiqueta debajo de cada uno; la sudadera, en el centro sobre un pedestal, gira hacia uno y otro. | Arena |
 | **3. Marketing viral** | Una **pared de 24 celulares** con la publicación de *Out of Office* y su contador de likes, y **corazones *clay*** que brotan de las pantallas como likes en vivo. La prenda se corre hacia el texto y tapa apenas una esquina de la pared. En el texto, la cifra cuenta hasta +500.000. | Rosa |
 | **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón con el neón *Nude House*, piso de madera, alfombra, perchero con sudaderas (cada una en su percha), estante con vinilos y tocadiscos, planta y lámpara de pie. La sudadera cuelga de frente en un perchero de exhibición: la percha sale por el escote y el gancho abraza la barra. | Bosque |
 | **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una **etiqueta flotante** con un dato. En la segunda diapositiva la cámara se corre a un **gráfico de barras hecho con pilas de sudaderas dobladas** (100 mil seguidores cada una, 2024 contra hoy) y la sudadera, armada, corona la más alta. | Marino |
@@ -228,16 +232,14 @@ presentacion/
 ├── vendor/              # three.js guardado localmente (npm run vendor:presentacion en juego/); GSAP, si se suma
 ├── interactivo/
 │   ├── hype.js          # Hype colectivo (proyector)
-│   ├── votacion.js      # Votación en vivo (proyector)
-│   ├── cola.js          # Cola de la tienda / barra de progreso
-│   └── feeds.js         # Feeds EGC vs. UGC
+│   └── votacion.js      # Votación en vivo (proyector)
 ├── datos/
 │   ├── votacion.json    # Pregunta y opciones
-│   └── feeds.json       # Publicaciones de cada feed (archivo, cuenta, cifra)
-├── media/               # Fotos y clips de video comprimidos
+│   └── feeds.json       # Publicaciones de cada feed (cuenta, texto, cifra, archivo)
+├── media/               # Fotos y clips de video comprimidos (ver media/README.md)
 └── renders/             # Imágenes pre-renderizadas de cada encuadre (sin WebGL, PDF y miniaturas del presentador)
 ```
-La escena 3D **no se copia**: la presentación importa [`design-system/escena/`](../design-system/escena/) (motor, sudadera y las 9 estaciones), así la maqueta y la presentación nunca se separan.
+La escena 3D **no se copia**: la presentación importa [`design-system/escena/`](../design-system/escena/) (motor, sudadera, las 9 estaciones y los feeds de los celulares, que reciben `feeds.json`) y [`design-system/cola.js`](../design-system/cola.js), así la maqueta y la presentación nunca se separan.
 
 Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el hype y la votación.
 
@@ -292,8 +294,9 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 - [x] Imágenes pre-renderizadas de respaldo (`renders/`, `npm run renders:presentacion`): sin WebGL, en el PDF y en las miniaturas del modo presentador
 
 ### Fase 3: Interacciones sin servidor
-- [ ] Cola de la tienda (avance por bloque y apertura de la puerta)
-- [ ] Feeds EGC vs. UGC con contenido de prueba y `feeds.json`
+- [x] Cola de la tienda rediseñada: fila que espera en la puerta de la Nude House, *"N personas adelante"*, una persona entra por bloque (la puerta se abre y la fila camina escalonada), y en el último bloque la puerta queda abierta con *Queda 1* ([`design-system/cola.js`](../design-system/cola.js) y `np-cola`)
+- [x] Feeds EGC vs. UGC desde [`datos/feeds.json`](datos/feeds.json): cuenta, texto, cifra (likes o vistas), foto o clip (en silencio, en bucle y solo mientras se ve) y la ilustración de prueba como respaldo si falta el archivo
+- [x] Tecla `F`: pausa los dos feeds para comentar una publicación (cartel *Pausado* en los celulares y aviso en el modo presentador)
 
 ### Fase 4: Interacciones con servidor
 *Depende de la Fase 1 del juego: salas, grupos, tokens y sincronización de reloj.*

@@ -137,13 +137,9 @@
       <span class="np-interfaz__drop">Drop 001 · 2026</span>
     </div>
     <div class="np-interfaz__abajo">
-      <div class="np-interfaz__contador"><b id="numero">00</b><span>/ 08</span><span class="np-interfaz__barra" id="barra"></span></div>
+      <div class="np-interfaz__contador"><b id="numero">00</b><span>/ 08</span></div>
       <span class="np-interfaz__pista">← → para recorrer</span>
-      <div class="np-cola" id="cola" style="--avance: 0">
-        <div class="np-cola__fila"><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona np-cola__persona--nosotros"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span></div>
-        <span class="np-cola__bloque" id="bloque">00</span>
-        <div class="np-cola__puerta" id="puerta"></div>
-      </div>
+      <div class="np-cola" id="cola"></div>
     </div>
   </div>
 
@@ -164,6 +160,7 @@
 <script type="module">
   import { iniciar } from './escena/escena.js';
   import { tokens } from './tokens.js';
+  import { crearCola } from './cola.js';
 
   const $ = (s, el = document) => el.querySelector(s);
   const escenario = $('#escenario');
@@ -185,6 +182,7 @@
   }
   window.escenaLista = true;
 
+  const cola = crearCola($('#cola'), { bloques: nombres.length });
   $('#menu').innerHTML = nombres.map((n, i) => `<li><button data-i="${i}"><b>${dosDigitos(i)}</b>${n}</button></li>`).join('');
   $('#menu').addEventListener('click', (ev) => { const b = ev.target.closest('button'); if (b) motor.ir(Number(b.dataset.i)); });
 
@@ -201,10 +199,7 @@
     capas.forEach((c, k) => c.classList.toggle('np-diapo--activa', k === i));
     gigantes.forEach((g) => { g.classList.remove('np-gigante--sale'); g.classList.toggle('np-gigante--activa', Number(g.dataset.estacion) === i); });
     $('#numero').textContent = dosDigitos(i);
-    $('#bloque').textContent = dosDigitos(i);
-    $('#barra').style.setProperty('--avance', i / (nombres.length - 1));
-    $('#cola').style.setProperty('--avance', i / (nombres.length - 1));
-    $('#puerta').classList.toggle('np-cola__puerta--abierta', i === nombres.length - 1);
+    cola.ir(i);
     document.querySelectorAll('#menu button').forEach((b, k) => b.toggleAttribute('aria-current', k === i));
   }
   function llegar(i) {

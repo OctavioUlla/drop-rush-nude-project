@@ -30,12 +30,15 @@ npm run dev
 | `P` | Modo presentador |
 | `B` (o `.` del control) | Pantalla en cacao (pausa) |
 | `H` | Hype colectivo: cuenta regresiva, medidor y drop (ensayo sin celulares hasta la fase 4; con el medidor corriendo, lo completa) |
+| `F` | Pausar o reanudar los feeds de EGC vs. UGC (para comentar una publicación) |
 | `M` | Medidor de fps |
 
 - `#3` en la URL abre directo en la diapositiva 3.
 - `?medir` hace un recorrido de prueba por las 9 estaciones y muestra los fps; `?escala=1` baja la resolución interna si la notebook no llega a 60 fps.
 - `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página, sobre la imagen pre-renderizada de su escena.
 - `renders/` guarda esas imágenes (una por encuadre): también se ven si la notebook no tiene WebGL y como miniaturas del modo presentador. Después de cambiar la escena, `npm run renders:presentacion` en `juego/` las vuelve a generar (necesita Playwright).
+- Las publicaciones de los feeds de EGC vs. UGC están en [`datos/feeds.json`](datos/feeds.json); las fotos y los clips van en [`media/`](media/README.md). Si un archivo falta, se ve la ilustración de prueba.
+- La **cola de la tienda** (abajo a la derecha) es la barra de progreso: *"N personas adelante"* = bloques que faltan. En cada bloque entra una persona; en el último nos toca y aparece *Queda 1*.
 - Las diapositivas están en [`index.html`](index.html): cada `<section data-escena>` es una diapositiva, con sus notas en `<aside class="notas">`.
 
 ---
