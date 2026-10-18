@@ -43,7 +43,7 @@ function fachada() {
 function cola() {
   const partes = [];
   for (let i = 0; i < 6; i++) {
-    const g = fan();
+    const g = fan({ simple: true });
     g.rotateY(Math.PI / 2 + (i % 2 ? 0.2 : -0.15)); // de costado, mirando hacia la puerta
     g.translate(-2.2 - i * 0.95, 0.2, 1.4 + (i % 2) * 0.25);
     partes.push(g);
