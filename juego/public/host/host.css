@@ -242,3 +242,24 @@ th, td { padding: var(--np-espacio-1) var(--np-espacio-2); border-bottom: var(--
 .aviso--sale { opacity: 0; transition: opacity 0.4s; }
 @keyframes aviso-entra { from { transform: translateX(-1.5rem); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .aviso { animation: none; } }
+
+/* ---------- Instrucciones (entre el lobby y la cuenta regresiva) ---------- */
+.tutorial { display: flex; flex-direction: column; gap: var(--np-espacio-4); padding: var(--np-espacio-4) var(--np-espacio-7); }
+.tutorial__cabecera > *, .tutorial__pie > * { margin: 0; }
+.tutorial__titulo { margin: var(--np-espacio-2) 0 0; font: var(--np-peso-black) var(--np-texto-3xl) / 1.05 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+.tutorial__pasos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--np-espacio-3); flex: 1; align-content: start; }
+.tutorial__paso { display: flex; flex-direction: column; gap: var(--np-espacio-2); font-size: var(--np-texto-lg); line-height: 1.35; }
+.tutorial__paso[hidden] { display: none; }
+.tutorial__paso > * { margin: 0; }
+.tutorial__paso h2 { font: var(--np-peso-bold) var(--np-texto-2xl) / 1.1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); }
+.tutorial__icono { margin-right: var(--np-espacio-1); }
+.tutorial__lista { margin: 0; padding-left: 1.1em; display: grid; gap: var(--np-espacio-1); font-size: var(--np-texto-base); }
+.tutorial__pie { display: flex; align-items: center; justify-content: space-between; gap: var(--np-espacio-4); flex-wrap: wrap; }
+.tutorial__resumen { font: var(--np-peso-bold) var(--np-texto-lg) / 1.3 var(--np-fuente-display); color: var(--np-tinta-suave); }
+.tutorial__acciones { display: flex; gap: var(--np-espacio-3); margin-left: auto; }
+.tutorial__acciones .np-boton { white-space: nowrap; }
+@media (max-width: 760px) {
+  .tutorial { padding: var(--np-espacio-5) var(--np-espacio-4); }
+  .tutorial__titulo { font-size: var(--np-texto-3xl); }
+  .tutorial__pasos { grid-template-columns: 1fr; }
+}

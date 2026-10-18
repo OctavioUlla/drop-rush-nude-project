@@ -66,6 +66,49 @@
     </section>
   </main>
 
+  <!-- Instrucciones: después del lobby y antes de la cuenta regresiva, cómo se juega. -->
+  <main id="pantalla-tutorial" class="pantalla tutorial" hidden>
+    <header class="tutorial__cabecera">
+      <p class="np-etiqueta">Cómo se juega</p>
+      <h1 class="tutorial__titulo">Queda una sola sudadera. Llegá primero a la tienda.</h1>
+    </header>
+    <ol class="tutorial__pasos">
+      <li class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">👆</span> Moverse</h2>
+        <p>El fan corre solo. Deslizá a la <b>izquierda o derecha</b> (o tocá ese lado) para cambiar de carril y <b>hacia arriba para saltar</b>.</p>
+      </li>
+      <li class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">🚧</span> Obstáculos</h2>
+        <p>Las vallas, cajas y baches son <b>bajos: saltalos</b>. Los fans, bots y camiones son <b>altos: cambiá de carril</b>. Chocar te frena.</p>
+      </li>
+      <li class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">❤️</span> Likes</h2>
+        <p>Juntalos en el camino: cada uno suma un poquito de distancia. Pero las preguntas valen mucho más.</p>
+      </li>
+      <li class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">👀</span> Preguntas</h2>
+        <p>Cuando el celular avise, <b>mirá el proyector</b>. Vienen 3 arcos (A, B, C): ponete en el carril de tu respuesta. <b>Acertar rápido</b> da más metros; errar te hace arrancar lento.</p>
+      </li>
+      <li class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">⚡</span> Ventajas</h2>
+        <p>Cada acierto te da una de estas para el tramo que sigue:</p>
+        <ul id="tutorial-ventajas" class="tutorial__lista"></ul>
+      </li>
+      <li id="tutorial-poderes-paso" class="np-tarjeta tutorial__paso">
+        <h2><span class="tutorial__icono" aria-hidden="true">🔥</span> Rachas y poderes</h2>
+        <p id="tutorial-racha">Con aciertos seguidos ganás un poder. Se guarda uno a la vez y se usa con el botón del celular:</p>
+        <ul id="tutorial-poderes" class="tutorial__lista"></ul>
+      </li>
+    </ol>
+    <footer class="tutorial__pie">
+      <p id="tutorial-resumen" class="tutorial__resumen"></p>
+      <div class="tutorial__acciones">
+        <button id="btn-tutorial-volver" class="np-boton np-boton--secundario">← Lobby</button>
+        <button id="btn-arrancar" class="np-boton np-boton--acento np-boton--grande">¡Arrancar! →</button>
+      </div>
+    </footer>
+  </main>
+
   <!-- Carrera: mapa en vivo (o la pregunta, mientras corre) y ranking de hasta 40 grupos. -->
   <main id="pantalla-carrera" class="pantalla carrera" hidden>
     <section id="mapa" class="mapa" aria-label="Mapa de la carrera">
