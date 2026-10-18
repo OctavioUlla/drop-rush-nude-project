@@ -17,7 +17,9 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 ```
 ├── README.md
 ├── docs/
-│   └── caso-nude-project.pdf   # Caso y consigna provistos por la cátedra
+│   ├── caso-nude-project.pdf   # Caso y consigna provistos por la cátedra
+│   ├── presentacion-nude-project.pdf  # Diapositivas para enviar a la cátedra (generado)
+│   └── guion-nude-project.pdf  # Guion de los oradores para enviar a la cátedra (generado)
 ├── presentacion/
 │   ├── README.md               # Estructura, tiempos y diapositivas tipo
 │   └── PLANIFICACION.md        # Plan de la presentación interactiva en HTML

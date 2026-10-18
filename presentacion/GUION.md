@@ -35,7 +35,7 @@ Se reparte por **bloques enteros**: nadie corta un bloque al medio y los cambios
 - **Por qué E habla menos en la exposición**: conduce los 8 minutos de Drop Rush (instrucciones, carrera, repaso y debate), que no están escritos y son la parte más exigente. Hace el puente del bloque 7 al juego sin traspaso.
 - **C es el que más texto tiene** (~470 palabras en 4:00, unas 118 por minuto): entra en su tiempo, pero es el primero a cronometrar. No se puede aliviar sin cortar un bloque: los bloques 2 a 5 son los cuatro más largos y están seguidos.
 - **La notebook la maneja alguien fijo que no está hablando**: así el orador mira a la clase y no al teclado. En los bloques 0 a 6, **E** (todavía no habla) pasa las diapositivas y toca `H` (hype), `V` (votación, dos veces) y `F` (frenar los feeds) cuando el orador lo pide o lo marca el guion. Desde el bloque 7, **A** toma la notebook: pasa al juego y maneja los controles del presentador (`P` pausar, `S` saltar, `F` terminar) y libera los grupos que se queden sin celular (tocando su número en el lobby o su ficha en el ranking), cuando B se lo avisa.
-- Si entra [#42](https://github.com/OctavioUlla/drop-rush-nude-project/issues/42) (fotos de los grupos), la tecla extra del bloque 2 también la toca E.
+- La tecla `U` del bloque 2 (las fotos de los grupos, [#42](https://github.com/OctavioUlla/drop-rush-nude-project/issues/42)) también la toca E.
 - En el modo presentador, cada diapositiva muestra el orador del bloque y, en la última del bloque, a quién le pasa la palabra (`data-orador` en [`index.html`](index.html)).
 
 ---

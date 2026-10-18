@@ -41,6 +41,7 @@ npm run dev
 - `#3` en la URL abre directo en la diapositiva 3.
 - `?medir` hace un recorrido de prueba por las 9 estaciones y muestra los fps; `?escala=1` baja la resolución interna si la notebook no llega a 60 fps.
 - `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página, sobre la imagen pre-renderizada de su escena.
+- **PDFs para la cátedra:** `npm run pdf:presentacion` (en `juego/`, necesita Playwright) genera [`docs/presentacion-nude-project.pdf`](../docs/presentacion-nude-project.pdf) (las 13 diapositivas, una por página) y [`docs/guion-nude-project.pdf`](../docs/guion-nude-project.pdf) (el [guion](GUION.md) de los oradores, sin los pendientes). Volver a generarlos si cambian las diapositivas o el guion (por ejemplo, al anotar los nombres de los oradores).
 - `renders/` guarda esas imágenes (una por encuadre): también se ven si la notebook no tiene WebGL y como miniaturas del modo presentador. Después de cambiar la escena, `npm run renders:presentacion` en `juego/` las vuelve a generar (necesita Playwright).
 - Las publicaciones de los feeds de EGC vs. UGC están en [`datos/feeds.json`](datos/feeds.json); las fotos y los clips van en [`media/`](media/README.md). Si un archivo falta, se ve la ilustración de prueba.
 - La **cola de la tienda** (abajo a la derecha) es la barra de progreso: *"N personas adelante"* = bloques que faltan. En cada bloque entra una persona; en el último nos toca y aparece *Queda 1*. La forman los grupos conectados: cada persona toma el color de su grupo.
