@@ -48,7 +48,8 @@
         </div>
         <!-- Ingreso de los celulares: el QR abre /play/ con la sala ya elegida (la misma del juego). -->
         <div class="ingreso np-capa__entra portada__qr">
-          <img class="ingreso__qr" id="qr" alt="QR para entrar desde el celular">
+          <!-- Tocarlo (o la tecla Q) lo muestra a pantalla completa, para el fondo del aula. -->
+          <button class="ingreso__agrandar" id="qr-agrandar" title="Agrandar el QR (Q)"><img class="ingreso__qr" id="qr" alt="QR para entrar desde el celular"></button>
           <div class="ingreso__texto">
             <span class="np-etiqueta">Escaneá y elegí tu grupo</span>
             <b class="ingreso__url" id="sala-url"></b>
@@ -69,6 +70,7 @@
       </div>
       <aside class="notas">
         <p><em>Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.</em></p>
+        <p><em><kbd>Q</kbd> (o tocar el QR) lo agranda a pantalla completa para el fondo del aula; <kbd>Q</kbd> o <kbd>Esc</kbd> lo cierra. Sirve en cualquier diapositiva para los que llegan tarde.</em></p>
         <p>“Antes de arrancar: escaneen el QR y elijan el número de su grupo. Un celular por grupo.”</p>
         <p><em>Con el contador alto, <kbd>H</kbd>: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal. Si a los ~25 s no se llenó, <kbd>H</kbd> otra vez lo completa. Sin celulares conectados (o sin servidor), <kbd>H</kbd> hace un ensayo con 40 grupos simulados.</em></p>
         <p>“Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo.”</p>
@@ -304,6 +306,19 @@
       <div class="np-interfaz__contador"><b id="numero">00</b><span id="de">/ 08</span></div>
       <span class="np-interfaz__pista" id="pista">← → recorrer · P presentador</span>
       <div class="np-cola" id="cola"></div>
+    </div>
+  </div>
+
+  <!-- Tecla Q (o tocar el QR chico): el QR a pantalla completa, para que se pueda escanear desde el fondo del aula y
+       para los que llegan tarde en cualquier diapositiva. Se cierra con Q, Esc, un clic o al cambiar de diapositiva. -->
+  <div class="qr-grande" id="qr-grande" data-np-tema="cacao" aria-hidden="true">
+    <img class="qr-grande__codigo" id="qr-grande-img" alt="QR para entrar desde el celular">
+    <div class="qr-grande__texto">
+      <span class="np-etiqueta">Escaneá con la cámara y elegí tu grupo</span>
+      <p class="qr-grande__titulo">Entrá al drop</p>
+      <p class="qr-grande__sin-camara">¿Sin cámara? Entrá a <b id="qr-grande-url"></b> y escribí</p>
+      <p class="qr-grande__sala" data-sala="codigo">—</p>
+      <p class="qr-grande__cola"><b data-sala="conectados"></b> grupos en la cola</p>
     </div>
   </div>
 

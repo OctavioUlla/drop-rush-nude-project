@@ -31,8 +31,10 @@ body { display: grid; place-items: center; }
 
 /* ============ Ingreso de los celulares (portada): QR, dirección, sala y grupos en la cola ============ */
 .ingreso { display: flex; align-items: flex-end; gap: 1.4cqw; }
-.ingreso__qr { display: none; width: 9.5cqw; height: 9.5cqw; image-rendering: pixelated; }
-[data-servidor="conectado"] .ingreso__qr { display: block; }
+.ingreso__agrandar { all: unset; display: none; pointer-events: auto; cursor: zoom-in; }
+[data-servidor="conectado"] .ingreso__agrandar { display: block; }
+.ingreso__agrandar:focus-visible { outline: 2px solid var(--np-acento-mostaza); outline-offset: 0.4cqw; }
+.ingreso__qr { display: block; width: 9.5cqw; height: 9.5cqw; image-rendering: pixelated; }
 .ingreso__texto { display: grid; gap: 0.55cqw; justify-items: start; max-width: 19cqw; }
 .np-capa .ingreso .np-etiqueta { font-size: 0.85cqw; }
 .ingreso__url { display: none; font: var(--np-peso-bold) 1.35cqw / 1.1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); }
@@ -97,6 +99,26 @@ body { display: grid; place-items: center; }
 
 /* ?render: solo la escena 3D (y sus etiquetas), para las imágenes de respaldo. */
 [data-render] :is(.np-diapo__texto, .portada__pie, .np-interfaz, .np-grano, .np-cargador, .hype) { display: none !important; }
+
+/* QR a pantalla completa (tecla Q): lo más grande posible a lo alto, con el código de la sala para escribirlo a mano. */
+.qr-grande {
+  z-index: 6; display: flex; align-items: center; justify-content: center; gap: 5cqw; padding: 3cqw;
+  background: var(--np-marca-cacao-profundo); color: var(--np-tinta);
+  opacity: 0; visibility: hidden; cursor: zoom-out;
+  transition: opacity var(--np-movimiento-lento) linear, visibility 0s linear var(--np-movimiento-lento);
+}
+.qr-grande--activo { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.qr-grande__codigo { flex: none; height: 48cqw; aspect-ratio: 1; image-rendering: pixelated; transform: scale(0.94); transition: transform var(--np-movimiento-texto) var(--np-movimiento-curva); }
+.qr-grande--activo .qr-grande__codigo { transform: none; }
+.qr-grande__texto { display: grid; gap: 1.4cqw; justify-items: start; max-width: 32cqw; }
+.qr-grande__texto > * { margin: 0; }
+.qr-grande .np-etiqueta { font-size: 1.1cqw; }
+.qr-grande__titulo { font: var(--np-peso-black) 5.2cqw / 0.95 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+.qr-grande__sin-camara { font: var(--np-peso-medio) 1.5cqw / 1.35 var(--np-fuente-texto); color: var(--np-tinta-suave); }
+.qr-grande__sin-camara b { color: var(--np-tinta); white-space: nowrap; }
+.qr-grande__sala { padding: 0.5cqw 1.6cqw; background: var(--np-acento-mostaza); color: var(--np-marca-cacao); font: var(--np-peso-black) 6.4cqw / 1 var(--np-fuente-display); letter-spacing: 0.14em; }
+.qr-grande__cola { font: var(--np-peso-medio) 1.5cqw / 1.2 var(--np-fuente-texto); color: var(--np-tinta-suave); font-variant-numeric: tabular-nums; }
+.qr-grande__cola b { font: var(--np-peso-black) 2.6cqw / 1 var(--np-fuente-display); color: var(--np-tinta); margin-right: 0.15em; }
 
 /* Pantalla en cacao (tecla B). */
 .pausa {

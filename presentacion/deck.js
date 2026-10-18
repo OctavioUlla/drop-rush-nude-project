@@ -166,6 +166,7 @@ function ir(n) {
   if (n === actual && (visible === n || motor?.viajando)) return;
   actual = n;
   history.replaceState(null, '', `#${n}`);
+  alternarQr(false);
   if (reloj.inicio !== null) marcarBloque();
   else if (n !== 0) empezarReloj(); // si nadie lo empezó, arranca al pasar de la portada
   avisar();
@@ -236,6 +237,7 @@ canal?.addEventListener('message', ({ data }) => {
   else if (data.tipo === 'pausa') alternarPausa();
   else if (data.tipo === 'feeds') alternarFeeds();
   else if (data.tipo === 'hype') lanzarHype();
+  else if (data.tipo === 'qr') alternarQr();
   else if (data.tipo === 'votacion') votacion?.alternar();
   else if (data.tipo === 'reiniciar-interactivo') reiniciarInteractivo();
   else if (data.tipo === 'reloj') { (data.accion === 'empezar' ? empezarReloj : reiniciarReloj)(); avisar(); }
@@ -261,6 +263,7 @@ function alternarPausa() {
 // hype y la votación se ensayan con grupos simulados, así la presentación nunca se traba.
 let sala = null;
 let servidor = imprimiendo ? 'sin servidor' : 'conectando'; // conectando | conectado | sin servidor
+let qrGrande = false; // QR a pantalla completa (tecla Q)
 /** En el último bloque (Drop Rush) los celulares pasan al lobby del juego; antes, a la espera de la presentación. */
 const etapaDe = (i) => (diapos[i].bloque === ultimoBloque ? 'juego' : 'presentacion');
 // Se declaran antes de crearlos: al crearse ya avisan al modo presentador, que lee su estado.
@@ -295,9 +298,10 @@ function pintarSala() {
   const cifra = enLinea ? `${conectados}/${sala.max}` : '';
   if (enLinea && $('#qr').dataset.url !== sala.urlQr) {
     $('#qr').dataset.url = sala.urlQr;
-    $('#qr').src = `/api/qr.svg?texto=${encodeURIComponent(sala.urlQr)}`;
-    $('#sala-url').textContent = `${sala.urlCelulares.replace(/^https?:\/\//, '')}/play`;
+    $('#qr').src = $('#qr-grande-img').src = `/api/qr.svg?texto=${encodeURIComponent(sala.urlQr)}`;
+    $('#sala-url').textContent = $('#qr-grande-url').textContent = `${sala.urlCelulares.replace(/^https?:\/\//, '')}/play`;
   }
+  if (!enLinea) alternarQr(false);
   for (const el of document.querySelectorAll('[data-sala="codigo"]')) el.textContent = sala?.codigo ?? '—';
   for (const el of document.querySelectorAll('[data-sala="conectados"]')) el.textContent = cifra;
   $('#sala-estado').textContent = enLinea ? `${cifra} en la cola` : servidor === 'conectando' ? 'Conectando con el servidor…' : 'Sin servidor: el hype y la votación se ensayan sin celulares';
@@ -306,9 +310,28 @@ function pintarSala() {
   avisar();
 }
 
+/**
+ * Tecla Q (o tocar el QR chico): el QR a pantalla completa, para que se escanee desde el fondo del aula y para los que
+ * llegan tarde en cualquier diapositiva. Sin sala no hay QR que mostrar. Se cierra al cambiar de diapositiva.
+ */
+function alternarQr(si = !qrGrande) {
+  si = si && servidor === 'conectado';
+  if (si === qrGrande) return;
+  qrGrande = si;
+  $('#qr-grande').classList.toggle('qr-grande--activo', si);
+  $('#qr-grande').setAttribute('aria-hidden', String(!si));
+  avisar();
+}
+$('#qr-agrandar').addEventListener('click', (ev) => {
+  ev.currentTarget.blur(); // si no, Espacio (o el control de diapositivas) lo volvería a apretar
+  alternarQr(true);
+});
+$('#qr-grande').addEventListener('click', () => alternarQr(false));
+
 /** Tecla H, solo en la portada: cuenta regresiva → medidor → drop; con el medidor corriendo, lo completa. */
 function lanzarHype() {
   if (!hype || diapos[actual].escena !== 'portada' || motor?.viajando) return;
+  alternarQr(false);
   hype.alternar();
 }
 
@@ -326,6 +349,7 @@ function reiniciarInteractivo() {
 function estadoInteractivo() {
   return {
     servidor,
+    qrGrande,
     sala: sala?.codigo ?? null,
     conectados: servidor === 'conectado' ? sala.conectados : 0,
     max: sala?.max ?? 40,
@@ -358,6 +382,8 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'b' || tecla === '.') alternarPausa(); // los controles de diapositivas mandan "." para la pantalla negra
   else if (tecla === 'm') medir();
   else if (tecla === 'h') lanzarHype();
+  else if (tecla === 'q') alternarQr();
+  else if (tecla === 'Escape') alternarQr(false);
   else if (tecla === 'v') votacion?.alternar();
   else if (tecla === 'j') abrirJuego();
   else if (tecla === 'f') alternarFeeds();

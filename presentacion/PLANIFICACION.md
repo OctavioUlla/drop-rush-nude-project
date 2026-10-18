@@ -32,7 +32,7 @@
 
 | Momento | 📽️ Proyector | 📱 Celular |
 |---|---|---|
-| Espera | Portada (tema cacao), QR grande y cuántos grupos están conectados (*"34/40 en la cola"*) | *"Esperando el drop…"* con el número del grupo |
+| Espera | Portada (tema cacao), QR y cuántos grupos están conectados (*"34/40 en la cola"*). Con `Q` (o tocando el QR), el QR ocupa casi todo el alto del proyector, con el código de la sala en grande para entrar escribiéndolo | *"Esperando el drop…"* con el número del grupo |
 | 3, 2, 1 | Cuenta regresiva gigante | Cuenta regresiva sincronizada |
 | ¡Hype! (~10 a 15 s) | **Medidor de hype** que se llena en vivo, con el porcentaje y los toques. Debajo, una ficha por grupo que se enciende con su color cuando ese grupo empieza a tocar (*"38/40 grupos sumando"*) | Botón **HYPE** a pantalla completa (mostaza) que late con cada toque, y debajo el aporte del grupo (*"Sumaron 64 toques"*) |
 | ¡Drop! (al llegar al 100 %) | La sudadera cae al pedestal, lluvia de papelitos con los colores de los grupos y *"40 grupos, 1.832 toques: el drop salió"* | *"¡Lo lograron entre todos!"* y el aporte del grupo |
@@ -187,6 +187,7 @@ La **cola** está presente todo el tiempo y no suma minutos.
 | → / Espacio / ↓ | Siguiente |
 | ← / ↑ | Anterior |
 | `H` | Lanzar el hype (y completarlo si se estanca) |
+| `Q` | QR a pantalla completa, para escanearlo desde el fondo del aula (y para los que llegan tarde) |
 | `V` | Abrir o cerrar la votación |
 | `F` | Pausar o reanudar los feeds |
 | `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana y con la misma sala |

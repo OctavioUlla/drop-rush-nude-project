@@ -31,6 +31,7 @@ npm run dev
 | `P` | Modo presentador |
 | `B` (o `.` del control) | Pantalla en cacao (pausa) |
 | `H` | En la portada: hype colectivo (cuenta regresiva, botón HYPE en los celulares, medidor y drop). Con el medidor corriendo, lo completa |
+| `Q` | QR a pantalla completa (también tocando el QR chico de la portada), con el código de la sala para escribirlo a mano. Sirve en cualquier diapositiva para los que llegan tarde; se cierra con `Q`, `Esc` o al cambiar de diapositiva |
 | `V` | Abrir o cerrar la votación en vivo (en la historia solo se ve cuántos grupos votaron; el resultado se revela en los desafíos, con la balanza) |
 | `F` | Pausar o reanudar los feeds de EGC vs. UGC (para comentar una publicación) |
 | `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana, con la misma sala y los mismos celulares |
