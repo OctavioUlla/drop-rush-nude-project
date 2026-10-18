@@ -322,7 +322,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [ ] Probarlo con celulares reales en el Wi-Fi del aula (con la prueba del juego, ver [Ensayo en el aula](../juego/README.md#ensayo-en-el-aula))
 
 ### Fase 5: Contenido y ensayo
-- [ ] Cargar el contenido de cada bloque (sección 8): el texto y las notas ya están; faltan las fuentes de las métricas y las fotos del bloque 4
+- [ ] Cargar el contenido de cada bloque (sección 8): el texto y las notas ya están; faltan las fotos del bloque 4 (las fuentes de las métricas ya están en `GUION.md`)
 - [ ] Ensayo con cronómetro: 15 min de exposición + 8 min de juego
 - [ ] Prueba en el aula: proyector, Wi-Fi y control de diapositivas
 - [ ] Exportar el PDF de respaldo
@@ -335,7 +335,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [ ] Fotos de la Nude House y del Château (bloque 4)
 - [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
 - [x] Campaña o publicación viral a analizar: *Out of Office* (agosto de 2025)
-- [ ] Métricas públicas actualizadas, con sus fuentes (relevadas a octubre de 2026; falta citar las fuentes)
+- [x] Métricas públicas actualizadas, con sus fuentes (perfiles oficiales al 18/10/2026; ver las notas de respaldo de [`GUION.md`](GUION.md)). Falta verificar las cifras de Instagram de comienzos de 2024.
 - [ ] Pregunta definitiva de la votación y sus opciones
 - [ ] Quién presenta cada bloque (las notas del orador ya están en cada diapositiva)
 
