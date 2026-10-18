@@ -86,7 +86,7 @@ La presentación es el **lanzamiento de un producto**: una sudadera 3D estilo *c
 
 | Bloque | Colorway | Estudio |
 |---|---|---|
-| 0. Portada + drop falso | cacao | cacao |
+| 0. Portada + hype colectivo | cacao | cacao |
 | 1. La historia | crema | crema |
 | 2. EGC vs. UGC | arena | crema |
 | 3. Marketing viral | rosa | crema |
@@ -108,7 +108,7 @@ Reglas de la escena:
 | `escena` + `curva-escena` | 800 ms, `cubic-bezier(.65,0,.35,1)` | Transición continua de cámara y prenda entre bloques, la cola y los feeds. |
 | `texto` + `escalonado` | 700 ms, 90 ms por línea | Títulos que suben desde una máscara (`np-revelar__linea`). |
 | `cifra` | 1200 ms | Cifras que cuentan desde 0. |
-| `latido` | 900 ms | Cartel *QUEDA 1* durante el drop (`np-latido`). |
+| `latido` | 900 ms | Cartel *QUEDA 1* antes del juego y botón HYPE al tocarlo (`np-latido`). |
 | `cinta` | 24 s | Vuelta completa de la cinta de los separadores (`np-cinta`). |
 
 En JavaScript, `segundos('escena')` devuelve `0.8`, listo para GSAP. Con `prefers-reduced-motion`, las animaciones pasan a fundidos cortos y la cinta y el latido se detienen.
@@ -145,7 +145,7 @@ En JavaScript, `segundos('escena')` devuelve `0.8`, listo para GSAP. Con `prefer
 | [`build.mjs`](build.mjs) | Genera `tokens.css` y `tokens.js` desde `tokens.json`: `node design-system/build.mjs` |
 | [`tokens.css`](tokens.css) | *(generado)* Variables CSS `--np-*`, `@font-face` y los temas crema y cacao. |
 | [`tokens.js`](tokens.js) | *(generado)* Módulo ES con los mismos valores, más `colores3d` (números `0x482922` para Three.js), `colorDeGrupo(n)`, `colorwayDeBloque(n)` y `segundos(nombre)`. |
-| [`components.css`](components.css) | Componentes con prefijo `np-`: logo, tipografía, botones, insignias, cartel, sello, tarjetas, datos, fichas de grupo, opciones A/B/C, temporizador, HUD, ranking, diapositivas 16:9 y las piezas de la presentación (escena, texto animado, cinta, grano, cola, votación, feeds, drop, etiquetas 3D y modo presentador). |
+| [`components.css`](components.css) | Componentes con prefijo `np-`: logo, tipografía, botones, insignias, cartel, sello, tarjetas, datos, fichas de grupo, opciones A/B/C, temporizador, HUD, ranking, diapositivas 16:9 y las piezas de la presentación (escena, texto animado, cinta, grano, cola, votación, feeds, hype, etiquetas 3D y modo presentador). |
 | [`index.html`](index.html) | Guía visual con todo lo anterior en uso. |
 | [`fonts/`](fonts/) | Inter e Inter Tight (woff2 variables, subconjunto latino) + licencia. |
 
@@ -228,7 +228,7 @@ const { color3d } = colorDeGrupo(numeroDeGrupo); // tinte del corredor
 | `np-cola` (+ `__fila`, `__persona`, `__persona--nosotros`, `__bloque`, `__puerta`, `__puerta--abierta`) | Cola de la tienda como barra de progreso (`--avance` de 0 a 1; `--g` con el color de cada grupo) |
 | `np-votacion` (+ `__opcion`, `__barra`, `__cifra`, `__estado`) | Barras de la votación en vivo (`--valor` en %) |
 | `np-feeds`, `np-feed` (+ `__pista`, `__pub`, `__pie`, `__cuenta`, `__cifra`, `--pausado`) | Feeds 9:16 de EGC vs. UGC (`--actual` = publicación visible) |
-| `np-cuenta`, `np-comprar` (+ `--enviado`) | Cuenta regresiva gigante y botón COMPRAR a pantalla completa del drop falso |
+| `np-cuenta`, `np-hype`, `np-hype-boton` | Cuenta regresiva gigante, medidor de hype con las fichas de los grupos y botón HYPE a pantalla completa del celular |
 | `np-etiqueta-3d` (+ `__valor`, `__texto`) | Etiquetas flotantes de la vista desarmada (`--x`, `--y` proyectados desde la escena) |
 | `np-presentador` (+ `__actual`, `__notas`, `__estado`), `np-cronometro` (+ `--aviso`, `--pasado`) | Modo presentador: notas, siguiente diapositiva y cronómetro por bloque |
 

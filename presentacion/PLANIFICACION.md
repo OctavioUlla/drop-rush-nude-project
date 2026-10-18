@@ -12,36 +12,38 @@
 
 - **Coherencia estética:** el mismo design system que el juego, sin copiar colores a mano en otra herramienta.
 - **Interactividad real:** los 40 celulares se conectan con el QR de la portada y quedan conectados hasta el juego. Ese mismo canal sirve para la presentación.
-- **Novedad:** cosas que Slides o Canva no pueden hacer, como un drop en vivo, resultados de una votación en tiempo real o feeds con video.
+- **Novedad:** cosas que Slides o Canva no pueden hacer, como un hype en vivo entre 40 celulares, resultados de una votación en tiempo real o feeds con video.
 - **Un solo sistema:** una URL, un QR, un servidor y una sola prueba en el Wi-Fi de la facultad.
 
 ---
 
 ## 2. Las 4 ideas elegidas
 
-### 2.1 Drop falso de apertura 🛒
+### 2.1 Hype colectivo de apertura 🔥
 
-**Qué es.** En la portada hay una cuenta regresiva y el QR. Al llegar a cero, en todos los celulares aparece un botón **COMPRAR**. Hay **una sola sudadera**: la consigue el primer grupo que toca y los demás ven **SOLD OUT**.
+**Qué es.** En la portada están el QR y el contador de grupos conectados. El presentador lanza una cuenta regresiva y, al llegar a cero, en todos los celulares aparece un botón **HYPE**. Cada toque suma a un **medidor de hype** que la clase llena **entre todos**. Cuando llega al 100 %, la sudadera cae al pedestal: el drop sale porque la comunidad lo pidió. No hay ganador ni perdedores.
 
 **Para qué.**
-- **Gancho:** *"Lo que acaban de sentir es el modelo de negocio de Nude Project"* (drops limitados, urgencia, exclusividad, hype).
-- **Prueba técnica:** antes del juego se confirma que los 40 celulares están conectados.
-- **Hilo narrativo:** el final del juego repite lo mismo (un ganador, 39 sin sudadera) y cierra el debate sobre exclusividad vs. accesibilidad.
+- **Gancho:** *"Ningún drop de Nude Project sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Lo que acaban de hacer entre los 40 es eso: hype."*
+- **Prueba técnica:** antes del juego se confirma que los 40 celulares están conectados y que sus toques llegan al servidor.
+- **Hilo narrativo:** la apertura es lo opuesto al final. Al principio la clase muestra la **comunidad** (todos suman para lo mismo); en el juego aparece la **escasez** (queda 1 y gana un solo grupo). Esa tensión es el debate de exclusividad vs. accesibilidad del bloque 7: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera"*.
 
 **Cómo se ve.**
 
 | Momento | 📽️ Proyector | 📱 Celular |
 |---|---|---|
-| Espera | Portada (tema cacao), QR grande, *"Nuevo drop en 00:10"* y cuántos grupos están conectados (*"34/40 en la cola"*) | *"Esperando el drop…"* con el número del grupo |
+| Espera | Portada (tema cacao), QR grande y cuántos grupos están conectados (*"34/40 en la cola"*) | *"Esperando el drop…"* con el número del grupo |
 | 3, 2, 1 | Cuenta regresiva gigante | Cuenta regresiva sincronizada |
-| ¡Drop! | Cartel **QUEDA 1** latiendo | Botón **COMPRAR** a pantalla completa (mostaza) |
-| Resultado (al instante) | *"Grupo 23 se llevó la sudadera en 0,41 s"*, sello **SOLD OUT** y el top 5 de los más rápidos | Ganador: *"¡Es tuya!"* · Resto: **SOLD OUT** y *"Llegaste 0,8 s tarde"* |
+| ¡Hype! (~10 a 15 s) | **Medidor de hype** que se llena en vivo, con el porcentaje y los toques. Debajo, una ficha por grupo que se enciende con su color cuando ese grupo empieza a tocar (*"38/40 grupos sumando"*) | Botón **HYPE** a pantalla completa (mostaza) que late con cada toque, y debajo el aporte del grupo (*"Sumaron 64 toques"*) |
+| ¡Drop! (al llegar al 100 %) | La sudadera cae al pedestal, lluvia de papelitos con los colores de los grupos y *"40 grupos, 1.832 toques: el drop salió"* | *"¡Lo lograron entre todos!"* y el aporte del grupo |
 
 **Reglas.**
-- Un toque por grupo; los siguientes se ignoran.
-- Gana el primer toque que **llega al servidor**: igual que en un drop real, la conexión también cuenta. Se puede comentar en el debate.
-- La cuenta regresiva usa la **sincronización de reloj** que ya está planeada para el juego, así todos los celulares ven el "¡ya!" al mismo tiempo.
-- El presentador lanza el drop con una tecla, cuando ve suficientes grupos conectados.
+- La meta se calcula con los grupos conectados al lanzar (por ejemplo, **25 toques por grupo**), así el medidor tarda lo mismo con 25 grupos que con 40. El valor se ajusta en el ensayo.
+- Cada celular cuenta como máximo **8 toques por segundo**: tocar con varios dedos o con un auto-clicker no rinde más. Así pesa que toquen todos, no que uno toque mucho.
+- El proyector **no muestra un ranking** de grupos: el mensaje es colectivo.
+- Si a los 25 s el medidor no se llenó, el presentador lo completa con la misma tecla y el drop sale igual.
+- La cuenta regresiva usa la **sincronización de reloj** que ya está planeada para el juego, así todos los celulares arrancan al mismo tiempo.
+- El presentador lanza el hype con una tecla, cuando ve suficientes grupos conectados.
 
 ### 2.2 La cola de la tienda como barra de progreso 🚶🚶🚶🏬
 
@@ -62,7 +64,7 @@
 
 **Cuándo.**
 - Se **abre** en el bloque de la historia y los drops, durante ~20 s, y las barras se llenan en vivo mientras se sigue hablando.
-- Se **retoma** en el bloque de desafíos y en el debate final, junto al resultado del drop falso y del juego: *"El 70 % dijo que sí… y 39 de 40 grupos se quedaron sin sudadera"*.
+- Se **retoma** en el bloque de desafíos y en el debate final, junto al hype de apertura y al resultado del juego: *"El 70 % dijo que sí; al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera"*.
 
 **Detalles.**
 - Un voto por grupo, se puede cambiar mientras la votación está abierta.
@@ -119,7 +121,7 @@ Se arma en Three.js con piezas redondeadas que se unen y suavizan:
 
 | Bloque | Qué hace la sudadera | Colorway |
 |---|---|---|
-| **0. Portada + drop falso** | Gira lenta sobre el pedestal, bajo un foco. En la cuenta regresiva la luz se apaga; en *¡DROP!* la sudadera cae desde arriba al pedestal con un pequeño rebote. Al conocerse el ganador, un sello **SOLD OUT** se estampa delante y el pedestal queda vacío. | Cacao |
+| **0. Portada + hype colectivo** | Gira lenta sobre el pedestal, bajo un foco. En la cuenta regresiva la luz se apaga y la sudadera sube fuera de cuadro. Mientras se llena el medidor, el foco vuelve a encenderse de a poco y la sudadera baja en proporción al hype. Al 100 % cae al pedestal con un pequeño rebote, entre papelitos con los colores de los grupos. El sello **SOLD OUT** se guarda para el final del juego. | Cacao |
 | **1. La historia** | Aparece dentro de una caja de envío de cartón (la de los primeros pedidos desde la habitación). Mientras pasan los años 2019 → hoy, la caja se multiplica y la sudadera cambia de color en cada año. | Crema |
 | **2. EGC vs. UGC** | Queda en el centro entre los dos feeds y gira hacia el lado que se está comentando. | Arena |
 | **3. Marketing viral** | Corazones rosas en 3D salen de la prenda y orbitan alrededor mientras un contador de vistas sube a la cifra real. | Rosa |
@@ -151,7 +153,7 @@ La interactividad se come minutos de la exposición, así que va **dentro** de l
 | Bloque | Tiempo | Interacción |
 |---|---|---|
 | **Antes de empezar** (mientras la clase se acomoda) | — | QR en pantalla: los grupos entran y eligen su número |
-| 0. Portada | 1 min | **Drop falso** (~40 s con resultado) |
+| 0. Portada | 1 min | **Hype colectivo** (~40 s con la cuenta y el drop) |
 | 1. La historia y los drops | 2 min | **Votación** abierta (~20 s) |
 | 2. EGC vs. UGC | 3 min | **Feeds** |
 | 3 a 6 | 7,5 min | — |
@@ -169,7 +171,7 @@ La **cola** está presente todo el tiempo y no suma minutos.
   - diapositiva actual y siguiente;
   - notas del orador;
   - **cronómetro por bloque**, que se pone en mostaza al quedar 20 s y en ladrillo al pasarse;
-  - estado del drop y de la votación, y cantidad de grupos conectados.
+  - estado del hype y de la votación, y cantidad de grupos conectados.
   - Las dos ventanas se sincronizan en la misma compu (`BroadcastChannel`), sin pasar por el servidor.
 - **Controles de teclado** (también sirven con un control de diapositivas):
 
@@ -177,14 +179,14 @@ La **cola** está presente todo el tiempo y no suma minutos.
 |---|---|
 | → / Espacio / ↓ | Siguiente |
 | ← / ↑ | Anterior |
-| `D` | Lanzar el drop falso |
+| `H` | Lanzar el hype (y completarlo si se estanca) |
 | `V` | Abrir o cerrar la votación |
 | `F` | Pausar o reanudar los feeds |
 | `P` | Abrir el modo presentador |
 | `B` | Pantalla en cacao (pausa) |
 
 - **Sin internet:** fotos, videos y tipografías van dentro del repositorio; nada se carga en vivo desde Instagram o TikTok.
-- **Si el servidor falla:** la presentación sigue funcionando sola. Las diapositivas interactivas muestran una versión estática (por ejemplo, el resultado de un drop de ensayo) y se pueden saltar.
+- **Si el servidor falla:** la presentación sigue funcionando sola. Las diapositivas interactivas muestran una versión estática (por ejemplo, el medidor lleno de un hype de ensayo) y se pueden saltar.
 - **Respaldo en PDF:** imprimir desde el navegador genera un PDF con una diapositiva por página.
 - **Proyector:** todo escala con el ancho de la diapositiva (16:9) y respeta los tamaños del design system; probar antes en el aula.
 
@@ -196,7 +198,7 @@ La **cola** está presente todo el tiempo y no suma minutos.
 El servidor de Node del juego también sirve la presentación y maneja sus eventos. El celular de cada grupo entra **una sola vez** (QR → elegir número de grupo) y la misma sesión pasa por tres etapas:
 
 ```
-[Presentación: espera / drop falso / votación] → [Lobby del juego] → [Drop Rush]
+[Presentación: espera / hype / votación] → [Lobby del juego] → [Drop Rush]
 ```
 
 Así se reutiliza todo lo ya planeado para el juego: salas, un celular por grupo, tokens de dispositivo, reconexión invisible y sincronización de reloj.
@@ -204,9 +206,9 @@ Así se reutiliza todo lo ya planeado para el juego: salas, un celular por grupo
 ### 6.2 Motor de diapositivas
 Liviano y propio, sin frameworks:
 - Cada diapositiva es un `<section class="np-diapo np-diapo--escena">` del design system (transparente, para que se vea la escena 3D de atrás), con sus notas en un `<aside class="notas">`. El motor marca la actual con `np-diapo--activa`, que dispara los títulos animados.
-- Los componentes visuales de las interacciones (cola, votación, feeds, drop, etiquetas 3D, modo presentador) ya están en [`components.css`](../design-system/components.css); el motor solo cambia sus variables (`--avance`, `--valor`, `--actual`, `--x`/`--y`).
+- Los componentes visuales de las interacciones (cola, votación, feeds, hype, etiquetas 3D, modo presentador) ya están en [`components.css`](../design-system/components.css); el motor solo cambia sus variables (`--avance`, `--valor`, `--actual`, `--x`/`--y`).
 - `deck.js` se encarga de la navegación, el teclado, el escalado 16:9, el cronómetro, el modo presentador y el modo impresión.
-- Los componentes interactivos son módulos separados que se "enganchan" a una diapositiva por un atributo (por ejemplo, `data-interactivo="drop"`).
+- Los componentes interactivos son módulos separados que se "enganchan" a una diapositiva por un atributo (por ejemplo, `data-interactivo="hype"`).
 - **Contenido separado del motor:** agregar o cambiar una diapositiva es editar HTML con las clases `np-*`, sin tocar JavaScript.
 
 ### 6.3 Estructura propuesta
@@ -226,7 +228,7 @@ presentacion/
 │   └── transiciones.js  # Animaciones entre escenas (GSAP)
 ├── vendor/              # three.js y GSAP guardados localmente
 ├── interactivo/
-│   ├── drop.js          # Drop falso (proyector)
+│   ├── hype.js          # Hype colectivo (proyector)
 │   ├── votacion.js      # Votación en vivo (proyector)
 │   ├── cola.js          # Cola de la tienda / barra de progreso
 │   └── feeds.js         # Feeds EGC vs. UGC
@@ -236,23 +238,25 @@ presentacion/
 ├── media/               # Fotos y clips de video comprimidos
 └── renders/             # Imágenes pre-renderizadas de cada escena (respaldo sin WebGL y PDF)
 ```
-Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el drop y la votación.
+Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el hype y la votación.
 
 ### 6.4 Eventos de Socket.io (borrador)
 
 | Dirección | Evento | Datos |
 |---|---|---|
-| presentación → server | `pres:drop:preparar` | `{ segundos }` (duración de la cuenta regresiva) |
-| server → todos | `pres:drop:cuenta` | `{ empiezaEn }` (hora del servidor) |
-| celular → server | `pres:drop:comprar` | `{}` (el server registra la hora de llegada) |
-| server → todos | `pres:drop:resultado` | `{ ganador, tiempoGanador, top5, intentos }` |
+| presentación → server | `pres:hype:preparar` | `{ segundos }` (duración de la cuenta regresiva) |
+| server → todos | `pres:hype:cuenta` | `{ empiezaEn, meta }` (hora del servidor y toques necesarios) |
+| celular → server | `pres:hype:toques` | `{ n }` (toques acumulados desde el último envío, cada ~200 ms) |
+| server → todos | `pres:hype:nivel` | `{ toques, meta, grupos }` (unas 10 veces por segundo; `grupos` son los que ya sumaron) |
+| presentación → server | `pres:hype:completar` | `{}` (el presentador lo completa si se estanca) |
+| server → todos | `pres:hype:drop` | `{ toques, grupos, aportes }` (`aportes` por grupo, para mostrar en cada celular) |
 | presentación → server | `pres:votacion:abrir` / `pres:votacion:cerrar` | `{ id }` |
 | server → celulares | `pres:votacion:pregunta` | `{ id, pregunta, opciones }` |
 | celular → server | `pres:votacion:votar` | `{ id, opcion }` |
 | server → presentación | `pres:votacion:conteo` | `{ id, votos: [n, n, n], votaron, conectados }` |
 | server → presentación | `pres:grupos` | `[{ numero, color, conectado }]` (para la cola y el contador) |
 
-- El servidor guarda el resultado del drop y de la votación para retomarlos en el debate, aunque se recargue la página.
+- El servidor guarda el resultado del hype y de la votación para retomarlos en el debate, aunque se recargue la página.
 - Un celular que se reconecta recibe el estado actual (por ejemplo, la votación abierta) con el mismo `state:sync` del juego.
 
 ### 6.5 Medios
@@ -286,8 +290,8 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 
 ### Fase 4: Interacciones con servidor
 *Depende de la Fase 1 del juego: salas, grupos, tokens y sincronización de reloj.*
-- [ ] Pantallas de espera, drop y votación en el celular
-- [ ] Drop falso: cuenta regresiva sincronizada, primer toque y resultado
+- [ ] Pantallas de espera, hype y votación en el celular
+- [ ] Hype colectivo: cuenta regresiva sincronizada, medidor compartido, tope de toques y drop final
 - [ ] Votación en vivo con conteo y resultado guardado
 - [ ] Cola formada por los grupos conectados (opcional)
 - [ ] Versión estática de respaldo si el servidor no responde
@@ -316,11 +320,12 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, drop y 
 
 | Riesgo | Mitigación |
 |---|---|
-| Pocos grupos conectados al momento del drop | Mostrar el QR desde antes de empezar; el presentador lanza el drop cuando ve el contador alto |
+| Pocos grupos conectados al momento del hype | Mostrar el QR desde antes de empezar; el presentador lanza el hype cuando ve el contador alto, y la meta se ajusta a los conectados |
+| Muchos toques saturan el Wi-Fi o el servidor | Cada celular manda sus toques agrupados cada ~200 ms y con tope por segundo; probar con los 40 bots |
 | La interactividad se come los 15 minutos | Tiempos fijos por interacción (sección 4) y cronómetro en el modo presentador |
 | El servidor o el Wi-Fi fallan | La presentación funciona sola, con versiones estáticas y PDF de respaldo |
 | Videos pesados o que se traban | Clips cortos y comprimidos, guardados en el repositorio y precargados |
-| Distracción con el celular | El celular solo muestra algo durante el drop y la votación; el resto del tiempo, una pantalla de espera quieta |
+| Distracción con el celular | El celular solo muestra algo durante el hype y la votación; el resto del tiempo, una pantalla de espera quieta |
 | La sudadera por código no queda creíble | Prototipo visual primero (Fase 0) con un visor para ajustar proporciones; si no alcanza, usar un modelo 3D libre (GLTF con licencia abierta) con el mismo material clay |
 | La notebook no mueve bien el 3D | Medir en la Fase 0; bajar la resolución interna o usar las imágenes pre-renderizadas |
 | El 3D distrae del contenido | La sudadera acompaña, no explica: cada escena refuerza el mensaje del bloque y se mueve solo en las transiciones |
