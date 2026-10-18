@@ -58,7 +58,7 @@ Medido en Chromium sin GPU (render por software, el peor caso): **~25 draw calls
 
 ### 2. Reconexión
 - **Manual**: en plena partida, cortar el Wi-Fi del celular unos segundos (o tocar 🐞 → **Cortar red 5 s / 20 s**). El corredor tiene que seguir corriendo sin carteles; si el corte dura más de 5 s aparece solo un 📶 chico. Al volver, el panel muestra *sesiones recuperadas* y el proyector suma la respuesta si se dio a tiempo.
-- **Automática**: `npm test` levanta un servidor con fases cortas y 40 bots que sufren un corte de 1 a 4 s cada uno, y verifica que **todas las respuestas llegan y se cuentan una sola vez**. También prueba las salas, el token de cada celular, liberar un grupo en plena partida, el revelado, el ganador, el desempate y la elección del repaso, (Fase 2) los obstáculos nuevos, el cruce del bot revendedor, los likes y la ubicación de la tienda en el mapa, (Fase 3) cada ventaja y cada poder, la racha, el tope del Cambio de algoritmo, emparejar, la predicción del proyector y que un poder reintentado se aplique una sola vez, y (Fase 4) pausar, seguir, saltar y terminar, las reglas del balanceo y los archivos comprimidos.
+- **Automática**: `npm test` levanta un servidor con fases cortas y 40 bots que sufren un corte de 1 a 4 s cada uno, y verifica que **todas las respuestas llegan y se cuentan una sola vez**. También prueba las salas, el token de cada celular, liberar un grupo en plena partida, el revelado, el ganador, el desempate y la elección del repaso, (Fase 2) los obstáculos nuevos, el cruce del bot revendedor, los likes y la ubicación de la tienda en el mapa, (Fase 3) cada ventaja y cada poder, la racha, el tope del Cambio de algoritmo, emparejar, la predicción del proyector y que un poder reintentado se aplique una sola vez, (Fase 4) pausar, seguir, saltar y terminar, las reglas del balanceo y los archivos comprimidos, y (la presentación) el hype colectivo con su tope de toques, la votación y la prueba con 40 bots.
 
 ### 3. 40 bots contra el servidor
 
@@ -66,6 +66,7 @@ Medido en Chromium sin GPU (render por software, el peor caso): **~25 draw calls
 npm run dev                                          # en una terminal
 npm run bots -- --bots 40 --empezar --cortes 2       # en otra: crea su propia sala y la arranca
 npm run bots -- --sala ABCD --bots 39 --desde 2      # o: entran a la sala del proyector (y la arranca el proyector)
+npm run bots -- --presentacion                       # o: hacen la parte de la presentación (hype y votación)
 ```
 
 | Opción | Descripción |
@@ -78,8 +79,9 @@ npm run bots -- --sala ABCD --bots 39 --desde 2      # o: entran a la sala del p
 | `--preguntas`, `--tramo`, `--pregunta` | Largo de la partida (8, 15 s y 15 s) |
 | `--cortes`, `--corte-min`, `--corte-max` | Microcortes por bot y su duración en segundos |
 | `--polling` | Fuerza *long-polling*, como si la red bloqueara WebSocket |
+| `--presentacion` | El script hace de presentación: lanza el hype colectivo y abre y cierra la votación con los bots, y verifica que el drop salga con todos los grupos, que ningún celular pase el tope de toques y que el conteo coincida con el último voto de cada bot |
 
-Al final muestra un resumen (respuestas confirmadas, cortes, sesiones recuperadas, RTT) y sale con error si se perdió alguna respuesta. Mientras corre, `/host/?debug` muestra los mensajes por segundo, la demora del *event loop* y la memoria del servidor. Los bots también siguen las pausas y los saltos del presentador.
+Al final muestra un resumen (respuestas confirmadas, cortes, sesiones recuperadas, RTT) y sale con error si se perdió alguna respuesta. Los bots también responden a la presentación: si entran a la sala de la presentación (`--sala` con el código de la portada), tocan HYPE cuando se lanza el hype (algunos más rápido que el tope de 8 por segundo) y votan cuando se abre la votación (uno de cada cuatro cambia su voto). Mientras corre, `/host/?debug` muestra los mensajes por segundo, la demora del *event loop* y la memoria del servidor. Los bots también siguen las pausas y los saltos del presentador.
 
 **Resultado (Fase 4)**, contra el build de producción (`npm start`) en una notebook, con 40 bots, 6 preguntas de 10 s y 2 cortes de 1 a 6 s por bot: **240 de 240 respuestas** confirmadas y contadas una sola vez, 79 cortes y 79 sesiones recuperadas, 17 poderes usados sin rechazos, ~20.000 mensajes de distancia y RTT mediano de 1 ms (p95 3 ms, red local). Falta repetirlo con algunos celulares reales mezclados (ver [Ensayo en el aula](#ensayo-en-el-aula)).
 

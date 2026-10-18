@@ -2,9 +2,12 @@
 // cronómetro por bloque, modo presentador (BroadcastChannel) e impresión.
 // La escena 3D es la del design system: el deck le pide viajar a la estación de cada diapositiva y,
 // cuando dos diapositivas seguidas comparten estación, solo cambia el texto (la cámara no se mueve).
-import { tokens } from '../design-system/tokens.js';
+import { tokens, colorDeGrupo } from '../design-system/tokens.js';
 import { crearCola } from '../design-system/cola.js';
 import { CANAL, dosDigitos, leerDiapositivas } from './comun.js';
+import { abrirSala } from './interactivo/sala.js';
+import { crearHype } from './interactivo/hype.js';
+import { crearVotacion } from './interactivo/votacion.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const params = new URLSearchParams(location.search);
@@ -56,6 +59,15 @@ async function leerFeeds() {
     return undefined;
   }
 }
+/** Pregunta y opciones de la votación en vivo (datos/votacion.json). Sin el archivo, no hay votación. */
+async function leerVotacion() {
+  try {
+    return await (await fetch(new URL('./datos/votacion.json', location.href))).json();
+  } catch (error) {
+    console.warn('No se pudo leer datos/votacion.json: la tecla V no abre nada', error);
+    return null;
+  }
+}
 // Imagen pre-renderizada de cada diapositiva (renders/, ver tools/renders.mjs): se ve sin WebGL y en el PDF.
 for (const d of diapos) d.el.style.setProperty('--respaldo', `url("${new URL(`./renders/${d.escena}${d.pose ? `-${d.pose}` : ''}.jpg`, location.href)}")`);
 // ?render: solo la escena, sin texto ni interfaz (para generar esas imágenes).
@@ -102,6 +114,7 @@ function mostrar(i) {
   contar(d.el);
   $('#numero').textContent = dosDigitos(d.bloque);
   cola.ir(d.bloque);
+  sala?.etapa(etapaDe(i));
   document.querySelectorAll('#menu button').forEach((b, k) => b.toggleAttribute('aria-current', k === d.bloque));
 }
 
@@ -212,7 +225,7 @@ function reiniciarReloj() {
 // ---------- Modo presentador ----------
 const canal = 'BroadcastChannel' in window ? new BroadcastChannel(CANAL) : null;
 function avisar() {
-  canal?.postMessage({ tipo: 'estado', actual, pausa, feedsPausados, reloj: structuredClone(reloj), ahora: Date.now() });
+  canal?.postMessage({ tipo: 'estado', actual, pausa, feedsPausados, reloj: structuredClone(reloj), ahora: Date.now(), interactivo: estadoInteractivo() });
 }
 setInterval(avisar, 1000); // latido: el presentador sabe si el proyector sigue abierto
 canal?.addEventListener('message', ({ data }) => {
@@ -222,6 +235,9 @@ canal?.addEventListener('message', ({ data }) => {
   else if (data.tipo === 'anterior') anterior();
   else if (data.tipo === 'pausa') alternarPausa();
   else if (data.tipo === 'feeds') alternarFeeds();
+  else if (data.tipo === 'hype') lanzarHype();
+  else if (data.tipo === 'votacion') votacion?.alternar();
+  else if (data.tipo === 'reiniciar-interactivo') reiniciarInteractivo();
   else if (data.tipo === 'reloj') { (data.accion === 'empezar' ? empezarReloj : reiniciarReloj)(); avisar(); }
 });
 const abrirPresentador = () => window.open('./presentador.html', 'np-presentador', 'popup,width=1440,height=900');
@@ -239,55 +255,83 @@ function alternarPausa() {
   avisar();
 }
 
-// ---------- Hype colectivo de la portada (PLANIFICACION 2.1) ----------
-// Tecla H: cuenta regresiva → medidor → drop. Hasta la fase 4 es un ensayo sin celulares: los toques se simulan
-// con 40 grupos; la fase 4 reemplaza la simulación por los eventos pres:hype:* del servidor, sin tocar la escena.
-const hypeUi = $('#hype');
-const GRUPOS = 40, META = 25 * GRUPOS;
-let ensayo = null;
-if (hypeUi) $('#hype-grupos').innerHTML = Array.from({ length: GRUPOS }, (_, i) => `<span class="np-ficha np-ficha--libre" style="--g: var(--np-grupo-${i + 1}); --gt: var(--np-grupo-${i + 1}-texto)">${i + 1}</span>`).join('');
-function faseHype(fase) {
-  escenario.dataset.hype = fase;
-  hypeUi?.setAttribute('data-fase', fase);
+// ---------- Interacciones con los celulares (PLANIFICACION 2.1 a 2.3, fase 4) ----------
+// La presentación abre la sala del juego: el QR de la portada lleva a /play/ con la sala elegida, el hype (H) y la
+// votación (V) llegan a los celulares y la cola la forman los grupos conectados. Sin servidor (o sin celulares) el
+// hype y la votación se ensayan con grupos simulados, así la presentación nunca se traba.
+let sala = null;
+let servidor = imprimiendo ? 'sin servidor' : 'conectando'; // conectando | conectado | sin servidor
+/** En el último bloque (Drop Rush) los celulares pasan al lobby del juego; antes, a la espera de la presentación. */
+const etapaDe = (i) => (diapos[i].bloque === ultimoBloque ? 'juego' : 'presentacion');
+// Se declaran antes de crearlos: al crearse ya avisan al modo presentador, que lee su estado.
+let hype = null, votacion = null;
+if ($('#hype')) hype = crearHype({ $, escenario, motor, sala: () => sala, alCambiar: avisar });
+const datosVotacion = imprimiendo ? null : await leerVotacion();
+if (datosVotacion) votacion = crearVotacion({ datos: datosVotacion, contenedores: [...document.querySelectorAll('[data-votacion]')], escenario, motor, sala: () => sala, alCambiar: avisar });
+
+if (!imprimiendo) {
+  abrirSala({ etapa: etapaDe(actual), nueva: params.has('nueva-sala') })
+    .then((s) => {
+      sala = s;
+      hype?.conectar(s);
+      votacion?.conectar(s);
+      s.addEventListener('cambio', pintarSala);
+      // Si no hay sala a los pocos segundos, se avisa (el socket sigue reintentando y la sala aparece sola cuando vuelve).
+      setInterval(pintarSala, 3000);
+    })
+    .catch((error) => {
+      console.warn('Sin servidor del juego: el hype y la votación se ensayan sin celulares', error);
+      servidor = 'sin servidor';
+      pintarSala();
+    });
 }
-function pintarHype(toques, sumando) {
-  const nivel = Math.min(toques / META, 1);
-  $('#hype-barra').style.setProperty('--valor', `${(nivel * 100).toFixed(1)}%`);
-  $('#hype-cifra').textContent = `${Math.floor(nivel * 100)} % · ${formato.format(toques)} toques`;
-  $('#hype-sumando').textContent = `${sumando.size}/${GRUPOS} grupos sumando`;
-  $('#hype-grupos').querySelectorAll('.np-ficha').forEach((f, i) => f.classList.toggle('np-ficha--libre', !sumando.has(i)));
-  motor?.hype('llenando', nivel);
+
+/** QR y contador de la portada, sala en la interfaz y en el bloque de Drop Rush, y la cola con los grupos. */
+function pintarSala() {
+  if (sala) servidor = sala.conectado ? 'conectado' : sala.codigo || performance.now() > 9000 ? 'sin servidor' : 'conectando';
+  escenario.dataset.servidor = servidor;
+  const enLinea = servidor === 'conectado';
+  const conectados = enLinea ? sala.conectados : 0;
+  const cifra = enLinea ? `${conectados}/${sala.max}` : '';
+  if (enLinea && $('#qr').dataset.url !== sala.urlQr) {
+    $('#qr').dataset.url = sala.urlQr;
+    $('#qr').src = `/api/qr.svg?texto=${encodeURIComponent(sala.urlQr)}`;
+    $('#sala-url').textContent = `${sala.urlCelulares.replace(/^https?:\/\//, '')}/play`;
+  }
+  for (const el of document.querySelectorAll('[data-sala="codigo"]')) el.textContent = sala?.codigo ?? '—';
+  for (const el of document.querySelectorAll('[data-sala="conectados"]')) el.textContent = cifra;
+  $('#sala-estado').textContent = enLinea ? `${cifra} en la cola` : servidor === 'conectando' ? 'Conectando con el servidor…' : 'Sin servidor: el hype y la votación se ensayan sin celulares';
+  $('#pista').textContent = enLinea ? `Sala ${sala.codigo} · ${cifra} conectados · /play` : '← → recorrer · P presentador';
+  cola.grupos(enLinea ? sala.grupos.filter((g) => g.connected).map((g) => colorDeGrupo(g.number).color) : []);
+  avisar();
 }
-function hype() {
-  if (!hypeUi || diapos[actual].escena !== 'portada' || motor?.viajando) return;
-  if (ensayo?.fase === 'llenando') { ensayo.toques = META; return; } // el presentador lo completa si se estanca
-  if (ensayo) return;
-  ensayo = { fase: 'cuenta', toques: 0, sumando: new Set() };
-  faseHype('cuenta');
-  motor?.hype('cuenta');
-  const cuenta = $('#hype-cuenta');
-  [3, 2, 1].forEach((n, k) => setTimeout(() => { cuenta.textContent = n; cuenta.classList.remove('np-cuenta--ya'); }, k * 1000));
-  setTimeout(() => {
-    cuenta.textContent = '¡Hype!'; cuenta.classList.add('np-cuenta--ya');
-    ensayo.fase = 'llenando';
-    faseHype('llenando');
-    pintarHype(0, ensayo.sumando);
-    let ultimo = performance.now();
-    const simular = (ahora) => {
-      const dt = (ahora - ultimo) / 1000; ultimo = ahora;
-      // Cada grupo arranca a su tiempo y toca entre 4 y 8 veces por segundo (el tope del servidor).
-      for (let g = 0; g < GRUPOS; g++) if (Math.random() < dt * 1.4) ensayo.sumando.add(g);
-      ensayo.toques = Math.min(META, ensayo.toques + Math.round(ensayo.sumando.size * dt * (2 + Math.random() * 1.6)));
-      pintarHype(ensayo.toques, ensayo.sumando);
-      if (ensayo.toques < META) return requestAnimationFrame(simular);
-      // ¡Drop!
-      faseHype('drop');
-      motor?.hype('drop');
-      $('#hype-final').textContent = `${GRUPOS} grupos, ${formato.format(ensayo.toques)} toques: el drop salió.`;
-      setTimeout(() => { faseHype('reposo'); ensayo = null; }, 6000);
-    };
-    requestAnimationFrame(simular);
-  }, 3000);
+
+/** Tecla H, solo en la portada: cuenta regresiva → medidor → drop; con el medidor corriendo, lo completa. */
+function lanzarHype() {
+  if (!hype || diapos[actual].escena !== 'portada' || motor?.viajando) return;
+  hype.alternar();
+}
+
+/** Tecla J (en el bloque de Drop Rush): el proyector del juego, en la misma ventana y con la misma sala. */
+function abrirJuego() {
+  if (diapos[actual].bloque === ultimoBloque) location.assign('/host/');
+}
+
+/** Ensayos: borra el hype y la votación guardados en el servidor. */
+function reiniciarInteractivo() {
+  sala?.pedir('pres:reiniciar');
+}
+
+/** Estado de la sala, el hype y la votación para el modo presentador. */
+function estadoInteractivo() {
+  return {
+    servidor,
+    sala: sala?.codigo ?? null,
+    conectados: servidor === 'conectado' ? sala.conectados : 0,
+    max: sala?.max ?? 40,
+    hype: hype?.estado ?? null,
+    votacion: votacion?.estado ?? null,
+  };
 }
 
 // ---------- Medidor de rendimiento (fase 0: fps en la notebook del presentador) ----------
@@ -313,7 +357,9 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'p') abrirPresentador();
   else if (tecla === 'b' || tecla === '.') alternarPausa(); // los controles de diapositivas mandan "." para la pantalla negra
   else if (tecla === 'm') medir();
-  else if (tecla === 'h') hype();
+  else if (tecla === 'h') lanzarHype();
+  else if (tecla === 'v') votacion?.alternar();
+  else if (tecla === 'j') abrirJuego();
   else if (tecla === 'f') alternarFeeds();
 });
 addEventListener('hashchange', () => ir(Number.parseInt(location.hash.slice(1), 10) || 0));

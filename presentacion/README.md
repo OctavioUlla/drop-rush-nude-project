@@ -20,7 +20,8 @@ npm run dev
 ```
 
 - **Proyector:** `http://localhost:3000/presentacion/` (pantalla completa con F11).
-- **Modo presentador:** tecla `P` desde el proyector (abre otra ventana con las notas, la próxima diapositiva y el cronómetro).
+- **Modo presentador:** tecla `P` desde el proyector (abre otra ventana con las notas, la próxima diapositiva, el cronómetro, los grupos conectados y el estado del hype y de la votación).
+- **Celulares:** el QR de la portada abre `/play/` con la sala ya elegida; cada grupo toca su número **una sola vez** y queda adentro hasta el final del juego. Mientras dura la presentación, el celular muestra una espera quieta, el botón **HYPE** y la votación; al llegar al bloque de Drop Rush pasa solo al lobby del juego.
 
 | Tecla | Acción |
 |---|---|
@@ -29,8 +30,10 @@ npm run dev
 | Inicio / Fin | Primera / última |
 | `P` | Modo presentador |
 | `B` (o `.` del control) | Pantalla en cacao (pausa) |
-| `H` | Hype colectivo: cuenta regresiva, medidor y drop (ensayo sin celulares hasta la fase 4; con el medidor corriendo, lo completa) |
+| `H` | En la portada: hype colectivo (cuenta regresiva, botón HYPE en los celulares, medidor y drop). Con el medidor corriendo, lo completa |
+| `V` | Abrir o cerrar la votación en vivo (las barras aparecen en la segunda diapositiva de la historia) |
 | `F` | Pausar o reanudar los feeds de EGC vs. UGC (para comentar una publicación) |
+| `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana, con la misma sala y los mismos celulares |
 | `M` | Medidor de fps |
 
 - `#3` en la URL abre directo en la diapositiva 3.
@@ -38,7 +41,11 @@ npm run dev
 - `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página, sobre la imagen pre-renderizada de su escena.
 - `renders/` guarda esas imágenes (una por encuadre): también se ven si la notebook no tiene WebGL y como miniaturas del modo presentador. Después de cambiar la escena, `npm run renders:presentacion` en `juego/` las vuelve a generar (necesita Playwright).
 - Las publicaciones de los feeds de EGC vs. UGC están en [`datos/feeds.json`](datos/feeds.json); las fotos y los clips van en [`media/`](media/README.md). Si un archivo falta, se ve la ilustración de prueba.
-- La **cola de la tienda** (abajo a la derecha) es la barra de progreso: *"N personas adelante"* = bloques que faltan. En cada bloque entra una persona; en el último nos toca y aparece *Queda 1*.
+- La **cola de la tienda** (abajo a la derecha) es la barra de progreso: *"N personas adelante"* = bloques que faltan. En cada bloque entra una persona; en el último nos toca y aparece *Queda 1*. La forman los grupos conectados: cada persona toma el color de su grupo.
+- La pregunta de la **votación** y sus opciones están en [`datos/votacion.json`](datos/votacion.json) (cada opción dice hacia dónde inclina la balanza de los desafíos). El resultado queda guardado en el servidor: se ve en los desafíos, en el modo presentador y en el debate del juego.
+- **Sin servidor o sin celulares conectados**, `H` y `V` hacen un ensayo con 40 grupos simulados (lo dice el medidor y la votación), así se puede ensayar en casa. Abriendo la presentación con un servidor cualquiera (sin el del juego), la portada avisa *"Sin servidor"* en lugar del QR.
+- La presentación vuelve a la sala que tenía (la guarda el navegador, igual que `/host/`); `?nueva-sala` crea otra. Después de un ensayo, *Reiniciar hype y votación* en el modo presentador borra lo guardado.
+- **Ensayo con bots:** con la presentación abierta, `npm run bots -- --sala ABCD --bots 39 --desde 2` (en `juego/`) suma 39 grupos que tocan HYPE, votan y después juegan; `npm run bots -- --presentacion` hace la prueba completa sola (40 bots, hype y votación) y verifica los resultados.
 - Las diapositivas están en [`index.html`](index.html): cada `<section data-escena>` es una diapositiva, con sus notas en `<aside class="notas">`.
 
 ---

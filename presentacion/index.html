@@ -46,13 +46,22 @@
             <span class="np-revelar__linea" style="--i: 2"><span>y autenticidad.</span></span>
           </h1>
         </div>
-        <span class="marcador np-capa__entra portada__qr">Pendiente · QR y grupos conectados (fase 4)</span>
+        <!-- Ingreso de los celulares: el QR abre /play/ con la sala ya elegida (la misma del juego). -->
+        <div class="ingreso np-capa__entra portada__qr">
+          <img class="ingreso__qr" id="qr" alt="QR para entrar desde el celular">
+          <div class="ingreso__texto">
+            <span class="np-etiqueta">Escaneá y elegí tu grupo</span>
+            <b class="ingreso__url" id="sala-url"></b>
+            <span class="np-etiqueta">Sala <b data-sala="codigo">—</b></span>
+            <span class="ingreso__cola" id="sala-estado">Conectando con el servidor…</span>
+          </div>
+        </div>
       </div>
-      <!-- Hype colectivo (tecla H): cuenta regresiva, medidor y drop. Ensayo sin celulares hasta la fase 4. -->
+      <!-- Hype colectivo (tecla H): cuenta regresiva, medidor y drop. Sin celulares conectados se ensaya con grupos simulados. -->
       <div class="hype" id="hype" data-fase="reposo" aria-live="polite">
         <div class="np-cuenta hype__cuenta" id="hype-cuenta">3</div>
         <div class="hype__medidor">
-          <div class="hype__estado"><span class="np-etiqueta">Hype colectivo · ensayo sin celulares</span><span class="np-etiqueta" id="hype-sumando">0/40 grupos sumando</span></div>
+          <div class="hype__estado"><span class="np-etiqueta" id="hype-modo">Hype colectivo</span><span class="np-etiqueta" id="hype-sumando">0/40 grupos sumando</span></div>
           <div class="np-hype" id="hype-barra" style="--valor: 0%"><div class="np-hype__barra"></div><p class="np-hype__cifra" id="hype-cifra">0 % · 0 toques</p></div>
           <div class="np-grilla-grupos" id="hype-grupos"></div>
         </div>
@@ -61,7 +70,7 @@
       <aside class="notas">
         <p><em>Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.</em></p>
         <p>“Antes de arrancar: escaneen el QR y elijan el número de su grupo. Un celular por grupo.”</p>
-        <p><em>Con el contador alto, <kbd>H</kbd>: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.</em></p>
+        <p><em>Con el contador alto, <kbd>H</kbd>: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal. Si a los ~25 s no se llenó, <kbd>H</kbd> otra vez lo completa. Sin celulares conectados (o sin servidor), <kbd>H</kbd> hace un ensayo con 40 grupos simulados.</em></p>
         <p>“Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo.”</p>
       </aside>
     </section>
@@ -89,20 +98,25 @@
           <span class="np-revelar__linea" style="--i: 0"><span>De 600 €</span></span>
           <span class="np-revelar__linea" style="--i: 1"><span>a 26 M€.</span></span>
         </h2>
-        <ol class="hitos np-capa__entra">
-          <li><b>600 €</b><span>2019</span></li>
-          <li><b>600 mil €</b><span>1.ª colección</span></li>
-          <li><b>11,5 M€</b><span>2022</span></li>
-          <li><b>26 M€</b><span>2023</span></li>
-        </ol>
-        <p class="np-capa__entra">Venta directa (D2C) y drops limitados que se agotan: urgencia y deseo.</p>
-        <span class="marcador np-capa__entra">Pendiente · Votación en vivo: ¿pagarías 90 € por una sudadera que se agota en minutos? (fase 4)</span>
+        <!-- Al abrir la votación (tecla V), las barras en vivo reemplazan a los hitos. -->
+        <div class="historia__datos">
+          <div class="historia__hitos">
+            <ol class="hitos np-capa__entra">
+              <li><b>600 €</b><span>2019</span></li>
+              <li><b>600 mil €</b><span>1.ª colección</span></li>
+              <li><b>11,5 M€</b><span>2022</span></li>
+              <li><b>26 M€</b><span>2023</span></li>
+            </ol>
+            <p class="np-capa__entra">Venta directa (D2C) y drops limitados que se agotan: urgencia y deseo.</p>
+          </div>
+          <div class="votacion" data-votacion aria-live="polite"></div>
+        </div>
       </div>
       <aside class="notas">
         <p><em>Los hitos aparecen en la columna del texto; la sudadera sigue sobre la caja del pedido #0001.</em></p>
         <p>“Su primera colección facturó unos 600.000 euros; en 2022 llegaron a 11,5 millones y en 2023, a 26 millones. Hoy venden en más de cien países, con 11 tiendas en Europa y unos 250 empleados.</p>
         <p>¿Cómo lo hicieron? Con dos decisiones. Un modelo <i>direct-to-consumer</i>: venden sin intermediarios, desde su web, sus tiendas y sus redes. Y drops limitados: colecciones pequeñas que se agotan rápido y generan urgencia y deseo.”</p>
-        <p><em><kbd>V</kbd>: se abre la votación.</em></p>
+        <p><em><kbd>V</kbd>: se abre la votación en los celulares y las barras reemplazan a los hitos. Sin celulares conectados, es un ensayo con votos simulados.</em></p>
         <p>“Ahora les toca a ustedes. En el celular tienen una pregunta: ¿pagarían 90 euros por una sudadera que se agota en minutos?</p>
         <p>Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se convierte una marca de sudaderas en una comunidad? La vamos a responder en cinco pasos: el contenido que producen, cómo se vuelven virales, las experiencias físicas, qué dicen los números y cuál es, en el fondo, su objetivo. Y al final, los desafíos que vienen.”</p>
         <p><em>A los ~20 s, <kbd>V</kbd>: se cierra la votación.</em> “Guardamos el resultado: lo retomamos al final.”</p>
@@ -247,7 +261,8 @@
           <span class="np-revelar__linea" style="--i: 1"><span>vs. acceso.</span></span>
         </h2>
         <p class="np-capa__entra">Autenticidad al crecer, sostenibilidad, dependencia de las redes y exclusividad.</p>
-        <span class="marcador np-capa__entra">Pendiente · Resultado de la votación: inclina la balanza (fase 4)</span>
+        <!-- Resultado de la votación del bloque 1 (también inclina la balanza). -->
+        <div class="votacion votacion--resultado np-capa__entra" data-votacion></div>
       </div>
       <div class="np-etiquetas" aria-hidden="true">
         <div class="np-etiqueta-3d np-etiqueta-3d--abajo" data-ancla="exclusividad" style="--i: 0"><span class="np-etiqueta-3d__valor">Exclusividad</span><span class="np-etiqueta-3d__texto">Una sola</span></div>
@@ -259,7 +274,7 @@
         <p>El primero, <b>la autenticidad</b>: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada Álex le escribió a Bruno que lo que los trajo hasta aquí no los iba a llevar más allá, y planteó cambios en todos los departamentos.</p>
         <p>El segundo, <b>la sostenibilidad</b>: prometen prendas duraderas, pero la demanda y el ritmo del mercado ponen a prueba esa promesa.</p>
         <p>El tercero, <b>la dependencia de las redes</b>: un cambio en el algoritmo de Instagram o de TikTok impacta directo en su visibilidad y en sus ventas.</p>
-        <p>Y el cuarto, <b>exclusividad contra accesibilidad</b>. <em>La balanza se inclina según la votación.</em> Al principio les preguntamos si pagarían 90 euros por una sudadera que se agota en minutos, y el <em>[X %]</em> dijo que sí. El encanto de la marca es sentir que pertenecés a algo especial; pero si esa exclusividad se vuelve frustración o elitismo, la comunidad se divide.</p>
+        <p>Y el cuarto, <b>exclusividad contra accesibilidad</b>. <em>La balanza se inclina según la votación (el resultado está en la diapositiva y en el modo presentador).</em> Al principio les preguntamos si pagarían 90 euros por una sudadera que se agota en minutos, y el <em>[X %]</em> dijo que sí. El encanto de la marca es sentir que pertenecés a algo especial; pero si esa exclusividad se vuelve frustración o elitismo, la comunidad se divide.</p>
         <p>Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora llegamos a la puerta de la tienda y queda una sola sudadera. Y como en la pop-up de Nueva York, se define con una carrera. Por suerte, con ropa puesta.”</p>
         <p><em>La cola llega a la puerta: cartel QUEDA 1 → Drop Rush.</em></p>
       </aside>
@@ -274,10 +289,10 @@
           <span class="np-revelar__linea" style="--i: 0"><span class="np-logo-juego">Drop <span>Rush</span></span></span>
         </h2>
         <p class="np-capa__entra">Un celular por grupo. Gana uno solo.</p>
-        <span class="marcador np-capa__entra">Pendiente · Paso al lobby del juego (fase 4)</span>
+        <p class="sala-juego np-capa__entra" data-servidor-requerido>Sala <b data-sala="codigo">—</b> · <b data-sala="conectados"></b> grupos en la cola</p>
       </div>
       <aside class="notas">
-        <p><em>Abrir el proyector del juego (<code>/host/</code>): instrucciones (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min).</em></p>
+        <p><em>Al llegar a este bloque, los celulares pasan solos al lobby del juego (siguen en su grupo). <kbd>J</kbd> abre el proyector del juego (<code>/host/</code>) en esta misma ventana y con la misma sala: instrucciones (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min).</em></p>
         <p>En el debate se retoman el hype, la votación y el resultado: “Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera.”</p>
       </aside>
     </section>
@@ -291,7 +306,7 @@
     </div>
     <div class="np-interfaz__abajo">
       <div class="np-interfaz__contador"><b id="numero">00</b><span id="de">/ 08</span></div>
-      <span class="np-interfaz__pista">← → recorrer · P presentador</span>
+      <span class="np-interfaz__pista" id="pista">← → recorrer · P presentador</span>
       <div class="np-cola" id="cola"></div>
     </div>
   </div>

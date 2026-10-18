@@ -10,6 +10,7 @@ import { Server } from 'socket.io';
 import { cargarConfig, cargarPreguntas } from './config.js';
 import { Salas } from './rooms.js';
 import { Partida } from './game.js';
+import { Presentacion } from './presentacion.js';
 import { esPrincipal } from './principal.js';
 
 // Un solo proceso sirve la página, el JavaScript del juego y el tiempo real (sección 5).
@@ -59,6 +60,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     const n = Math.round(Number(maxGrupos));
     const sala = salas.crear(n >= 1 && n <= config.maxGrupos ? n : config.maxGrupos);
     sala.partida = new Partida({ config, banco, sala, enviar: enviarA(sala) });
+    sala.presentacion = new Presentacion({ config, sala, enviar: enviarA(sala) });
     return sala;
   };
 
@@ -129,6 +131,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       if (sala && grupo && !grupo.libre) {
         conectarGrupo(socket, sala, grupo);
         socket.emit('state:sync', sala.partida.estadoDe(grupo));
+        socket.emit('pres:estado', sala.presentacion.estadoCelular(grupo));
       }
     }
 
@@ -158,6 +161,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       socket.emit('room:groups', sala.resumen());
       if (sala.partida.guion) socket.emit('game:script', sala.partida.guion);
       socket.emit('state:sync', sala.partida.estadoDe(r.grupo));
+      socket.emit('pres:estado', sala.presentacion.estadoCelular(r.grupo));
     });
 
     socket.on('run:progress', (datos) => {
@@ -183,6 +187,17 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       responder(ack, grupo ? salaDe(socket).partida.usarPoder(grupo, datos) : { ok: false, motivo: 'no_group' });
     });
 
+    // Presentación (hype colectivo y votación en vivo): toques acumulados y voto del grupo.
+    socket.on('pres:hype:toques', (datos, ack) => {
+      const grupo = grupoDe(socket);
+      responder(ack, grupo ? salaDe(socket).presentacion.registrarToques(grupo, datos) : { ok: false, motivo: 'no_group' });
+    });
+
+    socket.on('pres:votacion:votar', (datos, ack) => {
+      const grupo = grupoDe(socket);
+      responder(ack, grupo ? salaDe(socket).presentacion.votar(grupo, datos) : { ok: false, motivo: 'no_group' });
+    });
+
     socket.on('debug:report', (datos) => {
       informes.unshift({ ...datos, room: socket.data.sala ?? null, group: socket.data.grupo ?? null, receivedAt: Date.now() });
       informes.length = Math.min(informes.length, 100);
@@ -198,6 +213,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       socket.emit('room:groups', sala.resumen());
       socket.emit('debug:reports', informes);
       socket.emit('host:state', sala.partida.estadoHost());
+      socket.emit('pres:estado', sala.presentacion.estadoProyector());
       return { ok: true, code: sala.codigo, hostKey: sala.claveHost, maxGroups: sala.maxGrupos, settings: ajustesLobby(sala) };
     };
 
@@ -217,8 +233,30 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
 
     socket.on('host:start', (ajustes) => {
       const sala = esHost(socket);
-      if (sala) sala.partida.iniciar(ajustes ?? {});
+      if (!sala) return;
+      sala.presentacion.cambiarEtapa('juego');
+      sala.partida.iniciar(ajustes ?? {});
     });
+
+    // ---------- Presentación (es un proyector más de la sala: la misma que después abre /host/) ----------
+    // pres:conectar pasa los celulares a la etapa de la presentación (espera, hype y votación) y devuelve el estado
+    // guardado (hype y votación) por si se recargó la página.
+    const accionesPresentacion = {
+      'pres:conectar': (p, d) => (p.cambiarEtapa(d?.etapa === 'juego' ? 'juego' : 'presentacion'), { ok: true, ...p.estadoProyector() }),
+      'pres:etapa': (p, d) => ({ ok: p.cambiarEtapa(d?.etapa) }),
+      'pres:hype:preparar': (p, d) => p.prepararHype(d?.segundos),
+      'pres:hype:completar': (p) => ({ ok: p.completarHype() }),
+      'pres:votacion:abrir': (p, d) => p.abrirVotacion(d),
+      'pres:votacion:cerrar': (p) => ({ ok: p.cerrarVotacion() }),
+      'pres:reiniciar': (p) => (p.reiniciar(), { ok: true }),
+    };
+    for (const [evento, accion] of Object.entries(accionesPresentacion)) {
+      socket.on(evento, (datos, ack) => {
+        const sala = esHost(socket);
+        if (typeof datos === 'function') [datos, ack] = [undefined, datos];
+        responder(ack, sala ? accion(sala.presentacion, datos) : { ok: false, motivo: 'not_host' });
+      });
+    }
 
     // Controles del presentador durante la carrera (el ack dice si se pudo).
     const controles = { 'host:pause': 'pausar', 'host:resume': 'reanudar', 'host:skip': 'saltar', 'host:finish': 'terminarYa' };
@@ -324,6 +362,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       for (const sala of [...salas]) {
         if (Date.now() - sala.ultimaActividad > SALA_ABANDONADA && !tamano(canal.sala(sala.codigo))) {
           sala.partida.detener();
+          sala.presentacion.detener();
           salas.borrar(sala.codigo);
         }
       }
@@ -378,6 +417,8 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
   if (archivos === 'auto') {
     app.use('/presentacion', express.static(resolve(RAIZ, '../presentacion'), { maxAge: 0 }));
     app.use('/design-system', express.static(resolve(RAIZ, '../design-system'), { maxAge: 0 }));
+    // El reloj sincronizado del juego (public/shared/), para la cuenta regresiva del hype en el proyector.
+    app.use('/compartido', express.static(resolve(RAIZ, 'public/shared'), { maxAge: 0 }));
   }
 
   // `--produccion` en vez de NODE_ENV=production: así `npm start` anda igual en Windows.
@@ -414,7 +455,10 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     raiz: RAIZ,
     async cerrar() {
       clearInterval(intervalo);
-      for (const sala of salas) sala.partida.detener();
+      for (const sala of salas) {
+        sala.partida.detener();
+        sala.presentacion.detener();
+      }
       for (const t of pendientes.values()) clearTimeout(t);
       lag.disable();
       await vite?.close();

@@ -488,6 +488,7 @@
   background: var(--g);
   transform-origin: 50% 0;
 }
+.np-cola__persona > :is(b, i) { transition: background var(--np-movimiento-lento) linear; } /* al entrar un grupo, toma su color */
 .np-cola__persona > i:first-child { left: 17%; }
 .np-cola__persona > i:nth-child(2) { right: 17%; }
 /* Nosotros: en mostaza, con un contorno para que se lea sobre crema, y una marca arriba. */

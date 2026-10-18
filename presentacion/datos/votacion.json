@@ -1,0 +1,10 @@
+{
+  "nota": "Votación en vivo (bloque 1, se retoma en el bloque 7). Campos: id (cambiarlo si cambia la pregunta: así no se mezclan votos de un ensayo), pregunta, y opciones (de 2 a 4) con su texto y su peso en la balanza de los desafíos: 1 inclina hacia la exclusividad, -1 hacia la accesibilidad y 0 no la mueve. Pregunta provisoria hasta definir la definitiva (fase 5).",
+  "id": "sudadera-90",
+  "pregunta": "¿Pagarías 90 € por una sudadera que se agota en minutos?",
+  "opciones": [
+    { "texto": "Sí", "balanza": 1 },
+    { "texto": "No", "balanza": -1 },
+    { "texto": "Depende", "balanza": 0 }
+  ]
+}
