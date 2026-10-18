@@ -470,11 +470,11 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 - Marketing experiencial: 1
 - Métricas y rendimiento digital: 1
 - Objetivo comunicacional: 1
-- Modelo D2C, drops y comunidad: 1
+- Modelo D2C, drops y desafíos: 1
 
-Los desafíos de la marca (exclusividad vs. accesibilidad, etc.) se trabajan en el debate final, a partir del resultado del juego. Las 8 preguntas por defecto suman 2 de las de reserva, elegidas al azar; conviene tener alguna más en el banco por si se sube la cantidad.
+Hay 8 de reserva (2 de marketing viral, 2 de métricas y 1 de cada uno de los otros temas): las 8 preguntas por defecto suman 2 de ellas, elegidas al azar, y alcanzan si se sube la cantidad. Los desafíos de la marca entran en una pregunta y además se trabajan en el debate final, a partir del resultado del juego.
 
-> **Pendiente:** revisar el borrador de `data/preguntas.json` *(a cargo del equipo)*: 6 preguntas principales (una por tema) y 4 de reserva, todas tomadas del caso.
+**Criterio del banco.** Todas se responden con lo que se dijo en la exposición ([`presentacion/GUION.md`](../presentacion/GUION.md) y las diapositivas), no con datos del caso que no se presentaron. Son **difíciles a propósito**, para que haya diferencia entre los grupos: las opciones incorrectas salen de otros datos de la misma exposición (la «autenticidad controlada» del EGC contra la validación social del UGC, los 600 € de inversión contra los 600 mil € de la primera colección, etc.). Con 15 s por pregunta, las opciones están recortadas para leerse rápido en el proyector; si en el ensayo no alcanza, se sube la duración en *Ajustes*. Si cambia el guion, hay que revisar las preguntas que dependen de ese bloque.
 
 ---
 
@@ -585,7 +585,7 @@ juego/
 
 - [x] Inicializar el proyecto Node con Express, Socket.io y Vite
 - [x] Crear sala con código y QR; lista de grupos con **un celular por grupo** y token de dispositivo
-- [x] Cargar las preguntas desde el JSON *(con un banco borrador redactado a partir del caso: falta que lo revise el equipo)*
+- [x] Cargar las preguntas desde el JSON *(14 preguntas tomadas de la exposición: 6 principales y 8 de reserva)*
 - [x] Guion de la partida, sincronización de reloj y ciclo pregunta → elección de carril → **revelado instantáneo**
 - [x] Puntuación por distancia y ranking en el host para 40 grupos
 - [x] Estadísticas por pregunta, pantalla final con ranking y **repaso de errores**
@@ -703,7 +703,6 @@ La presentación es interactiva y usa **el mismo servidor** ([plan de la present
 - [x] Assets 3D: **los crea Claude**, generados por código (ver 5.3.1)
 
 **Abiertas**
-- [ ] Revisar el banco de preguntas (`data/preguntas.json`): hay un **borrador** de 6 preguntas (una por tema) + 4 de reserva, redactado a partir del caso
 - [ ] Conseguir 2 o 3 celulares de gama baja para las pruebas de rendimiento
 - [ ] Averiguar cómo es el Wi-Fi de la facultad (portal cautivo, bloqueos) y probarlo
 - [ ] Elegir el hosting del servidor (uno solo)
