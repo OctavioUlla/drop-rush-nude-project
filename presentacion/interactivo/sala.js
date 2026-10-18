@@ -3,7 +3,7 @@
 // así los celulares entran una sola vez con el QR de la portada y pasan de la presentación al juego sin elegir nada.
 //
 // const sala = await abrirSala({ etapa: 'presentacion' });   // falla si no hay servidor (se ensaya sin celulares)
-// sala.conectado, sala.codigo, sala.conectados, sala.grupos, sala.estado (hype y votación guardados)
+// sala.conectado, sala.codigo, sala.conectados, sala.grupos, sala.estado (hype y votación guardados), sala.fotos
 // await sala.pedir('pres:hype:preparar', { segundos: 3 })     // null si no hay conexión
 // sala.addEventListener('pres:hype:nivel', (e) => …)
 //
@@ -46,7 +46,8 @@ class Sala extends EventTarget {
     this.conectado = false; // con la sala abierta (no basta con el socket)
     this.codigo = null;
     this.max = 40;
-    this.grupos = []; // [{ number, taken, connected }] de room:groups
+    this.grupos = []; // [{ number, taken, connected, photo }] de room:groups
+    this.clave = null; // clave del proyector: también sirve para pedir las fotos de los grupos
     this.estado = null; // { etapa, hype, votacion } que guarda el servidor
     this.urlCelulares = null;
 
@@ -81,6 +82,7 @@ class Sala extends EventTarget {
     this.nueva = false;
     guardarSesion({ code: r.code, hostKey: r.hostKey });
     this.codigo = r.code;
+    this.clave = r.hostKey;
     this.max = r.maxGroups;
     this.urlCelulares ??= await origenParaCelulares();
     const estado = await this.pedir('pres:conectar', { etapa: this.etapaActual }, { siempre: true });
@@ -112,6 +114,17 @@ class Sala extends EventTarget {
   /** Grupos de alumnos conectados (la cifra "12/40"; los profes no ocupan lugar de grupo). */
   get conectados() {
     return this.grupos.filter((g) => g.connected && !g.teacher).length;
+  }
+
+  /**
+   * Fotos de los grupos (selfie o fit check, las sacan en la espera) para el feed de UGC: [{ numero, profe, url }].
+   * room:groups trae la versión de cada una; la imagen se pide con la clave del proyector.
+   */
+  get fotos() {
+    if (!this.conectado) return [];
+    return this.grupos
+      .filter((g) => g.photo)
+      .map((g) => ({ numero: g.number, profe: Boolean(g.teacher), url: `/api/fotos/${this.codigo}/${g.number}?v=${g.photo}&clave=${encodeURIComponent(this.clave)}` }));
   }
 
   /** Dirección que abre el QR: la sala ya elegida, así el celular solo toca su número. */

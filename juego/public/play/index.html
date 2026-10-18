@@ -98,6 +98,31 @@
       <span class="np-ficha pres__grupo" data-pres="grupo"></span>
       <h1 class="np-titulo">Esperando el drop…</h1>
       <p class="np-texto np-texto-suave">Mirá el proyector. Cuando sea el momento, acá aparece el botón.</p>
+      <!-- Foto del grupo (foto.js): opcional, solo con la cámara y hasta que arranca la presentación. -->
+      <div class="pres__foto" data-foto="oferta" hidden>
+        <p class="np-etiqueta">Foto del grupo · opcional</p>
+        <p class="pres__foto-texto">Una <b>selfie del grupo</b> o un <b>fit check</b> (la ropa o las zapatillas). Es su foto de perfil en el juego.</p>
+        <p class="pres__foto-aviso">Su foto va a aparecer en la pantalla del aula, junto a las de los demás grupos.</p>
+        <div class="pres__foto-botones">
+          <button class="np-boton np-boton--acento" data-foto="selfie">🤳 Selfie</button>
+          <button class="np-boton np-boton--acento" data-foto="fit">👟 Fit check</button>
+        </div>
+        <button class="pres__foto-saltear" data-foto="saltear">Saltear, sin foto</button>
+      </div>
+      <div class="pres__foto pres__foto--lista" data-foto="lista" hidden>
+        <img class="pres__foto-mini" data-foto="mini" alt="Foto del grupo">
+        <div class="pres__foto-lista-texto">
+          <p class="np-etiqueta">Foto lista</p>
+          <p class="pres__foto-texto">Se va a ver en la pantalla del aula, junto a las de los demás grupos.</p>
+          <div class="pres__foto-acciones">
+            <button class="pres__foto-saltear" data-foto="selfie">Otra selfie</button>
+            <button class="pres__foto-saltear" data-foto="fit">Fit check</button>
+            <button class="pres__foto-saltear" data-foto="quitar">Quitar</button>
+          </div>
+        </div>
+      </div>
+      <p class="pres__foto-nota" data-foto="nota" hidden></p>
+      <button class="np-boton np-boton--secundario pres__cambiar-grupo" data-foto="abrir" hidden>📸 Foto del grupo</button>
       <button id="pres-cambiar-grupo" class="np-boton np-boton--secundario pres__cambiar-grupo" hidden>¿No es tu grupo? Cambiar</button>
     </div>
     <div class="np-cuenta pres__cuenta" data-pres="cuenta" aria-live="assertive">3</div>
@@ -123,6 +148,26 @@
       <p class="np-etiqueta">Votación cerrada</p>
       <h1 class="np-titulo" data-pres="cerrada"></h1>
       <p class="np-texto np-texto-suave">El resultado se revela al final de la presentación.</p>
+    </div>
+  </section>
+
+  <!-- Cámara de la foto del grupo (foto.js): vista en vivo, disparo y "Otra vez / Usar esta". Sin galería. -->
+  <section id="camara" class="camara" data-np-tema="cacao" data-paso="visor" hidden>
+    <p class="np-etiqueta" data-foto="titulo">Selfie del grupo</p>
+    <div class="camara__visor">
+      <video class="camara__video" data-foto="video" playsinline muted autoplay></video>
+      <canvas class="camara__foto" data-foto="lienzo"></canvas>
+    </div>
+    <p class="camara__aviso" data-foto="aviso"></p>
+    <p class="camara__error" data-foto="error" role="alert" hidden></p>
+    <div class="camara__botones camara__botones--visor" data-foto="disparo">
+      <button class="np-boton np-boton--secundario" data-foto="cancelar">Cancelar</button>
+      <button class="camara__disparo" data-foto="disparar" aria-label="Sacar la foto"></button>
+      <button class="np-boton np-boton--secundario" data-foto="girar" aria-label="Cambiar de cámara">🔄</button>
+    </div>
+    <div class="camara__botones camara__botones--revision" data-foto="revision">
+      <button class="np-boton np-boton--secundario" data-foto="otra">Otra vez</button>
+      <button class="np-boton np-boton--acento" data-foto="usar">Usar esta</button>
     </div>
   </section>
 

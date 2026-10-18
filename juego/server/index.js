@@ -177,6 +177,19 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       responder(ack, { ok: true, groups: sala.resumen() });
     });
 
+    // Foto del grupo (selfie o fit check), sacada con la cámara en la espera: { image: JPEG } la cambia y
+    // { image: null } la borra. Vale lo mismo que el cambio de grupo: hasta que arranca la presentación o la partida.
+    socket.on('player:photo', (datos, ack) => {
+      const sala = salaDe(socket);
+      const grupo = grupoDe(socket);
+      if (!sala || !grupo || grupo.socketId !== socket.id) return responder(ack, { ok: false, reason: 'no_group' });
+      if (sala.presentacion.comenzo || sala.partida.guion) return responder(ack, { ok: false, reason: 'started' });
+      const r = sala.ponerFoto(grupo, datos?.image);
+      if (!r.ok) return responder(ack, { ok: false, reason: r.motivo });
+      avisarGrupos(sala);
+      responder(ack, { ok: true, photo: r.version });
+    });
+
     socket.on('run:progress', (datos) => {
       const grupo = grupoDe(socket);
       if (grupo) salaDe(socket).partida.registrarProgreso(grupo, datos);
@@ -410,6 +423,17 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       color: { dark: '#482922', light: '#fff8ee' },
     });
     res.type('image/svg+xml').set('Cache-Control', 'public, max-age=86400').send(svg);
+  });
+
+  // Foto de un grupo (room:groups dice qué versión tiene). Solo la ven los proyectores de la sala (con su clave) y el
+  // celular del grupo (con su token): el código de 4 letras no alcanza para bajar las caras de la clase.
+  app.get('/api/fotos/:codigo/:grupo', (req, res) => {
+    const sala = salas.get(req.params.codigo);
+    const grupo = sala?.grupos.get(Number(req.params.grupo));
+    const clave = String(req.query.clave ?? '');
+    if (!grupo?.foto || !clave || (clave !== sala.claveHost && clave !== grupo.token)) return res.status(404).end();
+    // ?v= lleva la versión: una foto nueva tiene otra URL, así que esta se puede guardar.
+    res.type('image/jpeg').set('Cache-Control', 'private, max-age=86400').send(grupo.foto.datos);
   });
 
   // Direcciones de la notebook en la red local: el QR las usa si el proyector abrió localhost.

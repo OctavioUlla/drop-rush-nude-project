@@ -10,6 +10,7 @@ import { Red } from './net.js';
 import { Vista } from './render/vista.js';
 import { Calidad, resumirCuadros } from './render/quality.js';
 import { PantallaPresentacion } from './presentacion.js';
+import { FotoGrupo } from './foto.js';
 
 // Controlador del celular.
 // ?sala=ABCD   → entra directo a esa sala (es lo que trae el QR del proyector).
@@ -36,6 +37,7 @@ const calidad = new Calidad({ forzada: params.get('calidad'), alCambiarNivel: ()
 let vista = null;
 let red = null;
 let presentacion = null; // pantallas de la presentación (espera, hype y votación) antes del juego
+let foto = null; // foto del grupo (selfie o fit check) en la espera de la presentación
 let grupo = SOLO ? 1 : null;
 let guion = null;
 let guionIniciado = null; // id del guion con el que se reinició el corredor
@@ -143,6 +145,8 @@ function mostrarJuego() {
 function conectar() {
   red = new Red(CODIGO_URL);
   presentacion = new PantallaPresentacion({ red, raiz: $('pres'), hayPartida: () => Boolean(guion), grupo: () => grupo });
+  // Se ofrece en la espera, mientras se puede cambiar de grupo (hasta el hype de apertura).
+  foto = new FotoGrupo({ red, espera: $('pres').querySelector('.pres__espera'), camara: $('camara'), puede: () => puedeCambiarGrupo() && presentacion.visible, grupo: () => grupo });
   red.addEventListener('room:groups', (e) => dibujarGrilla(e.detail));
   red.addEventListener('sala', (e) => mostrarPasoGrupo(e.detail.codigo));
   red.addEventListener('unido', (e) => {
@@ -263,6 +267,7 @@ function puedeCambiarGrupo() {
 function actualizarCambioGrupo() {
   const oculto = !puedeCambiarGrupo();
   for (const id of ['btn-cambiar-grupo', 'pres-cambiar-grupo']) if ($(id).hidden !== oculto) $(id).hidden = oculto;
+  foto?.actualizar();
 }
 
 function reiniciarPartida() {

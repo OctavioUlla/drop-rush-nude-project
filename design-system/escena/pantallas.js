@@ -3,7 +3,7 @@
 // Todo se dibuja en canvas con los colores y la tipografía del design system, y se vuelve a dibujar cuando
 // terminan de cargar las fuentes (si no, el primer dibujo sale con la tipografía de respaldo).
 import * as THREE from 'three';
-import { colores } from '../tokens.js';
+import { colores, colorDeGrupo } from '../tokens.js';
 
 const M = colores.marca;
 const A = colores.acento;
@@ -240,6 +240,69 @@ export const publicaciones = {
   ],
 };
 
+// ---------- Fotos de la clase en el feed de UGC (issue #42) ----------
+// Cada grupo se saca una selfie o un fit check con el celular en la espera; con una tecla del presentador, el
+// celular de UGC las muestra como publicaciones (@grupo7, @grupo12…): la clase acaba de crear UGC en vivo.
+
+const DURACION_CLASE = 15; // s que se ven las fotos de la clase (después el feed sigue con los clips reales)
+const QUIETO_CLASE = 2; // s que el feed de la clase queda quieto al empezar y al terminar de bajar
+
+/** Fotos de ejemplo para el ensayo (sin servidor o sin fotos): selfies y fit checks dibujados con colores de grupo. */
+function fotosDeEnsayo() {
+  return [7, 12, 3, 21, 15, 30, 9, 26, 1, 18, 34, 5].map((numero, k) => {
+    const c = colorDeGrupo(numero);
+    const imagen = document.createElement('canvas');
+    imagen.width = imagen.height = 256;
+    const ctx = imagen.getContext('2d');
+    ctx.fillStyle = c.color; ctx.fillRect(0, 0, 256, 256);
+    if (k % 2) siluetaSudadera(ctx, 128, 150, 200, c.texto, c.color); // fit check
+    else for (const [x, s, a] of [[62, 190, 0.7], [194, 190, 0.7], [128, 220, 1]]) { ctx.globalAlpha = a; persona(ctx, x, 270, s, c.texto); } // selfie
+    ctx.globalAlpha = 1;
+    imagen.listo = true;
+    return { cuenta: `@grupo${numero}`, imagen, color: c.color, texto: c.texto };
+  });
+}
+
+/** Feed de la clase: cabecera "Creado por la clase" y las fotos en una grilla que baja de a poco (avance de 0 a 1). */
+function dibujarClase(ctx, w, h, fotos, avance, ensayo) {
+  ctx.fillStyle = M.crema; ctx.fillRect(0, 0, w, h);
+  const cols = fotos.length <= 2 ? 1 : fotos.length <= 16 ? 2 : 3;
+  const gap = w * 0.02;
+  const lado = (w - gap * (cols + 1)) / cols;
+  const arriba = w * 0.42;
+  const alto = Math.ceil(fotos.length / cols) * (lado + gap) + gap;
+  const desplazado = Math.max(0, alto - (h - arriba)) * avance;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, arriba, w, h - arriba); ctx.clip();
+  fotos.forEach((f, k) => {
+    const x = gap + (k % cols) * (lado + gap);
+    const y = arriba + gap + Math.floor(k / cols) * (lado + gap) - desplazado;
+    if (y > h || y + lado < arriba) return;
+    // Mientras carga, el color del grupo.
+    if (f.imagen?.listo) ctx.drawImage(f.imagen, x, y, lado, lado);
+    else { ctx.fillStyle = f.color; ctx.fillRect(x, y, lado, lado); }
+    // La cuenta del grupo, como en una publicación.
+    const px = Math.max(w * 0.032, lado * 0.085);
+    ctx.font = fuente(800, px); espaciado(ctx, 0); ctx.textAlign = 'left';
+    const ancho = ctx.measureText(f.cuenta).width + px * 1.2;
+    ctx.fillStyle = 'rgba(46,25,20,.72)'; rect(ctx, x + px * 0.5, y + lado - px * 2.1, ancho, px * 1.6, px * 0.8); ctx.fill();
+    ctx.fillStyle = M.crema; ctx.fillText(f.cuenta, x + px * 1.1, y + lado - px * 0.93);
+  });
+  ctx.restore();
+  // Cabecera fija: en vivo (o ensayo), título y cuántas publicaciones hizo la clase sin cobrar nada.
+  ctx.textAlign = 'left';
+  ctx.font = fuente(800, w * 0.036); espaciado(ctx, w * 0.003);
+  const etiqueta = ensayo ? 'ENSAYO · FOTOS DE EJEMPLO' : '● UGC EN VIVO';
+  ctx.fillStyle = ensayo ? M.piedra : A.ladrillo;
+  rect(ctx, w * 0.06, w * 0.13, ctx.measureText(etiqueta).width + w * 0.06, w * 0.07, w * 0.035); ctx.fill();
+  ctx.fillStyle = ensayo ? M.cacao : M.crema; ctx.fillText(etiqueta, w * 0.09, w * 0.177);
+  ctx.fillStyle = M.cacao; ctx.font = fuente(900, w * 0.088); espaciado(ctx, -w * 0.003);
+  ctx.fillText('Creado por la clase', w * 0.06, w * 0.3);
+  ctx.font = fuenteTexto(500, w * 0.04); espaciado(ctx, 0); ctx.globalAlpha = 0.75;
+  ctx.fillText(`${fotos.length} ${fotos.length === 1 ? 'publicación' : 'publicaciones'} · 0 € en publicidad`, w * 0.06, w * 0.37);
+  ctx.globalAlpha = 1;
+}
+
 const esVideo = (archivo) => /\.(mp4|webm|mov|m4v)(\?|$)/i.test(archivo);
 /** Carga la foto o el clip de una publicación; listo() se llama cuando hay algo para dibujar. */
 function cargarMedia(archivo, listo) {
@@ -283,7 +346,20 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
   }); // cada publicación se dibuja una vez y el feed las compone
   const n = capas.length;
   let reloj = desfase, pausado = false, cuadro = 0;
+  let clase = null; // { fotos, t, ensayo } mientras se ven las fotos de la clase (mostrarClase)
   const tex = lienzo(ancho, alto, (ctx, w, h, i = 0, u = 0) => {
+    if (clase) {
+      // Las fotos de la clase entran desde abajo como una publicación más y, al terminar, salen hacia arriba.
+      const y = h * (1 - suave(limitar(clase.t / pase))) - h * suave(limitar((clase.t - DURACION_CLASE) / pase));
+      if (y > 0) ctx.drawImage(capas[i % n].image, 0, y - h);
+      if (y < 0) ctx.drawImage(capas[i % n].image, 0, y + h);
+      ctx.save(); ctx.translate(0, y);
+      dibujarClase(ctx, w, h, clase.fotos, suave(limitar((clase.t - QUIETO_CLASE) / (DURACION_CLASE - 2 * QUIETO_CLASE))), clase.ensayo);
+      ctx.restore();
+      barraEstado(ctx, w, M.cacao);
+      if (pausado) cartelPausa(ctx, w);
+      return;
+    }
     const a = capas[i % n].image, b = capas[(i + 1) % n].image;
     const y = -h * u;
     ctx.drawImage(a, 0, y);
@@ -293,12 +369,14 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
   });
   fuentesListas.then(() => { estado = null; });
   const suave = (x) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2);
+  const limitar = (x) => THREE.MathUtils.clamp(x, 0, 1);
   const fase = () => {
     const ciclo = Math.max(0, reloj) / cada;
     const i = Math.floor(ciclo);
     return { i, u: THREE.MathUtils.clamp((ciclo - i - (1 - pase / cada)) / (pase / cada), 0, 1) };
   };
   tex.avanzar = (dt) => {
+    if (clase) return avanzarClase(dt);
     let { i, u } = fase();
     // En pausa el reloj solo corre para terminar un pase empezado; la publicación queda quieta en pantalla.
     if (!pausado || u > 0) {
@@ -329,8 +407,52 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
     estado = clave;
     tex.redibujar(i, suave(u));
   };
-  tex.dormir = () => { for (const c of capas) if (c.media && 'pause' in c.media && !c.media.paused) c.media.pause(); };
+  // Con las fotos de la clase, el feed real queda quieto (los clips en pausa) y se redibuja a ~30 cuadros por segundo.
+  // En pausa (F) la grilla deja de bajar; una entrada o una salida empezada termina.
+  const avanzarClase = (dt) => {
+    const antes = clase.t;
+    if (!(pausado && antes >= pase && antes < DURACION_CLASE)) clase.t += dt;
+    if (pausado && antes < pase) clase.t = Math.min(clase.t, pase); // pausado mientras entraba: termina de entrar
+    tex.dormir(false);
+    if (clase.t >= DURACION_CLASE + pase) {
+      clase = null;
+      estado = null;
+      return;
+    }
+    cuadro += dt;
+    if (cuadro < 1 / 30) return;
+    cuadro = 0;
+    tex.redibujar(fase().i);
+  };
+  tex.dormir = (salir = true) => {
+    for (const c of capas) if (c.media && 'pause' in c.media && !c.media.paused) c.media.pause();
+    // Fuera de cuadro, las fotos de la clase se terminan (al volver, el feed sigue con los clips).
+    if (salir && clase) { clase = null; estado = null; }
+  };
   tex.pausar = (si = !pausado) => { pausado = si; estado = null; return pausado; };
+  /**
+   * Fotos de la clase (selfies y fit checks de los grupos): [{ cuenta, url, color }]. Se ven ~15 s y el feed vuelve
+   * a la publicación en la que estaba. Sin fotos, las de ensayo. null las saca antes de tiempo. Devuelve si se ven.
+   */
+  tex.mostrarClase = (fotos) => {
+    if (!fotos) {
+      if (clase) clase.t = Math.max(clase.t, DURACION_CLASE);
+      return false;
+    }
+    const lista = fotos.length
+      ? fotos.map((f) => {
+          const imagen = new Image();
+          imagen.onload = () => (imagen.listo = true);
+          imagen.src = f.url;
+          return { ...f, imagen };
+        })
+      : fotosDeEnsayo();
+    clase = { fotos: lista, t: 0, ensayo: !fotos.length };
+    reloj = fase().i * cada; // al volver, la publicación de antes se ve entera
+    cuadro = 1;
+    return true;
+  };
+  tex.enClase = () => (clase ? { fotos: clase.fotos.length, ensayo: clase.ensayo } : null);
   return tex;
 }
 

@@ -8,6 +8,8 @@ import { VALOR_LIKE, NUMEROS_PROFES, esProfe } from '../public/shared/constantes
 // Sin I, L, O ni Q: no se confunden con 1 y 0 al copiarlas del proyector.
 const LETRAS = 'ABCDEFGHJKMNPRSTUVWXYZ';
 const LARGO_CODIGO = 4;
+/** La foto del grupo llega como JPEG cuadrado de ~256 px (~20 KB); con este tope, las 40 juntas no pasan de 2 MB. */
+export const FOTO_MAX_BYTES = 48 * 1024;
 
 export function normalizarCodigo(codigo) {
   return String(codigo ?? '').trim().toUpperCase().replace(/[^A-Z]/g, '').slice(0, LARGO_CODIGO);
@@ -56,6 +58,7 @@ export class Sala {
     this.tokens = new Map(); // token → número de grupo
     this.partida = null;
     this.ultimaActividad = Date.now();
+    this.versionFotos = 0; // cada foto nueva lleva otra versión: la URL cambia y el navegador no usa la vieja
   }
 
   /**
@@ -99,6 +102,24 @@ export class Sala {
     return grupo;
   }
 
+  /**
+   * Foto del grupo (selfie o fit check): un JPEG que el celular ya recortó y comprimió. null la borra.
+   * Queda en memoria con el grupo: sobrevive a recargas del celular y del proyector, no a un reinicio del servidor.
+   */
+  ponerFoto(grupo, datos) {
+    if (datos === null) {
+      grupo.foto = null;
+      return { ok: true, version: 0 };
+    }
+    // Socket.io entrega los datos binarios como Buffer (el celular manda un ArrayBuffer).
+    const bytes = Buffer.isBuffer(datos) ? datos : null;
+    if (!bytes || bytes.length < 4 || bytes.length > FOTO_MAX_BYTES) return { ok: false, motivo: 'invalid' };
+    // Solo JPEG (empieza con FF D8 FF): es lo que arma el celular y lo único que se sirve.
+    if (bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes[2] !== 0xff) return { ok: false, motivo: 'invalid' };
+    grupo.foto = { datos: Buffer.from(bytes), version: ++this.versionFotos };
+    return { ok: true, version: grupo.foto.version };
+  }
+
   /** Al volver al lobby, los grupos liberados que nadie retomó quedan libres del todo. */
   limpiarLiberados() {
     for (const [n, g] of this.grupos) if (g.libre) this.grupos.delete(n);
@@ -131,12 +152,16 @@ export class Sala {
     return n;
   }
 
-  /** Los grupos de alumnos (1 a maxGrupos) y después los profes, marcados con `teacher`. */
+  /**
+   * Los grupos de alumnos (1 a maxGrupos) y después los profes, marcados con `teacher`.
+   * `photo` es la versión de la foto del grupo (0 si no tiene): la imagen se pide aparte (/api/fotos/), así esta lista,
+   * que les llega a todos los celulares, sigue liviana.
+   */
   resumen() {
     const lista = [];
     const agregar = (n, extra) => {
       const g = this.grupos.get(n);
-      lista.push({ number: n, taken: Boolean(g && !g.libre), connected: Boolean(g?.conectado), ...extra });
+      lista.push({ number: n, taken: Boolean(g && !g.libre), connected: Boolean(g?.conectado), photo: g?.foto?.version ?? 0, ...extra });
     };
     for (let n = 1; n <= this.maxGrupos; n++) agregar(n);
     for (const n of NUMEROS_PROFES) agregar(n, { teacher: true });
@@ -152,6 +177,7 @@ export class Grupo {
     this.libre = false;
     this.conectado = false;
     this.socketId = null;
+    this.foto = null; // { datos: Buffer (JPEG), version }
     this.reiniciarPartida();
   }
 

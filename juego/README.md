@@ -126,6 +126,7 @@ Lo que queda de la Fase 4 solo se puede hacer con celulares y la red reales. Lis
 6. **Corte de red** con un celular real: apagar el Wi-Fi 5 s en plena pregunta y volver; la respuesta tiene que contar.
 7. **Controles**: pausar, seguir, saltar una pregunta y terminar, mirando que los celulares sigan al proyector.
 8. **Proyector**: mirar la legibilidad del mapa y del ranking con 40 grupos desde el fondo del aula.
+9. **Foto del grupo** en un iPhone y un Android reales: en la espera de la presentación, *Selfie* (cámara frontal) y *Fit check* (trasera), aceptar y negar el permiso de cámara (con el permiso negado se saltea sin trabarse), *Otra vez / Usar esta* y la foto en el lobby, el ranking y la cola del proyector. Necesita HTTPS (el deploy) o `localhost`.
 
 ## Deploy
 

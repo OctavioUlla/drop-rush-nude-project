@@ -1,5 +1,5 @@
 // Motor del plano secuencia: renderer, luz de cine, la sudadera protagonista y el viaje de cámara entre estaciones.
-// iniciar({ lienzo, escenario, eventos, escalaMaxima, feeds }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, pausarFeeds, estaciones }
+// iniciar({ lienzo, escenario, eventos, escalaMaxima, feeds }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, pausarFeeds, mostrarClase, estaciones }
 // escalaMaxima: tope de la resolución interna (por defecto tokens.escena.render['escala-maxima']); bajarlo si la notebook no llega a 60 fps.
 // feeds: { egc: [...], ugc: [...] } con las publicaciones de los celulares (ver feed() en pantallas.js); sin esto, las de prueba.
 import * as THREE from 'three';
@@ -335,6 +335,12 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
     },
     /** Frena o reanuda los feeds de EGC vs. UGC (sin si, alterna); devuelve si quedaron en pausa. */
     pausarFeeds(si) { return estaciones.find((e) => e.pausarFeeds)?.pausarFeeds(si) ?? false; },
+    /**
+     * Las fotos de la clase ([{ cuenta, url, color }]) en el celular de UGC, ~15 s; con [] las de ensayo y con null
+     * se sacan antes. claseEnFeed() → { fotos, ensayo } mientras se ven, o null.
+     */
+    mostrarClase(fotos) { return estaciones.find((e) => e.mostrarClase)?.mostrarClase(fotos) ?? false; },
+    claseEnFeed() { return estaciones.find((e) => e.enClase)?.enClase() ?? null; },
     /** Suelta la sudadera sobre el pedestal (después del cargador). */
     arrancar() { arrancado = true; },
     /** Saltar sin viaje (al cargar con #n en la URL). */
