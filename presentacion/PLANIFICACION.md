@@ -32,14 +32,14 @@
 
 | Momento | 📽️ Proyector | 📱 Celular |
 |---|---|---|
-| Espera | Portada (tema cacao), QR grande y cuántos grupos están conectados (*"34/40 en la cola"*) | *"Esperando el drop…"* con el número del grupo |
+| Espera | Portada (tema cacao), QR y cuántos grupos están conectados (*"34/40 en la cola"*). Con `Q` (o tocando el QR), el QR ocupa casi todo el alto del proyector, con el código de la sala en grande para entrar escribiéndolo | *"Esperando el drop…"* con el número del grupo |
 | 3, 2, 1 | Cuenta regresiva gigante | Cuenta regresiva sincronizada |
 | ¡Hype! (~10 a 15 s) | **Medidor de hype** que se llena en vivo, con el porcentaje y los toques. Debajo, una ficha por grupo que se enciende con su color cuando ese grupo empieza a tocar (*"38/40 grupos sumando"*) | Botón **HYPE** a pantalla completa (mostaza) que late con cada toque, y debajo el aporte del grupo (*"Sumaron 64 toques"*) |
 | ¡Drop! (al llegar al 100 %) | La sudadera cae al pedestal, lluvia de papelitos con los colores de los grupos y *"40 grupos, 1.832 toques: el drop salió"* | *"¡Lo lograron entre todos!"* y el aporte del grupo |
 
 **Reglas.**
-- La meta se calcula con los grupos conectados al lanzar (por ejemplo, **25 toques por grupo**), así el medidor tarda lo mismo con 25 grupos que con 40. El valor se ajusta en el ensayo.
-- Cada celular cuenta como máximo **8 toques por segundo**: tocar con varios dedos o con un auto-clicker no rinde más. Así pesa que toquen todos, no que uno toque mucho.
+- La meta se calcula con los grupos conectados al lanzar (por ejemplo, **25 toques por grupo**), así el medidor tarda lo mismo con 25 grupos que con 40. El valor se ajusta en el ensayo (`hypeToquesPorGrupo` en [`juego/data/config.json`](../juego/data/config.json)). Con 40 bots que tocan a su ritmo (entre 4 y 12 por segundo, con el tope) el drop sale en ~4 s.
+- Cada celular cuenta como máximo **8 toques por segundo** (`hypeToquesPorSegundo`, con una ráfaga de 16 para los envíos que llegan juntos): tocar con varios dedos o con un auto-clicker no rinde más. Así pesa que toquen todos, no que uno toque mucho. El celular aplica el mismo tope, así lo que muestra (*"Sumaron 64 toques"*) es lo que suma.
 - El proyector **no muestra un ranking** de grupos: el mensaje es colectivo.
 - Si a los 25 s el medidor no se llenó, el presentador lo completa con la misma tecla y el drop sale igual.
 - La cuenta regresiva usa la **sincronización de reloj** que ya está planeada para el juego, así todos los celulares arrancan al mismo tiempo.
@@ -56,7 +56,7 @@
 - La tienda es una fachada con el cartel *Nude® Project*, la puerta y una vidriera con **la última sudadera**.
 - En el **último bloque** nos toca: la puerta queda abierta, la luz cae sobre la vereda, el texto pasa a *"Puerta abierta · Nos toca"* y aparece el cartel **QUEDA 1** latiendo. Es la transición directa a Drop Rush.
 - Las personas tienen tonos de la tinta del tema (cacao sobre crema, crema sobre cacao), así se lee como gente distinta sin sumar colores; un velo del color del tema al pie asegura el contraste aunque el piso de la escena sea claro u oscuro.
-- **Opcional (fase 4):** la cola la forman los **grupos conectados**, cada persona con el color de su grupo (`--g`, los 40 colores del design system). Así la clase se ve a sí misma esperando.
+- La cola la forman los **grupos conectados**, cada persona con el color de su grupo (`--g`, los 40 colores del design system): a medida que entran los celulares, la fila se va pintando. Así la clase se ve a sí misma esperando.
 - No compite con el contenido: ~8 % de alto, al pie, y **nada se mueve mientras se habla**: solo camina al cambiar de bloque.
 - Técnica: el componente `np-cola` del design system; [`design-system/cola.js`](../design-system/cola.js) arma el HTML y `--bloque` mueve la fila con CSS.
 
@@ -67,13 +67,14 @@
 **Pregunta sugerida (a confirmar con el contenido):** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
 
 **Cuándo.**
-- Se **abre** en el bloque de la historia y los drops, durante ~20 s, y las barras se llenan en vivo mientras se sigue hablando.
+- Se **abre** en el bloque de la historia y los drops, durante ~20 s, mientras se sigue hablando. El proyector solo muestra cuántos grupos votaron: el resultado se guarda.
 - Se **retoma** en el bloque de desafíos y en el debate final, junto al hype de apertura y al resultado del juego: *"El 70 % dijo que sí; al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera"*.
 
 **Detalles.**
 - Un voto por grupo, se puede cambiar mientras la votación está abierta.
 - Barras horizontales grandes (cacao sobre crema) con el porcentaje y la cantidad de votos; se ve cuántos grupos votaron (*"31/40"*).
-- La pregunta y las opciones se definen en un archivo de datos, así se cambian sin tocar código.
+- La pregunta y las opciones se definen en [`datos/votacion.json`](datos/votacion.json), así se cambian sin tocar código; cada opción dice hacia dónde inclina la **balanza** de los desafíos (exclusividad, accesibilidad o nada).
+- En la historia, debajo de los hitos, una línea dice cuántos grupos votaron (*"Votación abierta · 31/40 grupos votaron"*), sin porcentajes. El resultado se **revela en los desafíos**: las barras aparecen debajo del texto (la más votada en mostaza) y la balanza se inclina. El presentador lo ve antes en su ventana.
 
 ### 2.4 Feeds de EGC vs. UGC 📱📱
 
@@ -186,13 +187,15 @@ La **cola** está presente todo el tiempo y no suma minutos.
 | → / Espacio / ↓ | Siguiente |
 | ← / ↑ | Anterior |
 | `H` | Lanzar el hype (y completarlo si se estanca) |
+| `Q` | QR a pantalla completa, para escanearlo desde el fondo del aula (y para los que llegan tarde) |
 | `V` | Abrir o cerrar la votación |
 | `F` | Pausar o reanudar los feeds |
+| `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana y con la misma sala |
 | `P` | Abrir el modo presentador |
 | `B` | Pantalla en cacao (pausa) |
 
 - **Sin internet:** fotos, videos y tipografías van dentro del repositorio; nada se carga en vivo desde Instagram o TikTok.
-- **Si el servidor falla:** la presentación sigue funcionando sola. Las diapositivas interactivas muestran una versión estática (por ejemplo, el medidor lleno de un hype de ensayo) y se pueden saltar.
+- **Si el servidor falla:** la presentación sigue funcionando sola. La portada avisa *"Sin servidor"* en lugar del QR, y `H` y `V` hacen un **ensayo** con 40 grupos simulados (lo mismo pasa con servidor pero sin celulares conectados). Si el servidor se cae en pleno hype, `H` lo completa igual y el drop sale.
 - **Respaldo en PDF:** imprimir desde el navegador genera un PDF con una diapositiva por página.
 - **Proyector:** todo escala con el ancho de la diapositiva (16:9) y respeta los tamaños del design system; probar antes en el aula.
 
@@ -231,8 +234,9 @@ presentacion/
 ├── medidor.js           # Medidor de fps y recorrido de prueba (fase 0)
 ├── vendor/              # three.js guardado localmente (npm run vendor:presentacion en juego/); GSAP, si se suma
 ├── interactivo/
-│   ├── hype.js          # Hype colectivo (proyector)
-│   └── votacion.js      # Votación en vivo (proyector)
+│   ├── sala.js          # Conexión con el servidor: abre la sala del juego (la misma que /host/) y el reloj sincronizado
+│   ├── hype.js          # Hype colectivo (proyector), en vivo o de ensayo
+│   └── votacion.js      # Votación en vivo (proyector), en vivo o de ensayo
 ├── datos/
 │   ├── votacion.json    # Pregunta y opciones
 │   └── feeds.json       # Publicaciones de cada feed (cuenta, texto, cifra, archivo)
@@ -241,26 +245,33 @@ presentacion/
 ```
 La escena 3D **no se copia**: la presentación importa [`design-system/escena/`](../design-system/escena/) (motor, sudadera, las 9 estaciones y los feeds de los celulares, que reciben `feeds.json`) y [`design-system/cola.js`](../design-system/cola.js), así la maqueta y la presentación nunca se separan.
 
-Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y votación son fases más del controlador del juego (`juego/public/play/`). Del lado del **servidor**, un módulo `juego/server/presentacion.js` maneja el hype y la votación.
+Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y votación son fases más del controlador del juego ([`juego/public/play/presentacion.js`](../juego/public/play/presentacion.js)), que tapan el runner (sin simularlo ni dibujarlo) mientras la sala está en la etapa de la presentación. Del lado del **servidor**, [`juego/server/presentacion.js`](../juego/server/presentacion.js) maneja la etapa, el hype y la votación de cada sala.
 
-### 6.4 Eventos de Socket.io (borrador)
+La presentación es un **proyector más de la sala**: la crea (o vuelve a la guardada) con la misma clave que usa `/host/`, así al llegar al juego los celulares ya están adentro. `socket.io-client` y el reloj sincronizado (`juego/public/shared/reloj.js`, servido en `/compartido/`) los sirve el mismo servidor; si la presentación se abre desde otro servidor, no los encuentra y se ensaya sin celulares.
+
+### 6.4 Eventos de Socket.io
 
 | Dirección | Evento | Datos |
 |---|---|---|
+| presentación → server | `pres:conectar` | `{ etapa }` → devuelve lo guardado `{ etapa, hype, votacion }` (si se recargó la página) |
+| presentación → server | `pres:etapa` | `{ etapa }`: `'presentacion'` (espera, hype y votación en los celulares) o `'juego'` (al llegar al bloque de Drop Rush; también al arrancar la partida) |
+| server → todos | `pres:etapa` | `{ etapa }` |
 | presentación → server | `pres:hype:preparar` | `{ segundos }` (duración de la cuenta regresiva) |
-| server → todos | `pres:hype:cuenta` | `{ empiezaEn, meta }` (hora del servidor y toques necesarios) |
-| celular → server | `pres:hype:toques` | `{ n }` (toques acumulados desde el último envío, cada ~200 ms) |
+| server → todos | `pres:hype:cuenta` | `{ empiezaEn, meta, conectados }` (hora del servidor y toques necesarios) |
+| celular → server | `pres:hype:toques` | `{ total }` (toques acumulados en este hype, cada ~200 ms: si un envío se pierde, el siguiente lo corrige) |
 | server → todos | `pres:hype:nivel` | `{ toques, meta, grupos }` (unas 10 veces por segundo; `grupos` son los que ya sumaron) |
 | presentación → server | `pres:hype:completar` | `{}` (el presentador lo completa si se estanca) |
-| server → todos | `pres:hype:drop` | `{ toques, grupos, aportes }` (`aportes` por grupo, para mostrar en cada celular) |
-| presentación → server | `pres:votacion:abrir` / `pres:votacion:cerrar` | `{ id }` |
-| server → celulares | `pres:votacion:pregunta` | `{ id, pregunta, opciones }` |
-| celular → server | `pres:votacion:votar` | `{ id, opcion }` |
-| server → presentación | `pres:votacion:conteo` | `{ id, votos: [n, n, n], votaron, conectados }` |
-| server → presentación | `pres:grupos` | `[{ numero, color, conectado }]` (para la cola y el contador) |
+| server → todos | `pres:hype:drop` | `{ toques, meta, grupos, aportes, at }` (`aportes` por grupo, para mostrar en cada celular) |
+| presentación → server | `pres:votacion:abrir` / `pres:votacion:cerrar` | `{ id, pregunta, opciones }` / `{}` (reabrir la misma pregunta conserva los votos) |
+| server → todos | `pres:votacion:pregunta` | `{ id, pregunta, opciones, abierta }` |
+| celular → server | `pres:votacion:votar` | `{ id, opcion, seq }` con ack (se reintenta; `seq` descarta un voto viejo que llega después de uno nuevo) |
+| server → proyectores | `pres:votacion:conteo` | `{ id, pregunta, opciones, abierta, votos: [n, n, n], votaron, conectados }` |
+| server → celular o proyector | `pres:estado` | Todo lo anterior al entrar o reconectar: la etapa, el hype en curso (con el aporte del grupo) y la votación (con su voto) |
+| presentación → server | `pres:reiniciar` | `{}` (después de un ensayo: borra el hype y la votación guardados) |
 
-- El servidor guarda el resultado del hype y de la votación para retomarlos en el debate, aunque se recargue la página.
-- Un celular que se reconecta recibe el estado actual (por ejemplo, la votación abierta) con el mismo `state:sync` del juego.
+- Los grupos conectados (para el contador, la cola y la meta del hype) son el mismo `room:groups` del juego.
+- El servidor guarda el resultado del hype y de la votación para retomarlos en el debate, aunque se recargue la página: el proyector del juego los muestra en la pantalla del debate.
+- Un celular que se reconecta recibe el estado actual (por ejemplo, la votación abierta) con `pres:estado`, junto al `state:sync` del juego.
 
 ### 6.5 Medios
 - **Videos:** MP4 (H.264), 720p o menos, 5 a 10 s, sin audio; objetivo **< 2 MB por clip**.
@@ -290,7 +301,7 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 - [x] Pulir cada estación con el contenido real: feeds que pasan solos en los celulares, contador de likes, hitos de la historia, etiquetas de las métricas y de la balanza, frase final
 - [x] Sin solapes: ningún texto ni etiqueta queda sobre un objeto, y ningún objeto atraviesa otro (la sudadera levita sobre los apoyos, cuelga de una percha real, descansa en el plato de la balanza con los hilos por fuera y entra y sale de la percha y del plato por delante)
 - [x] Poses dentro de una estación (`data-pose`): la cámara se acomoda sin viajar (pilas de las métricas)
-- [x] Coreografía del hype en la portada (`H`): luz que se apaga, sudadera que sube y baja con el medidor, papelitos con los colores de los grupos. Hasta la fase 4 los toques se simulan
+- [x] Coreografía del hype en la portada (`H`): luz que se apaga, sudadera que sube y baja con el medidor, papelitos con los colores de los grupos (desde la fase 4, con los toques de los celulares)
 - [x] Imágenes pre-renderizadas de respaldo (`renders/`, `npm run renders:presentacion`): sin WebGL, en el PDF y en las miniaturas del modo presentador
 
 ### Fase 3: Interacciones sin servidor
@@ -300,12 +311,15 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 
 ### Fase 4: Interacciones con servidor
 *Depende de la Fase 1 del juego: salas, grupos, tokens y sincronización de reloj.*
-- [ ] Pantallas de espera, hype y votación en el celular
-- [ ] Hype colectivo: cuenta regresiva sincronizada, medidor compartido, tope de toques y drop final
-- [ ] Votación en vivo con conteo y resultado guardado
-- [ ] Cola formada por los grupos conectados (opcional)
-- [ ] Versión estática de respaldo si el servidor no responde
-- [ ] Prueba con los 40 bots del juego
+- [x] La presentación abre la sala del juego (la misma que después usa `/host/`): QR y *"34/40 en la cola"* en la portada, sala en la interfaz y en el bloque de Drop Rush (`J` abre el juego). Al llegar a ese bloque, los celulares pasan solos al lobby
+- [x] Pantallas de espera, hype y votación en el celular ([`juego/public/play/presentacion.js`](../juego/public/play/presentacion.js)): tapan el runner, que no se dibuja mientras tanto
+- [x] Hype colectivo: cuenta regresiva sincronizada, medidor compartido, tope de toques (en el celular y en el servidor) y drop final con el aporte de cada grupo
+- [x] Votación en vivo ([`datos/votacion.json`](datos/votacion.json)) con conteo, voto que se puede cambiar, resultado guardado, balanza de los desafíos y retoma en el debate del juego
+- [x] Cola formada por los grupos conectados
+- [x] Modo presentador: sala y grupos conectados, estado del hype y de la votación, y botones para lanzarlos y para reiniciarlos después de un ensayo
+- [x] Versión de respaldo si el servidor no responde (o no hay celulares): hype y votación de ensayo con grupos simulados
+- [x] Prueba con los 40 bots del juego (`npm run bots -- --presentacion`, también en `npm test`): drop con los 40 grupos, ningún celular pasa el tope (aunque 22 tocan más rápido) y el conteo coincide con el último voto de cada bot
+- [ ] Probarlo con celulares reales en el Wi-Fi del aula (con la prueba del juego, ver [Ensayo en el aula](../juego/README.md#ensayo-en-el-aula))
 
 ### Fase 5: Contenido y ensayo
 - [ ] Cargar el contenido de cada bloque (sección 8)

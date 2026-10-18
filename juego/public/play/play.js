@@ -9,6 +9,7 @@ import { escucharControles } from './input.js';
 import { Red } from './net.js';
 import { Vista } from './render/vista.js';
 import { Calidad, resumirCuadros } from './render/quality.js';
+import { PantallaPresentacion } from './presentacion.js';
 
 // Controlador del celular.
 // ?sala=ABCD   → entra directo a esa sala (es lo que trae el QR del proyector).
@@ -34,6 +35,7 @@ const pista = new Pista();
 const calidad = new Calidad({ forzada: params.get('calidad'), alCambiarNivel: () => vista?.aplicarNivel() });
 let vista = null;
 let red = null;
+let presentacion = null; // pantallas de la presentación (espera, hype y votación) antes del juego
 let grupo = SOLO ? 1 : null;
 let guion = null;
 let guionIniciado = null; // id del guion con el que se reinició el corredor
@@ -141,6 +143,7 @@ function mostrarJuego() {
 // ---------- Red ----------
 function conectar() {
   red = new Red(CODIGO_URL);
+  presentacion = new PantallaPresentacion({ red, raiz: $('pres'), hayPartida: () => Boolean(guion), grupo: () => grupo });
   red.addEventListener('room:groups', (e) => dibujarGrilla(e.detail));
   red.addEventListener('sala', (e) => mostrarPasoGrupo(e.detail.codigo));
   red.addEventListener('unido', (e) => {
@@ -636,6 +639,11 @@ function enPartida() {
 
 function bucle(t) {
   requestAnimationFrame(bucle);
+  // Durante la presentación el celular muestra la espera, el hype o la votación: el runner no se simula ni se dibuja.
+  if (presentacion?.visible) {
+    tAnterior = t;
+    return;
+  }
   // Calidad baja: como máximo 30 cuadros por segundo (la simulación no cambia: va a paso fijo).
   const { fpsMax } = calidad.config;
   if (fpsMax && t - ultimoCuadro < 1000 / fpsMax - 2) return;

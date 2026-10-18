@@ -23,6 +23,10 @@ export const CONFIG_POR_DEFECTO = {
   rachaParaPoder: 2,
   emparejar: true,
   sonido: true,
+  // Hype colectivo de la presentación: meta por grupo conectado y tope de toques por celular.
+  hypeToquesPorGrupo: 25,
+  hypeToquesPorSegundo: 8,
+  hypeRafaga: 16,
 };
 
 function leerJson(nombre) {

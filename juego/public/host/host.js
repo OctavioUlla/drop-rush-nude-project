@@ -39,6 +39,7 @@ let final = null;
 let repaso = [];
 let vista = 'auto'; // 'auto' (según el guion) | 'tutorial' (antes de empezar) | 'repaso' | 'debate'
 let repasoIndice = 0;
+let presentacion = null; // hype y votación de la presentación en esta sala, para retomarlos en el debate
 const mapa = new Mapa({ lienzo: $('mapa-lienzo'), falta: $('mapa-falta'), progreso: $('mapa-progreso') });
 const sonido = new Sonido(leerPreferenciaSonido() ?? true);
 let ultimoSonido = { fase: null, segundo: null, final: false }; // para no repetir efectos en cada vuelta de actualizar()
@@ -93,6 +94,20 @@ async function origenParaCelulares() {
   if (!['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) return location.origin;
   const { ips = [] } = await fetch('/api/red').then((r) => r.json()).catch(() => ({}));
   return ips[0] ? `${location.protocol}//${ips[0]}${location.port ? `:${location.port}` : ''}` : location.origin;
+}
+
+/** "Al principio llenaron el hype entre 40 grupos… y al final 39 se quedaron sin sudadera." + la votación. */
+function textoRetoma(otros) {
+  const partes = [];
+  const h = presentacion?.hype?.resultado;
+  if (h) {
+    const quienes = h.grupos === 1 ? 'un grupo llenó el hype' : `llenaron el hype entre los ${h.grupos} grupos`;
+    const final = otros > 0 ? `… y al final ${otros} se ${otros === 1 ? 'quedó' : 'quedaron'} sin sudadera` : '';
+    partes.push(`Al principio ${quienes} (${h.toques.toLocaleString('es-AR')} toques)${final}.`);
+  }
+  const v = presentacion?.votacion;
+  if (v?.votaron) partes.push(`${v.pregunta} ${v.opciones.map((o, i) => `${o}: ${Math.round((v.votos[i] / v.votaron) * 100)} %`).join(' · ')}.`);
+  return partes.join(' ');
 }
 
 function aplicarAjustes(a) {
@@ -194,6 +209,9 @@ socket.on('server:stats', (s) => {
   ].join('\n');
 });
 socket.on('debug:reports', dibujarInformes);
+socket.on('pres:estado', (e) => (presentacion = e));
+socket.on('pres:hype:drop', (r) => presentacion && (presentacion.hype.resultado = r));
+socket.on('pres:votacion:conteo', (c) => presentacion && (presentacion.votacion = c));
 setInterval(() => reloj.sincronizar(3), 15_000);
 
 /** Hora del guion: la del servidor, congelada mientras la partida está en pausa. */
@@ -502,6 +520,9 @@ function actualizar() {
     const otros = (final?.stats.length ?? 1) - 1;
     $('debate-pregunta').textContent =
       otros > 0 ? `¿Cómo se sintieron los ${otros} ${otros === 1 ? 'grupo que quedó' : 'grupos que quedaron'} sin sudadera?` : '¿Cómo se siente quedarse sin la sudadera?';
+    const retoma = textoRetoma(otros);
+    $('debate-retoma').textContent = retoma;
+    $('debate-retoma').hidden = !retoma;
     return mostrarPantalla('pantalla-debate');
   }
   sonar(f, t);

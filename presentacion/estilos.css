@@ -26,8 +26,46 @@ body { display: grid; place-items: center; }
 /* ============ Portada: título abajo a la izquierda y lugar del QR abajo a la derecha ============ */
 .portada__pie { display: flex; justify-content: space-between; align-items: flex-end; gap: 4cqw; }
 .np-capa .portada__titulo .np-titulo { font-size: 4.6cqw; }
-.portada__qr { align-self: flex-end; max-width: 16cqw; }
+.portada__qr { align-self: flex-end; }
 .np-capa .portada__titulo, .portada__qr { transition: opacity var(--np-movimiento-lento) linear; }
+
+/* ============ Ingreso de los celulares (portada): QR, dirección, sala y grupos en la cola ============ */
+.ingreso { display: flex; align-items: flex-end; gap: 1.4cqw; }
+.ingreso__agrandar { all: unset; display: none; pointer-events: auto; cursor: zoom-in; }
+[data-servidor="conectado"] .ingreso__agrandar { display: block; }
+.ingreso__agrandar:focus-visible { outline: 2px solid var(--np-acento-mostaza); outline-offset: 0.4cqw; }
+.ingreso__qr { display: block; width: 9.5cqw; height: 9.5cqw; image-rendering: pixelated; }
+.ingreso__texto { display: grid; gap: 0.55cqw; justify-items: start; max-width: 19cqw; }
+.np-capa .ingreso .np-etiqueta { font-size: 0.85cqw; }
+.ingreso__url { display: none; font: var(--np-peso-bold) 1.35cqw / 1.1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); }
+[data-servidor="conectado"] .ingreso__url { display: block; }
+.ingreso .np-etiqueta b { color: var(--np-tinta); letter-spacing: 0.12em; }
+.ingreso__cola { font: var(--np-peso-medio) 0.95cqw / 1.3 var(--np-fuente-texto); color: var(--np-tinta-suave); }
+[data-servidor="conectado"] .ingreso__cola { font: var(--np-peso-black) 1.7cqw / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); color: var(--np-tinta); font-variant-numeric: tabular-nums; }
+.np-escenario:not([data-servidor="conectado"]) .ingreso .np-etiqueta { display: none; }
+
+/* Sala en el bloque de Drop Rush (solo con servidor). */
+.np-capa .sala-juego { margin: 0; font: var(--np-peso-medio) 1.1cqw / 1.3 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; color: var(--np-tinta-suave); }
+.sala-juego b { color: var(--np-tinta); font-variant-numeric: tabular-nums; }
+.np-escenario:not([data-servidor="conectado"]) [data-servidor-requerido] { display: none; }
+
+/* ============ Votación en vivo (tecla V) ============ */
+/* En la historia, mientras se vota: solo cuántos grupos votaron (sin porcentajes), con un punto que late. */
+.np-capa .votacion-estado {
+  display: none; align-items: center; gap: 0.7em; margin: 0; max-width: none; white-space: nowrap;
+  font: var(--np-peso-medio) 1cqw / 1.3 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase; color: var(--np-tinta); font-variant-numeric: tabular-nums;
+}
+.np-capa .votacion-estado::before { content: ''; flex: none; width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--np-acento-mostaza); box-shadow: 0 0 0 0.15em var(--np-tinta); }
+.np-escenario:is([data-votacion="abierta"], [data-votacion="cerrada"]) .votacion-estado { display: flex; }
+.np-escenario[data-votacion="abierta"] .votacion-estado::before { animation: np-latido var(--np-movimiento-latido) var(--np-movimiento-curva) infinite; }
+/* En los desafíos se revela el resultado (si hubo votos), junto a la balanza que inclina. */
+.np-capa .votacion { display: grid; gap: 1cqw; align-content: start; max-width: 32cqw; }
+.np-capa .votacion .np-votacion { font-size: 1.1cqw; }
+.votacion .np-votacion__opcion { grid-template-columns: 5.4em 1fr 4.8em; }
+.np-capa .votacion .np-votacion__estado { margin: 0; font-size: 0.85cqw; }
+.votacion__pregunta { margin: 0; }
+.np-escenario:not([data-votos]) .votacion--resultado { display: none; }
 
 /* ============ Hype colectivo (tecla H) ============ */
 /* La cuenta va en el centro (la sudadera sube fuera de cuadro); el medidor ocupa el lugar del título. */
@@ -61,6 +99,26 @@ body { display: grid; place-items: center; }
 
 /* ?render: solo la escena 3D (y sus etiquetas), para las imágenes de respaldo. */
 [data-render] :is(.np-diapo__texto, .portada__pie, .np-interfaz, .np-grano, .np-cargador, .hype) { display: none !important; }
+
+/* QR a pantalla completa (tecla Q): lo más grande posible a lo alto, con el código de la sala para escribirlo a mano. */
+.qr-grande {
+  z-index: 6; display: flex; align-items: center; justify-content: center; gap: 5cqw; padding: 3cqw;
+  background: var(--np-marca-cacao-profundo); color: var(--np-tinta);
+  opacity: 0; visibility: hidden; cursor: zoom-out;
+  transition: opacity var(--np-movimiento-lento) linear, visibility 0s linear var(--np-movimiento-lento);
+}
+.qr-grande--activo { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+.qr-grande__codigo { flex: none; height: 48cqw; aspect-ratio: 1; image-rendering: pixelated; transform: scale(0.94); transition: transform var(--np-movimiento-texto) var(--np-movimiento-curva); }
+.qr-grande--activo .qr-grande__codigo { transform: none; }
+.qr-grande__texto { display: grid; gap: 1.4cqw; justify-items: start; max-width: 32cqw; }
+.qr-grande__texto > * { margin: 0; }
+.qr-grande .np-etiqueta { font-size: 1.1cqw; }
+.qr-grande__titulo { font: var(--np-peso-black) 5.2cqw / 0.95 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+.qr-grande__sin-camara { font: var(--np-peso-medio) 1.5cqw / 1.35 var(--np-fuente-texto); color: var(--np-tinta-suave); }
+.qr-grande__sin-camara b { color: var(--np-tinta); white-space: nowrap; }
+.qr-grande__sala { padding: 0.5cqw 1.6cqw; background: var(--np-acento-mostaza); color: var(--np-marca-cacao); font: var(--np-peso-black) 6.4cqw / 1 var(--np-fuente-display); letter-spacing: 0.14em; }
+.qr-grande__cola { font: var(--np-peso-medio) 1.5cqw / 1.2 var(--np-fuente-texto); color: var(--np-tinta-suave); font-variant-numeric: tabular-nums; }
+.qr-grande__cola b { font: var(--np-peso-black) 2.6cqw / 1 var(--np-fuente-display); color: var(--np-tinta); margin-right: 0.15em; }
 
 /* Pantalla en cacao (tecla B). */
 .pausa {
@@ -105,7 +163,7 @@ body { display: grid; place-items: center; }
   position: relative; inset: auto; width: 100%; box-sizing: border-box; aspect-ratio: 16 / 9; visibility: visible;
   background: var(--np-fondo) var(--respaldo, none) center / cover no-repeat; break-after: page; break-inside: avoid;
 }
-[data-impresion] .hype { display: none; }
+[data-impresion] :is(.hype, .ingreso, .votacion, .votacion-estado, .sala-juego) { display: none; }
 [data-impresion] .np-capa * { animation: none !important; transition: none !important; }
 [data-impresion] .np-capa .np-capa__entra { opacity: 1; transform: none; }
 [data-impresion] .np-capa .marcador { opacity: 0.75; }

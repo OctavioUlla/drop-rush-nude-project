@@ -95,6 +95,8 @@ export class Red extends EventTarget {
     for (const evento of [
       'room:groups', 'game:script', 'game:reset', 'game:end', 'state:sync',
       'question:start', 'question:result', 'question:closed', 'run:rank', 'run:modifiers',
+      // Presentación: espera, hype colectivo y votación en vivo (presentacion.js).
+      'pres:estado', 'pres:etapa', 'pres:hype:cuenta', 'pres:hype:nivel', 'pres:hype:drop', 'pres:votacion:pregunta',
     ]) {
       s.on(evento, (datos) => this.emitir(evento, datos));
     }

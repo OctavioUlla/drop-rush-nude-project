@@ -8,6 +8,7 @@
 // const cola = crearCola(document.querySelector('.np-cola'), { bloques: 9 });
 // cola.ir(3);                 // con paso
 // cola.ir(3, { animar: false }); // sin paso (al cargar)
+// cola.grupos(['#2f52bc', '#3bb075']); // la forman los grupos conectados: cada persona con el color de su grupo
 import { tokens } from './tokens.js';
 
 const DETRAS = 14; // personas detrás nuestro: la fila se pierde a la izquierda
@@ -68,5 +69,17 @@ export function crearCola(el, { bloques }) {
     }
   }
 
-  return { ir, get bloque() { return actual; } };
+  /**
+   * La cola la forman los grupos conectados (PLANIFICACION 2.2): cada persona, salvo nosotros, toma el color de un
+   * grupo en orden; las que sobran vuelven al tono de la tinta. Así la clase se ve a sí misma esperando.
+   */
+  const otras = [...el.querySelectorAll('.np-cola__persona:not(.np-cola__persona--nosotros)')];
+  function grupos(colores = []) {
+    otras.forEach((p, k) => {
+      if (colores[k]) p.style.setProperty('--g', colores[k]);
+      else p.style.removeProperty('--g');
+    });
+  }
+
+  return { ir, grupos, get bloque() { return actual; } };
 }

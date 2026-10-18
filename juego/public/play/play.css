@@ -218,3 +218,88 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .debug .np-boton--secundario { color: var(--np-marca-crema); border-color: var(--np-marca-crema); }
 
 .sin-webgl { margin: var(--np-espacio-6) var(--np-espacio-4); font: var(--np-peso-bold) var(--np-texto-xl) / 1.3 var(--np-fuente-display); }
+
+/* ---------- Presentación: espera, hype colectivo y votación ---------- */
+/* Tapa el juego mientras la sala está en la etapa de la presentación (presentacion.js). */
+.pres {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  background: var(--np-fondo);
+  color: var(--np-tinta);
+}
+.pres[hidden] { display: none; }
+.pres > * {
+  grid-area: 1 / 1;
+  display: none;
+  min-height: 0;
+  padding: max(var(--np-espacio-6), env(safe-area-inset-top)) var(--np-espacio-5) max(var(--np-espacio-6), env(safe-area-inset-bottom));
+}
+.pres > * > * { margin: 0; }
+.pres[data-fase="espera"] .pres__espera,
+.pres[data-fase="drop"] .pres__drop,
+.pres[data-fase="votacion"] .pres__votacion,
+.pres[data-fase="cerrada"] .pres__cerrada { display: flex; flex-direction: column; justify-content: center; gap: var(--np-espacio-4); }
+.pres[data-fase="cuenta"] .pres__cuenta { display: grid; place-items: center; }
+.pres[data-fase="hype"] .pres__hype { display: block; padding: 0; }
+
+.pres__grupo { font-size: var(--np-texto-2xl); }
+.pres__drop .np-cartel { align-self: flex-start; }
+
+/* Botón HYPE a pantalla completa (np-hype-boton) con el aporte del grupo y el medidor de toda la clase arriba. */
+.pres__boton { position: absolute; inset: 0; align-content: center; gap: var(--np-espacio-4); }
+.pres__aporte {
+  font: var(--np-peso-bold) var(--np-texto-lg) / 1.2 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+.pres__nivel {
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: max(10px, env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--np-marca-cacao) 25%, var(--np-acento-mostaza));
+  pointer-events: none;
+}
+.pres__nivel::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--valor, 0%);
+  background: var(--np-marca-cacao);
+  transition: width var(--np-movimiento-rapido) linear;
+}
+
+/* Votación: una opción por botón; la elegida queda en mostaza (se puede cambiar mientras está abierta). */
+.pres__pregunta { font: var(--np-peso-black) var(--np-texto-3xl) / 1.05 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+.pres__opciones { display: grid; gap: var(--np-espacio-3); margin-top: var(--np-espacio-2) !important; }
+.pres__opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--np-espacio-4);
+  min-height: 64px;
+  padding: var(--np-espacio-3) var(--np-espacio-4);
+  border: var(--np-borde-grueso) solid var(--np-tinta);
+  background: transparent;
+  color: var(--np-tinta);
+  font: var(--np-peso-bold) var(--np-texto-xl) / 1.15 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-titulo);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.pres__letra {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.8em;
+  height: 1.8em;
+  background: var(--np-tinta);
+  color: var(--np-fondo);
+  font-weight: var(--np-peso-black);
+}
+.pres__opcion--elegida { background: var(--np-acento-mostaza); border-color: var(--np-acento-mostaza); color: var(--np-marca-cacao); }
+.pres__opcion--elegida .pres__letra { background: var(--np-marca-cacao); color: var(--np-acento-mostaza); }
+.pres__voto-estado { font-size: var(--np-texto-sm); }

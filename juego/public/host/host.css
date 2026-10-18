@@ -195,6 +195,7 @@ body { display: flex; flex-direction: column; min-height: 100%; }
 .debate > * { margin: 0; }
 .debate__pregunta { font: var(--np-peso-black) var(--np-texto-5xl) / 1.05 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); max-width: 22ch; }
 .debate__sub { font: var(--np-peso-medio) var(--np-texto-2xl) / 1.3 var(--np-fuente-display); color: var(--np-tinta-suave); max-width: 40ch; }
+.debate__retoma { padding-left: var(--np-espacio-4); border-left: var(--np-borde-grueso) solid var(--np-acento-mostaza); font: var(--np-peso-medio) var(--np-texto-xl) / 1.35 var(--np-fuente-texto); max-width: 52ch; }
 .debate .np-boton--secundario { color: var(--np-tinta); border-color: var(--np-tinta); }
 
 /* ---------- Panel técnico ---------- */

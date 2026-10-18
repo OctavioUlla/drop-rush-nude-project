@@ -90,6 +90,39 @@
     </aside>
   </main>
 
+  <!-- Presentación (antes del juego): espera quieta, cuenta regresiva, botón HYPE y votación en vivo. -->
+  <section id="pres" class="pres" data-np-tema="cacao" data-fase="espera" hidden>
+    <div class="pres__espera">
+      <span class="np-ficha pres__grupo" data-pres="grupo"></span>
+      <h1 class="np-titulo">Esperando el drop…</h1>
+      <p class="np-texto np-texto-suave">Mirá el proyector. Cuando sea el momento, acá aparece el botón.</p>
+    </div>
+    <div class="np-cuenta pres__cuenta" data-pres="cuenta" aria-live="assertive">3</div>
+    <div class="pres__hype">
+      <div class="pres__nivel" data-pres="nivel" aria-hidden="true"></div>
+      <button class="np-hype-boton pres__boton" data-pres="boton">
+        <span>Hype</span>
+        <small class="pres__aporte" data-pres="aporte" aria-live="polite"></small>
+      </button>
+    </div>
+    <div class="pres__drop">
+      <p class="np-cartel">¡Drop!</p>
+      <h1 class="np-titulo">¡Lo lograron entre todos!</h1>
+      <p class="np-texto np-texto-suave" data-pres="final"></p>
+    </div>
+    <div class="pres__votacion">
+      <p class="np-etiqueta">Votación en vivo</p>
+      <h1 class="pres__pregunta" data-pres="pregunta"></h1>
+      <div class="pres__opciones" data-pres="opciones"></div>
+      <p class="np-texto-suave pres__voto-estado" data-pres="voto-estado"></p>
+    </div>
+    <div class="pres__cerrada">
+      <p class="np-etiqueta">Votación cerrada</p>
+      <h1 class="np-titulo" data-pres="cerrada"></h1>
+      <p class="np-texto np-texto-suave">El resultado se revela al final de la presentación.</p>
+    </div>
+  </section>
+
   <p id="sin-webgl" class="sin-webgl" hidden>Este celular no puede mostrar gráficos 3D (WebGL). Usen otro celular del grupo.</p>
 
   <script type="module" src="./play.js"></script>

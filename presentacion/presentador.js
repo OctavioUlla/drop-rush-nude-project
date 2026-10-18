@@ -25,7 +25,7 @@ function miniatura(contenedor, d) {
   const capas = document.createElement('div');
   capas.className = 'np-capas';
   const capa = document.importNode(d.el, true);
-  capa.querySelectorAll('aside.notas, .np-etiquetas, .hype').forEach((x) => x.remove());
+  capa.querySelectorAll('aside.notas, .np-etiquetas, .hype, .ingreso').forEach((x) => x.remove());
   capa.classList.add('np-diapo--activa');
   // Fondo: la imagen pre-renderizada de su encuadre (renders/), así la miniatura muestra la escena.
   capa.style.setProperty('--respaldo', `url("${new URL(`./renders/${d.escena}${d.pose ? `-${d.pose}` : ''}.jpg`, location.href)}")`);
@@ -54,13 +54,32 @@ function cronometro(el, segundos, texto, { limite } = {}) {
   el.classList.toggle('np-cronometro--pasado', limite !== undefined && segundos !== null && segundos < 0);
 }
 
+/** Sala y grupos conectados, hype y votación (los manda el proyector, que es el que habla con el servidor). */
+function insigniasInteractivas(i) {
+  if (!i) return [];
+  const lista = [];
+  if (i.servidor === 'conectado') lista.push(`<span class="np-insignia np-insignia--relleno">Sala ${i.sala} · ${i.conectados}/${i.max} conectados</span>`);
+  else if (i.servidor === 'conectando') lista.push('<span class="np-insignia">Conectando con el servidor…</span>');
+  else lista.push('<span class="np-insignia np-insignia--alerta">Sin servidor: hype y votación de ensayo</span>');
+  if (i.qrGrande) lista.push('<span class="np-insignia np-insignia--rosa">QR a pantalla completa (Q)</span>');
+  const h = i.hype;
+  const ensayo = (x) => (x?.modo === 'ensayo' ? ' (ensayo)' : '');
+  if (h?.fase === 'cuenta') lista.push(`<span class="np-insignia np-insignia--rosa">Hype: cuenta regresiva${ensayo(h)}</span>`);
+  if (h?.fase === 'llenando') lista.push(`<span class="np-insignia np-insignia--rosa">Hype ${Math.floor(h.nivel * 100)} % · ${h.sumando}/${h.conectados} grupos${ensayo(h)} · H lo completa</span>`);
+  if (h?.fase === 'drop') lista.push(`<span class="np-insignia np-insignia--rosa">Hype: ¡drop! ${h.toques} toques${ensayo(h)}</span>`);
+  const v = i.votacion;
+  if (v?.estado === 'abierta') lista.push(`<span class="np-insignia np-insignia--rosa">Votación abierta · ${v.votaron}/${v.conectados}${ensayo(v)} · ${v.resumen}</span>`);
+  if (v?.estado === 'cerrada') lista.push(`<span class="np-insignia">Votación${ensayo(v)} · ${v.votaron} votos · ${v.resumen}</span>`);
+  return lista;
+}
+
 function pintar() {
   const conectado = estado && Date.now() - recibido < 2500;
   const insignias = [
     conectado ? '<span class="np-insignia np-insignia--relleno">Proyector conectado</span>' : '<span class="np-insignia np-insignia--alerta">Proyector sin conexión: abrilo y tocá P</span>',
     estado?.pausa ? '<span class="np-insignia np-insignia--rosa">Pantalla en pausa (B)</span>' : '',
     estado?.feedsPausados ? '<span class="np-insignia np-insignia--rosa">Feeds en pausa (F)</span>' : '',
-    '<span class="np-insignia">Grupos, hype y votación: fase 4</span>',
+    ...insigniasInteractivas(conectado ? estado.interactivo : null),
   ];
   $('#estado').innerHTML = insignias.join('');
   if (!estado) return;
@@ -90,6 +109,9 @@ const reloj = () => enviar('reloj', { accion: estado?.reloj.inicio === null ? 'e
 document.addEventListener('click', (ev) => {
   const accion = ev.target.closest('[data-accion]')?.dataset.accion;
   if (accion === 'reloj') reloj();
+  else if (accion === 'reiniciar-interactivo') {
+    if (confirm('¿Borrar el hype y la votación guardados en el servidor? (para después de un ensayo)')) enviar(accion);
+  }
   else if (accion) enviar(accion);
 });
 addEventListener('keydown', (ev) => {
@@ -102,6 +124,9 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'b' || tecla === '.') enviar('pausa');
   else if (tecla === 't') reloj();
   else if (tecla === 'f') enviar('feeds');
+  else if (tecla === 'h') enviar('hype');
+  else if (tecla === 'q') enviar('qr');
+  else if (tecla === 'v') enviar('votacion');
 });
 
 mostrarDiapositiva(0);

@@ -16,5 +16,8 @@
   "poderesActivos": true,
   "rachaParaPoder": 2,
   "emparejar": true,
-  "sonido": true
+  "sonido": true,
+  "hypeToquesPorGrupo": 25,
+  "hypeToquesPorSegundo": 8,
+  "hypeRafaga": 16
 }
