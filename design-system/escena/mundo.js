@@ -436,12 +436,14 @@ function estacionViral(g, { feeds: datos } = {}) {
   panel.position.set(2.25, 0, -3.2);
   panel.rotation.y = -0.1;
   g.add(panel);
-  // Corazones que brotan de los celulares (likes en vivo): suben un poco delante de su pantalla y se apagan.
+  // Corazones que brotan de los celulares (likes en vivo): suben un poco delante de su pantalla y se apagan. Nunca de
+  // las dos primeras columnas, las que encuadra la pose de la remera: ahí taparían la frase.
   const geo = corazonGeo();
   const mat = clay(C.acento.rosa, { roughness: 0.8 });
+  const libres = pantallas.filter((_, k) => k % cols > 1);
   const corazones = Array.from({ length: 14 }, (_, i) => {
     const m = malla(geo, mat);
-    const origen = pantallas[(i * 11) % pantallas.length].clone().add(V(0, 0.3, 0.22)).applyAxisAngle(V(0, 1, 0), panel.rotation.y).add(panel.position);
+    const origen = libres[(i * 7) % libres.length].clone().add(V(0, 0.3, 0.22)).applyAxisAngle(V(0, 1, 0), panel.rotation.y).add(panel.position);
     m.userData = { origen, fase: i / 14, s: 0.15 + (i % 3) * 0.03 };
     g.add(m);
     return m;
@@ -456,6 +458,13 @@ function estacionViral(g, { feeds: datos } = {}) {
     tema: 'crema', encuadre: 'editorial', ancla, escala: 0.72,
     // La prenda a ~57 % del ancho (no al 72 % de siempre), para dejarle lugar a la pared.
     mira: V(1.2, 1.6, 0),
+    poses: {
+      // La cámara se acerca de frente a la punta izquierda de la fila del medio hasta que se lee la remera (el mensaje
+      // es la campaña); el texto queda sobre la pared lisa, a la izquierda de los celulares. Desvíos desde el encuadre
+      // editorial: mira en (-0.55, 1.6, 0) y cámara en (-0.55, 2.2, 8.5).
+      // La prenda se corre a la izquierda, fuera de cuadro: si no, queda delante de la cámara.
+      remera: { mira: V(0.56, 0.3, -3.25), camara: V(1.06, -0.25, -9.25), heroe: V(-4, 0, 0) },
+    },
     actualizar(dt, t, presencia) {
       // Contador de likes: arranca cuando llega la cámara y sube hasta pasar el medio millón.
       reloj = presencia > 0.95 ? reloj + dt : presencia < 0.05 ? 0 : reloj;
