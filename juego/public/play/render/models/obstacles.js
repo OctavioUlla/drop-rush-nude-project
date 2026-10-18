@@ -1,18 +1,21 @@
 import { colores3d } from '../../../../../design-system/tokens.js';
-import { caja, cilindro, esfera, cono, unir } from './kit.js';
+import { caja, cilindro, esfera, cono, casquete, placa, corazon, letrero, unir } from './kit.js';
 
 // Obstáculos y likes. Origen: centro del frente, a nivel del piso; el modelo ocupa z ∈ [−largo, 0].
-// Alto = ladrillo, bajo = mostaza, like = rosa (se reconocen por color y por silueta).
+// Alto = ladrillo, bajo = mostaza, like = corazón rojo (se reconocen por color y por silueta).
 
 const { juego: J, marca: M, acento: A } = colores3d;
 
 export function valla() {
-  const partes = [
-    caja(0.1, 1.2, 0.1, M.cacao, { x: -0.85, y: 0.6, z: -0.25 }),
-    caja(0.1, 1.2, 0.1, M.cacao, { x: 0.85, y: 0.6, z: -0.25 }),
-    caja(0.5, 0.06, 0.5, M.cacao, { x: -0.85, y: 0.03, z: -0.25 }),
-    caja(0.5, 0.06, 0.5, M.cacao, { x: 0.85, y: 0.03, z: -0.25 }),
-  ];
+  const partes = [];
+  // Postes redondos de cola de tienda, con base de disco y remate crema.
+  for (const x of [-0.85, 0.85]) {
+    partes.push(
+      cilindro(0.06, 0.06, 1.2, 6, M.cacao, { x, y: 0.6, z: -0.25 }),
+      cilindro(0.24, 0.27, 0.06, 8, M['cacao-profundo'], { x, y: 0.03, z: -0.25 }),
+      esfera(0.09, 5, M.crema, { x, y: 1.24, z: -0.25 }),
+    );
+  }
   // Barras con franjas mostaza y cacao.
   for (const y of [0.75, 1.1]) {
     for (let i = 0; i < 4; i++) {
@@ -22,55 +25,110 @@ export function valla() {
   return unir(partes);
 }
 
+/** Cajas del drop con cinta y el nombre de la marca estampado (bajo: se salta). */
 export function cajaStock() {
   const c = J['obstaculo-bajo'];
+  const tinta = M.cacao;
+  const giro = 0.15;
   return unir([
     caja(0.9, 0.7, 0.9, c, { x: -0.35, y: 0.35, z: -0.5 }),
-    caja(0.8, 0.65, 0.85, c, { x: 0.45, y: 0.325, z: -0.5, ry: 0.15 }),
+    caja(0.8, 0.65, 0.85, c, { x: 0.45, y: 0.325, z: -0.5, ry: giro }),
     caja(0.75, 0.6, 0.75, c, { x: 0.0, y: 1.0, z: -0.5, ry: -0.2 }),
-    caja(0.92, 0.04, 0.12, M.cacao, { x: -0.35, y: 0.71, z: -0.5 }),
-    caja(0.12, 0.04, 0.77, M.cacao, { x: 0.0, y: 1.3, z: -0.5, ry: -0.2 }),
+    caja(0.92, 0.04, 0.12, tinta, { x: -0.35, y: 0.71, z: -0.5 }), // cinta
+    caja(0.12, 0.04, 0.77, tinta, { x: 0.0, y: 1.3, z: -0.5, ry: -0.2 }),
+    letrero('NP', 0.08, tinta, { x: -0.35, y: 0.34, z: -0.045 }),
+    letrero('NP', 0.06, tinta, { x: 0.45 + 0.43 * Math.sin(giro), y: 0.34, z: -0.5 + 0.43 * Math.cos(giro), ry: giro }),
   ]);
 }
 
-export function fan() {
+/**
+ * Fan filmando el drop con el celular (alto: se esquiva). Mira hacia +z, al corredor.
+ * La capucha es una esfera abierta adelante que envuelve la cabeza, así la cara asoma entera.
+ * `simple` baja las caras de las esferas y saca los detalles chicos (para la cola de la tienda).
+ */
+export function fan({ simple = false } = {}) {
   const piel = J.piel;
   const buzo = J['obstaculo-alto'];
+  const z = -0.3;
+  const yCabeza = 1.8;
+  const lados = simple ? 6 : 8;
+  const detalle = (...partes) => (simple ? [] : partes);
   return unir([
-    caja(0.22, 0.85, 0.24, M.cacao, { x: -0.13, y: 0.425, z: -0.3 }),
-    caja(0.22, 0.85, 0.24, M.cacao, { x: 0.13, y: 0.425, z: -0.3 }),
-    caja(0.24, 0.1, 0.34, M.crema, { x: -0.13, y: 0.05, z: -0.28 }), // zapatillas
-    caja(0.24, 0.1, 0.34, M.crema, { x: 0.13, y: 0.05, z: -0.28 }),
-    caja(0.6, 0.75, 0.34, buzo, { y: 1.22, z: -0.3 }),
-    caja(0.16, 0.6, 0.18, buzo, { x: -0.38, y: 1.25, z: -0.3 }),
-    caja(0.16, 0.45, 0.18, buzo, { x: 0.36, y: 1.38, z: -0.12, rx: 1.0 }),
-    esfera(0.2, 6, piel, { y: 1.8, z: -0.3 }),
-    caja(0.46, 0.3, 0.42, buzo, { y: 1.86, z: -0.36 }),
-    caja(0.12, 0.2, 0.03, M['cacao-profundo'], { x: 0.36, y: 1.55, z: 0.02 }), // celular
-    caja(0.09, 0.15, 0.01, M.crema, { x: 0.36, y: 1.55, z: 0.04 }), // pantalla (está filmando el drop)
+    // Piernas, zapatillas con suela y cintura.
+    caja(0.2, 0.82, 0.22, M.cacao, { x: -0.12, y: 0.47, z }),
+    caja(0.2, 0.82, 0.22, M.cacao, { x: 0.12, y: 0.47, z }),
+    caja(0.22, 0.1, 0.32, M.crema, { x: -0.12, y: 0.09, z: z + 0.04 }),
+    caja(0.22, 0.1, 0.32, M.crema, { x: 0.12, y: 0.09, z: z + 0.04 }),
+    detalle(
+      caja(0.23, 0.04, 0.34, M['cacao-profundo'], { x: -0.12, y: 0.02, z: z + 0.04 }),
+      caja(0.23, 0.04, 0.34, M['cacao-profundo'], { x: 0.12, y: 0.02, z: z + 0.04 }),
+    ),
+    // Buzo: cuerpo, hombros redondeados, puño elástico, bolsillo canguro y cordones.
+    caja(0.56, 0.68, 0.32, buzo, { y: 1.22, z }),
+    esfera(0.15, 5, buzo, { x: -0.26, y: 1.48, z }),
+    esfera(0.15, 5, buzo, { x: 0.26, y: 1.48, z }),
+    caja(0.58, 0.07, 0.34, M.crema, { y: 0.9, z }),
+    caja(0.38, 0.16, 0.03, M['cacao-profundo'], { y: 1.06, z: z + 0.17 }),
+    detalle(
+      caja(0.025, 0.18, 0.025, M.crema, { x: -0.06, y: 1.48, z: z + 0.17 }),
+      caja(0.025, 0.18, 0.025, M.crema, { x: 0.06, y: 1.48, z: z + 0.17 }),
+    ),
+    // Brazo izquierdo colgando y el derecho levantado con el celular.
+    caja(0.15, 0.58, 0.17, buzo, { x: -0.36, y: 1.2, z, rz: -0.08 }),
+    esfera(0.075, 5, piel, { x: -0.38, y: 0.87, z }),
+    caja(0.15, 0.42, 0.17, buzo, { x: 0.36, y: 1.36, z: z + 0.16, rx: 1.0 }),
+    esfera(0.075, 5, piel, { x: 0.36, y: 1.52, z: z + 0.36 }),
+    caja(0.12, 0.2, 0.03, M['cacao-profundo'], { x: 0.36, y: 1.6, z: z + 0.4 }), // celular
+    placa(0.09, 0.15, M.crema, { x: 0.36, y: 1.6, z: z + 0.42 }), // pantalla (está filmando el drop)
+    // Cuello, cabeza, pelo, ojos y la capucha alrededor.
+    cilindro(0.07, 0.08, 0.14, 6, piel, { y: 1.6, z }),
+    esfera(0.165, lados, piel, { y: yCabeza, z }),
+    // Pelo y sombra dentro de la capucha: rellena el hueco entre la cabeza y la tela.
+    esfera(0.19, lados, M['cacao-profundo'], { y: yCabeza + 0.01, z: z - 0.05 }),
+    detalle(
+      caja(0.04, 0.05, 0.02, M['cacao-profundo'], { x: -0.06, y: yCabeza + 0.01, z: z + 0.16 }),
+      caja(0.04, 0.05, 0.02, M['cacao-profundo'], { x: 0.06, y: yCabeza + 0.01, z: z + 0.16 }),
+    ),
+    casquete(0.215, lados + 1, buzo, { abertura: 1.05, rx: 0.4, y: yCabeza + 0.01, z: z - 0.03 }),
+    caja(0.34, 0.22, 0.1, buzo, { y: 1.58, z: z - 0.15 }), // capucha cayendo sobre la espalda
   ]);
 }
 
+/** Camión de reparto de Nude Project: caja cacao con el nombre de la marca atrás y a los costados. */
 export function camion() {
-  const carga = J['obstaculo-alto'];
+  const carga = M.cacao;
+  const tinta = M.crema;
+  const oscuro = M['cacao-profundo'];
   const partes = [
     caja(2.0, 2.4, 4.4, carga, { y: 1.75, z: -2.2 }),
-    caja(2.02, 0.35, 4.42, M.crema, { y: 2.2, z: -2.2 }),
+    caja(2.04, 0.18, 4.44, A.ladrillo, { y: 2.9, z: -2.2 }), // franjas de alto (se esquiva)
+    caja(2.04, 0.18, 4.44, A.ladrillo, { y: 0.66, z: -2.2 }),
+    // Cabina crema con ventanillas y parabrisas.
     caja(1.9, 1.8, 1.5, M.crema, { y: 1.45, z: -5.2 }),
-    caja(1.7, 0.7, 0.05, M['cacao-profundo'], { y: 1.95, z: -5.97 }),
-    caja(2.0, 0.3, 6.0, M['cacao-profundo'], { y: 0.5, z: -3.0 }),
-    // Puertas traseras de la caja (lo que ve el corredor): franja crema y manijas.
-    caja(0.04, 2.2, 0.06, M['cacao-profundo'], { y: 1.75, z: 0.02 }),
-    caja(1.9, 0.3, 0.05, M.crema, { y: 1.2, z: 0.02 }),
-    caja(0.08, 0.35, 0.08, M.crema, { x: -0.15, y: 1.75, z: 0.05 }),
-    caja(0.08, 0.35, 0.08, M.crema, { x: 0.15, y: 1.75, z: 0.05 }),
-    caja(2.1, 0.18, 0.2, M['cacao-profundo'], { y: 0.45, z: 0.05 }), // paragolpes
-    caja(0.25, 0.12, 0.05, A.ladrillo, { x: -0.8, y: 0.62, z: 0.06 }), // luces traseras
-    caja(0.25, 0.12, 0.05, A.ladrillo, { x: 0.8, y: 0.62, z: 0.06 }),
+    caja(1.92, 0.12, 1.52, oscuro, { y: 2.36, z: -5.2 }),
+    caja(1.7, 0.7, 0.05, oscuro, { y: 1.95, z: -5.97 }),
+    placa(0.8, 0.6, oscuro, { x: -0.955, y: 1.9, z: -5.3, ry: -Math.PI / 2 }),
+    placa(0.8, 0.6, oscuro, { x: 0.955, y: 1.9, z: -5.3, ry: Math.PI / 2 }),
+    caja(2.0, 0.3, 6.0, oscuro, { y: 0.5, z: -3.0 }),
+    // Puertas traseras (lo que ve el corredor): ranura, manijas y el nombre de la marca.
+    placa(0.03, 2.04, oscuro, { y: 1.75, z: 0.01 }),
+    caja(0.08, 0.3, 0.06, tinta, { x: -0.14, y: 1.25, z: 0.03 }),
+    caja(0.08, 0.3, 0.06, tinta, { x: 0.14, y: 1.25, z: 0.03 }),
+    letrero('NUDE', 0.09, tinta, { y: 2.3, z: 0.02 }),
+    letrero('PROJECT', 0.055, tinta, { y: 1.78, z: 0.02 }),
+    // Costados: el nombre en grande y una línea fina, como en los camiones de reparto.
+    letrero('NUDE PROJECT', 0.075, tinta, { x: -1.005, y: 1.95, z: -2.2, ry: -Math.PI / 2 }),
+    letrero('NUDE PROJECT', 0.075, tinta, { x: 1.005, y: 1.95, z: -2.2, ry: Math.PI / 2 }),
+    placa(3.6, 0.05, tinta, { x: -1.005, y: 1.5, z: -2.2, ry: -Math.PI / 2 }),
+    placa(3.6, 0.05, tinta, { x: 1.005, y: 1.5, z: -2.2, ry: Math.PI / 2 }),
+    caja(2.1, 0.18, 0.2, oscuro, { y: 0.45, z: 0.05 }), // paragolpes
+    caja(0.25, 0.12, 0.05, A.ladrillo, { x: -0.8, y: 0.62, z: 0.08 }), // luces traseras
+    caja(0.25, 0.12, 0.05, A.ladrillo, { x: 0.8, y: 0.62, z: 0.08 }),
   ];
   for (const z of [-0.9, -4.9]) {
     for (const x of [-0.95, 0.95]) {
-      partes.push(cilindro(0.42, 0.42, 0.3, 8, M['cacao-profundo'], { x, y: 0.42, z, rz: Math.PI / 2 }));
+      partes.push(cilindro(0.42, 0.42, 0.3, 10, oscuro, { x, y: 0.42, z, rz: Math.PI / 2 }));
+      partes.push(cilindro(0.18, 0.18, 0.04, 8, M.piedra, { x: x + Math.sign(x) * 0.16, y: 0.42, z, rz: Math.PI / 2 })); // llanta
     }
   }
   return unir(partes);
@@ -128,13 +186,9 @@ export function bot() {
   ]);
 }
 
+/** Corazón rojo de like, como el de las redes sociales (gira sobre sí mismo en el mundo). */
 export function like() {
-  const c = J.like;
-  return unir([
-    esfera(0.2, 6, c, { x: -0.14, y: 0.08 }),
-    esfera(0.2, 6, c, { x: 0.14, y: 0.08 }),
-    cono(0.3, 0.42, 6, c, { y: -0.16, rz: Math.PI, s: [1.08, 1, 0.75] }),
-  ]);
+  return corazon(0.7, 0.2, J.like);
 }
 
 export const MODELOS_OBSTACULOS = { valla, caja: cajaStock, bache, fan, bot, camion };

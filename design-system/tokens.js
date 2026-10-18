@@ -27,7 +27,7 @@ export const colores = {
   "juego": {
     "obstaculo-alto": "#b3261e",
     "obstaculo-bajo": "#ffe500",
-    "like": "#ffc0cb",
+    "like": "#ff3040",
     "arco": "#fff8ee",
     "arco-borde": "#482922",
     "cielo-arriba": "#e9d6c2",
@@ -94,7 +94,7 @@ export const colores3d = {
   "juego": {
     "obstaculo-alto": 11740702,
     "obstaculo-bajo": 16770304,
-    "like": 16761035,
+    "like": 16724032,
     "arco": 16775406,
     "arco-borde": 4729122,
     "cielo-arriba": 15324866,

@@ -1,6 +1,6 @@
 import { Group, Mesh, PlaneGeometry, MeshBasicMaterial, CanvasTexture, SRGBColorSpace } from 'three';
 import { colores3d, colorDeGrupo } from '../../../../../design-system/tokens.js';
-import { caja, esfera, unir, materialMundo, curvarMaterial } from './kit.js';
+import { caja, cilindro, esfera, casquete, unir, materialMundo, curvarMaterial } from './kit.js';
 
 // Corredor articulado: cada parte es un grupo con el pivote en la articulación,
 // para animarlo con funciones seno (sin esqueleto). Buzo con capucha en el color del grupo
@@ -62,11 +62,15 @@ export function crearCorredor(numeroGrupo) {
   );
   cadera.add(torso);
 
+  // Cabeza redonda con la capucha puesta: una esfera abierta hacia adelante (−z) que la envuelve,
+  // con el pelo asomando en la frente y la capucha cayendo sobre la espalda.
   const cabeza = parte(
     unir([
-      esfera(0.2, 7, PIEL, { y: 0.2 }),
-      caja(0.46, 0.34, 0.2, buzo, { y: 0.2, z: 0.16 }), // capucha
-      caja(0.42, 0.08, 0.3, buzo, { y: 0.4, z: 0.06 }),
+      cilindro(0.08, 0.09, 0.12, 6, PIEL, { y: 0.02 }), // cuello
+      esfera(0.18, 10, PIEL, { y: 0.24 }),
+      casquete(0.187, 10, M['cacao-profundo'], { abertura: 1.5, rx: 0.9, y: 0.25, z: 0.005, ry: Math.PI }),
+      casquete(0.235, 12, buzo, { abertura: 1.05, rx: 0.4, y: 0.25, z: 0.03, ry: Math.PI }),
+      caja(0.36, 0.2, 0.1, buzo, { y: 0.04, z: 0.15 }),
     ]),
     0, 0.66, 0,
   );

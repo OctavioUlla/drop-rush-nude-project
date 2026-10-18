@@ -313,18 +313,18 @@ Todos los modelos 3D se **crean desde cero en JavaScript** (a cargo de Claude), 
 | Modelo | Cómo se arma | Triángulos aprox. |
 |---|---|---|
 | **Corredor** | Figura articulada (cabeza, torso, brazos y piernas en dos partes) con buzo con capucha estilo Nude Project, teñido con el color del grupo y número en la espalda | ≤ 1.500 |
-| **Valla de la cola** | Dos postes y barras con franjas | ≤ 150 |
-| **Fan haciendo fila** | Versión simplificada del corredor, quieta y con celular en la mano | ≤ 600 |
+| **Valla de la cola** | Dos postes redondos de cola de tienda (base de disco y remate crema) y barras con franjas | ≤ 250 |
+| **Fan haciendo fila** | Versión simplificada del corredor, quieta y con celular en la mano; cabeza redonda envuelta por la capucha | ≤ 600 |
 | **Bot revendedor** | Robot de cajas con antena y ojos que brillan, con muchas bolsas | ≤ 500 |
 | **Bache del algoritmo** | Pozo en el piso con flecha de gráfico hacia abajo | ≤ 100 |
-| **Caja de stock** | Pila de cajas de cartón con cinta y logo | ≤ 150 |
-| **Camión de reparto** | Cabina y caja de carga, ruedas de pocas caras | ≤ 600 |
+| **Caja de stock** | Pila de cajas con cinta y "NP" / "NUDE" estampado | ≤ 150 |
+| **Camión de reparto** | Camión de Nude Project: caja cacao con "NUDE PROJECT" atrás y a los costados (letras de placas, sin texturas), franjas ladrillo, cabina con ventanillas y llantas | ≤ 900 |
 | **Bloque de calle** | Asfalto con líneas de carril, veredas, cordón; una sola geometría por bloque | ≤ 300 |
 | **Edificios de Madrid** | Fachadas de varias alturas con balcones y ventanas (instanciados, con variaciones de color y altura) | ≤ 400 c/u |
 | **Decoración** | Faroles, árboles, carteles de drop, vallas publicitarias | ≤ 150 c/u |
-| **Like ❤️** | Corazón extruido que gira, instanciado | ≤ 100 |
+| **Like ❤️** | Corazón extruido con bisel, rojo como el de las redes sociales, que gira, instanciado | ≤ 200 |
 | **Arco de respuesta** | Marco con la letra y el texto corto de la opción (texto dibujado en un `CanvasTexture` generado al vuelo) | ≤ 200 |
-| **Tienda Nude Project** | Fachada minimalista blanca y negra con vidriera, cartel "DROP" y cola de gente | ≤ 2.000 |
+| **Tienda Nude Project** | Fachada minimalista blanca y negra con vidriera, cartel "DROP" y cola de gente (fans en versión simple) | ≤ 2.600 |
 
 **Animación del corredor (procedural, sin esqueleto)**
 - Las partes del cuerpo son grupos con pivote en la articulación y se animan con funciones seno según la velocidad: **correr** (brazos y piernas alternados, leve rebote), **saltar** (piernas recogidas, brazos arriba), **cambiar de carril** (inclinación del torso hacia el lado), **tropezar** (giro hacia adelante y recuperación).

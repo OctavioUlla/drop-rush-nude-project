@@ -26,14 +26,14 @@ const malla = (geometria) => new Mesh(geometria, materialMundo);
 const MODELOS = [
   { id: 'corredor', nombre: 'Corredor', presupuesto: 1500, crear: () => crearCorredorAnimado() },
   { id: 'fan', nombre: 'Fan haciendo fila', presupuesto: 600, crear: () => malla(fan()) },
-  { id: 'valla', nombre: 'Valla de la cola', presupuesto: 150, crear: () => malla(valla()) },
+  { id: 'valla', nombre: 'Valla de la cola', presupuesto: 250, crear: () => malla(valla()) },
   { id: 'caja', nombre: 'Caja de stock', presupuesto: 150, crear: () => malla(cajaStock()) },
   { id: 'bache', nombre: 'Bache del algoritmo', presupuesto: 110, crear: () => malla(bache()) },
   { id: 'bot', nombre: 'Bot revendedor', presupuesto: 500, crear: () => malla(bot()) },
-  { id: 'camion', nombre: 'Camión de reparto', presupuesto: 600, crear: () => malla(camion()) },
-  { id: 'like', nombre: 'Like', presupuesto: 100, crear: () => malla(like()) },
+  { id: 'camion', nombre: 'Camión de reparto', presupuesto: 900, crear: () => malla(camion()) },
+  { id: 'like', nombre: 'Like', presupuesto: 200, crear: () => malla(like()) },
   { id: 'arcos', nombre: 'Arcos de respuesta (×3)', presupuesto: 600, crear: () => crearArcos() },
-  { id: 'tienda', nombre: 'Tienda Nude Project', presupuesto: 2000, crear: () => crearTienda() },
+  { id: 'tienda', nombre: 'Tienda Nude Project', presupuesto: 2600, crear: () => crearTienda() },
   // El bloque incluye asfalto, veredas, faroles, árboles y ~6 edificios (≤ 300 + 400 c/u en el plan).
   { id: 'bloque', nombre: 'Bloque de calle completo', presupuesto: 3000, crear: () => malla(bloqueCalle(crearRng(20240611), 24, Number($('nivel-detalle').value))) },
 ];
