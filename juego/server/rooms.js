@@ -1,8 +1,9 @@
 import { randomInt, randomUUID } from 'node:crypto';
-import { VALOR_LIKE } from '../public/shared/constantes.js';
+import { VALOR_LIKE, NUMEROS_PROFES, esProfe } from '../public/shared/constantes.js';
 
 // Salas con código de 4 letras. Cada grupo (1 a maxGrupos) queda atado a un celular
 // mediante un token de dispositivo que el celular guarda en localStorage (sección 3.8).
+// Los profes (P1 a P5) son grupos más, con su propio celular, pero fuera de concurso (constantes.js).
 
 // Sin I, L, O ni Q: no se confunden con 1 y 0 al copiarlas del proyector.
 const LETRAS = 'ABCDEFGHJKMNPRSTUVWXYZ';
@@ -66,7 +67,8 @@ export class Sala {
     const delToken = token && this.tokens.get(token);
     if (delToken) return { ok: true, grupo: this.grupos.get(delToken) };
 
-    if (!Number.isInteger(numero) || numero < 1 || numero > this.maxGrupos) {
+    const valido = Number.isInteger(numero) && ((numero >= 1 && numero <= this.maxGrupos) || esProfe(numero));
+    if (!valido) {
       return { ok: false, motivo: 'invalid_group' };
     }
     let grupo = this.grupos.get(numero);
@@ -112,6 +114,11 @@ export class Sala {
     return [...this.grupos.values()];
   }
 
+  /** Solo los grupos de alumnos: los que compiten y cuentan en las estadísticas de la clase. */
+  get alumnos() {
+    return this.jugadores.filter((g) => !g.profe);
+  }
+
   get ocupados() {
     let n = 0;
     for (const g of this.grupos.values()) if (!g.libre) n++;
@@ -124,12 +131,15 @@ export class Sala {
     return n;
   }
 
+  /** Los grupos de alumnos (1 a maxGrupos) y después los profes, marcados con `teacher`. */
   resumen() {
     const lista = [];
-    for (let n = 1; n <= this.maxGrupos; n++) {
+    const agregar = (n, extra) => {
       const g = this.grupos.get(n);
-      lista.push({ number: n, taken: Boolean(g && !g.libre), connected: Boolean(g?.conectado) });
-    }
+      lista.push({ number: n, taken: Boolean(g && !g.libre), connected: Boolean(g?.conectado), ...extra });
+    };
+    for (let n = 1; n <= this.maxGrupos; n++) agregar(n);
+    for (const n of NUMEROS_PROFES) agregar(n, { teacher: true });
     return lista;
   }
 }
@@ -137,6 +147,7 @@ export class Sala {
 export class Grupo {
   constructor(numero, token) {
     this.numero = numero;
+    this.profe = esProfe(numero); // juega pero no gana
     this.token = token;
     this.libre = false;
     this.conectado = false;

@@ -1,5 +1,5 @@
-import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
-import { FASES, PASOS_POR_SEGUNDO, VELOCIDAD_BASE, INTERVALO_PROGRESO, VALOR_LIKE } from '../shared/constantes.js';
+import { colorGrupo } from '../shared/grupos.js';
+import { FASES, PASOS_POR_SEGUNDO, VELOCIDAD_BASE, INTERVALO_PROGRESO, VALOR_LIKE, esProfe, etiquetaGrupo } from '../shared/constantes.js';
 import { recorridoIdeal } from '../shared/carrera.js';
 import { VENTAJAS, PODERES, DURACION_ARRANQUE_LENTO } from '../shared/poderes.js';
 import { Guion } from '../shared/guion.js';
@@ -132,8 +132,8 @@ function mostrarJuego() {
   } else {
     vista.cambiarGrupo(grupo);
   }
-  const c = coloresGrupos[grupo - 1];
-  $('hud-grupo').textContent = grupo;
+  const c = colorGrupo(grupo);
+  $('hud-grupo').textContent = etiquetaGrupo(grupo);
   $('hud-grupo').style.setProperty('--g', c.color);
   $('hud-grupo').style.setProperty('--gt', c.texto);
   corredor.corriendo = true;
@@ -323,22 +323,23 @@ function mostrarPasoGrupo(codigo) {
   $('sala-codigo').textContent = codigo;
 }
 
+/** Los grupos de alumnos y, aparte, los lugares de los profes (P1 a P5). */
 function dibujarGrilla(lista) {
-  const grilla = $('grilla');
-  grilla.replaceChildren(
-    ...lista.map(({ number, taken }) => {
-      const b = document.createElement('button');
-      const c = coloresGrupos[number - 1];
-      b.className = taken ? 'np-ficha np-ficha--libre np-ficha--desconectada' : 'np-ficha';
-      b.style.setProperty('--g', c.color);
-      b.style.setProperty('--gt', c.texto);
-      b.textContent = number;
-      b.disabled = taken;
-      b.setAttribute('aria-label', taken ? `Grupo ${number} (tomado)` : `Grupo ${number}`);
-      b.addEventListener('click', () => red.unirse(number));
-      return b;
-    }),
-  );
+  const boton = ({ number, taken }) => {
+    const b = document.createElement('button');
+    const c = colorGrupo(number);
+    const nombre = esProfe(number) ? `Profe ${etiquetaGrupo(number)}` : `Grupo ${number}`;
+    b.className = taken ? 'np-ficha np-ficha--libre np-ficha--desconectada' : 'np-ficha';
+    b.style.setProperty('--g', c.color);
+    b.style.setProperty('--gt', c.texto);
+    b.textContent = etiquetaGrupo(number);
+    b.disabled = taken;
+    b.setAttribute('aria-label', taken ? `${nombre} (tomado)` : nombre);
+    b.addEventListener('click', () => red.unirse(number));
+    return b;
+  };
+  $('grilla').replaceChildren(...lista.filter((g) => !g.teacher).map(boton));
+  $('grilla-profes').replaceChildren(...lista.filter((g) => g.teacher).map(boton));
 }
 
 // ---------- Partida simulada (?solo) ----------
@@ -537,7 +538,7 @@ function recibirAlgoritmo({ extraObstacles, by }) {
   if (!(extraObstacles > algoritmoHasta)) return;
   algoritmoHasta = extraObstacles;
   navigator.vibrate?.([80, 50, 80]);
-  const quien = by ? `El grupo ${by}` : 'Alguien';
+  const quien = by ? (esProfe(by) ? `El profe ${etiquetaGrupo(by)}` : `El grupo ${by}`) : 'Alguien';
   cartel(`<span class="cartel__caja">📉 ¡${quien} cambió el algoritmo!<br><small>Más obstáculos por unos segundos</small></span>`, 2500);
 }
 
@@ -568,7 +569,7 @@ function usarPoder() {
     }
     if (r.closed) cerrarArco(r.closed);
     if (id === 'algoritmo' && r.targets?.length) {
-      cartel(`<span class="cartel__caja">📉 Más obstáculos para ${r.targets.length === 1 ? 'el grupo' : 'los grupos'} ${r.targets.join(', ')}</span>`, 2500);
+      cartel(`<span class="cartel__caja">📉 Más obstáculos para ${r.targets.length === 1 ? 'el grupo' : 'los grupos'} ${r.targets.map(etiquetaGrupo).join(', ')}</span>`, 2500);
     }
   });
 }
@@ -809,7 +810,9 @@ function actualizarHud() {
       ? '<span class="cartel__caja">¡Llegaste a la tienda!</span>'
       : resultadoFinal.winner === grupo
         ? '<span class="np-cartel">¡La sudadera es tuya!</span>'
-        : '<span class="np-sello">Sold out</span>';
+        : esProfe(grupo)
+          ? '<span class="cartel__caja">Fuera de concurso 🎓<br><small>La sudadera es para los alumnos</small></span>'
+          : '<span class="np-sello">Sold out</span>';
   } else if (!guion) {
     $('cartel').innerHTML = SOLO ? '' : '<span class="cartel__caja">Esperando que empiece el drop…</span>';
   } else {
@@ -857,8 +860,9 @@ function actualizarFinal(f) {
   const propio = f?.type === FASES.FIN && resultadoFinal?.stats?.find((s) => s.group === grupo);
   $('final').hidden = !propio;
   if (!propio) return;
-  $('final-puesto').textContent = `${propio.position}.º`;
-  $('final-total').textContent = `de ${resultadoFinal.stats.length}`;
+  // Un profe no tiene puesto: corrió fuera de concurso.
+  $('final-puesto').textContent = propio.teacher ? etiquetaGrupo(grupo) : `${propio.position}.º`;
+  $('final-total').textContent = propio.teacher ? 'fuera de concurso' : `de ${resultadoFinal.stats.filter((s) => !s.teacher).length}`;
   $('final-aciertos').textContent = `${propio.correct}/${resultadoFinal.questions ?? '–'}`;
   $('final-distancia').textContent = `${propio.distance} m`;
   $('final-esquivados').textContent = propio.dodged ?? corredor.esquivados;

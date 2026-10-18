@@ -334,9 +334,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
         ultimoPosicionados.set(sala.codigo, clave);
         if (ticks % 5 === 0) {
           const ranking = partida.ranking();
-          ranking.forEach((g, i) => {
-            if (g.conectado) enviar(g.numero, 'run:rank', partida.rango(i + 1, ranking.length));
-          });
+          for (const g of ranking) if (g.conectado) enviar(g.numero, 'run:rank', partida.rangoDe(g, ranking));
         }
       }
       if (ticks % 5 === 0 && tamano(canal.hosts(sala.codigo))) {

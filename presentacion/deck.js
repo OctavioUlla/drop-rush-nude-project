@@ -2,7 +2,7 @@
 // cronómetro por bloque, modo presentador (BroadcastChannel) e impresión.
 // La escena 3D es la del design system: el deck le pide viajar a la estación de cada diapositiva y,
 // cuando dos diapositivas seguidas comparten estación, solo cambia el texto (la cámara no se mueve).
-import { tokens, colorDeGrupo } from '../design-system/tokens.js';
+import { tokens, colores, colorDeGrupo } from '../design-system/tokens.js';
 import { crearCola } from '../design-system/cola.js';
 import { CANAL, dosDigitos, leerDiapositivas } from './comun.js';
 import { abrirSala } from './interactivo/sala.js';
@@ -306,7 +306,9 @@ function pintarSala() {
   for (const el of document.querySelectorAll('[data-sala="conectados"]')) el.textContent = cifra;
   $('#sala-estado').textContent = enLinea ? `${cifra} en la cola` : servidor === 'conectando' ? 'Conectando con el servidor…' : 'Sin servidor: el hype y la votación se ensayan sin celulares';
   $('#pista').textContent = enLinea ? `Sala ${sala.codigo} · ${cifra} conectados · /play` : '← → recorrer · P presentador';
-  cola.grupos(enLinea ? sala.grupos.filter((g) => g.connected).map((g) => colorDeGrupo(g.number).color) : []);
+  // Los profes (P1 a P5, fuera de concurso) también hacen la cola, en cacao.
+  const colorEnCola = (g) => (g.teacher ? colores.marca.cacao : colorDeGrupo(g.number).color);
+  cola.grupos(enLinea ? sala.grupos.filter((g) => g.connected).map(colorEnCola) : []);
   avisar();
 }
 

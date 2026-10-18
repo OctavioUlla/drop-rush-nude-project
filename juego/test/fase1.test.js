@@ -163,7 +163,8 @@ test('sala con código: entrar, preguntas con revelado, ganador, repaso y vuelta
 
     assert.deepEqual(await sabe.emitWithAck('room:enter', { code: 'ZZZZ' }), { ok: false, reason: 'room_not_found' });
     const entrada = await sabe.emitWithAck('room:enter', { code: sala.code.toLowerCase() });
-    assert.equal(entrada.groups.length, 40);
+    assert.equal(entrada.groups.filter((g) => !g.teacher).length, 40);
+    assert.equal(entrada.groups.filter((g) => g.teacher).length, 5, 'más los lugares de los profes (P1 a P5)');
 
     const unido = await sabe.emitWithAck('player:join', { code: sala.code, groupId: 1 });
     assert.ok(unido.ok);

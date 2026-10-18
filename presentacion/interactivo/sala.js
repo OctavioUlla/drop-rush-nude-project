@@ -109,8 +109,9 @@ class Sala extends EventTarget {
     this.pedir('pres:etapa', { etapa });
   }
 
+  /** Grupos de alumnos conectados (la cifra "12/40"; los profes no ocupan lugar de grupo). */
   get conectados() {
-    return this.grupos.filter((g) => g.connected).length;
+    return this.grupos.filter((g) => g.connected && !g.teacher).length;
   }
 
   /** Dirección que abre el QR: la sala ya elegida, así el celular solo toca su número. */
