@@ -227,6 +227,7 @@ function conectar() {
     if (!r.ok) mostrarPasoCodigo(r.reason === 'room_not_found' ? `No hay ninguna sala ${codigo}. Revisá el código en el proyector.` : 'No hay conexión. Probá de nuevo.');
   });
   $('codigo').addEventListener('input', (e) => (e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '')));
+  for (const id of ['btn-cambiar-grupo', 'pres-cambiar-grupo']) $(id).addEventListener('click', cambiarGrupo);
   $('btn-cambiar-sala').addEventListener('click', () => {
     red.olvidarGrupo();
     red.sala = null;
@@ -239,6 +240,26 @@ function conectar() {
     if (red.sala) mostrarPasoGrupo(red.sala);
     else mostrarPasoCodigo();
   }
+}
+
+/** Antes de que arranque la partida el grupo se puede soltar para elegir otro número (por si se eligió mal). */
+async function cambiarGrupo() {
+  if (guion || grupo == null) return;
+  const r = await red.salirDeGrupo();
+  if (!r.ok) {
+    cartel(r.reason === 'game_started' ? 'La partida ya arrancó: ya no se puede cambiar de grupo.' : 'No se pudo cambiar de grupo. Probá de nuevo.', 2500);
+    return;
+  }
+  grupo = null;
+  $('ingreso-error').hidden = true;
+  volverAlIngreso();
+  mostrarPasoGrupo(red.sala);
+}
+
+/** El botón para cambiar de grupo solo aparece mientras no hay partida. */
+function actualizarCambioGrupo() {
+  const oculto = SOLO || Boolean(guion) || grupo == null;
+  for (const id of ['btn-cambiar-grupo', 'pres-cambiar-grupo']) if ($(id).hidden !== oculto) $(id).hidden = oculto;
 }
 
 function reiniciarPartida() {
@@ -640,6 +661,7 @@ function enPartida() {
 
 function bucle(t) {
   requestAnimationFrame(bucle);
+  actualizarCambioGrupo();
   // Durante la presentación el celular muestra la espera, el hype o la votación: el runner no se simula ni se dibuja.
   if (presentacion?.visible) {
     tAnterior = t;

@@ -250,3 +250,33 @@ test('el presentador libera un grupo en plena partida y otro celular lo retoma c
     await servidor.cerrar();
   }
 });
+
+test('antes de arrancar, un celular suelta su grupo para elegir otro; con la partida en curso ya no puede', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno', config: { duracionCuenta: 1, duracionTramo: 20 } });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    const otro = await conectar(servidor.url);
+    sockets.push(host, celu, otro);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    await celu.emitWithAck('player:join', { code, groupId: 4 });
+    await host.esperar('room:groups', (g) => g[3].taken);
+
+    const r = await celu.emitWithAck('player:leave', {});
+    assert.ok(r.ok);
+    assert.equal(r.groups[3].taken, false);
+    await host.esperar('room:groups', (g) => !g[3].taken);
+    // El número queda libre para otro celular y el que se equivocó entra al suyo.
+    assert.ok((await otro.emitWithAck('player:join', { code, groupId: 4 })).ok);
+    assert.equal((await celu.emitWithAck('player:join', { code, groupId: 5 })).groupId, 5);
+
+    host.emit('host:start', {});
+    await celu.esperar('game:script');
+    assert.deepEqual(await celu.emitWithAck('player:leave', {}), { ok: false, reason: 'game_started' });
+    assert.equal([...servidor.salas][0].grupos.get(5).libre, false);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
