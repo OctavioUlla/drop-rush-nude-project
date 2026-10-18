@@ -16,7 +16,8 @@
     "test": "node --test test/*.test.js",
     "balanceo": "node tools/balanceo.js",
     "vendor:presentacion": "node tools/vendor-presentacion.js",
-    "renders:presentacion": "node tools/renders-presentacion.js"
+    "renders:presentacion": "node tools/renders-presentacion.js",
+    "pdf:presentacion": "node tools/pdf-presentacion.js"
   },
   "dependencies": {
     "express": "^5.1.0",

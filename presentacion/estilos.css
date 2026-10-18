@@ -155,4 +155,9 @@ body { display: grid; place-items: center; }
 [data-impresion] .np-capa * { animation: none !important; transition: none !important; }
 [data-impresion] .np-capa .np-capa__entra { opacity: 1; transform: none; }
 [data-impresion] .np-etiquetas { display: none; } /* ya están en la imagen de respaldo */
-@media print { [data-impresion] .np-capas { gap: 0; } }
+/* Al imprimir, cada diapositiva mide exactamente la página: con el 16:9 calculado desde el ancho, el redondeo
+   de subpíxeles puede partir una diapositiva en dos páginas. */
+@media print {
+  [data-impresion] .np-capas { gap: 0; }
+  [data-impresion] .np-capa { width: 320mm; height: 180mm; aspect-ratio: auto; }
+}
