@@ -377,9 +377,10 @@ function celular(textura_, w = 1.5, h = 3.0, soporte = true) {
   g.add(cuerpo);
   return g;
 }
-function estacionEgcUgc(g) {
+function estacionEgcUgc(g, { feeds: datos } = {}) {
   g.add(fondo(caja(13, 0.3, 7, C.marca.arena, 0, -0.3, -0.6, 0.1)));
-  const feeds = [feed('egc'), feed('ugc', { desfase: 2 })];
+  // Publicaciones de datos/feeds.json (si la presentación las pasa) o las de prueba de pantallas.js.
+  const feeds = [feed('egc', { publicaciones: datos?.egc }), feed('ugc', { publicaciones: datos?.ugc, desfase: 2 })];
   const anclas = {};
   [[-1, feeds[0], 'egc'], [1, feeds[1], 'ugc']].forEach(([lado, tex, clave]) => {
     const c = celular(tex);
@@ -398,7 +399,9 @@ function estacionEgcUgc(g) {
   g.add(ancla, ped);
   return {
     tema: 'crema', encuadre: 'centro', ancla, anclas, escala: 0.82,
-    actualizar(dt, t, presencia) { if (presencia > 0.3) for (const f of feeds) f.avanzar(t); },
+    actualizar(dt, t, presencia) { for (const f of feeds) if (presencia > 0.3) f.avanzar(dt); else f.dormir(); },
+    /** El presentador frena los dos feeds para comentar una publicación (tecla F). */
+    pausarFeeds: (si) => feeds.map((f) => f.pausar(si))[0],
   };
 }
 
@@ -720,13 +723,13 @@ const constructores = {
 };
 
 /** Arma todas las estaciones del recorrido, en el orden de tokens.escena.recorrido. */
-export function crearMundo(escena) {
+export function crearMundo(escena, opciones = {}) {
   const { separacion, estaciones } = esc.recorrido;
   return estaciones.map((nombre, i) => {
     const grupo = new THREE.Group();
     grupo.name = nombre;
     grupo.position.x = i * separacion;
-    const e = constructores[nombre](grupo);
+    const e = constructores[nombre](grupo, opciones);
     escena.add(grupo);
     return { nombre, indice: i, grupo, escala: 1, anclas: {}, poses: {}, ...e };
   });

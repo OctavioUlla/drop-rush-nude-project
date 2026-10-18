@@ -32,6 +32,8 @@
     .estudio { position: relative; container-type: inline-size; overflow: hidden; background: radial-gradient(120% 90% at 50% 38%, #fff, var(--np-presentacion-estudio-crema-fondo) 62%); }
     .estudio[data-np-tema="cacao"] { background: radial-gradient(120% 90% at 50% 38%, #3b221b, var(--np-presentacion-estudio-cacao-fondo) 62%); }
     .estudio .np-diapo { position: relative; z-index: 1; }
+    .cola-muestra { display: flex; justify-content: center; padding: 6cqw 3cqw 3cqw; }
+    .cola-muestra .np-cola { font-size: 2.5cqw; }
     .vivo { position: relative; aspect-ratio: 16 / 9; background: var(--np-marca-cacao-profundo); box-shadow: var(--np-sombra-lg); }
     .vivo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .estaciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--np-espacio-4); }
@@ -166,18 +168,10 @@
     <div class="estaciones" id="estaciones"></div>
 
     <h3 class="np-subtitulo">Cola de la tienda (barra de progreso)</h3>
-    <p class="np-texto np-texto-suave">Al pie de cada diapositiva, ~5 % de alto. Avanza por bloque (<code>--avance</code> de 0 a 1). Con grupos conectados, cada persona lleva el color de su grupo; la nuestra va en mostaza. En el último bloque se abre la puerta.</p>
+    <p class="np-texto np-texto-suave">Al pie de la presentación, junto al número de bloque. Delante nuestro (en mostaza) hay tantas personas como bloques faltan: en cada bloque la puerta se abre, entra la primera y la fila da un paso. En el último nos toca: la puerta queda abierta con su luz y aparece <i>Queda 1</i>, el pase al juego. Las piernas solo se mueven durante el paso. Con grupos conectados, cada persona puede llevar el color de su grupo (<code>--g</code>). El HTML lo arma <a href="./cola.js"><code>cola.js</code></a>.</p>
     <div class="dos">
-      <div class="np-cola" style="--avance: .6">
-        <div class="np-cola__fila" id="cola-grupos"></div>
-        <span class="np-cola__bloque">05</span>
-        <div class="np-cola__puerta"></div>
-      </div>
-      <div class="np-cola" style="--avance: 1">
-        <div class="np-cola__fila"><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona np-cola__persona--nosotros"></span></div>
-        <span class="np-cola__bloque">08</span>
-        <div class="np-cola__puerta np-cola__puerta--abierta"></div>
-      </div>
+      <div class="estudio cola-muestra"><div class="np-cola" data-bloque="3"></div></div>
+      <div class="estudio cola-muestra" data-np-tema="cacao"><div class="np-cola" data-bloque="8"></div></div>
     </div>
 
     <h3 class="np-subtitulo">Votación en vivo y feeds</h3>
@@ -361,8 +355,14 @@
   document.getElementById('estaciones').innerHTML = estaciones.map(([n, nombre, color, estudio, que]) => `
     <div class="estacion"><div class="estacion__color" style="background: var(--np-colorway-${n}); color: var(--np-marca-${oscuros.includes(color) ? 'crema' : 'cacao'})"><span>${String(n).padStart(2, '0')}</span></div>
     <p><b>${nombre}</b> · <code>${color}</code> · estudio ${estudio}<br>${que}</p></div>`).join('');
-  document.getElementById('cola-grupos').innerHTML = [3, 18, 7, 26, 11]
-    .map((n) => `<span class="np-cola__persona" style="--g: var(--np-grupo-${n})"></span>`).join('') + '<span class="np-cola__persona np-cola__persona--nosotros"></span>';
+  // Cola de la tienda: el mismo HTML que arma cola.js (la guía no importa módulos para poder abrirse con file://).
+  document.querySelectorAll('.np-cola[data-bloque]').forEach((el) => {
+    const bloque = Number(el.dataset.bloque), ultimo = 8, faltan = ultimo - bloque;
+    const personas = Array.from({ length: ultimo + 15 }, (_, j) => `<span class="np-cola__persona${j === ultimo ? ' np-cola__persona--nosotros' : ''}" style="--j: ${j}; --tono: ${[100, 78, 90, 66, 84][j % 5]}%; --alto: ${j === ultimo ? 1 : [1, 0.94, 1.04, 0.97, 1.02, 0.92][j % 6]}"><i></i><i></i><b></b></span>`).join('');
+    el.style.cssText = `--bloque: ${bloque}; --ultimo: ${ultimo}`;
+    el.innerHTML = `<p class="np-cola__texto"><span class="np-cola__etiqueta">${faltan ? 'Cola del drop' : 'Puerta abierta'}</span><span class="np-cola__cifra">${faltan ? `<b>${faltan}</b> personas adelante` : '<b>Nos toca</b>'}</span></p>
+      <div class="np-cola__vereda"><div class="np-cola__fila">${personas}</div><div class="np-cola__tienda${faltan ? '' : ' np-cola__tienda--abierta'}"><span class="np-cola__queda">Queda 1</span><span class="np-cola__cartel">Nude<sup>®</sup>Project</span><span class="np-cola__puerta"><span class="np-cola__hoja"></span></span><span class="np-cola__vidriera"></span></div></div>`;
+  });
 
   const ficha = (n) => `<span class="np-ficha" style="--g: var(--np-grupo-${n}); --gt: var(--np-grupo-${n}-texto)">${n}</span>`;
   document.getElementById('grupos').innerHTML = Array.from({ length: 40 }, (_, i) => ficha(i + 1)).join('');

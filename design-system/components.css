@@ -390,76 +390,221 @@
 @keyframes np-latido { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.06); } }
 
 /* ============ Presentación: cola de la tienda (barra de progreso) ============ */
-/* Franja al pie de la diapositiva. --avance va de 0 (primer bloque) a 1 (la fila llega a la puerta).
-   <div class="np-cola" style="--avance: .5">
-     <div class="np-cola__fila"><span class="np-cola__persona"></span>… <span class="np-cola__persona np-cola__persona--nosotros"></span></div>
-     <span class="np-cola__bloque">04</span><div class="np-cola__puerta"></div>
+/* Una fila de personas espera en la puerta de la Nude House. Delante nuestro (mostaza) hay tantas personas como
+   bloques faltan: en cada bloque la puerta se abre, entra la primera y la fila da un paso. En el último nos toca:
+   la puerta queda abierta con su luz y aparece QUEDA 1. El HTML lo arma design-system/cola.js:
+   <div class="np-cola" style="--bloque: 3; --ultimo: 8">
+     <p class="np-cola__texto"><span class="np-cola__etiqueta">Cola del drop</span><span class="np-cola__cifra"><b>5</b> personas adelante</span></p>
+     <div class="np-cola__vereda">
+       <div class="np-cola__fila"><span class="np-cola__persona" style="--j: 0; --tono: 100%; --alto: 1"><i></i><i></i><b></b></span>…</div>
+       <div class="np-cola__tienda"><span class="np-cola__queda">Queda 1</span><span class="np-cola__cartel">Nude<sup>®</sup>Project</span>
+         <span class="np-cola__puerta"><span class="np-cola__hoja"></span></span><span class="np-cola__vidriera"></span></div>
+     </div>
    </div>
-   Con grupos conectados: style="--g: var(--np-grupo-7)" en cada persona. */
+   --j: lugar en la fila (0 = la primera); la persona "nosotros" es la --ultimo. Con grupos conectados, --g pinta
+   cada persona con el color de su grupo. Todo se mide en em: el tamaño lo da el font-size del contenedor. */
 .np-cola {
-  position: relative;
-  height: 2.6rem;
-  color: var(--np-tinta);
-  border-bottom: var(--np-borde-fino) solid var(--np-linea);
-}
-.np-diapo > .np-cola { position: absolute; left: 7%; right: 7%; bottom: 0; height: 4.5cqw; font-size: 1.2cqw; }
-.np-cola__fila {
-  position: absolute;
-  bottom: 0;
-  right: calc((1 - var(--avance, 0)) * (100% - 3.2em) + 3.2em);
+  --paso: 1.22em;         /* distancia entre dos personas */
+  --tienda: 6.6em;        /* ancho de la fachada */
+  --luz: var(--np-acento-mostaza);
+  --interior: color-mix(in srgb, var(--luz) 42%, var(--np-fondo));
   display: flex;
   align-items: flex-end;
-  gap: 0.35em;
+  gap: 1.6em;
+  height: 4.6em;
+  color: var(--np-tinta);
+}
+.np-cola__texto { margin: 0; display: grid; gap: 0.45em; justify-items: end; padding-bottom: 0.15em; white-space: nowrap; }
+.np-cola__etiqueta {
+  display: flex; align-items: center; gap: 0.6em;
+  font: var(--np-peso-medio) 0.72em / 1 var(--np-fuente-texto);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.np-cola__etiqueta::before { content: ''; width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--luz); box-shadow: 0 0 0 0.12em color-mix(in srgb, currentColor 35%, transparent); }
+.np-cola__cifra { font: var(--np-peso-bold) 1.05em / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-titulo); }
+.np-cola__cifra b { font-size: 1.55em; font-weight: var(--np-peso-black); letter-spacing: var(--np-interletra-display); font-variant-numeric: tabular-nums; margin-right: 0.08em; }
+.np-cola__cifra--cambia { animation: np-cola-cifra var(--np-movimiento-texto) var(--np-movimiento-curva) both; }
+@keyframes np-cola-cifra { from { opacity: 0; transform: translateY(0.6em); } }
+
+/* La vereda: la fila corre por debajo de la tienda, así quien entra desaparece detrás de la fachada. */
+.np-cola__vereda {
+  position: relative;
+  width: calc(var(--tienda) + 13 * var(--paso));
   height: 100%;
-  transition: right var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+}
+.np-cola__fila {
+  position: absolute;
+  inset: -1em 0 0;
+  /* la fila se pierde a la izquierda: se ve larga sin ocupar más lugar */
+  mask-image: linear-gradient(to right, transparent, #000 calc(5 * var(--paso)));
 }
 .np-cola__persona {
-  --g: var(--np-tinta);
-  position: relative;
-  flex: none;
-  width: 0.75em;
-  height: 70%;
-  background: var(--g);
-  border-radius: 0.35em 0.35em 0 0;
+  --slot: calc(var(--j) - var(--bloque, 0));       /* lugar actual: 0 = en la puerta, negativo = ya entró */
+  --g: color-mix(in srgb, currentColor var(--tono, 100%), var(--np-fondo));
+  position: absolute;
+  right: calc(var(--tienda) + 0.4em);
+  bottom: 0;
+  width: 0.92em;
+  height: calc(2.75em * var(--alto, 1));
+  transform: translateX(calc(max(var(--slot), -1) * var(--paso) * -1 + clamp(0, -1 * var(--slot), 1) * 1.1em));
+  /* la primera arranca enseguida y las de atrás la siguen, como una fila de verdad */
+  transition: transform var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+  transition-delay: calc(clamp(0, var(--slot), 12) * var(--np-movimiento-escalonado) * 0.6);
 }
-.np-cola__persona::before { /* cabeza */
+.np-cola--atras .np-cola__persona { transition-delay: calc(clamp(0, 12 - var(--slot), 12) * var(--np-movimiento-escalonado) * 0.6); }
+.np-cola--quieta .np-cola__persona { transition: none; }
+/* Cuerpo con capucha (b), cabeza (b::before), capucha caída a la espalda (b::after) y dos piernas (i). */
+.np-cola__persona > b {
+  position: absolute;
+  inset: 34% 0 27%;
+  border-radius: 0.42em 0.42em 0.16em 0.16em;
+  background: var(--g);
+}
+.np-cola__persona > b::before {
   content: '';
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 0.12em);
-  width: 0.55em;
-  height: 0.55em;
-  translate: -50% 0;
+  left: 50%; bottom: calc(100% + 0.07em);
+  width: 0.6em; height: 0.64em;
+  translate: -45% 0;
   border-radius: 50%;
   background: inherit;
 }
-.np-cola__persona--nosotros { --g: var(--np-acento-mostaza); }
-.np-cola__bloque {
-  position: absolute;
-  right: 3.2em;
-  top: 0;
-  font: var(--np-peso-medio) 0.8em / 1 var(--np-fuente-texto);
-  letter-spacing: var(--np-interletra-etiqueta);
-  color: var(--np-tinta-suave);
-}
-.np-cola__puerta {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 2.4em;
-  height: 100%;
-  background: var(--np-tinta);
-  border: var(--np-borde-fino) solid var(--np-tinta);
-  transition: background var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
-}
-.np-cola__puerta::after { /* cartel de la Nude House */
+.np-cola__persona > b::after {
   content: '';
   position: absolute;
-  inset: 18% 22% auto;
-  height: 0.18em;
-  background: var(--np-fondo);
+  left: 4%; top: -0.2em;
+  width: 0.56em; height: 0.46em;
+  border-radius: 50% 50% 40% 40%;
+  background: inherit;
 }
-.np-cola__puerta--abierta { background: var(--np-acento-mostaza); }
+.np-cola__persona > i {
+  position: absolute;
+  bottom: 0;
+  width: 0.3em; height: 30%;
+  border-radius: 0.15em;
+  background: var(--g);
+  transform-origin: 50% 0;
+}
+.np-cola__persona > i:first-child { left: 17%; }
+.np-cola__persona > i:nth-child(2) { right: 17%; }
+/* Nosotros: en mostaza, con un contorno para que se lea sobre crema, y una marca arriba. */
+.np-cola__persona--nosotros {
+  --g: var(--luz);
+  z-index: 1;
+  filter: drop-shadow(0.07em 0 0 currentColor) drop-shadow(-0.07em 0 0 currentColor) drop-shadow(0 0.07em 0 currentColor) drop-shadow(0 -0.07em 0 currentColor);
+}
+.np-cola__persona--nosotros::before {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: calc(100% + 0.3em);
+  width: 0.5em; height: 0.36em;
+  translate: -50% 0;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+/* El paso: piernas y un leve rebote, solo mientras la fila camina. */
+.np-cola--andando .np-cola__persona > b { animation: np-cola-rebote 300ms ease-in-out infinite alternate; }
+.np-cola--andando .np-cola__persona > i { animation: np-cola-pierna 300ms ease-in-out infinite alternate; }
+.np-cola--andando .np-cola__persona > i:nth-child(2) { animation-direction: alternate-reverse; }
+@keyframes np-cola-pierna { from { transform: rotate(22deg); } to { transform: rotate(-22deg); } }
+@keyframes np-cola-rebote { to { transform: translateY(-0.1em); } }
+
+/* La tienda: fachada con su cartel, la puerta (se abre con luz cálida) y la vidriera con la última sudadera. */
+.np-cola__tienda {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: var(--tienda);
+  height: 100%;
+  border-radius: 0.22em 0.22em 0 0;
+  background: currentColor;
+  z-index: 1;
+}
+.np-cola__cartel {
+  position: absolute;
+  inset: 0.5em 0 auto;
+  text-align: center;
+  font: var(--np-peso-bold) 0.78em / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-logo);
+  color: var(--np-fondo);
+  white-space: nowrap;
+}
+.np-cola__cartel sup { font-size: 0.5em; }
+.np-cola__puerta, .np-cola__vidriera {
+  position: absolute;
+  bottom: 0;
+  background: var(--interior);
+  transition: background var(--np-movimiento-lento) linear, box-shadow var(--np-movimiento-lento) linear;
+}
+.np-cola__puerta { left: 0.55em; width: 1.6em; height: 2.75em; perspective: 9em; }
+.np-cola__hoja {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, currentColor 72%, var(--np-fondo));
+  box-shadow: inset 0 0 0 0.12em currentColor;
+  transform-origin: 0 50%;
+  transition: transform var(--np-movimiento-escena) var(--np-movimiento-curva-escena);
+}
+.np-cola__hoja::after { /* manija */
+  content: '';
+  position: absolute;
+  right: 0.24em; top: 45%;
+  width: 0.1em; height: 0.5em;
+  border-radius: 0.05em;
+  background: var(--np-fondo);
+  opacity: 0.7;
+}
+.np-cola__vidriera { right: 0.55em; bottom: 0.65em; width: 3.4em; height: 2.1em; overflow: hidden; }
+.np-cola__vidriera::before { /* la última sudadera */
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 0.25em;
+  width: 1.3em; height: 1.3em;
+  translate: -50% 0;
+  background: currentColor;
+  clip-path: polygon(36% 0, 64% 0, 72% 9%, 100% 34%, 91% 58%, 79% 50%, 79% 100%, 21% 100%, 21% 50%, 9% 58%, 0 34%, 28% 9%);
+}
+.np-cola__vidriera::after { /* reflejo del vidrio */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.3) 31% 40%, transparent 41%);
+}
+/* Mientras pasa la primera de la fila (y siempre en el último bloque), la puerta se abre y sale la luz. */
+.np-cola__tienda--pasa .np-cola__hoja, .np-cola__tienda--abierta .np-cola__hoja { transform: rotateY(-72deg); }
+.np-cola__tienda--pasa .np-cola__puerta, .np-cola__tienda--abierta .np-cola__puerta { background: var(--luz); }
+.np-cola__tienda--abierta .np-cola__puerta { box-shadow: 0 0 1.6em 0.3em color-mix(in srgb, var(--luz) 70%, transparent); }
+.np-cola__tienda--abierta .np-cola__vidriera { background: color-mix(in srgb, var(--luz) 70%, var(--np-fondo)); }
+.np-cola__tienda::after { /* luz que cae en la vereda */
+  content: '';
+  position: absolute;
+  left: -2.4em; bottom: -0.55em;
+  width: 6.4em; height: 1.1em;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--luz) 75%, transparent), transparent);
+  opacity: 0;
+  transition: opacity var(--np-movimiento-lento) linear;
+  pointer-events: none;
+}
+.np-cola__tienda--abierta::after { opacity: 1; }
+.np-cola__queda {
+  position: absolute;
+  left: 50%; bottom: calc(100% + 0.6em);
+  padding: 0.4em 0.6em 0.35em;
+  translate: -50% 0;
+  background: var(--luz);
+  color: var(--np-marca-cacao);
+  font: var(--np-peso-black) 0.8em / 1 var(--np-fuente-display);
+  letter-spacing: var(--np-interletra-etiqueta);
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(0.6em) scale(0.9);
+  transition: opacity var(--np-movimiento-lento) linear, transform var(--np-movimiento-texto) var(--np-movimiento-rebote);
+}
+.np-cola__tienda--abierta .np-cola__queda { opacity: 1; transform: none; transition-delay: var(--np-movimiento-escena); animation: np-latido var(--np-movimiento-latido) var(--np-movimiento-curva) infinite calc(var(--np-movimiento-escena) * 2); }
 
 /* ============ Presentación: votación en vivo ============ */
 /* <ol class="np-votacion"><li class="np-votacion__opcion" style="--valor: 70%">
@@ -684,7 +829,8 @@
 @media (prefers-reduced-motion: reduce) {
   .np-diapo--activa .np-revelar__linea > span { animation: np-fundido var(--np-movimiento-lento) ease-out both; }
   .np-cinta__pista, .np-latido { animation: none; }
-  .np-cola__fila, .np-cola__puerta, .np-feed__pista, .np-votacion__barra::after { transition-duration: var(--np-movimiento-base); }
+  .np-cola__persona, .np-cola__hoja, .np-feed__pista, .np-votacion__barra::after { transition-duration: var(--np-movimiento-base); transition-delay: 0ms; }
+  .np-cola--andando .np-cola__persona > *, .np-cola__queda { animation: none !important; }
 }
 @keyframes np-fundido { from { opacity: 0; } to { opacity: 1; } }
 
@@ -765,6 +911,9 @@
 
 /* ----- Interfaz (HUD) ----- */
 .np-interfaz { z-index: 4; pointer-events: none; padding: 2.4cqw 3cqw; display: flex; flex-direction: column; justify-content: space-between; color: var(--np-tinta); transition: color var(--np-movimiento-lento) linear; }
+/* Velo al pie, del color del tema: la interfaz de abajo (contador y cola) se lee aunque la escena tenga un piso claro
+   con el tema cacao (la vereda de la vidriera) o uno oscuro con el tema crema. */
+.np-interfaz::before { content: ''; position: absolute; inset: auto 0 0; height: 16%; z-index: -1; background: linear-gradient(to top, color-mix(in srgb, var(--np-fondo) 78%, transparent), transparent); }
 .np-interfaz__arriba, .np-interfaz__abajo { display: flex; align-items: center; justify-content: space-between; gap: 3cqw; }
 .np-interfaz .np-logo { font-size: 1.7cqw; }
 .np-interfaz__menu { display: flex; gap: 1.6cqw; margin: 0; padding: 0; list-style: none; pointer-events: auto; }
@@ -781,10 +930,8 @@
 .np-interfaz__drop { font: var(--np-peso-medio) 0.82cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; }
 .np-interfaz__contador { display: flex; align-items: baseline; gap: 0.6cqw; font: var(--np-peso-bold) 1.1cqw / 1 var(--np-fuente-display); font-variant-numeric: tabular-nums; }
 .np-interfaz__contador b { font-size: 2.6cqw; letter-spacing: var(--np-interletra-display); }
-.np-interfaz__barra { width: 12cqw; height: 1px; background: color-mix(in srgb, currentColor 25%, transparent); position: relative; margin-left: 1cqw; align-self: center; }
-.np-interfaz__barra::after { content: ''; position: absolute; inset: 0; background: currentColor; transform: scaleX(var(--avance, 0)); transform-origin: left; transition: transform var(--np-movimiento-viaje) var(--np-movimiento-curva-viaje); }
 .np-interfaz__pista { font: var(--np-peso-medio) 0.78cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; opacity: 0.6; }
-.np-interfaz .np-cola { width: 30cqw; height: 2.6cqw; font-size: 0.8cqw; }
+.np-interfaz .np-cola { font-size: 0.82cqw; }
 
 /* ----- Cargador ----- */
 .np-cargador {
@@ -803,6 +950,6 @@
 .np-cargador--sin-servidor .np-cargador__linea, .np-cargador--sin-servidor .np-cargador__estado { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .np-gigante > span, .np-capa .np-capa__entra, .np-interfaz__barra::after { transition-duration: 1ms !important; transition-delay: 0ms !important; }
+  .np-gigante > span, .np-capa .np-capa__entra { transition-duration: 1ms !important; transition-delay: 0ms !important; }
   .np-capa--sale { visibility: hidden; }
 }

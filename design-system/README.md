@@ -166,6 +166,7 @@ En JavaScript, `segundos('viaje')` devuelve `1.8`, listo para GSAP; `curva()` de
 | [`tokens.css`](tokens.css) | *(generado)* Variables CSS `--np-*`, `@font-face` y los temas crema y cacao. |
 | [`tokens.js`](tokens.js) | *(generado)* Módulo ES con los mismos valores, más `colores3d` (números `0x482922` para Three.js), `colorDeGrupo(n)`, `colorwayDeBloque(n)` y `segundos(nombre)`. |
 | [`components.css`](components.css) | Componentes con prefijo `np-`: logo, tipografía, botones, insignias, cartel, sello, tarjetas, datos, fichas de grupo, opciones A/B/C, temporizador, HUD, ranking, diapositivas 16:9 y las piezas de la presentación (escenario, tipografía gigante, capas de texto, interfaz, cargador, viñeta, texto animado, cinta, grano, cola, votación, feeds, hype, etiquetas 3D y modo presentador). |
+| [`cola.js`](cola.js) | Arma la cola de la tienda (`np-cola`) y la hace caminar de un bloque al otro. |
 | [`index.html`](index.html) | Guía visual con todo lo anterior en uso. |
 | [`escena.html`](escena.html), [`escena/`](escena/) | Maqueta viva del plano secuencia: sudadera *clay* por piezas (`sudadera.js`), las 9 estaciones (`mundo.js`) y el motor de luz y cámara (`escena.js`). |
 | [`fonts/`](fonts/) | Inter e Inter Tight (woff2 variables, subconjunto latino) + licencia. |
@@ -251,7 +252,7 @@ const { color3d } = colorDeGrupo(numeroDeGrupo); // tinte del corredor
 | `np-diapo__editorial` (+ `__texto`, `__hueco`) | Layout 5/12 texto + 7/12 sudadera |
 | `np-revelar__linea`, `np-cifra` | Títulos que suben línea por línea / cifras con ancho fijo para contar desde 0 |
 | `np-cinta`, `np-latido`, `np-grano` | Cinta *DROP 001 — QUEDA 1* de los separadores, cartel latiendo y grano de película |
-| `np-cola` (+ `__fila`, `__persona`, `__persona--nosotros`, `__bloque`, `__puerta`, `__puerta--abierta`) | Cola de la tienda como barra de progreso (`--avance` de 0 a 1; `--g` con el color de cada grupo) |
+| `np-cola` (+ `__texto`, `__vereda`, `__fila`, `__persona`, `__persona--nosotros`, `__tienda`, `__puerta`, `__vidriera`, `__queda`) | Cola de la tienda como barra de progreso: delante nuestro (mostaza) hay tantas personas como bloques faltan; en cada bloque entra una y la fila da un paso, y en el último se abre la puerta con *Queda 1*. El HTML lo arma [`cola.js`](cola.js) (`crearCola(el, { bloques }).ir(n)`); `--bloque` mueve la fila y `--g` pinta cada persona con el color de su grupo |
 | `np-votacion` (+ `__opcion`, `__barra`, `__cifra`, `__estado`) | Barras de la votación en vivo (`--valor` en %) |
 | `np-feeds`, `np-feed` (+ `__pista`, `__pub`, `__pie`, `__cuenta`, `__cifra`, `--pausado`) | Feeds 9:16 de EGC vs. UGC (`--actual` = publicación visible) |
 | `np-cuenta`, `np-hype`, `np-hype-boton` | Cuenta regresiva gigante, medidor de hype con las fichas de los grupos y botón HYPE a pantalla completa del celular |

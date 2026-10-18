@@ -1,6 +1,7 @@
 // Motor del plano secuencia: renderer, luz de cine, la sudadera protagonista y el viaje de cámara entre estaciones.
-// iniciar({ lienzo, escenario, eventos, escalaMaxima }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, estaciones }
+// iniciar({ lienzo, escenario, eventos, escalaMaxima, feeds }) → { ir, siguiente, anterior, actual, total, proyectar, arrancar, pausarFeeds, estaciones }
 // escalaMaxima: tope de la resolución interna (por defecto tokens.escena.render['escala-maxima']); bajarlo si la notebook no llega a 60 fps.
+// feeds: { egc: [...], ugc: [...] } con las publicaciones de los celulares (ver feed() en pantallas.js); sin esto, las de prueba.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { tokens, colores3d, colorways, segundos } from '../tokens.js';
@@ -37,7 +38,7 @@ const rebote = (u) => {
   return n * (u -= 2.625 / d) * u + 0.984375;
 };
 
-export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.render['escala-maxima'] }) {
+export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.render['escala-maxima'], feeds }) {
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ canvas: lienzo, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
@@ -69,7 +70,7 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
   escena.add(hemi, principal, principal.target, relleno, relleno.target, contorno, contorno.target);
 
   // ---------- Mundo y protagonista ----------
-  const estaciones = crearMundo(escena);
+  const estaciones = crearMundo(escena, { feeds });
   const heroe = crearSudadera(colorways[0].color3d);
   escena.add(heroe.grupo);
   escena.updateMatrixWorld(true);
@@ -332,6 +333,8 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
         Object.assign(hype, { fase: 'reposo', nivel: 1 });
       } else Object.assign(hype, { fase, nivel: clamp(nivel, 0, 1) });
     },
+    /** Frena o reanuda los feeds de EGC vs. UGC (sin si, alterna); devuelve si quedaron en pausa. */
+    pausarFeeds(si) { return estaciones.find((e) => e.pausarFeeds)?.pausarFeeds(si) ?? false; },
     /** Suelta la sudadera sobre el pedestal (después del cargador). */
     arrancar() { arrancado = true; },
     /** Saltar sin viaje (al cargar con #n en la URL). */

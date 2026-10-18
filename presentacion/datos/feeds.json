@@ -1,0 +1,15 @@
+{
+  "nota": "Publicaciones de los dos celulares del bloque 2 (EGC vs. UGC). Cada feed pasa una cada 4 s. Campos: cuenta, texto, cifra (opcional, debajo del ícono), icono ('like' o 'vistas'), archivo (foto .jpg/.webp o clip .mp4/.webm en ../media/, relativo a este archivo; en silencio y en bucle), arte (ilustración de prueba que se ve si no hay archivo o no carga: dia1, reglas, podcast, oficina, cola, llave, outfit, artistas) y claro (true si el fondo es claro: la barra de estado va en cacao). Contenido de prueba hasta cargar los clips reales (fase 5).",
+  "egc": [
+    { "cuenta": "@brunocasanovas", "texto": "Day 1 of making our brand known in the US", "arte": "dia1" },
+    { "cuenta": "@nudeproject", "texto": "House Rules: las reglas de la casa.", "arte": "reglas", "claro": true },
+    { "cuenta": "@nudeproject.podcast", "texto": "Episodio 1: de 0 a 200.000 seguidores.", "arte": "podcast" },
+    { "cuenta": "@nudeproject", "texto": "Out of Office: la campaña la protagoniza el equipo.", "arte": "oficina", "cifra": "+500 k", "icono": "like" }
+  ],
+  "ugc": [
+    { "cuenta": "@cola.madrid", "texto": "Cola desde las 6 de la mañana para la apertura.", "arte": "cola", "claro": true },
+    { "cuenta": "@primeros60", "texto": "Uno de los 60: tengo la llave.", "arte": "llave" },
+    { "cuenta": "@fitcheck", "texto": "Fit check con la sudadera nueva.", "arte": "outfit" },
+    { "cuenta": "@comunidad", "texto": "La marca, vista en sus artistas.", "arte": "artistas" }
+  ]
+}

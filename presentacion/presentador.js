@@ -59,6 +59,7 @@ function pintar() {
   const insignias = [
     conectado ? '<span class="np-insignia np-insignia--relleno">Proyector conectado</span>' : '<span class="np-insignia np-insignia--alerta">Proyector sin conexión: abrilo y tocá P</span>',
     estado?.pausa ? '<span class="np-insignia np-insignia--rosa">Pantalla en pausa (B)</span>' : '',
+    estado?.feedsPausados ? '<span class="np-insignia np-insignia--rosa">Feeds en pausa (F)</span>' : '',
     '<span class="np-insignia">Grupos, hype y votación: fase 4</span>',
   ];
   $('#estado').innerHTML = insignias.join('');
@@ -100,6 +101,7 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'End') enviar('ir', { diapositiva: diapos.length - 1 });
   else if (tecla === 'b' || tecla === '.') enviar('pausa');
   else if (tecla === 't') reloj();
+  else if (tecla === 'f') enviar('feeds');
 });
 
 mostrarDiapositiva(0);

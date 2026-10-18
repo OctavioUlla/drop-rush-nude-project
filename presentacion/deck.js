@@ -3,6 +3,7 @@
 // La escena 3D es la del design system: el deck le pide viajar a la estación de cada diapositiva y,
 // cuando dos diapositivas seguidas comparten estación, solo cambia el texto (la cámara no se mueve).
 import { tokens } from '../design-system/tokens.js';
+import { crearCola } from '../design-system/cola.js';
 import { CANAL, dosDigitos, leerDiapositivas } from './comun.js';
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -31,12 +32,28 @@ if (!imprimiendo) {
   try {
     const { iniciar } = await import('../design-system/escena/escena.js');
     const escala = Number.parseFloat(params.get('escala'));
-    motor = iniciar({ lienzo: $('#lienzo'), escenario, eventos: { salir, entrar, llegar }, escalaMaxima: escala > 0 ? escala : undefined });
+    const feeds = await leerFeeds();
+    motor = iniciar({ lienzo: $('#lienzo'), escenario, eventos: { salir, entrar, llegar }, escalaMaxima: escala > 0 ? escala : undefined, feeds });
     if (params.has('depurar') || params.has('render')) window.motor = motor; // herramientas: control de solapes y renders
   } catch (error) {
     // Sin WebGL: la presentación sigue, con el fondo del tema (y las imágenes de respaldo cuando existan).
     document.documentElement.setAttribute('data-np-sin-webgl', '');
     console.error(error);
+  }
+}
+/**
+ * Publicaciones de los feeds de EGC vs. UGC (datos/feeds.json). Las rutas de fotos y clips son relativas al
+ * archivo. Si no se puede leer, el motor usa las publicaciones de prueba del design system.
+ */
+async function leerFeeds() {
+  const url = new URL('./datos/feeds.json', location.href);
+  try {
+    const datos = await (await fetch(url)).json();
+    for (const lado of ['egc', 'ugc']) for (const pub of datos[lado] ?? []) if (pub.archivo) pub.archivo = new URL(pub.archivo, url).href;
+    return datos;
+  } catch (error) {
+    console.warn('No se pudo leer datos/feeds.json: se usan las publicaciones de prueba', error);
+    return undefined;
   }
 }
 // Imagen pre-renderizada de cada diapositiva (renders/, ver tools/renders.mjs): se ve sin WebGL y en el PDF.
@@ -54,6 +71,9 @@ $('#menu').addEventListener('click', (ev) => {
   ir(bloques[Number(b.dataset.bloque)].diapos[0]);
 });
 $('#de').textContent = `/ ${dosDigitos(ultimoBloque)}`;
+// Cola de la tienda (PLANIFICACION 2.2): la barra de progreso. En cada bloque entra una persona y la fila da un
+// paso; en el último nos toca y se abre la puerta (QUEDA 1).
+const cola = crearCola($('#cola'), { bloques: bloques.length });
 
 // ---------- Estado ----------
 const limitar = (n) => Math.max(0, Math.min(diapos.length - 1, n));
@@ -61,6 +81,7 @@ let actual = limitar(Number.parseInt(location.hash.slice(1), 10) || 0); // la di
 let visible = null; // la diapositiva cuyo texto está en pantalla
 let cambio = 0; // cambio de texto pendiente dentro de una misma estación
 let pausa = false;
+let feedsPausados = false;
 // Cronómetro por bloque (ver más abajo): ms acumulados en cada bloque y desde cuándo corre el actual.
 const reloj = { inicio: null, porBloque: bloques.map(() => 0), bloque: 0, desde: null };
 
@@ -80,10 +101,7 @@ function mostrar(i) {
   }
   contar(d.el);
   $('#numero').textContent = dosDigitos(d.bloque);
-  $('#bloque').textContent = dosDigitos(d.bloque);
-  $('#barra').style.setProperty('--avance', d.bloque / ultimoBloque);
-  $('#cola').style.setProperty('--avance', d.bloque / ultimoBloque);
-  $('#puerta').classList.toggle('np-cola__puerta--abierta', d.bloque === ultimoBloque);
+  cola.ir(d.bloque);
   document.querySelectorAll('#menu button').forEach((b, k) => b.toggleAttribute('aria-current', k === d.bloque));
 }
 
@@ -194,7 +212,7 @@ function reiniciarReloj() {
 // ---------- Modo presentador ----------
 const canal = 'BroadcastChannel' in window ? new BroadcastChannel(CANAL) : null;
 function avisar() {
-  canal?.postMessage({ tipo: 'estado', actual, pausa, reloj: structuredClone(reloj), ahora: Date.now() });
+  canal?.postMessage({ tipo: 'estado', actual, pausa, feedsPausados, reloj: structuredClone(reloj), ahora: Date.now() });
 }
 setInterval(avisar, 1000); // latido: el presentador sabe si el proyector sigue abierto
 canal?.addEventListener('message', ({ data }) => {
@@ -203,9 +221,17 @@ canal?.addEventListener('message', ({ data }) => {
   else if (data.tipo === 'siguiente') siguiente();
   else if (data.tipo === 'anterior') anterior();
   else if (data.tipo === 'pausa') alternarPausa();
+  else if (data.tipo === 'feeds') alternarFeeds();
   else if (data.tipo === 'reloj') { (data.accion === 'empezar' ? empezarReloj : reiniciarReloj)(); avisar(); }
 });
 const abrirPresentador = () => window.open('./presentador.html', 'np-presentador', 'popup,width=1440,height=900');
+
+/** Tecla F: frena los feeds de EGC vs. UGC para comentar la publicación que se ve (y los reanuda). */
+function alternarFeeds() {
+  if (!motor) return;
+  feedsPausados = motor.pausarFeeds(!feedsPausados);
+  avisar();
+}
 
 function alternarPausa() {
   pausa = !pausa;
@@ -288,6 +314,7 @@ addEventListener('keydown', (ev) => {
   else if (tecla === 'b' || tecla === '.') alternarPausa(); // los controles de diapositivas mandan "." para la pantalla negra
   else if (tecla === 'm') medir();
   else if (tecla === 'h') hype();
+  else if (tecla === 'f') alternarFeeds();
 });
 addEventListener('hashchange', () => ir(Number.parseInt(location.hash.slice(1), 10) || 0));
 // La rueda recorre la presentación solo a pantalla completa: dentro de un iframe tiene que seguir bajando la página.
