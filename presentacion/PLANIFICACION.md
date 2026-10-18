@@ -64,7 +64,7 @@
 
 **Qué es.** Una sola pregunta que la clase responde desde el celular, con el resultado en vivo en el proyector.
 
-**Pregunta sugerida (a confirmar con el contenido):** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
+**Pregunta provisoria (falta confirmarla, ver sección 8):** *"¿Pagarías 90 € por una sudadera que se agota en minutos?"* — Sí / No / Depende.
 
 **Cuándo.**
 - Se **abre** en el bloque de la historia y los drops, durante ~20 s, mientras se sigue hablando. El proyector solo muestra cuántos grupos votaron: el resultado se guarda.
@@ -89,7 +89,7 @@
 - Cada publicación muestra la cuenta (@usuario) y, si suma, la cifra de likes o vistas.
 - El presentador puede **pausar** un feed para comentar una publicación puntual.
 - Se ve la diferencia antes de explicarla: quién habla, cómo se ve, qué se muestra.
-- 📝 **Contenido pendiente:** elegir 4 a 6 publicaciones por lado (ver sección 8).
+- ✅ **Contenido:** 4 publicaciones por lado, clips reales de TikTok (ver [`media/`](media/README.md)).
 
 ---
 
@@ -322,7 +322,7 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 - [ ] Probarlo con celulares reales en el Wi-Fi del aula (con la prueba del juego, ver [Ensayo en el aula](../juego/README.md#ensayo-en-el-aula))
 
 ### Fase 5: Contenido y ensayo
-- [ ] Cargar el contenido de cada bloque (sección 8)
+- [ ] Cargar el contenido de cada bloque (sección 8): el texto y las notas ya están; faltan las fuentes de las métricas y las fotos del bloque 4
 - [ ] Ensayo con cronómetro: 15 min de exposición + 8 min de juego
 - [ ] Prueba en el aula: proyector, Wi-Fi y control de diapositivas
 - [ ] Exportar el PDF de respaldo
@@ -331,12 +331,13 @@ La presentación es un **proyector más de la sala**: la crea (o vuelve a la gua
 
 ## 8. Contenido pendiente (a cargo del equipo)
 
-- [ ] Texto e imágenes de cada bloque (ver [`README.md`](README.md))
+- [x] Texto de cada bloque y notas del orador (ver el [guion](GUION.md))
+- [ ] Fotos de la Nude House y del Château (bloque 4)
 - [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
-- [ ] Campaña o publicación viral a analizar
-- [ ] Métricas públicas actualizadas, con sus fuentes
+- [x] Campaña o publicación viral a analizar: *Out of Office* (agosto de 2025)
+- [ ] Métricas públicas actualizadas, con sus fuentes (relevadas a octubre de 2026; falta citar las fuentes)
 - [ ] Pregunta definitiva de la votación y sus opciones
-- [ ] Notas del orador por diapositiva y quién presenta cada bloque
+- [ ] Quién presenta cada bloque (las notas del orador ya están en cada diapositiva)
 
 ---
 

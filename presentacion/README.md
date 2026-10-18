@@ -92,4 +92,10 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 - [x] Juntar ejemplos reales de EGC y UGC: 4 y 4 clips de TikTok en los feeds (ver [`media/`](media/README.md)).
 - [x] Elegir la campaña viral a analizar: *Out of Office* (agosto de 2025).
 - [ ] Relevar métricas públicas actualizadas y citar las fuentes (relevadas a octubre de 2026; falta citar las fuentes).
-- [ ] Ensayar con cronómetro: 15 min de exposición + 7 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).
+- [ ] Fotos de la Nude House y del Château para el bloque 4 (hoy se ve el cartel *Pendiente*).
+- [ ] Confirmar la pregunta de la votación ([`datos/votacion.json`](datos/votacion.json); la actual es provisoria).
+- [ ] Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7).
+- [ ] Revisar en equipo el banco de preguntas del juego ([`juego/data/preguntas.json`](../juego/data/preguntas.json), hoy un borrador).
+- [ ] Repartir los bloques entre los oradores.
+- [ ] Ensayar con cronómetro: 15 min de exposición + 8 min de juego. Son 13 diapositivas para 9 bloques; las notas del orador suman unas 1.660 palabras (≈ 13 min a 130 palabras por minuto), así que el hype y la votación tienen que entrar en el margen.
+- [ ] Prueba en el aula: notebook (`?medir`), proyector, celulares reales en el Wi-Fi de la facultad y PDF de respaldo (ver [PLANIFICACION.md](PLANIFICACION.md#fase-5-contenido-y-ensayo)).

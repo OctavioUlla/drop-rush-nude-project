@@ -17,7 +17,7 @@
 | 6 | Objetivo comunicacional | Punto 5 | 1:30 |
 | 7 | Desafíos y puente al juego | Cierre | 1:30 |
 | | **Exposición** | | **15:00** |
-| 8 | Drop Rush | Punto 6 | 7:00 |
+| 8 | Drop Rush | Punto 6 | 8:00 |
 
 ---
 
@@ -129,9 +129,9 @@ Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora l
 
 *[La cola llega a la puerta: cartel QUEDA 1 → Drop Rush.]*
 
-## 8. Drop Rush (~7:00)
+## 8. Drop Rush (~8:00)
 
-Instrucciones en el proyector, carrera con 6 preguntas y debate final (ver [`juego/PLANIFICACION.md`](../juego/PLANIFICACION.md)). En el debate se retoman el hype, la votación y el resultado: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera."*
+Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min) (ver [`juego/PLANIFICACION.md`](../juego/PLANIFICACION.md)). En el debate se retoman el hype, la votación y el resultado: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera."*
 
 ---
 
