@@ -78,7 +78,6 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
   const { distancia, altura } = esc.camara;
   for (const e of estaciones) {
     const a = e.ancla.getWorldPosition(new THREE.Vector3());
-    e.puntoAncla = a;
     const k = e.escala ?? 1;
     const d = e.distancia ?? distancia;
     if (e.encuadre === 'editorial') { // la sudadera a la derecha, el texto en los 5/12 de la izquierda
@@ -86,8 +85,9 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
       e.mira = centro.clone().add(new THREE.Vector3(-1.75 * (d / distancia), 0, 0));
       e.camara = e.mira.clone().add(new THREE.Vector3(0, altura - 1.1, d));
     } else if (e.encuadre === 'macro') { // el logo bordado a la derecha; la cita, en la columna libre
-      e.mira = new THREE.Vector3(a.x - 0.85, a.y + 1.35, a.z);
-      e.camara = e.mira.clone().add(new THREE.Vector3(0.05, 0.05, 3.3));
+      const { mira = new THREE.Vector3(-0.85, 1.35, 0), distancia: dm = 3.3 } = e.macro ?? {};
+      e.mira = a.clone().add(mira);
+      e.camara = e.mira.clone().add(new THREE.Vector3(0.05, 0.05, dm));
     } else {
       e.mira = new THREE.Vector3(a.x, a.y + 1.15, a.z);
       e.camara = e.mira.clone().add(new THREE.Vector3(0, altura - 0.95, d * (e.nombre === 'portada' ? 1.12 : 1)));
@@ -99,20 +99,33 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
   // ---------- Estado del viaje ----------
   const facil = curva(tokens.movimiento['curva-viaje']);
   const dur = segundos('viaje');
+  const lambdaPose = 3 / (segundos('escena') * 1.4); // las poses se acomodan en ~1 s: la prenda viaja más que en un cambio de texto
   let actual = 0;
-  let viaje = null; // { desde, hasta, t, d, entro }
+  let viaje = null; // { desde, hasta, t, d, entro, giro0 }
   let posicion = 0; // índice continuo: 1.5 = a mitad de camino entre la estación 1 y la 2
   let intro = reducido ? 1 : 0;
+  let alturaCaida = 7;
   let arrancado = false;
   let giro = 0;
   let desarme = 0;
+  let flota = 1; // 1 = flota, 0 = apoyada o colgada (se funde para no saltar)
+  let tiempo = 0;
   const puntero = new THREE.Vector2();
   const paralaje = new THREE.Vector2();
+  // Pose dentro de la estación (diapositivas con data-pose): desvíos que se acomodan con suavidad.
+  let pose = null;
+  const desvio = { camara: new THREE.Vector3(), mira: new THREE.Vector3(), heroe: new THREE.Vector3() };
+  let factorEscala = 1;
+  // Coreografía del hype en la portada.
+  const hype = { fase: 'reposo', nivel: 0 };
+  let luzHype = 1, subida = 0;
+  const portada = estaciones.find((e) => e.nombre === 'portada');
 
   let pendiente = null; // si se pide otra estación durante un viaje, se encola (la cámara nunca salta)
-  function ir(i) {
+  function ir(i, nombrePose = null) {
     i = clamp(i, 0, estaciones.length - 1);
-    if (viaje) { pendiente = i === viaje.hasta ? null : i; return; }
+    if (viaje) { pendiente = i === viaje.hasta && nombrePose === pose ? null : { i, pose: nombrePose }; return; }
+    pose = nombrePose;
     if (i === actual) return;
     eventos.salir?.(actual, i);
     const saltos = Math.abs(i - actual);
@@ -122,14 +135,15 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
 
   // ---------- Cuadro a cuadro ----------
   const v = new THREE.Vector3(), m1 = new THREE.Vector3(), m2 = new THREE.Vector3(), c1 = new THREE.Vector3(), c2 = new THREE.Vector3();
+  const colgada = new THREE.Vector3(), cero = new THREE.Vector3();
   const colorA = new THREE.Color(), colorB = new THREE.Color(), fondo = new THREE.Color();
-  const reloj = new THREE.Clock();
   const { producto } = esc;
   const periodo = Number.parseFloat(producto['flotar-periodo']);
+  const amortiguar = (vec, obj, lambda, dt) => vec.set(damp(vec.x, obj.x, lambda, dt), damp(vec.y, obj.y, lambda, dt), damp(vec.z, obj.z, lambda, dt));
 
-  function cuadro() {
-    const dt = Math.min(reloj.getDelta(), 1 / 20);
-    const t = reloj.elapsedTime;
+  function actualizar(dt) {
+    tiempo += dt;
+    const t = tiempo;
     let s = 0, a = actual, b = actual;
     if (viaje) {
       viaje.t += dt / viaje.d;
@@ -139,16 +153,24 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
       if (viaje.t >= 1) {
         viaje = null; s = 0; a = b = actual;
         eventos.llegar?.(actual);
-        if (pendiente !== null) { const p = pendiente; pendiente = null; ir(p); }
+        if (pendiente !== null) { const p = pendiente; pendiente = null; ir(p.i, p.pose); }
       }
     }
     const ea = estaciones[a], eb = estaciones[b];
     posicion = lerp(a, b, s);
     const arco = Math.sin(Math.PI * s); // 0 en las puntas, 1 a mitad del viaje
+    const llegada = s > 0.5 ? eb : ea;
+
+    // Pose: desvíos de cámara, mira y protagonista de la estación de destino.
+    const p = estaciones[actual].poses[pose] ?? null;
+    amortiguar(desvio.camara, p?.camara ?? cero, lambdaPose, dt);
+    amortiguar(desvio.mira, p?.mira ?? cero, lambdaPose, dt);
+    amortiguar(desvio.heroe, p?.heroe ?? cero, lambdaPose, dt);
+    factorEscala = damp(factorEscala, p?.escala ? p.escala / estaciones[actual].escala : 1, lambdaPose, dt);
 
     // Cámara: travelling con grúa (sube y retrocede a mitad de camino), más una respiración y paralaje del puntero.
-    m1.copy(ea.mira).lerp(eb.mira, s);
-    c1.copy(ea.camara).lerp(eb.camara, s);
+    m1.copy(ea.mira).lerp(eb.mira, s).add(desvio.mira);
+    c1.copy(ea.camara).lerp(eb.camara, s).add(desvio.camara);
     c1.y += arco * esc.camara['elevacion-viaje'];
     c1.z += arco * esc.camara['retroceso-viaje'];
     paralaje.x = damp(paralaje.x, puntero.x * esc.camara.paralaje, 3, dt);
@@ -156,6 +178,20 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
     const factorMacro = ea.encuadre === 'macro' || eb.encuadre === 'macro' ? 0.25 : 1;
     camara.position.set(c1.x + paralaje.x * factorMacro + Math.sin(t * 0.21) * 0.06, c1.y + paralaje.y * factorMacro + Math.sin(t * 0.17) * 0.04, c1.z);
     camara.lookAt(m1);
+
+    // Hype de la portada: la luz se apaga en la cuenta regresiva y vuelve con el medidor; la protagonista sube
+    // fuera de cuadro y baja en proporción al hype.
+    const enPortada = actual === portada.indice && !viaje;
+    const enHype = enPortada && (hype.fase === 'cuenta' || hype.fase === 'llenando');
+    const luzObjetivo = !enHype ? 1 : hype.fase === 'cuenta' ? 0.1 : 0.1 + 0.9 * hype.nivel;
+    const subidaObjetivo = !enHype ? 0 : hype.fase === 'cuenta' ? 6.5 : 0.6 + 5.9 * (1 - smoothstep(hype.nivel, 0.1, 0.95)) ** 2;
+    luzHype = damp(luzHype, luzObjetivo, hype.fase === 'cuenta' ? 2.5 : 4, dt);
+    subida = damp(subida, subidaObjetivo, hype.fase === 'cuenta' ? 1.6 : 2.4, dt);
+    portada.luz(luzHype);
+    const tenue = 0.25 + 0.75 * luzHype;
+    principal.intensity = esc.luz.principal * tenue;
+    hemi.intensity = esc.luz.ambiente * tenue;
+    contorno.intensity = esc.luz.contorno * tenue;
 
     // Luz principal y su sombra acompañan a la cámara.
     v.copy(m1); v.y = 0;
@@ -172,33 +208,49 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
     escenario.style.setProperty('--fondo-escena', `#${fondo.getHexString()}`);
 
     // Protagonista: viaja de ancla en ancla con un arco, acelera el giro y cambia de colorway con un fundido.
-    c2.copy(ea.puntoAncla);
+    // Si sale de una percha o de un plato (o entra), primero se adelanta y recién después se corre de costado:
+    // así no atraviesa la barra ni los hilos.
     ea.ancla.getWorldPosition(c2);
     eb.ancla.getWorldPosition(m2);
-    c2.lerp(m2, s);
+    const margenA = viaje && ea.entradaFrontal ? 0.16 : 0, margenB = viaje && eb.entradaFrontal ? 0.16 : 0;
+    const lateral = clamp((s - margenA) / (1 - margenA - margenB), 0, 1);
+    c2.lerp(m2, lateral).add(desvio.heroe);
     c2.y += arco * 1.4;
+    if (margenA || margenB) c2.z += arco * 1.6;
     const caida = arrancado ? (reducido ? 1 : rebote(Math.min(intro += dt / 1.1, 1))) : 0;
-    const flotar = Math.sin((t / periodo) * Math.PI * 2) * producto['flotar-amplitud'];
-    const cuelga = eb.encuadre !== 'macro' && (s > 0.5 ? eb : ea).calida;
-    heroe.grupo.position.set(c2.x, c2.y + (cuelga ? 0 : flotar) + (1 - caida) * 7, c2.z);
-    heroe.grupo.scale.setScalar(lerp(ea.escala ?? 1, eb.escala ?? 1, s));
+    const cuelga = llegada.encuadre !== 'macro' && llegada.percha && !p?.heroe;
+    flota = damp(flota, llegada.apoyada || cuelga ? 0 : 1, 6, dt);
+    const flotar = Math.sin((t / periodo) * Math.PI * 2) * producto['flotar-amplitud'] * flota;
+    c2.y += flotar + (1 - caida) * alturaCaida + subida;
+    const escala = lerp(ea.escala, eb.escala, s) * factorEscala;
+    heroe.grupo.scale.setScalar(escala);
 
-    const llegada = s > 0.5 ? eb : ea;
     const quieta = !viaje && (llegada.encuadre === 'macro' || llegada.calida);
     // En reposo la prenda se balancea mostrando el frente y los tres cuartos (nunca queda de espaldas);
     // en el viaje da una vuelta completa y frena en el frente de la estación siguiente.
     const vuelta = Math.round(giro / (Math.PI * 2)) * Math.PI * 2;
     if (viaje) giro = viaje.giro0 + Math.PI * 2 * producto['vueltas-viaje'] * s;
-    else if (quieta) giro = damp(giro, vuelta + (llegada.calida ? 0.35 : -0.25), 2.5, dt);
+    else if (quieta) giro = damp(giro, vuelta + (llegada.giroReposo ?? (llegada.calida ? 0.35 : -0.25)), 2.5, dt);
     else if (llegada.nombre === 'egc-ugc') giro = damp(giro, vuelta + Math.sin(t * 0.5) * 0.9, 2, dt);
-    else giro = damp(giro, vuelta + Math.sin(t * producto['balanceo-velocidad']) * producto['balanceo-amplitud'], 1.5, dt);
-    heroe.grupo.rotation.set(arco * 0.25, giro, cuelga && !viaje ? Math.sin(t * 0.9) * 0.025 : arco * -0.15);
+    else giro = damp(giro, vuelta + Math.sin(t * producto['balanceo-velocidad']) * (llegada.balanceo ?? producto['balanceo-amplitud']), 1.5, dt);
+    const vaiven = cuelga && !viaje ? Math.sin(t * 0.9) * 0.025 : 0;
+    heroe.grupo.rotation.set(arco * 0.25, giro, cuelga ? vaiven : arco * -0.15);
+
+    // Colgada: oscila desde la barra, no desde el pie. La percha (de la estación) se mueve igual que ella.
+    if (cuelga) {
+      const { pivote, gancho } = llegada.percha;
+      pivote.rotation.set(0, llegada.giroReposo ?? 0, vaiven);
+      pivote.getWorldPosition(colgada);
+      colgada.addScaledVector(v.copy(gancho).applyEuler(heroe.grupo.rotation), -escala);
+      c2.lerp(colgada, 1 - arco);
+    }
+    heroe.grupo.position.copy(c2);
 
     colorA.setHex(ea.colorway.color3d);
     colorB.setHex(eb.colorway.color3d);
     heroe.ponerColor(mezclarSrgb(colorA, colorA, colorB, smoothstep(s, 0.3, 0.7)));
 
-    desarme = damp(desarme, !viaje && estaciones[actual].desarmar ? 1 : 0, 3, dt);
+    desarme = damp(desarme, !viaje && estaciones[actual].desarmar && (p?.desarmar ?? true) ? 1 : 0, 3, dt);
     heroe.desarmar(desarme);
 
     for (const e of estaciones) {
@@ -206,9 +258,8 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
       e.grupo.visible = Math.abs(posicion - e.indice) < 1.6;
       if (e.grupo.visible) e.actualizar(dt, t, presencia);
     }
-
-    renderer.render(escena, camara);
   }
+  const render = () => renderer.render(escena, camara);
 
   // ---------- Tamaño, puntero y arranque ----------
   function medir() {
@@ -228,29 +279,69 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
 
   // Compila los shaders antes de mostrar nada, así el primer viaje no se traba.
   renderer.compile(escena, camara);
-  renderer.setAnimationLoop(cuadro);
+  let ultimo = null;
+  const bucle = (ahora) => {
+    const dt = ultimo === null ? 0 : Math.min((ahora - ultimo) / 1000, 1 / 20);
+    ultimo = ahora;
+    actualizar(dt);
+    render();
+  };
+  renderer.setAnimationLoop(bucle);
 
-  /** Posición en pantalla (en %) de una pieza de la protagonista, para las etiquetas flotantes. */
-  function proyectar(pieza, desplazamiento = [0, 0, 0]) {
-    const g = heroe.piezas[pieza];
-    const caja = new THREE.Box3().setFromObject(g);
-    caja.getCenter(v);
-    v.x += desplazamiento[0]; v.y += desplazamiento[1]; v.z += desplazamiento[2];
-    v.project(camara);
-    return { x: (v.x * 0.5 + 0.5) * 100, y: (-v.y * 0.5 + 0.5) * 100 };
+  const caja = new THREE.Box3(), mitad = new THREE.Vector3(), w = new THREE.Vector3();
+  /**
+   * Posición en pantalla (en %) de una pieza de la protagonista (capucha, mangaDerecha, bolsillo…) o de un ancla
+   * de la estación actual, para las etiquetas flotantes. punto: [x, y, z] de -1 a 1 dentro de la caja de la pieza
+   * (por ejemplo [0, 1, 0] = arriba al centro); en las anclas, un desplazamiento en metros.
+   */
+  function proyectar(nombre, punto = [0, 0, 0]) {
+    const pieza = heroe.piezas[nombre];
+    if (pieza) {
+      caja.setFromObject(pieza);
+      caja.getCenter(w);
+      caja.getSize(mitad).multiplyScalar(0.5);
+      w.add(mitad.multiply(v.fromArray(punto)));
+    } else {
+      const ancla = estaciones[actual].anclas[nombre] ?? estaciones.find((e) => e.anclas[nombre])?.anclas[nombre];
+      if (!ancla) return { x: -100, y: -100 };
+      ancla.getWorldPosition(w).add(v.fromArray(punto));
+    }
+    w.project(camara);
+    return { x: (w.x * 0.5 + 0.5) * 100, y: (-w.y * 0.5 + 0.5) * 100 };
   }
 
   return {
     ir, estaciones,
-    siguiente: () => ir((pendiente ?? actual) + 1),
-    anterior: () => ir((pendiente ?? actual) - 1),
+    siguiente: () => ir((pendiente?.i ?? actual) + 1),
+    anterior: () => ir((pendiente?.i ?? actual) - 1),
     get actual() { return actual; },
     get viajando() { return Boolean(viaje); },
     total: estaciones.length,
     proyectar,
+    /** Cambia de pose sin salir de la estación (la cámara solo se acomoda). */
+    pose(nombre) { if (!viaje) pose = nombre; else if (pendiente) pendiente.pose = nombre; else pendiente = { i: actual, pose: nombre }; },
+    /**
+     * Coreografía del hype en la portada: fase 'cuenta' (la luz se apaga y la sudadera sube fuera de cuadro),
+     * 'llenando' con nivel de 0 a 1 (la luz vuelve y la sudadera baja), 'drop' (cae al pedestal entre papelitos)
+     * y 'reposo'.
+     */
+    hype(fase, nivel = hype.nivel) {
+      if (fase === 'drop') {
+        alturaCaida = subida; subida = 0; intro = reducido ? 1 : 0;
+        portada.lanzarPapelitos();
+        Object.assign(hype, { fase: 'reposo', nivel: 1 });
+      } else Object.assign(hype, { fase, nivel: clamp(nivel, 0, 1) });
+    },
     /** Suelta la sudadera sobre el pedestal (después del cargador). */
     arrancar() { arrancado = true; },
     /** Saltar sin viaje (al cargar con #n en la URL). */
-    saltar(i) { actual = clamp(i, 0, estaciones.length - 1); viaje = null; },
+    saltar(i, nombrePose = null) { actual = clamp(i, 0, estaciones.length - 1); viaje = null; pose = nombrePose; },
+    /** Avanza la animación sin esperar y dibuja (renders de respaldo y pruebas: la escena queda asentada). */
+    adelantar(segundosAdelante) {
+      for (let k = 0; k < segundosAdelante * 60; k++) actualizar(1 / 60);
+      render();
+    },
+    /** Para herramientas (medidor, control de solapes, renders): no se usan en la presentación. */
+    depuracion: { renderer, escena, camara, heroe, render, pausar: (si) => { ultimo = null; renderer.setAnimationLoop(si ? null : bucle); } },
   };
 }

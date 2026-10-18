@@ -641,9 +641,17 @@
   border-radius: 50%;
   background: var(--np-marca-cacao);
 }
+/* Variantes según dónde hay lugar libre: --izquierda (la etiqueta a la izquierda del punto) y --abajo
+   (debajo, con la línea vertical: ejes de los gráficos y objetos apoyados en el piso). */
+.np-etiqueta-3d--izquierda { translate: calc(-100% - 1.2em) -50%; text-align: right; align-items: flex-end; }
+.np-etiqueta-3d--izquierda::before { right: auto; left: 100%; }
+.np-etiqueta-3d--izquierda::after { right: auto; left: calc(100% + 1.2em - 0.25em); }
+.np-etiqueta-3d--abajo { translate: -50% 1.2em; text-align: center; align-items: center; white-space: nowrap; }
+.np-etiqueta-3d--abajo::before { right: auto; left: 50%; top: auto; bottom: 100%; width: 0; height: 1.2em; border-top: 0; border-left: var(--np-borde-fino) solid var(--np-marca-cacao); }
+.np-etiqueta-3d--abajo::after { right: auto; left: calc(50% - 0.25em); top: calc(-1.2em - 0.25em); }
 .np-etiqueta-3d__valor { font: var(--np-peso-bold) 1.6em / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); font-variant-numeric: tabular-nums; }
 .np-etiqueta-3d__texto { font: var(--np-peso-medio) 0.7em / 1.2 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; color: var(--np-marca-cacao-suave); }
-.np-diapo .np-etiqueta-3d { font-size: 1.6cqw; }
+.np-diapo .np-etiqueta-3d { font-size: 1.25cqw; }
 
 /* ============ Presentación: modo presentador ============ */
 /* Ventana de la notebook: diapositiva actual, siguiente, notas, cronómetro y estado. */

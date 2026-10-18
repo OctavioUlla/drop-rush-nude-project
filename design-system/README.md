@@ -95,24 +95,27 @@ La presentación es el **lanzamiento de un producto contado en una sola toma** (
 
 | # | Estación | Qué hay | Colorway | Estudio | Encuadre |
 |---|---|---|---|---|---|
-| 0 | Portada + hype | Pedestal bajo un foco, sudaderas flotando y *Drop 001* gigante detrás | cacao | cacao | centro |
-| 1 | La historia | La habitación: cama, ventana, cajas de envío; la sudadera sale de una caja abierta | crema | crema | editorial |
-| 2 | EGC vs. UGC | Dos celulares gigantes con los feeds; la prenda gira hacia el que se comenta | arena | crema | centro |
-| 3 | Marketing viral | Pared de celulares con el mismo video y corazones *clay* orbitando | rosa | crema | editorial |
-| 4 | Marketing experiencial | Salón de la Nude House: pared de acento marrón, sillón, perchero, planta, vinilos, lámpara; la prenda en una percha | bosque | crema | editorial |
-| 5 | Métricas | Vista desarmada con etiquetas flotantes; detrás, barras hechas con pilas de sudaderas dobladas | marino | crema | editorial |
-| 6 | Objetivo comunicacional | Primer plano del logo bordado; la frase de Bruno en la columna libre | cacao | crema | macro |
-| 7 | Desafíos | Balanza: una sola sudadera contra una pila. Se inclina con la votación | mostaza | crema | editorial |
+| 0 | Portada + hype | Pedestal bajo un foco, sudaderas flotando y *Drop 001* gigante detrás. En el hype la luz se apaga, la prenda sube y baja con el medidor y cae entre papelitos con los colores de los grupos | cacao | cacao | centro |
+| 1 | La historia | La habitación: ventana, cama y pila de cajas; la sudadera levita sobre la caja abierta del pedido #0001 (solapas abiertas, papel de seda y etiqueta de envío) | crema | crema | editorial |
+| 2 | EGC vs. UGC | Dos celulares en su soporte con feeds verticales que pasan solos; la prenda gira hacia uno y otro | arena | crema | centro |
+| 3 | Marketing viral | Panel de celulares con la publicación de *Out of Office* y su contador de likes; corazones *clay* que suben a los costados | rosa | crema | editorial |
+| 4 | Marketing experiencial | Salón de la Nude House: pared de acento con neón, perchero con sudaderas en sus perchas, estante con vinilos, planta y lámpara; la prenda cuelga de frente en un perchero de exhibición | bosque | crema | editorial |
+| 5 | Métricas | Vista desarmada con etiquetas flotantes; en la pose *pilas*, barras hechas con sudaderas dobladas (2024 contra hoy) y la prenda arriba de la más alta | marino | crema | editorial |
+| 6 | Objetivo comunicacional | Plano medio de la prenda girada hacia la frase de Bruno, con el logo bordado bien grande | cacao | crema | macro |
+| 7 | Desafíos | Balanza: cada plato cuelga de un aro con tres hilos; una sola sudadera contra una pila. Se inclina con la votación | mostaza | crema | editorial |
 | 8 | Drop Rush | La vidriera de la tienda en la calle, con foco y cartel; *QUEDA 1* → juego | cacao | cacao | editorial |
 
-**Encuadres.** *Editorial*: texto en los 5/12 de la izquierda (`np-diapo__editorial`), la sudadera en los 7/12 de la derecha. *Centro*: la prenda al medio, el texto arriba o abajo. *Macro*: la cámara a 3 m del pecho, el logo a la derecha.
+**Encuadres.** *Editorial*: texto en los 5/12 de la izquierda (`np-diapo__editorial`), la sudadera en los 7/12 de la derecha. *Centro*: la prenda al medio, el texto arriba o abajo. *Macro*: plano medio de la prenda, sin pedestal, con el logo a la derecha.
+
+**Poses.** Una estación puede tener encuadres alternativos (`poses`): la diapositiva los pide con `data-pose` y la cámara se acomoda sin viajar (`escena`), con la prenda en otro lugar o tamaño. Solo en estaciones sin paredes: lo que queda detrás del texto en un encuadre no puede quedar detrás del texto en el otro.
 
 Reglas de la escena:
-- **Nada de texto sobre la prenda.** El texto va en su columna; la única excepción son las **etiquetas flotantes** de la vista desarmada (`np-etiqueta-3d`), que se proyectan desde cada pieza en cada cuadro.
-- **Lo que queda detrás del texto es claro y de bajo contraste** (camas, sillones y paredes en crema y arena); los objetos oscuros van del lado de la prenda.
+- **Nada de texto sobre los objetos.** El texto y la interfaz van sobre paredes, piso o fondo; los objetos quedan en su columna. Las **etiquetas flotantes** (`np-etiqueta-3d`) señalan piezas de la prenda (`data-pieza`) u objetos de la estación (`data-ancla`), y van al costado o debajo (`--izquierda`, `--abajo`), nunca encima.
+- **Nada se atraviesa.** Lo que se apoya, se apoya: la prenda **levita** sobre pedestales y cajas con un hueco mayor que la amplitud de flotar; en la balanza descansa en el plato, con los hilos por fuera; colgada, la percha sale por el escote y el gancho abraza la barra. Para salir o entrar de una percha o un plato, primero se adelanta.
+- **Lo que queda detrás del texto es claro y de bajo contraste** (paredes en crema y arena); los objetos oscuros van del lado de la prenda.
 - **Nunca un corte.** Si se pide otra estación durante un viaje, se encola; la cámara no salta.
 - **Formas redondeadas solo en el 3D.** El *clay* es redondo; la interfaz que lo rodea sigue recta.
-- **Respaldo:** sin WebGL, cada estación se reemplaza por su imagen pre-renderizada (`--respaldo`), la misma que se usa para el PDF.
+- **Respaldo:** sin WebGL, cada encuadre se reemplaza por su imagen pre-renderizada (`--respaldo`, en `presentacion/renders/`), la misma que se usa para el PDF y las miniaturas del modo presentador. Se regeneran con `npm run renders:presentacion` en `juego/`.
 
 ### 3.2 Movimiento
 | Token | Valor | Uso |

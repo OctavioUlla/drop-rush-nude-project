@@ -19,11 +19,11 @@
     .np-presentador__notas kbd, .atajos kbd { font: var(--np-peso-bold) 0.8em / 1 var(--np-fuente-texto); padding: 0.15em 0.4em; border: 1px solid currentColor; }
     .titulo { display: flex; justify-content: space-between; align-items: baseline; gap: var(--np-espacio-3); }
     .titulo .np-subtitulo { margin: 0; }
-    /* Miniaturas: la misma diapositiva del proyector, sin la escena 3D ni animaciones. */
+    /* Miniaturas: la misma diapositiva del proyector sobre su imagen pre-renderizada, sin animaciones. */
     .miniatura { border: var(--np-borde-fino) solid var(--np-linea); }
     .miniatura .np-escenario { width: 100%; }
     .np-presentador__actual .miniatura { width: min(100%, 46vh * 16 / 9); flex: none; }
-    .miniatura .np-capa { visibility: visible; }
+    .miniatura .np-capa { visibility: visible; background: var(--np-fondo) var(--respaldo, none) center / cover no-repeat; }
     .miniatura .np-capa * { animation: none !important; transition: none !important; }
     .miniatura .np-capa .np-capa__entra { opacity: 1; transform: none; }
     .miniatura .np-capa .marcador { opacity: 0.75; }

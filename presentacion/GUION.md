@@ -33,7 +33,7 @@
 
 ## 1. La historia, el modelo y la votación (~2:00)
 
-*[La sudadera sale de una caja de envío; la caja se multiplica con los años 2019 → hoy.]*
+*[La sudadera levita sobre la caja de envío del pedido #0001. En la segunda diapositiva aparecen los hitos: 600 € · 600 mil € · 11,5 M€ · 26 M€.]*
 
 "Imaginen empezar una marca de ropa con 600 euros, desde una habitación, sin saber de moda. Eso hicieron Bruno Casanovas y Álex Benlloch en 2019: pusieron 300 euros cada uno y crearon Nude Project. El nombre lo dice todo: *nude* es transparencia y autenticidad.
 
@@ -51,7 +51,7 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 ## 2. EGC vs. UGC (~3:00)
 
-*[Los dos feeds 9:16; la sudadera en el centro gira hacia el lado que se comenta. `F` pausa un feed.]*
+*[Los dos celulares pasan su feed solos (contenido de prueba hasta la fase 3); la sudadera en el centro gira hacia un lado y el otro.]*
 
 "Empecemos por el contenido. El **EGC** es el que crean los dueños y el equipo de la marca; el **UGC**, el que crean los usuarios. En Nude Project el EGC es la base, y el UGC lo amplifica.
 
@@ -63,7 +63,7 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 ## 3. Marketing viral (~2:00)
 
-*[Corazones rosas orbitan la sudadera; el contador sube hasta el medio millón de likes.]*
+*[La pared de celulares repite la publicación; los corazones suben a los costados y el contador pasa el medio millón.]*
 
 "Lo viral está en el ADN de la marca. Su primera sudadera, con la frase *pretty girls like trap music*, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.
 
@@ -77,7 +77,7 @@ La lección: la viralidad parece casual, pero está diseñada. Eligen el momento
 
 ## 4. Marketing experiencial (~2:00)
 
-*[La sudadera se cuelga de una percha y aparece el rincón de la Nude House.]*
+*[La sudadera queda colgada de una percha en el salón de la Nude House.]*
 
 "Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la **Nude House** de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.
 
@@ -89,7 +89,7 @@ Esa lógica la llevaron a Estados Unidos, con pop-ups en Miami, Los Ángeles y N
 
 ## 5. Métricas (~2:00)
 
-*[Vista desarmada: capucha → Instagram 1,6 M · manga → TikTok 1 M · bolsillo → YouTube 950 mil · cuerpo → podcast 275 mil. Después, las pilas de sudaderas comparan comienzos de 2024 con hoy.]*
+*[Vista desarmada: capucha → Instagram 1,6 M · manga derecha → TikTok 1 M · bolsillo → YouTube 950 mil · manga izquierda → podcast 275 mil. En la segunda diapositiva (“Y crecen rápido”), la sudadera se arma y corona las pilas que comparan comienzos de 2024 con hoy.]*
 
 "Veamos los números, con datos a octubre de 2026. Nude Project tiene 1,6 millones de seguidores en Instagram, un millón en TikTok, 950 mil en YouTube y 275 mil solo en la cuenta de su podcast. Y crecen rápido: a comienzos de 2024, Instagram y YouTube tenían la mitad de seguidores que hoy, y el podcast, menos de la mitad.
 
@@ -101,7 +101,7 @@ También hay medidas externas: en *The Hype List* de Modaes, Nude Project lider�
 
 ## 6. Objetivo comunicacional (~1:30)
 
-*[La cámara se acerca al logo bordado y la frase de Bruno se escribe encima.]*
+*[Plano medio de la sudadera, girada hacia la frase de Bruno.]*
 
 "¿Cuál es su objetivo comunicacional principal? Construir **pertenencia**. Lo dijo Bruno: *'El mundo no necesita más sudaderas, pero la gente sí necesita pertenecer a algo'*.
 
