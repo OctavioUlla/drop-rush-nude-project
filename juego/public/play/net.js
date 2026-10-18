@@ -144,6 +144,16 @@ export class Red extends EventTarget {
     this.socket.emit('player:join', { code: this.sala, groupId: numero, deviceToken: this.token });
   }
 
+  /** Suelta el grupo antes de que arranque la presentación (el número se eligió mal) y vuelve a la grilla. */
+  async salirDeGrupo() {
+    const r = await this.socket.timeout(5000).emitWithAck('player:leave', {}).catch(() => ({ ok: false, reason: 'timeout' }));
+    if (r.ok) {
+      this.olvidarGrupo();
+      this.emitir('room:groups', r.groups);
+    }
+    return r;
+  }
+
   olvidarGrupo() {
     this.grupo = null;
     this.token = null;

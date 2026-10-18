@@ -196,7 +196,8 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
   gap: var(--np-espacio-2);
   justify-content: flex-end;
 }
-.juego__botones #btn-partida { margin-right: auto; }
+.juego__botones #btn-partida,
+.juego__cambiar-grupo { margin-right: auto; }
 .juego__mini { min-height: 40px; padding: var(--np-espacio-2) var(--np-espacio-3); background: color-mix(in srgb, var(--np-marca-crema) 80%, transparent); }
 
 /* ---------- Panel de pruebas ---------- */
@@ -241,6 +242,7 @@ html, body { overflow: hidden; overscroll-behavior: none; touch-action: none; us
 .pres[data-fase="drop"] .pres__drop,
 .pres[data-fase="votacion"] .pres__votacion,
 .pres[data-fase="cerrada"] .pres__cerrada { display: flex; flex-direction: column; justify-content: center; gap: var(--np-espacio-4); }
+.pres__cambiar-grupo { align-self: center; color: var(--np-marca-crema); border-color: var(--np-marca-crema); }
 .pres[data-fase="cuenta"] .pres__cuenta { display: grid; place-items: center; }
 .pres[data-fase="hype"] .pres__hype { display: block; padding: 0; }
 

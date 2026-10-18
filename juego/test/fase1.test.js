@@ -250,3 +250,55 @@ test('el presentador libera un grupo en plena partida y otro celular lo retoma c
     await servidor.cerrar();
   }
 });
+
+test('antes de la presentación un celular suelta su grupo para elegir otro; con el hype lanzado ya no puede', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno' });
+  const sockets = [];
+  try {
+    const pres = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    const otro = await conectar(servidor.url);
+    sockets.push(pres, celu, otro);
+    const { code } = await pres.emitWithAck('host:create_room', {});
+    assert.ok((await pres.emitWithAck('pres:conectar', {})).ok);
+    await celu.emitWithAck('player:join', { code, groupId: 4 });
+    await pres.esperar('room:groups', (g) => g[3].taken);
+
+    // En la espera de la portada todavía se puede corregir el número.
+    const r = await celu.emitWithAck('player:leave', {});
+    assert.ok(r.ok);
+    assert.equal(r.groups[3].taken, false);
+    await pres.esperar('room:groups', (g) => !g[3].taken);
+    assert.ok((await otro.emitWithAck('player:join', { code, groupId: 4 })).ok);
+    assert.equal((await celu.emitWithAck('player:join', { code, groupId: 5 })).groupId, 5);
+
+    // Con el hype de apertura arranca la presentación: el grupo queda fijo.
+    assert.ok((await pres.emitWithAck('pres:hype:preparar', { segundos: 0 })).ok);
+    assert.deepEqual(await celu.emitWithAck('player:leave', {}), { ok: false, reason: 'started' });
+    assert.equal([...servidor.salas][0].grupos.get(5).libre, false);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+test('en una sala sin presentación el grupo se puede cambiar hasta que arranca la partida', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno', config: { duracionCuenta: 1, duracionTramo: 20 } });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    sockets.push(host, celu);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    await celu.emitWithAck('player:join', { code, groupId: 4 });
+    assert.ok((await celu.emitWithAck('player:leave', {})).ok);
+    await celu.emitWithAck('player:join', { code, groupId: 5 });
+
+    host.emit('host:start', {});
+    await celu.esperar('game:script');
+    assert.deepEqual(await celu.emitWithAck('player:leave', {}), { ok: false, reason: 'started' });
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
