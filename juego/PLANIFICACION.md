@@ -176,7 +176,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 
 ### 3.7 Coleccionables
 - **❤️ Likes** en la calle, muchos, como las monedas de Subway Surfers: filas de 8 en un carril libre y arcos de 7 sobre los obstáculos bajos que siguen la curva del salto (saltando a tiempo se juntan enteros). Dan una pequeña cantidad de distancia extra y suman a las estadísticas finales.
-- Su valor es bajo (0,35 m cada uno), para que no compitan con las preguntas: juntar todos los de la carrera vale menos que una respuesta correcta.
+- Su valor es bajo (0,5 m cada uno), para que no compitan con las preguntas: no se pueden juntar todos (en cada fila hay likes en más de un carril), y aun juntando todos los que se pueden en la carrera suman menos que una respuesta correcta.
 
 ### 3.8 Un celular por grupo
 - Los grupos se identifican **solo con un número**, del 1 a `maxGrupos` (por ejemplo, 1 a 40).
@@ -597,7 +597,7 @@ juego/
 - [x] Simulación a paso fijo e interpolación del render
 - [x] Generación de obstáculos altos y bajos con semilla (`rng.js` + `track.js`) *(los 6 del plan, con el bot revendedor que cruza de carril)*
 - [x] Choques: tropiezo, frenado e invulnerabilidad
-- [x] Likes coleccionables (en el piso y en el aire) *(+0,35 m cada uno; muchos, en filas y en arcos)*
+- [x] Likes coleccionables (en el piso y en el aire) *(+0,5 m cada uno; muchos, en filas y en arcos)*
 - [x] Envío de la distancia al servidor y mapa en vivo en el host
 - [x] Arcos de respuesta dentro del runner y feedback sin pausa
 - [x] Sprint final, meta con la tienda, un único ganador y cartel SOLD OUT para el resto

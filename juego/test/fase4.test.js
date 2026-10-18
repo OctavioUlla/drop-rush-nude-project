@@ -9,7 +9,7 @@ import { io } from 'socket.io-client';
 import { Guion } from '../public/shared/guion.js';
 import { FASES } from '../public/shared/constantes.js';
 import { iniciarServidor, servirComprimidos } from '../server/index.js';
-import { medirBalance, reglasDeBalance } from '../tools/balanceo.js';
+import { medirBalance, reglasDeBalance, likesAlcanzables } from '../tools/balanceo.js';
 
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -178,12 +178,19 @@ test('balanceo: con la configuración por defecto, saber del caso pesa más que 
   for (const r of reglasDeBalance(b)) assert.ok(r.ok, `${r.regla}: ${r.detalle}`);
 });
 
+test('likes alcanzables: por fila cuenta solo el carril con más likes', () => {
+  const fila = (z, carril, n) => Array.from({ length: n }, (_, i) => ({ carril, z: z + i * 1.5 }));
+  // Fila de 8 en un carril y arco de 7 en otro a la misma altura: se puede tomar uno solo.
+  assert.equal(likesAlcanzables([...fila(30, 0, 8), ...fila(31, 2, 7), ...fila(60, 1, 8)]), 16);
+});
+
 test('balanceo: en cualquier dificultad un choque cuesta poco y una respuesta vale más que un tramo', () => {
   for (const dificultad of ['normal', 'caotico']) {
     const b = medirBalance({ dificultad, semillas: 30 });
     assert.ok(b.costoPorChoque >= 5 && b.costoPorChoque <= 20, `${dificultad}: ${b.costoPorChoque} m por choque`);
     assert.ok(b.acierto.minimo >= b.tramoPrimero);
     assert.ok(b.peorPerdidaTramo < b.acierto.minimo / 2, `${dificultad}: el peor tramo cuesta ${b.peorPerdidaTramo} m`);
+    assert.ok(b.likesMaximo < b.acierto.minimo, `${dificultad}: los likes alcanzables valen ${b.likesMaximo} m`);
   }
 });
 
