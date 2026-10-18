@@ -12,7 +12,8 @@
     "build": "vite build",
     "start": "node server/index.js --produccion",
     "bots": "node tools/bots.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "balanceo": "node tools/balanceo.js"
   },
   "dependencies": {
     "express": "^5.1.0",

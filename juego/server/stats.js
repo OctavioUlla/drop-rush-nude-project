@@ -31,10 +31,13 @@ export function estadisticasPartida(preguntas, grupos) {
 
 /**
  * Las `cantidad` preguntas con menor porcentaje de aciertos, de la más errada a la menos.
+ * `jugadas`: índices de las preguntas que se revelaron (todas, salvo que se haya terminado antes).
  * A igual porcentaje va primero la que más grupos respondieron mal (hubo más confusión).
  */
-export function elegirRepaso(preguntas, grupos, cantidad) {
+export function elegirRepaso(preguntas, grupos, cantidad, jugadas = null) {
   return estadisticasPartida(preguntas, grupos)
+    // Si la partida se terminó antes, las preguntas que no llegaron a jugarse no entran.
+    .filter((e) => !jugadas || jugadas.has(e.index))
     .sort((a, b) => a.correctRate - b.correctRate || b.answered - b.correctCount - (a.answered - a.correctCount) || a.index - b.index)
     .slice(0, Math.max(0, cantidad))
     .map((e) => {

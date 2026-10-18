@@ -34,17 +34,20 @@ export function cajaStock() {
 }
 
 export function fan() {
-  const piel = 0xc68863;
+  const piel = J.piel;
   const buzo = J['obstaculo-alto'];
   return unir([
     caja(0.22, 0.85, 0.24, M.cacao, { x: -0.13, y: 0.425, z: -0.3 }),
     caja(0.22, 0.85, 0.24, M.cacao, { x: 0.13, y: 0.425, z: -0.3 }),
+    caja(0.24, 0.1, 0.34, M.crema, { x: -0.13, y: 0.05, z: -0.28 }), // zapatillas
+    caja(0.24, 0.1, 0.34, M.crema, { x: 0.13, y: 0.05, z: -0.28 }),
     caja(0.6, 0.75, 0.34, buzo, { y: 1.22, z: -0.3 }),
     caja(0.16, 0.6, 0.18, buzo, { x: -0.38, y: 1.25, z: -0.3 }),
     caja(0.16, 0.45, 0.18, buzo, { x: 0.36, y: 1.38, z: -0.12, rx: 1.0 }),
     esfera(0.2, 6, piel, { y: 1.8, z: -0.3 }),
     caja(0.46, 0.3, 0.42, buzo, { y: 1.86, z: -0.36 }),
     caja(0.12, 0.2, 0.03, M['cacao-profundo'], { x: 0.36, y: 1.55, z: 0.02 }), // celular
+    caja(0.09, 0.15, 0.01, M.crema, { x: 0.36, y: 1.55, z: 0.04 }), // pantalla (está filmando el drop)
   ]);
 }
 
@@ -56,6 +59,14 @@ export function camion() {
     caja(1.9, 1.8, 1.5, M.crema, { y: 1.45, z: -5.2 }),
     caja(1.7, 0.7, 0.05, M['cacao-profundo'], { y: 1.95, z: -5.97 }),
     caja(2.0, 0.3, 6.0, M['cacao-profundo'], { y: 0.5, z: -3.0 }),
+    // Puertas traseras de la caja (lo que ve el corredor): franja crema y manijas.
+    caja(0.04, 2.2, 0.06, M['cacao-profundo'], { y: 1.75, z: 0.02 }),
+    caja(1.9, 0.3, 0.05, M.crema, { y: 1.2, z: 0.02 }),
+    caja(0.08, 0.35, 0.08, M.crema, { x: -0.15, y: 1.75, z: 0.05 }),
+    caja(0.08, 0.35, 0.08, M.crema, { x: 0.15, y: 1.75, z: 0.05 }),
+    caja(2.1, 0.18, 0.2, M['cacao-profundo'], { y: 0.45, z: 0.05 }), // paragolpes
+    caja(0.25, 0.12, 0.05, A.ladrillo, { x: -0.8, y: 0.62, z: 0.06 }), // luces traseras
+    caja(0.25, 0.12, 0.05, A.ladrillo, { x: 0.8, y: 0.62, z: 0.06 }),
   ];
   for (const z of [-0.9, -4.9]) {
     for (const x of [-0.95, 0.95]) {

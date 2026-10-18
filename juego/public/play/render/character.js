@@ -30,6 +30,7 @@ export class Personaje {
     this.xAnterior = 0;
     this.tropiezo = 0;
     this.aplastado = 0; // squash al aterrizar
+    this.estirado = 0; // stretch al despegar
   }
 
   cambiarGrupo(escena, numeroGrupo) {
@@ -48,9 +49,10 @@ export class Personaje {
     for (const e of corredor.eventos) {
       if (e === 'choque') this.tropiezo = 1;
       if (e === 'aterrizaje') this.aplastado = 1;
+      if (e === 'salto') this.estirado = 1;
     }
 
-    const v = corredor.velocidad;
+    const v = corredor.pausado ? 0 : corredor.velocidad; // en pausa queda parado
     this.ciclo += v * dt * 0.95;
     const s = Math.sin(this.ciclo);
     const enElAire = corredor.tSalto >= 0;
@@ -84,9 +86,11 @@ export class Personaje {
     torso.rotation.x = -0.18 * Math.min(1, v / 8) - Math.sin(this.tropiezo * Math.PI) * 0.7;
     cabeza.rotation.x = Math.sin(this.tropiezo * Math.PI) * 0.4;
 
-    // Squash & stretch al aterrizar.
+    // Squash & stretch: se estira al despegar y se aplasta al aterrizar (el volumen casi no cambia).
     this.aplastado = Math.max(0, this.aplastado - dt * 6);
-    raiz.scale.set(1 + this.aplastado * 0.12, 1 - this.aplastado * 0.15, 1 + this.aplastado * 0.12);
+    this.estirado = Math.max(0, this.estirado - dt * 5);
+    const s2 = this.aplastado * 0.15 - this.estirado * 0.14;
+    raiz.scale.set(1 + s2 * 0.8, 1 - s2, 1 + s2 * 0.8);
 
     // Parpadeo mientras es invulnerable.
     raiz.visible = corredor.invulnerable <= 0 || Math.floor(tiempo * 12) % 2 === 0;

@@ -11,6 +11,12 @@
     <p class="np-logo-juego barra__logo">Drop <span>Rush</span></p>
     <span id="barra-sala" class="np-insignia" hidden></span>
     <span id="barra-fase" class="barra__fase"></span>
+    <!-- Controles del presentador durante la carrera (también con el teclado: P, S y F). -->
+    <div id="controles" class="barra__controles" hidden>
+      <button id="btn-pausa" class="barra__control" title="Pausar o seguir (P)">⏸ Pausar</button>
+      <button id="btn-saltar" class="barra__control" title="Terminar ya el tramo o la pregunta en curso (S)">⏭ Saltar</button>
+      <button id="btn-fin" class="barra__control" title="Terminar la carrera ahora, con el ganador de este momento (F)">🏁 Terminar</button>
+    </div>
     <span id="red" class="barra__red" title="Celulares conectados">–</span>
     <button id="btn-sonido" class="barra__boton" title="Música y efectos" aria-label="Música y efectos" aria-pressed="true">🔊</button>
     <button id="btn-debug" class="barra__boton" title="Panel técnico" aria-label="Panel técnico">🐞</button>
@@ -90,6 +96,10 @@
     </section>
 
     <div id="cuenta" class="cuenta" hidden></div>
+    <div id="pausa" class="pausa" hidden>
+      <p class="pausa__titulo">⏸ Pausa</p>
+      <p class="pausa__sub">Los corredores esperan quietos. <b>P</b> para seguir.</p>
+    </div>
     <!-- Poderes que usan los grupos (Cambio de algoritmo, 50/50, Hype). -->
     <div id="avisos" class="avisos" aria-live="polite"></div>
   </main>
@@ -141,7 +151,7 @@
     <div class="debug__panel">
       <h2 class="np-etiqueta">Servidor</h2>
       <pre id="stats">–</pre>
-      <button id="btn-terminar" class="np-boton np-boton--secundario">Terminar la partida</button>
+      <button id="btn-terminar" class="np-boton np-boton--secundario">Cancelar la partida y volver al lobby</button>
     </div>
     <div class="debug__panel">
       <h2 class="np-etiqueta">Mediciones de FPS de los celulares</h2>

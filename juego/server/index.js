@@ -1,4 +1,6 @@
 import { createServer } from 'node:http';
+import { existsSync } from 'node:fs';
+import { extname, resolve, sep } from 'node:path';
 import { networkInterfaces } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
@@ -15,6 +17,7 @@ import { esPrincipal } from './principal.js';
 const RAIZ = fileURLToPath(new URL('..', import.meta.url));
 const DIST = fileURLToPath(new URL('../dist/', import.meta.url));
 const SALA_ABANDONADA = 12 * 60 * 60 * 1000;
+const PAGINAS = new Set(['/play', '/host', '/dev/models']);
 
 export async function iniciarServidor({ puerto = 3000, host, config: extra = {}, archivos = 'auto' } = {}) {
   const config = cargarConfig(extra);
@@ -217,6 +220,16 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       if (sala) sala.partida.iniciar(ajustes ?? {});
     });
 
+    // Controles del presentador durante la carrera (el ack dice si se pudo).
+    const controles = { 'host:pause': 'pausar', 'host:resume': 'reanudar', 'host:skip': 'saltar', 'host:finish': 'terminarYa' };
+    for (const [evento, metodo] of Object.entries(controles)) {
+      socket.on(evento, (datos, ack) => {
+        const sala = esHost(socket);
+        responder(typeof datos === 'function' ? datos : ack, { ok: Boolean(sala?.partida[metodo]()) });
+      });
+    }
+
+    // Cancela la partida y vuelve al lobby (sin ganador).
     socket.on('host:end', () => {
       const sala = esHost(socket);
       if (!sala) return;
@@ -351,6 +364,14 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
   // Direcciones de la notebook en la red local: el QR las usa si el proyector abrió localhost.
   app.get('/api/red', (_req, res) => res.json({ ips: direccionesLocales() }));
 
+  // Las páginas son carpetas: sin la barra final, Vite responde 404 y los ./archivos relativos no cargan.
+  // Se redirige `/dev/models` a `/dev/models/` (conservando ?sala=, ?solo, etc.).
+  app.use((req, res, next) => {
+    if (!PAGINAS.has(req.path)) return next();
+    const consulta = req.originalUrl.slice(req.path.length);
+    res.redirect(301, `${req.path}/${consulta}`);
+  });
+
   // `--produccion` en vez de NODE_ENV=production: así `npm start` anda igual en Windows.
   const produccion = process.env.NODE_ENV === 'production' || process.argv.includes('--produccion');
   let vite = null;
@@ -365,9 +386,11 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     app.get('/', (_req, res) => res.redirect('/play/'));
     app.use(vite.middlewares);
   } else if (archivos === 'auto') {
+    app.get('/', (_req, res) => res.redirect('/play/'));
+    // Versiones .br y .gz generadas al compilar (vite.config.js): menos bytes por el Wi-Fi del aula.
+    app.use(servirComprimidos(DIST));
     // Archivos con hash: se descargan una sola vez por celular.
     app.use('/assets', express.static(`${DIST}assets`, { immutable: true, maxAge: '1y' }));
-    app.get('/', (_req, res) => res.redirect('/play/'));
     app.use(express.static(DIST, { maxAge: 0 }));
   }
 
@@ -389,6 +412,35 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       await vite?.close();
       await io.close();
     },
+  };
+}
+
+/**
+ * Si el navegador acepta Brotli o gzip y existe la versión comprimida del archivo, manda esa.
+ * Los archivos de /assets/ llevan hash: se guardan un año (immutable); el resto se revalida.
+ */
+export function servirComprimidos(raiz) {
+  const base = resolve(raiz);
+  return (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    let ruta;
+    try {
+      ruta = decodeURIComponent(req.path);
+    } catch {
+      return next();
+    }
+    if (ruta.endsWith('/')) ruta += 'index.html';
+    const archivo = resolve(base, `.${ruta}`);
+    if (!archivo.startsWith(base + sep)) return next();
+    const acepta = String(req.headers['accept-encoding'] ?? '');
+    for (const [codificacion, extension] of [['br', '.br'], ['gzip', '.gz']]) {
+      if (!acepta.includes(codificacion) || !existsSync(archivo + extension)) continue;
+      const conHash = ruta.startsWith('/assets/');
+      res.set({ 'Content-Encoding': codificacion, Vary: 'Accept-Encoding' });
+      res.type(extname(ruta));
+      return res.sendFile(archivo + extension, { maxAge: conHash ? '1y' : 0, immutable: conHash });
+    }
+    next();
   };
 }
 

@@ -2,7 +2,7 @@
 
 Runner 3D multijugador para el cierre de la presentación. El plan completo está en [`PLANIFICACION.md`](PLANIFICACION.md).
 
-> **Estado: Fase 3 (red robusta, ventajas y poderes).** Se juega la partida completa con el runner 3D, los 6 obstáculos, likes, arcos de respuesta, sprint final hacia la tienda Nude Project y el mapa en vivo de los 40 grupos. Acertar da una **ventaja** para el tramo siguiente (turbo, escudo, imán o ruta VIP), 2 aciertos seguidos dan un **poder** (Cambio de algoritmo, Pase 50/50 o Hype), el último cuarto de la tabla recibe un **impulso** para emparejar y el proyector tiene **música y efectos**. Los poderes y las respuestas se reintentan hasta que el servidor los confirma, y el mapa sigue moviendo a un grupo que se quedó sin red unos segundos. El pulido visual es de la Fase 4. Las preguntas de [`data/preguntas.json`](data/preguntas.json) son un **borrador** redactado a partir del caso: falta que las revise el equipo.
+> **Estado: Fase 4 (gráficos, pulido y prueba).** Se juega la partida completa con el runner 3D, los 6 obstáculos, likes, arcos de respuesta, sprint final hacia la tienda Nude Project y el mapa en vivo de los 40 grupos, con ventajas, poderes, emparejar, música y red robusta (Fase 3). La Fase 4 suma **partículas, líneas de velocidad y *squash & stretch***, calles de Madrid con árboles, toldos y carteles del drop, un **visor de modelos** (`/dev/models/`), los **controles del presentador** (pausar, saltar y terminar), **Service Worker** y archivos precomprimidos, un **balanceo comprobado** con la simulación real y todo lo necesario para el **deploy** en Fly.io o Render. Falta lo que solo se puede hacer en el aula: medir FPS en celulares de gama baja reales y probar el Wi-Fi de la facultad (ver [Ensayo en el aula](#ensayo-en-el-aula)). Las preguntas de [`data/preguntas.json`](data/preguntas.json) son un **borrador** redactado a partir del caso: falta que las revise el equipo.
 
 ## Cómo correrlo
 
@@ -20,10 +20,11 @@ npm run dev          # servidor + Vite en un solo proceso, en http://localhost:3
 | `/play/` | Celular: escribir el código de la sala, elegir el número de grupo y correr. Mientras no hay partida, el corredor practica solo. |
 | `/play/?sala=ABCD` | Lo que abre el QR: entra directo a esa sala, sin escribir el código. |
 | `/play/?solo` | Celular sin servidor: práctica y una partida simulada de 3 preguntas con arcos, sprint y tienda (botón *Probar partida*). |
+| `/dev/models/` | Visor de los modelos 3D generados por código, con sus triángulos contra el presupuesto y exportación a `.glb`. |
 
 Parámetros extra: `/play/?debug` abre el panel de pruebas, `/play/?calidad=alta|media|baja` fija la calidad gráfica y `/host/?debug` (o 🐞) muestra la carga del servidor, las mediciones de FPS y el botón para terminar la partida.
 
-Para producción: `npm run build` y después `npm start` (sirve `dist/` con caché `immutable` para los archivos con *hash*).
+Para producción: `npm run build` y después `npm start`. El build deja junto a cada archivo su versión Brotli y gzip, y el servidor manda la que acepte el navegador (los archivos con *hash* con caché `immutable` de un año). En producción el celular registra un **Service Worker** (`/sw.js`) que guarda el juego: si recarga, no vuelve a descargar nada. Todo lo que baja un celular pesa **~250 kB** con Brotli (Three.js ~116 kB, el juego ~30 kB y las dos tipografías ~93 kB). Para subirlo a la nube, ver [Deploy](#deploy).
 
 **Controles**: deslizar a izquierda o derecha (o tocar ese lado de la pantalla) para cambiar de carril y deslizar hacia arriba para saltar. El poder guardado se usa con el botón amarillo de abajo. En la compu: flechas, A/D/W o espacio, y E (o Enter) para el poder.
 
@@ -36,7 +37,12 @@ Para producción: `npm run build` y después `npm start` (sirve `dist/` con cach
 5. **Tramos**: el corredor avanza solo; hay que esquivar y saltar obstáculos y juntar likes (❤ = +1 m cada uno). Chocar no elimina: el corredor tropieza, frena 1 s y parpadea 1,5 s sin poder chocar de nuevo. El proyector muestra el **mapa de la carrera** (un marcador por grupo camino a la tienda, con cuánto le falta al primero) y el ranking al costado.
 6. Durante cada pregunta, los obstáculos se hunden y se acercan **3 arcos** por la calle, uno por carril, con la letra y el texto corto de la opción: el corredor los cruza justo cuando se acaba el tiempo y cuenta el carril en el que esté. El proyector muestra la pregunta, las opciones, el tiempo y cuántos grupos ya se movieron de carril; abajo, el celular repite la letra y el texto corto de cada carril (en las preguntas de 2 opciones el tercero es una pared ✕). Acertar suma 150 m más un extra de hasta 100 m por rapidez, que baja cuanto más tarde se elige el carril (y se queda ahí): el celular muestra en vivo cuánto vale la respuesta («⚡ Si es la correcta: +243 m») y el proyector lo recuerda debajo de la pregunta. Al terminar, cada celular ve ✅ (con el desglose de la rapidez y la **ventaja** que ganó para el tramo que empieza) o ❌ (arranca el tramo un poco más lento 2 s) y el proyector resalta la correcta unos segundos sin frenar la carrera. Ver [ventajas y poderes](#qué-hay-en-la-fase-3).
 7. **Sprint final y llegada**: después de la última pregunta aparece la tienda Nude Project al final de la calle y el corredor llega justo a su puerta cuando termina el sprint. Un único ganador con la sudadera y el resto en la cola (SOLD OUT). Cada celular ve su puesto, aciertos, distancia, esquivados y likes.
-8. **Repaso de errores** (botón en el proyector): las preguntas con menos aciertos, con cuántos grupos eligieron cada opción y la explicación. Se avanza con los botones, las flechas o el control remoto. Al final, la pregunta para el **debate** y *Volver al lobby* para otra partida con los mismos grupos.
+8. **Controles del presentador** (en la barra de arriba durante la carrera, o con el teclado):
+   - **⏸ Pausar / ▶ Seguir** (`P`): todos los corredores quedan quietos donde estaban, el proyector muestra *Pausa* y los celulares *Mirá el proyector*. Al seguir, todo lo que faltaba (preguntas, ventajas, el sprint) se corre lo que duró la pausa.
+   - **⏭ Saltar** (`S`): termina ya la fase en curso. En un tramo, la pregunta empieza enseguida; en una pregunta, se cierra con el carril en el que esté cada grupo y se revela al segundo.
+   - **🏁 Terminar** (`F`, pide confirmación): la carrera termina ahora y gana el grupo que va primero. Solo cuentan las preguntas ya reveladas, y el repaso usa solo esas.
+   - Para cancelar sin ganador y volver al lobby: 🐞 → *Cancelar la partida*.
+9. **Repaso de errores** (botón en el proyector): las preguntas con menos aciertos, con cuántos grupos eligieron cada opción y la explicación. Se avanza con los botones, las flechas o el control remoto. Al final, la pregunta para el **debate** y *Volver al lobby* para otra partida con los mismos grupos.
 
 ## Pruebas
 
@@ -46,13 +52,13 @@ Para producción: `npm run build` y después `npm start` (sirve `dist/` con cach
 3. El resultado aparece en el celular y en la tabla *Mediciones de FPS* del panel técnico del proyector (`/host/?debug`), con el modelo de GPU, la resolución, las *draw calls* y los triángulos. También se puede bajar en JSON desde `/api/informes`.
 4. Repetir con `?calidad=alta`, `media` y `baja` para comparar.
 
-Qué mirar: **FPS medio ≥ 30 y "% > 34 ms" bajo** en gama baja (objetivo de la sección 5.3). En calidad automática el juego arranca en *alta* y baja la resolución (y después el nivel) si los FPS caen.
+Qué mirar: **FPS medio ≥ 30 y "% > 34 ms" bajo** en gama baja (objetivo de la sección 5.3). En calidad automática el juego arranca en *alta* y baja la resolución (y después el nivel) si los FPS caen. En calidad *baja* se dibuja a 30 FPS como máximo (el celular se calienta menos) y no hay partículas.
 
-Medido en Chromium sin GPU (render por software, el peor caso), en calidad alta: **~24 draw calls y ~13.000 triángulos** por cuadro en un tramo y **~26 draw calls** con los arcos o la tienda en pantalla, dentro del presupuesto de 80 llamadas y 60.000 triángulos.
+Medido en Chromium sin GPU (render por software, el peor caso): **~25 draw calls y ~14.000 triángulos** por cuadro en un tramo (con los árboles, toldos y efectos de la Fase 4), dentro del presupuesto de 80 llamadas y 60.000 triángulos. Las partículas y las líneas de velocidad suman una llamada cada una.
 
 ### 2. Reconexión
 - **Manual**: en plena partida, cortar el Wi-Fi del celular unos segundos (o tocar 🐞 → **Cortar red 5 s / 20 s**). El corredor tiene que seguir corriendo sin carteles; si el corte dura más de 5 s aparece solo un 📶 chico. Al volver, el panel muestra *sesiones recuperadas* y el proyector suma la respuesta si se dio a tiempo.
-- **Automática**: `npm test` levanta un servidor con fases cortas y 40 bots que sufren un corte de 1 a 4 s cada uno, y verifica que **todas las respuestas llegan y se cuentan una sola vez**. También prueba las salas, el token de cada celular, liberar un grupo en plena partida, el revelado, el ganador, el desempate y la elección del repaso, (Fase 2) los obstáculos nuevos, el cruce del bot revendedor, los likes y la ubicación de la tienda en el mapa, y (Fase 3) cada ventaja y cada poder, la racha, el tope del Cambio de algoritmo, emparejar, la predicción del proyector y que un poder reintentado se aplique una sola vez.
+- **Automática**: `npm test` levanta un servidor con fases cortas y 40 bots que sufren un corte de 1 a 4 s cada uno, y verifica que **todas las respuestas llegan y se cuentan una sola vez**. También prueba las salas, el token de cada celular, liberar un grupo en plena partida, el revelado, el ganador, el desempate y la elección del repaso, (Fase 2) los obstáculos nuevos, el cruce del bot revendedor, los likes y la ubicación de la tienda en el mapa, (Fase 3) cada ventaja y cada poder, la racha, el tope del Cambio de algoritmo, emparejar, la predicción del proyector y que un poder reintentado se aplique una sola vez, y (Fase 4) pausar, seguir, saltar y terminar, las reglas del balanceo y los archivos comprimidos.
 
 ### 3. 40 bots contra el servidor
 
@@ -73,7 +79,105 @@ npm run bots -- --sala ABCD --bots 39 --desde 2      # o: entran a la sala del p
 | `--cortes`, `--corte-min`, `--corte-max` | Microcortes por bot y su duración en segundos |
 | `--polling` | Fuerza *long-polling*, como si la red bloqueara WebSocket |
 
-Al final muestra un resumen (respuestas confirmadas, cortes, sesiones recuperadas, RTT) y sale con error si se perdió alguna respuesta. Mientras corre, `/host/?debug` muestra los mensajes por segundo, la demora del *event loop* y la memoria del servidor.
+Al final muestra un resumen (respuestas confirmadas, cortes, sesiones recuperadas, RTT) y sale con error si se perdió alguna respuesta. Mientras corre, `/host/?debug` muestra los mensajes por segundo, la demora del *event loop* y la memoria del servidor. Los bots también siguen las pausas y los saltos del presentador.
+
+**Resultado (Fase 4)**, contra el build de producción (`npm start`) en una notebook, con 40 bots, 6 preguntas de 10 s y 2 cortes de 1 a 6 s por bot: **240 de 240 respuestas** confirmadas y contadas una sola vez, 79 cortes y 79 sesiones recuperadas, 17 poderes usados sin rechazos, ~20.000 mensajes de distancia y RTT mediano de 1 ms (p95 3 ms, red local). Falta repetirlo con algunos celulares reales mezclados (ver [Ensayo en el aula](#ensayo-en-el-aula)).
+
+### 4. Balanceo
+
+```bash
+npm run balanceo                                  # dificultad fácil (la de config.json)
+npm run balanceo -- --dificultad normal           # o caotico; --semillas 400 para más precisión
+```
+
+Corre cientos de tramos con la simulación real del corredor (`runner.js` + `track.js`) y dos jugadores extremos: uno que nunca choca y otro que se queda en el carril del medio sin saltar (choca con todo lo que aparece ahí). La diferencia es lo máximo que se puede perder por no saber esquivar, y se compara con lo que vale responder bien (sección 7). `npm test` comprueba las mismas reglas.
+
+| Con 6 preguntas | Fácil (por defecto) | Normal | Caótico |
+|---|---|---|---|
+| Tramo completo (el primero / el más largo) | 142 / 169 m | 142 / 169 m | 142 / 169 m |
+| Respuesta correcta | **150 a 250 m** | 150 a 250 m | 150 a 250 m |
+| Choques por tramo sin esquivar nada | 2,2 | 3,4 | 4,8 |
+| Costo de cada choque | ~8 m | ~8 m | ~8 m |
+| Pérdida en **toda la carrera** sin esquivar nada | **116 m** | 175 m | 239 m |
+| Turbo durante un tramo | +57 m | +57 m | +57 m |
+| Cambio de algoritmo recibido | −6 m | −3 m | −2 m |
+| Likes de toda la carrera | ~28 m | ~31 m | ~31 m |
+
+Conclusiones:
+- **En fácil, se cumplen todas las reglas**: una respuesta correcta vale más que cualquier tramo, cada choque cuesta ~8 m y un grupo que no esquiva **nada** en toda la carrera pierde menos que lo que vale **una** respuesta correcta.
+- En *normal* y *caótico* no esquivar nada cuesta entre 1 y 1,6 respuestas: siguen pesando más las preguntas (6 preguntas valen 900 a 1500 m), pero por eso *fácil* queda como dificultad por defecto.
+- El **impulso de emparejar** (+10 % al último cuarto) suma hasta ~180 m en toda la carrera: es a propósito, para que los de atrás no se desenganchen, y solo lo reciben mientras están en el último cuarto.
+- El **Cambio de algoritmo** molesta (vibración, cartel y obstáculos que salen del piso) pero cuesta pocos metros, porque los obstáculos extra nunca se ponen cerca de los que ya hay.
+
+## Ensayo en el aula
+
+Lo que queda de la Fase 4 solo se puede hacer con celulares y la red reales. Lista para el ensayo (idealmente en el aula, unos días antes):
+
+1. **Deploy** en la nube (ver [Deploy](#deploy)) y abrir `/api/health` desde la red de la facultad.
+2. **Wi-Fi de la facultad**: conectar un celular, ver si aparece un **portal cautivo** (hay que iniciar sesión antes de escanear el QR) y abrir `/play/?debug`. En el panel 🐞 la línea `red` tiene que decir `websocket`; si dice `polling`, la red bloquea WebSocket pero el juego funciona igual (más lento el mapa).
+3. **Velocidad de descarga**: con 5 a 10 celulares a la vez, cronometrar cuánto tarda en aparecer el corredor la primera vez (son ~250 kB) y después recargar: con el Service Worker tiene que ser instantáneo.
+4. **FPS** en 2 o 3 celulares de gama baja: 🐞 → *Medir 20 s* jugando normalmente (ver [prueba 1](#1-fps-en-celulares-reales)). Objetivo: FPS medio ≥ 30.
+5. **Carga mixta**: `npm run bots -- --url https://TU-APP --sala ABCD --bots 35 --desde 6 --cortes 2` mientras 5 celulares reales juegan los grupos 1 a 5, con el proyector conectado. Mirar en `/host/?debug` la demora del *event loop* (< 20 ms) y que el mapa se mueva fluido.
+6. **Corte de red** con un celular real: apagar el Wi-Fi 5 s en plena pregunta y volver; la respuesta tiene que contar.
+7. **Controles**: pausar, seguir, saltar una pregunta y terminar, mirando que los celulares sigan al proyector.
+8. **Proyector**: mirar la legibilidad del mapa y del ranking con 40 grupos desde el fondo del aula.
+
+## Deploy
+
+El servidor es un único proceso de Node (Express + Socket.io) que sirve el juego y el tiempo real en el mismo dominio y puerto (sección 10). El estado de la partida vive en memoria: **tiene que haber una sola instancia**.
+
+**Fly.io** (recomendado: región São Paulo, no se duerme). Desde la raíz del repositorio:
+
+```bash
+fly launch --no-deploy --copy-config   # la primera vez (usa fly.toml; cambiar "app" si el nombre está tomado)
+fly deploy
+fly scale count 1                      # una sola máquina
+```
+
+**Render**: crear un *Blueprint* con el repositorio (usa [`render.yaml`](../render.yaml)). El plan gratuito se duerme: abrir la URL unos minutos antes de la clase.
+
+**Cualquier otro hosting con Docker** (Railway, un VPS): la imagen se construye desde la raíz porque el juego usa `../design-system`:
+
+```bash
+docker build -f juego/Dockerfile -t drop-rush .
+docker run -p 3000:3000 drop-rush
+```
+
+Sin Docker: `npm ci && npm run build && npm start` dentro de `juego/` (respeta la variable `PORT`). Todo tiene que ir por **HTTPS en el puerto 443** (lo dan Fly y Render), que es lo que menos bloquean las redes institucionales.
+
+## Qué hay en la Fase 4
+
+Sobre la Fase 3:
+
+**Controles del presentador.** Pausar, saltar y terminar desde la barra del proyector o con `P`, `S` y `F` (ver [cómo se juega](#cómo-se-juega-una-partida)). Por dentro, el servidor corre las horas del guion y manda el **mismo guion de nuevo** (mismo `id`, `revision` nueva) con `pausedAt` mientras está en pausa y la lista de corrimientos en `shifts`. Cada celular, el proyector y los bots lo siguen solos: en pausa la hora del guion queda congelada (`Guion.tiempo()`), y al seguir corren sus propias horas (ventaja, Cambio de algoritmo) igual que el servidor. Un celular que no recibió a tiempo el guion de una pregunta saltada responde con la hora original y se le acepta igual. En pausa no se pueden usar poderes y el mapa no predice avance.
+
+**Efectos** ([`render/effects.js`](public/play/render/effects.js)): partículas al juntar un like (rosa), al despegar y aterrizar (polvo), al chocar (polvo y ladrillo) y con el escudo (mostaza), en una sola malla instanciada que se recicla; **líneas de velocidad** con el turbo; el corredor se **estira al despegar y se aplasta al aterrizar** y la cámara tiembla al chocar. Van con la calidad: todo en *alta*, la mitad de las partículas en *media* y nada en *baja* (que además dibuja a 30 FPS como máximo).
+
+**Modelos.** La calle suma árboles con alcorque, toldos verdes en los locales, carteles del drop y balcones con baranda; el corredor, cordones en la capucha, puño y zapatillas con suela; el fan, zapatillas y el celular filmando; el camión, puertas traseras, paragolpes y luces. Todos los colores nuevos (piel, árboles, toldos, partículas, líneas de velocidad) salen del design system (`color.juego` en [`tokens.json`](../design-system/tokens.json)). **Visor** en `/dev/models/`: cada modelo girando (el corredor, corriendo y con botones para saltar y tropezar), sus triángulos contra el presupuesto de la sección 5.3.1, alambre, mundo curvado y exportación a `.glb` para retocarlo en Blender.
+
+| Modelo | Triángulos | Presupuesto |
+|---|---|---|
+| Corredor | 340 | 1.500 |
+| Fan · valla · caja · bache | 156 · 144 · 60 · 104 | 600 · 150 · 150 · ~100 |
+| Bot revendedor · camión | 192 · 272 | 500 · 600 |
+| Like · arco de respuesta | 84 · 122 | 100 · 200 |
+| Tienda Nude Project (con la cola) | 1.216 | 2.000 |
+| Bloque de calle completo (alta · media · baja) | ~2.500 · ~1.700 · ~600 | 300 + 400 por edificio |
+
+**Descarga y caché.** Service Worker ([`estaticos/sw.js`](estaticos/sw.js)): los archivos con *hash* se guardan la primera vez y la página se pide a la red (para tomar un deploy nuevo) con la guardada como respaldo sin conexión. El build genera las versiones `.br` y `.gz` y el servidor las manda según el navegador.
+
+**Balanceo y deploy.** [`tools/balanceo.js`](tools/balanceo.js) (ver [prueba 4](#4-balanceo)); [`Dockerfile`](Dockerfile), [`fly.toml`](../fly.toml) y [`render.yaml`](../render.yaml) (ver [Deploy](#deploy)).
+
+```
+juego/
+├── estaticos/sw.js        # Service Worker (se sirve en /sw.js)
+├── public/
+│   ├── play/render/effects.js   # Partículas y líneas de velocidad
+│   └── dev/models/              # Visor de modelos
+├── tools/balanceo.js      # Balanceo con la simulación real
+├── Dockerfile
+└── test/fase4.test.js
+```
 
 ## Qué hay en la Fase 3
 
@@ -141,4 +245,3 @@ juego/
 └── test/            # + fase2.test.js
 ```
 
-Pendiente para la Fase 4: Service Worker, efectos (partículas, líneas de velocidad), controles del presentador, balanceo y pruebas en el aula.

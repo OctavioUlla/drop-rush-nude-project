@@ -10,7 +10,7 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 | 🏃 **Drop Rush** | Juego multijugador de 7 minutos para el cierre de la presentación (22 minutos en total): hasta 40 grupos (un celular por grupo) corren en un runner 3D hacia el último drop de Nude Project, esquivando obstáculos y atravesando el arco de la respuesta correcta. | [`juego/`](juego/PLANIFICACION.md) |
 | 🎨 **Design System** | Colores, tipografía y componentes basados en la identidad real de la marca, para que la presentación y el juego se vean como una sola cosa. | [`design-system/`](design-system/README.md) |
 
-> 🚧 **Estado:** design system listo; juego en la Fase 3 (runner 3D con obstáculos, arcos de respuesta, tienda de la meta, mapa en vivo, ventajas, poderes, música y red robusta; ver [`juego/README.md`](juego/README.md)); presentación en planificación.
+> 🚧 **Estado:** design system listo; juego en la Fase 4 (gráficos y efectos pulidos, controles del presentador, Service Worker, balanceo comprobado y listo para el deploy; faltan las pruebas con celulares reales y en el Wi-Fi de la facultad; ver [`juego/README.md`](juego/README.md)); presentación en planificación.
 
 ## Estructura
 
@@ -25,7 +25,9 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 │   ├── README.md               # Cómo correr el juego, jugar una partida y las pruebas
 │   ├── PLANIFICACION.md        # Plan completo de Drop Rush
 │   ├── server/ · public/       # Servidor Node y clientes (celular y proyector)
-│   └── tools/ · test/          # Simulador de 40 bots y pruebas
+│   ├── tools/ · test/          # Simulador de 40 bots, balanceo y pruebas
+│   └── Dockerfile              # Imagen del servidor (se construye desde la raíz)
+├── fly.toml · render.yaml      # Deploy en la nube (Fly.io o Render)
 └── design-system/
     ├── README.md               # Identidad, principios y uso
     ├── index.html              # Guía visual (abrir en el navegador)

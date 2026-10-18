@@ -1,0 +1,12 @@
+# Deploy en Render (sección 10.A), alternativa a Fly.io. El plan gratuito se duerme:
+# abrir la URL unos minutos antes de la clase o usar el plan Starter ese día.
+services:
+  - type: web
+    name: drop-rush
+    runtime: docker
+    dockerfilePath: ./juego/Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: free
+    healthCheckPath: /api/health
+    numInstances: 1

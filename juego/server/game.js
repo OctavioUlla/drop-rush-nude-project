@@ -92,6 +92,7 @@ export class Partida {
     this.guion = null;
     this.preguntas = [];
     this.revelados = new Set();
+    this.empezadas = new Set(); // preguntas que ya se mostraron (para no repetirlas al reprogramar)
     this.temporizadores = [];
     this.terminada = false;
     this.ajustes = {};
@@ -111,19 +112,143 @@ export class Partida {
     this.preguntas = prepararPreguntas(this.banco, config);
     this.guion = crearGuion(config, this.preguntas, this.ahora() + 1500);
     this.revelados.clear();
+    this.empezadas.clear();
     this.terminada = false;
     this.sala.limpiarLiberados();
     for (const g of this.sala.grupos.values()) g.reiniciarPartida();
 
-    for (const fase of this.guion.phases) {
-      if (fase.type === FASES.PREGUNTA) {
-        this.programar(fase.startsAt, () => this.empezarPregunta(fase.index));
-        this.programar(fase.startsAt + fase.duration + ESPERA_REVELADO, () => this.revelar(fase.index));
-      }
-      if (fase.type === FASES.FIN) this.programar(fase.startsAt, () => this.terminar());
-    }
+    this.programarGuion();
     this.enviar('todos', 'game:script', this.guion);
     return this.guion;
+  }
+
+  /** Programa lo que falta del guion: preguntas, revelados y el final. Se rehace al pausar o saltar. */
+  programarGuion() {
+    this.limpiarTemporizadores();
+    for (const fase of this.guion.phases) {
+      if (fase.type === FASES.PREGUNTA) {
+        if (!this.empezadas.has(fase.index)) this.programar(fase.startsAt, () => this.empezarPregunta(fase.index));
+        if (!this.revelados.has(fase.index)) this.programar(fase.startsAt + fase.duration + ESPERA_REVELADO, () => this.revelar(fase.index));
+      }
+      if (fase.type === FASES.FIN && !this.terminada) this.programar(fase.startsAt, () => this.terminar());
+    }
+  }
+
+  limpiarTemporizadores() {
+    for (const t of this.temporizadores) clearTimeout(t);
+    this.temporizadores = [];
+  }
+
+  /** El guion cambió (pausa, salto o final adelantado): se manda de nuevo con el mismo id. */
+  publicarGuion() {
+    this.guion.revision = (this.guion.revision ?? 0) + 1;
+    this.enviar('todos', 'game:script', this.guion);
+  }
+
+  get pausada() {
+    return Boolean(this.guion?.pausedAt);
+  }
+
+  // ---------- Controles del presentador (sección 4.1) ----------
+
+  /**
+   * Congela la partida: los celulares y el proyector dejan de avanzar en la hora `pausedAt`.
+   * No se puede pausar la llegada (ya terminó la carrera).
+   */
+  pausar() {
+    if (!this.activa || this.pausada) return false;
+    const ahora = this.ahora();
+    if (this.faseEn(ahora)?.type === FASES.FIN) return false;
+    this.limpiarTemporizadores();
+    this.guion.pausedAt = ahora;
+    this.publicarGuion();
+    return true;
+  }
+
+  /** Sigue desde donde se pausó: todo lo que faltaba se corre lo que duró la pausa. */
+  reanudar() {
+    if (!this.activa || !this.pausada) return false;
+    this.quitarPausa();
+    this.programarGuion();
+    this.publicarGuion();
+    return true;
+  }
+
+  quitarPausa() {
+    const desde = this.guion.pausedAt;
+    this.guion.pausedAt = null;
+    this.desplazar(desde, this.ahora() - desde);
+  }
+
+  /**
+   * Termina ya la fase en curso y sigue con la siguiente: un tramo salta a su pregunta y una
+   * pregunta se cierra con el carril que tenga cada grupo (y se revela enseguida).
+   */
+  saltar() {
+    if (!this.activa) return false;
+    if (this.pausada) this.quitarPausa();
+    const ahora = this.ahora();
+    const f = this.faseEn(ahora);
+    if (f?.type === FASES.FIN) return false;
+    const fin = f ? f.startsAt + f.duration : this.guion.startsAt;
+    if (fin > ahora) {
+      // Un celular que no recibió el guion nuevo a tiempo responde con la hora original: se le acepta.
+      if (f?.type === FASES.PREGUNTA) f.cut ??= fin;
+      this.desplazar(ahora, ahora - fin);
+    }
+    this.programarGuion();
+    this.publicarGuion();
+    return true;
+  }
+
+  /**
+   * Termina la carrera ahora, con el ganador de este momento. La pregunta que estaba en curso
+   * (sin revelar) no cuenta; las que no llegaron a jugarse quedan afuera del repaso.
+   */
+  terminarYa() {
+    if (!this.activa) return false;
+    if (this.pausada) this.quitarPausa();
+    const ahora = this.ahora();
+    this.limpiarTemporizadores();
+    const g = this.guion;
+    // Una pregunta que ya cerró pero todavía esperaba su revelado se revela ahora.
+    for (const f of g.phases) {
+      if (f.type === FASES.PREGUNTA && f.startsAt + f.duration <= ahora && this.empezadas.has(f.index) && !this.revelados.has(f.index)) {
+        this.revelar(f.index);
+      }
+    }
+    g.phases = g.phases.filter((f) => f.type !== FASES.FIN && f.startsAt < ahora);
+    const ultima = g.phases.at(-1);
+    if (ultima) ultima.duration = Math.min(ultima.duration, ahora - ultima.startsAt);
+    g.phases.push({ type: FASES.FIN, startsAt: ahora, duration: 0 });
+    g.startsAt = Math.min(g.startsAt, ahora);
+    this.preguntaEnCurso = null;
+    this.publicarGuion();
+    this.terminar();
+    return true;
+  }
+
+  /**
+   * Corre en `delta` ms todo lo que pasa desde la hora `desde`: las fases que faltan, la que está en
+   * curso (se alarga o se acorta), las ventajas y el Cambio de algoritmo. Los celulares aplican el
+   * mismo corrimiento a sus horas (lo reciben en `shifts`).
+   */
+  desplazar(desde, delta) {
+    const g = this.guion;
+    if (g.startsAt >= desde) g.startsAt += delta;
+    for (const f of g.phases) {
+      if (f.startsAt >= desde) f.startsAt += delta;
+      else if (f.startsAt + f.duration > desde) f.duration += delta;
+    }
+    const mover = (t) => (t > desde ? t + delta : t);
+    for (const grupo of this.sala.grupos.values()) {
+      if (grupo.ventaja) {
+        grupo.ventaja.desde = mover(grupo.ventaja.desde);
+        grupo.ventaja.hasta = mover(grupo.ventaja.hasta);
+      }
+      grupo.algoritmoHasta = mover(grupo.algoritmoHasta);
+    }
+    (g.shifts ??= []).push({ from: desde, delta });
   }
 
   /** Configuración de la partida en curso: la de config.json con los ajustes del lobby encima. */
@@ -132,8 +257,7 @@ export class Partida {
   }
 
   detener() {
-    for (const t of this.temporizadores) clearTimeout(t);
-    this.temporizadores = [];
+    this.limpiarTemporizadores();
     this.guion = null;
     this.terminada = false;
     this.preguntaEnCurso = null;
@@ -182,6 +306,7 @@ export class Partida {
   }
 
   empezarPregunta(index) {
+    this.empezadas.add(index);
     this.preguntaEnCurso = index;
     this.enviar('todos', 'question:start', this.datosPregunta(index));
     // Los Pase 50/50 guardados se aplican en la primera pregunta de 3 opciones.
@@ -245,7 +370,7 @@ export class Partida {
     const llegada = this.ahora();
     const dada = Number(datos.serverTime);
     if (llegada < fase.startsAt) return { ok: false, motivo: 'too_early' };
-    if (!(dada <= fin + MARGEN_RELOJ) || llegada > fin + this.config.toleranciaRespuestaTardia * 1000) {
+    if (!(dada <= Math.max(fin, fase.cut ?? 0) + MARGEN_RELOJ) || llegada > fin + this.config.toleranciaRespuestaTardia * 1000) {
       return { ok: false, motivo: 'too_late' };
     }
 
@@ -328,6 +453,7 @@ export class Partida {
     const useId = String(datos?.useId ?? '');
     if (useId && grupo.usos.has(useId)) return { ok: true, repetida: true, powerId };
     if (!this.activa) return { ok: false, motivo: 'no_game' };
+    if (this.pausada) return { ok: false, motivo: 'paused' };
     if (!PODERES[powerId] || grupo.poder !== powerId) return { ok: false, motivo: 'no_power' };
     if (useId) grupo.usos.add(useId);
     grupo.poder = null;
@@ -388,7 +514,7 @@ export class Partida {
    */
   posiciones() {
     const ahora = this.ahora();
-    const corriendo = FASES_CORRIENDO.has(this.faseEn(ahora)?.type);
+    const corriendo = !this.pausada && FASES_CORRIENDO.has(this.faseEn(ahora)?.type);
     return this.sala.jugadores
       .map((g) => {
         let distancia = g.distanciaTotal;
@@ -418,7 +544,8 @@ export class Partida {
     this.final = {
       winner: ganador?.numero ?? null,
       queue: cola.map((g) => g.numero),
-      questions: this.preguntas.length,
+      // Si el presentador terminó antes, solo cuentan las preguntas que llegaron a revelarse.
+      questions: this.revelados.size,
       stats: this.ranking().map((g, i) => ({
         group: g.numero,
         position: i + 1,
@@ -437,7 +564,7 @@ export class Partida {
   /** Preguntas más erradas, con su distribución y explicación, para el repaso del final. */
   repaso() {
     if (!this.guion) return [];
-    return elegirRepaso(this.preguntas, this.sala.jugadores, this.configActual.preguntasEnRepaso);
+    return elegirRepaso(this.preguntas, this.sala.jugadores, this.configActual.preguntasEnRepaso, this.revelados);
   }
 
   /** Pregunta que se está respondiendo ahora (para quien entra o recarga en plena pregunta). */
