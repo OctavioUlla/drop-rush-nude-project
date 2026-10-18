@@ -30,8 +30,10 @@ export class Vista {
       return arco;
     });
     // Escudo (UGC viral): una burbuja alrededor del corredor mientras le quede un choque.
+    // Es un elipsoide (radio 1, escalado en dibujar) que envuelve al corredor de los pies
+    // a la capucha, incluso con los brazos arriba al saltar, para no cortarle la cabeza.
     this.burbuja = new Mesh(
-      new IcosahedronGeometry(1.05, 1),
+      new IcosahedronGeometry(1, 2),
       curvarMaterial(new MeshBasicMaterial({ color: colores3d.acento.mostaza, transparent: true, opacity: 0.3, depthWrite: false })),
     );
     this.burbuja.visible = false;
@@ -109,9 +111,10 @@ export class Vista {
     this.efectos.actualizar(dt, estado.distancia, corredor.velocidad, lineas && corredor.turbo && !corredor.pausado ? 1 : 0);
     this.burbuja.visible = corredor.escudos > 0 || corredor.invulnerable > 0 && this.burbuja.visible;
     if (this.burbuja.visible) {
-      this.burbuja.position.set(estado.x, estado.y + 0.95, -estado.distancia);
+      this.burbuja.position.set(estado.x, estado.y + 1.1, -estado.distancia);
       this.burbuja.rotation.y = tiempo * 0.8;
-      this.burbuja.scale.setScalar(1 + Math.sin(tiempo * 6) * 0.04);
+      const pulso = 1 + Math.sin(tiempo * 6) * 0.04;
+      this.burbuja.scale.set(0.95 * pulso, 1.4 * pulso, 0.95 * pulso);
     }
     const fov = corredor.turbo ? 8 : 0;
     if (Math.abs(fov - this.fovExtra) > 0.01) {
