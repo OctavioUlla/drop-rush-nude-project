@@ -57,11 +57,13 @@ function edificio(rng, lado, z0, ancho, detalle) {
 
   // Local de planta baja: toldo inclinado sobre la vidriera y, a veces, un cartel del drop.
   if (rng() < 0.6) p.push(caja(0.9, 0.08, ancho - 0.9, J.toldo, { x: frente - lado * 0.45, y: 2.75, z: zc, rz: lado * 0.35 }));
+  // Cada capa sobresale varios centímetros de la anterior (vidriera → cartel → letras): con caras al
+  // mismo nivel el buffer de profundidad no decide cuál va adelante y el cartel parpadea (z-fighting).
   if (detalle > 1 && rng() < 0.35) {
     const zCartel = zc + (rng() - 0.5) * (ancho - 2.2);
-    p.push(caja(0.06, 1.3, 0.95, A.mostaza, { x: frente - lado * 0.06, y: 1.35, z: zCartel }));
-    p.push(caja(0.07, 0.22, 0.75, M.cacao, { x: frente - lado * 0.07, y: 1.6, z: zCartel }));
-    p.push(caja(0.07, 0.1, 0.5, M.cacao, { x: frente - lado * 0.07, y: 1.2, z: zCartel }));
+    p.push(caja(0.08, 1.3, 0.95, A.mostaza, { x: frente - lado * 0.12, y: 1.35, z: zCartel }));
+    p.push(caja(0.06, 0.22, 0.75, M.cacao, { x: frente - lado * 0.18, y: 1.6, z: zCartel }));
+    p.push(caja(0.06, 0.1, 0.5, M.cacao, { x: frente - lado * 0.18, y: 1.2, z: zCartel }));
   }
 
   const columnas = Math.max(1, Math.floor((ancho - 0.6) / 1.7));
