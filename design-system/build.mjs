@@ -36,6 +36,7 @@ const esc = t.escena;
 for (const c of esc.colorways) vars.push(`  --np-colorway-${c.bloque}: var(--np-${c.color.replace('.', '-')});`);
 vars.push(
   `  --np-escena-grano-opacidad: ${esc.grano.opacidad};`,
+  `  --np-escena-vineta-opacidad: ${esc.vineta.opacidad};`,
   `  --np-escena-columnas-texto: ${esc.layout['columnas-texto']};`,
   `  --np-escena-columnas-escena: ${esc.layout['columnas-escena']};`,
 );

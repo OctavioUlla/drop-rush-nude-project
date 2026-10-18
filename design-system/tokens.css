@@ -67,6 +67,13 @@
   --np-presentacion-luz-contorno: #ffffff;
   --np-presentacion-luz-ambiente: #e9d6c2;
   --np-presentacion-sombra-contacto: #2e1914;
+  --np-presentacion-foco: #ffe9c9;
+  --np-presentacion-polvo: #fff1de;
+  --np-presentacion-casa-pared: #6e4a40;
+  --np-presentacion-casa-piso: #cf9f7a;
+  --np-presentacion-casa-carton: #c08a5e;
+  --np-presentacion-casa-planta: #6f8a4a;
+  --np-presentacion-pantalla: #fffaf3;
   --np-grupo-1: #2f52bc;
   --np-grupo-1-texto: #fff8ee;
   --np-grupo-2: #3bb075;
@@ -164,6 +171,7 @@
   --np-texto-4xl: 3.75rem;
   --np-texto-5xl: 5rem;
   --np-texto-6xl: 7rem;
+  --np-texto-gigante: 22cqw;
   --np-interletra-logo: -0.055em;
   --np-interletra-display: -0.04em;
   --np-interletra-titulo: -0.02em;
@@ -203,6 +211,10 @@
   --np-movimiento-latido: 900ms;
   --np-movimiento-cinta: 24s;
   --np-movimiento-curva-escena: cubic-bezier(.65,0,.35,1);
+  --np-movimiento-viaje: 1800ms;
+  --np-movimiento-curva-viaje: cubic-bezier(.76,0,.24,1);
+  --np-movimiento-salida-texto: 380ms;
+  --np-movimiento-cargador: 1400ms;
   --np-colorway-0: var(--np-marca-cacao);
   --np-colorway-1: var(--np-marca-crema);
   --np-colorway-2: var(--np-marca-arena);
@@ -212,7 +224,8 @@
   --np-colorway-6: var(--np-marca-cacao);
   --np-colorway-7: var(--np-acento-mostaza);
   --np-colorway-8: var(--np-marca-cacao);
-  --np-escena-grano-opacidad: 0.05;
+  --np-escena-grano-opacidad: 0.06;
+  --np-escena-vineta-opacidad: 0.38;
   --np-escena-columnas-texto: 5;
   --np-escena-columnas-escena: 7;
 

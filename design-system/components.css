@@ -686,3 +686,115 @@
   .np-grano { display: none; }
   .np-cinta__pista, .np-latido { animation: none; }
 }
+
+/* ============ Presentación: plano secuencia (escena 3D a pantalla completa) ============ */
+/* Escenario 16:9 con capas, de atrás hacia adelante: tipografía gigante → canvas 3D → viñeta → texto y etiquetas
+   → interfaz → grano → cargador. Todo escala con el ancho (cqw). Ver design-system/escena.html.
+   --fondo-escena lo actualiza el motor en cada cuadro (crema o cacao según la estación). */
+/* Escenario 16:9: todo escala con su ancho (cqw), igual que np-diapo. */
+.np-escenario {
+  --fondo-escena: var(--np-presentacion-estudio-cacao-fondo);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 38%, color-mix(in srgb, var(--fondo-escena), #fff 7%), var(--fondo-escena) 62%);
+  color: var(--np-tinta);
+  font-family: var(--np-fuente-texto);
+  user-select: none;
+}
+.np-escenario > * { position: absolute; inset: 0; }
+.np-escenario > canvas { z-index: 1; }
+.np-escenario canvas { width: 100%; height: 100%; display: block; }
+.np-escenario .np-grano { position: absolute; z-index: 6; }
+.np-vineta { pointer-events: none; z-index: 2; background: radial-gradient(75% 75% at 50% 45%, transparent 55%, rgb(46 25 20 / var(--np-escena-vineta-opacidad))); }
+
+/* ----- Tipografía gigante DETRÁS del producto (capa por debajo del canvas) ----- */
+.np-gigantes { z-index: 0; pointer-events: none; display: grid; place-items: center; }
+.np-gigante {
+  grid-area: 1 / 1;
+  margin: -17cqw 0 0;
+  font: var(--np-peso-black) var(--np-texto-gigante) / 0.8 var(--np-fuente-display);
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+  color: var(--np-marca-crema);
+  display: flex;
+}
+.np-gigante > span { display: inline-block; opacity: 0; transform: translateY(40%) rotate(4deg); transition: transform var(--np-movimiento-viaje) var(--np-movimiento-curva-viaje), opacity var(--np-movimiento-lento) linear; transition-delay: calc(var(--i) * 45ms); }
+.np-gigante--activa > span { opacity: 1; transform: none; }
+.np-gigante--sale > span { opacity: 0; transform: translateY(-30%); transition-duration: var(--np-movimiento-salida-texto); transition-delay: 0ms; }
+
+/* ----- Capas de texto (una por estación) ----- */
+.np-capas { z-index: 3; pointer-events: none; }
+.np-capa { position: absolute; inset: 0; width: auto; aspect-ratio: auto; visibility: hidden; padding: 9% 7% 10%; }
+.np-capa.np-diapo--activa, .np-capa--sale { visibility: visible; }
+.np-capa .np-diapo__texto { max-width: 40cqw; }
+.np-capa .np-display { font-size: 7.4cqw; line-height: 0.92; }
+.np-capa .np-titulo { font-size: 5.4cqw; line-height: 0.98; letter-spacing: var(--np-interletra-display); }
+.np-capa .np-etiqueta { display: flex; align-items: center; gap: 1.2cqw; font-size: 1.05cqw; }
+.np-capa .np-etiqueta::before { content: ''; width: 0.6cqw; height: 0.6cqw; background: currentColor; }
+.np-capa p { font-size: 1.55cqw; line-height: 1.45; max-width: 30cqw; color: var(--np-tinta-suave); }
+/* lo que no es título entra con un fundido corto, después de las líneas */
+.np-capa .np-capa__entra { opacity: 0; transform: translateY(1.5cqw); transition: opacity var(--np-movimiento-lento) linear, transform var(--np-movimiento-texto) var(--np-movimiento-curva); }
+.np-capa.np-diapo--activa .np-capa__entra { opacity: 1; transform: none; transition-delay: 380ms; }
+.np-capa--sale .np-revelar__linea > span { animation: np-subir-salir var(--np-movimiento-salida-texto) var(--np-movimiento-curva-viaje) both; animation-delay: calc(var(--i, 0) * 40ms); }
+.np-capa--sale .np-capa__entra { opacity: 0; transition-duration: var(--np-movimiento-salida-texto); }
+@keyframes np-subir-salir { from { transform: none; } to { transform: translateY(-110%); } }
+.np-capa--centro { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 7%; }
+.np-capa--centro .np-titulo { font-size: 4.4cqw; }
+.np-capa--centro .np-diapo__texto { align-items: center; max-width: none; }
+.np-capa--abajo { display: flex; flex-direction: column; justify-content: flex-end; }
+.np-capa .np-cartel { font-size: 2.2cqw; }
+.np-capa .np-cita { font-size: 3.5cqw; line-height: 1.02; letter-spacing: var(--np-interletra-display); font-weight: var(--np-peso-bold); }
+.np-capa .np-insignia { font-size: 1.1cqw; }
+.np-capa .np-logo-juego { font-size: 6cqw; }
+
+/* ----- Etiquetas flotantes de la vista desarmada ----- */
+.np-etiquetas { z-index: 3; pointer-events: none; font-size: 1.35cqw; }
+.np-etiquetas .np-etiqueta-3d { opacity: 0; transition: opacity var(--np-movimiento-lento) linear; }
+.np-etiquetas--visibles .np-etiqueta-3d { opacity: 1; transition-delay: calc(var(--i) * 120ms + 500ms); }
+
+/* ----- Interfaz (HUD) ----- */
+.np-interfaz { z-index: 4; pointer-events: none; padding: 2.4cqw 3cqw; display: flex; flex-direction: column; justify-content: space-between; color: var(--np-tinta); transition: color var(--np-movimiento-lento) linear; }
+.np-interfaz__arriba, .np-interfaz__abajo { display: flex; align-items: center; justify-content: space-between; gap: 3cqw; }
+.np-interfaz .np-logo { font-size: 1.7cqw; }
+.np-interfaz__menu { display: flex; gap: 1.6cqw; margin: 0; padding: 0; list-style: none; pointer-events: auto; }
+.np-interfaz__menu button {
+  all: unset; cursor: pointer; position: relative; padding: 0.5cqw 0;
+  font: var(--np-peso-medio) 0.82cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase;
+  opacity: 0.55; transition: opacity var(--np-movimiento-base) linear;
+}
+.np-interfaz__menu button b { font-weight: var(--np-peso-bold); margin-right: 0.4em; }
+.np-interfaz__menu button::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--np-movimiento-lento) var(--np-movimiento-curva); }
+.np-interfaz__menu button:hover, .np-interfaz__menu button[aria-current] { opacity: 1; }
+.np-interfaz__menu button[aria-current]::after { transform: none; }
+.np-interfaz__menu button:focus-visible { outline: 1px solid currentColor; outline-offset: 0.4cqw; }
+.np-interfaz__drop { font: var(--np-peso-medio) 0.82cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; }
+.np-interfaz__contador { display: flex; align-items: baseline; gap: 0.6cqw; font: var(--np-peso-bold) 1.1cqw / 1 var(--np-fuente-display); font-variant-numeric: tabular-nums; }
+.np-interfaz__contador b { font-size: 2.6cqw; letter-spacing: var(--np-interletra-display); }
+.np-interfaz__barra { width: 12cqw; height: 1px; background: color-mix(in srgb, currentColor 25%, transparent); position: relative; margin-left: 1cqw; align-self: center; }
+.np-interfaz__barra::after { content: ''; position: absolute; inset: 0; background: currentColor; transform: scaleX(var(--avance, 0)); transform-origin: left; transition: transform var(--np-movimiento-viaje) var(--np-movimiento-curva-viaje); }
+.np-interfaz__pista { font: var(--np-peso-medio) 0.78cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; opacity: 0.6; }
+.np-interfaz .np-cola { width: 30cqw; height: 2.6cqw; font-size: 0.8cqw; }
+
+/* ----- Cargador ----- */
+.np-cargador {
+  z-index: 8; display: grid; place-items: center; align-content: center; gap: 2cqw;
+  background: var(--np-marca-cacao-profundo); color: var(--np-marca-crema);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--np-movimiento-curva-viaje);
+}
+.np-cargador--listo { clip-path: inset(0 0 100% 0); }
+.np-cargador .np-logo { font-size: 4.6cqw; }
+.np-cargador__linea { width: 22cqw; height: 1px; background: rgb(255 248 238 / .2); position: relative; }
+.np-cargador__linea::after { content: ''; position: absolute; inset: 0; background: var(--np-marca-crema); transform: scaleX(var(--p, 0)); transform-origin: left; }
+.np-cargador__estado { display: flex; justify-content: space-between; width: 22cqw; font: var(--np-peso-medio) 0.85cqw / 1 var(--np-fuente-texto); letter-spacing: var(--np-interletra-etiqueta); text-transform: uppercase; font-variant-numeric: tabular-nums; opacity: .7; }
+.np-cargador__aviso { max-width: 40cqw; text-align: center; font-size: 1.2cqw; line-height: 1.5; opacity: .8; display: none; }
+.np-cargador--sin-servidor .np-cargador__aviso { display: block; }
+.np-cargador--sin-servidor .np-cargador__linea, .np-cargador--sin-servidor .np-cargador__estado { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .np-gigante > span, .np-capa .np-capa__entra, .np-interfaz__barra::after { transition-duration: 1ms !important; transition-delay: 0ms !important; }
+  .np-capa--sale { visibility: hidden; }
+}

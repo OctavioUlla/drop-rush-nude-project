@@ -2,7 +2,7 @@
 
 > La presentación se hace en **HTML**, con el mismo [design system](../design-system/README.md) y el mismo servidor que el juego [Drop Rush](../juego/PLANIFICACION.md).
 > La idea central: **la presentación es un *drop***. La clase no mira una exposición sobre el hype, lo vive desde el primer minuto.
-> Visualmente es el **lanzamiento de un producto**: una sudadera 3D estilo *clay* que protagoniza cada bloque (ver sección 3).
+> Visualmente es el **lanzamiento de un producto contado en un solo plano secuencia**: la cámara recorre una Nude House en miniatura estilo *clay* y la sudadera 3D protagoniza cada bloque (ver sección 3).
 >
 > 📝 Los **contenidos** de cada bloque todavía no están definidos. Este plan describe el formato, las interacciones y la técnica; el texto, las imágenes y los videos se cargan después sin tocar el motor.
 
@@ -88,60 +88,62 @@
 
 ---
 
-## 3. Dirección visual: la sudadera como producto
+## 3. Dirección visual: un plano secuencia por la Nude House
 
-> **Concepto:** la presentación es el **lanzamiento de un producto**, al estilo de una keynote de Apple. Hay un solo protagonista 3D, **la sudadera Nude Project**, que está en escena de principio a fin: gira, cambia de color, se desarma en piezas con datos, se multiplica en gráficos y, al final, queda **una sola** con el cartel *QUEDA 1*.
+> **Concepto:** la presentación es el **lanzamiento de un producto** y se cuenta **en una sola toma**. La cámara recorre una **Nude House en miniatura** —la habitación donde empezó todo, el salón de la tienda, la vidriera de la calle— y cada bloque es una **estación** del recorrido. La protagonista es **la sudadera Nude Project**: viaja con la cámara, gira, cambia de color, se desarma en piezas con datos y, al final, queda **una sola** en la vidriera con el cartel *QUEDA 1*.
 >
-> **Estilo: clay.** Formas redondeadas y suaves, sin texturas, colores mate de la marca e iluminación de estudio con sombras suaves: el look *clay render* de las campañas 3D actuales. Es más premium que el low-poly del juego, pero también se genera **por código**.
+> **Estilo: clay.** Formas redondeadas y suaves, sin texturas, colores mate de la marca e iluminación de estudio con sombras suaves. Todo se genera **por código**.
+>
+> **Referencias** ([#23](https://github.com/OctavioUlla/drop-rush-nude-project/issues/23)): el viaje continuo de la cámara por un escenario 3D de [fighterready.com](https://fighterready.com/), y los productos 3D que flotan y giran entre tipografía gigante de [lajoya-foods.com](https://lajoya-foods.com/en).
+>
+> 🎬 **Maqueta viva:** [`design-system/escena.html`](../design-system/escena.html) ya muestra las 9 estaciones, el viaje de cámara, la luz y el texto animado.
 
-### 3.1 Lenguaje visual
+### 3.1 Lo que la hace premium
 
-| Elemento | Cómo se ve |
+| Recurso | Cómo se ve |
 |---|---|
-| **Escenario** | Estudio infinito (un ciclorama sin horizonte) en crema o en cacao, según el tema de la diapositiva. Un pedestal cilíndrico bajo y redondeado. |
-| **Luz** | Luz principal cálida desde arriba a la izquierda, luz de relleno suave y una luz de contorno que separa la prenda del fondo. Luz ambiente cálida (tonos Nude House). |
-| **Sombras** | Sombra de contacto difusa bajo la prenda (un plano con degradado, barato) y oclusión ambiental suave en los pliegues. Sin sombras duras. |
-| **Material** | Mate (rugosidad alta, sin brillo metálico) con un leve brillo de tela (*sheen*) en los bordes, para que se lea como algodón grueso. |
-| **Colorways** | Un color por bloque, todos del design system: cacao, crema, arena, mostaza, marino, bosque y rosa. La prenda cambia de color con un fundido mientras gira. |
-| **Layout** | Editorial: el texto ocupa ~5/12 del ancho (a la izquierda) y la sudadera ~7/12 (a la derecha). En las diapositivas de cita o de cifra gigante, la sudadera pasa al fondo, desenfocada. |
-| **Texto animado** | Los títulos aparecen línea por línea, subiendo desde una máscara. Las cifras cuentan desde 0. En los separadores corre una cinta: *DROP 001 — QUEDA 1 — DROP 001 —*. |
-| **Grano** | Un grano de película muy leve sobre todo, para que no se vea "plástico". |
+| **Un solo plano** | Nunca hay un corte. Entre bloques, la cámara hace un **travelling con grúa** de 1,8 s: sube y retrocede a mitad de camino y baja en la estación siguiente. El fondo funde entre crema y cacao. Si el presentador apura las teclas, los viajes se encolan. |
+| **Producto héroe** | Una sola sudadera, siempre en movimiento: flota, se balancea mostrando el frente y los tres cuartos, y en cada viaje da **una vuelta completa** mientras cambia de colorway. En la portada la rodean sudaderas en los neutros de la marca, flotando. |
+| **Tipografía sándwich** | En la portada, *DROP 001* gigante va **detrás** de la sudadera y el título va **delante**. Las letras entran de a una. |
+| **Luz de cine** | Luz cálida de estudio con sombras suaves reales, un **foco con su haz visible y polvo flotando** en la portada y en la vidriera, niebla, viñeta y grano de película. |
+| **Texto coreografiado** | El texto de la estación que se va sube y desaparece al arrancar la cámara; el nuevo entra línea por línea cuando la cámara ya está llegando. |
+| **Interfaz de marca** | Arriba, el logo, el **índice de los 9 bloques** (el actual subrayado, se puede hacer clic) y *Drop 001*. Abajo, el número de bloque, una barra de avance y la **cola de la tienda**. |
+| **Cargador** | Antes de empezar, *Preparando el drop* cuenta del 0 al 100 % mientras se compila la escena, y se abre como un telón. |
 
 ### 3.2 La sudadera, por código
-Se arma en Three.js con piezas redondeadas que se unen y suavizan:
-- **Cuerpo:** caja con bordes muy redondeados, levemente deformada (más ancha abajo, hombros caídos).
-- **Capucha:** casquete de esfera aplanado, apoyado sobre la espalda, con el borde engrosado.
-- **Mangas:** tubos que siguen una curva suave (relajadas, con un leve pliegue en el codo).
-- **Puños y cintura:** anillos acanalados (rib), un poco más angostos que la manga.
-- **Bolsillo canguro**, **cordones** con sus puntas y el **logo *Nude® Project* bordado** en el pecho (texto en relieve muy leve, del mismo color o en crema).
-- Las piezas son **independientes**, para poder separarlas en la vista desarmada (bloque 5) y animarlas por separado.
+Se arma en Three.js con piezas redondeadas (ver [`escena/sudadera.js`](../design-system/escena/sudadera.js)):
+- **Cuerpo:** caja con bordes muy redondeados, más ancha abajo, con panza suave y hombros caídos; **cintura acanalada**.
+- **Capucha:** casquete aplanado apoyado sobre la espalda y borde engrosado alrededor del cuello.
+- **Mangas:** tubos que se afinan siguiendo una curva suave (con un leve pliegue en el codo), hombro redondo y **puño acanalado**.
+- **Bolsillo canguro**, **cordones** con sus puntas y el **logo *Nude® Project* bordado** en el pecho, en crema sobre colores oscuros y en cacao sobre los claros.
+- Material de algodón grueso: mate, sin brillo metálico, con un leve brillo de tela (*sheen*) en los bordes.
+- Las piezas son **independientes**, para separarlas en la vista desarmada (bloque 5).
 - El mismo modelo se puede usar después **en el juego**: en la vidriera de la tienda de la meta y en la pantalla del ganador.
 
-### 3.3 Guion visual por bloque
+### 3.3 Guion visual por estación
 
-| Bloque | Qué hace la sudadera | Colorway |
+| Estación | Qué pasa | Colorway |
 |---|---|---|
-| **0. Portada + hype colectivo** | Gira lenta sobre el pedestal, bajo un foco. En la cuenta regresiva la luz se apaga y la sudadera sube fuera de cuadro. Mientras se llena el medidor, el foco vuelve a encenderse de a poco y la sudadera baja en proporción al hype. Al 100 % cae al pedestal con un pequeño rebote, entre papelitos con los colores de los grupos. El sello **SOLD OUT** se guarda para el final del juego. | Cacao |
-| **1. La historia** | Aparece dentro de una caja de envío de cartón (la de los primeros pedidos desde la habitación). Mientras pasan los años 2019 → hoy, la caja se multiplica y la sudadera cambia de color en cada año. | Crema |
-| **2. EGC vs. UGC** | Queda en el centro entre los dos feeds y gira hacia el lado que se está comentando. | Arena |
-| **3. Marketing viral** | Corazones rosas en 3D salen de la prenda y orbitan alrededor mientras un contador de vistas sube a la cifra real. | Rosa |
-| **4. Marketing experiencial** | Se cuelga de una percha y la cámara retrocede: aparece un rincón mínimo de la Nude House (perchero, sillón, una planta, una pila de vinilos), todo en clay. | Bosque |
-| **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una etiqueta flotante con un dato (seguidores, engagement, vistas, facturación). Para comparar, un **gráfico de barras hecho con pilas de sudaderas dobladas**. | Marino |
-| **6. Objetivo comunicacional** | La cámara se acerca al pecho hasta llenar la pantalla con el logo bordado; la frase de Bruno se escribe encima. | Cacao |
-| **7. Desafíos** | Una **balanza** clay: de un lado *exclusividad*, del otro *accesibilidad*. Se inclina según el resultado de la votación en vivo. | Mostaza |
-| **8. Drop Rush** | Vuelve a estar sola en el pedestal con el cartel **QUEDA 1**. La cámara retrocede, aparece la vidriera de la tienda y la calle: transición directa al juego. | Cacao |
-
-Las transiciones entre bloques son **movimientos continuos de cámara y de la prenda** (~0,8 s), nunca cortes: la sudadera no desaparece entre diapositivas.
+| **0. Portada + hype colectivo** | Estudio cacao. Pedestal bajo un foco con su haz y polvo; sudaderas crema, arena y piedra flotan alrededor; *DROP 001* gigante detrás. Al terminar el cargador, la sudadera **cae al pedestal con un rebote**. En el hype: en la cuenta regresiva la luz se apaga y la sudadera sube fuera de cuadro; mientras se llena el medidor, el foco vuelve y la sudadera baja en proporción al hype; al 100 % cae entre papelitos con los colores de los grupos. | Cacao |
+| **1. La historia** | **La habitación**: cama, ventana con luz y pilas de cajas de envío. La sudadera sale de una caja abierta (la de los primeros pedidos). | Crema |
+| **2. EGC vs. UGC** | Dos **celulares gigantes** a los lados con los feeds; la sudadera, en el centro sobre un pedestal, gira hacia el lado que se está comentando. | Arena |
+| **3. Marketing viral** | Una **pared de celulares** con el mismo video y **corazones *clay*** que orbitan alrededor de la prenda mientras sube el contador de vistas. | Rosa |
+| **4. Marketing experiencial** | **El salón de la Nude House**: pared de acento marrón detrás de la prenda, piso de madera, alfombra, sillón, perchero con sudaderas, planta, vinilos y una lámpara cálida. La sudadera, colgada de una percha. | Bosque |
+| **5. Métricas** | **Vista desarmada:** capucha, mangas, bolsillo y cuerpo se separan, y cada pieza lleva una **etiqueta flotante** con un dato. Detrás, un **gráfico de barras hecho con pilas de sudaderas dobladas**. | Marino |
+| **6. Objetivo comunicacional** | **Primer plano** del logo bordado, a la derecha; la frase de Bruno en la columna libre de la izquierda. | Cacao |
+| **7. Desafíos** | Una **balanza** *clay*: de un lado, una sola sudadera (*exclusividad*); del otro, una pila (*accesibilidad*). Se inclina según la votación en vivo. | Mostaza |
+| **8. Drop Rush** | **La calle y la vidriera** de la tienda, de noche, con el cartel *Nude® Project*. Adentro, la última sudadera bajo un foco. Cartel **QUEDA 1** latiendo → juego. | Cacao |
 
 ### 3.4 Técnica
 - **Three.js** para el 3D y **GSAP** para animar cámara, prenda y texto en una misma línea de tiempo. Las dos librerías se guardan dentro del repositorio para funcionar sin internet.
-- **Valores del design system:** colores del estudio y las luces, material, grano, colorways por bloque y duraciones salen de [`tokens.js`](../design-system/tokens.js) (`colores3d.presentacion`, `tokens.escena`, `colorwayDeBloque(n)`, `segundos('escena')`). Ver la [sección 3.1 del design system](../design-system/README.md#31-escena-3d-de-la-presentación).
-- **Un solo canvas 3D** fijo detrás de todas las diapositivas. Cada diapositiva declara su escena con un atributo (por ejemplo, `data-escena="metricas"`) y el motor anima la transición hacia ella. Ir para atrás funciona igual.
+- **Valores del design system:** colores del estudio y las luces, material, cámara, recorrido, polvo, viñeta, grano, colorways por bloque y duraciones salen de [`tokens.js`](../design-system/tokens.js) (`colores3d.presentacion`, `tokens.escena`, `colorwayDeBloque(n)`, `segundos('viaje')`). Ver la [sección 3.1 del design system](../design-system/README.md#31-escena-3d-de-la-presentación-un-plano-secuencia).
+- **Punto de partida:** la maqueta viva del design system ([`escena.html`](../design-system/escena.html) y [`escena/`](../design-system/escena/)) ya resuelve la sudadera, las 9 estaciones, la luz, el viaje de cámara, el texto coreografiado, la interfaz y el cargador. La presentación la toma y le suma las diapositivas reales, las interacciones y el modo presentador.
+- **Un solo canvas 3D** fijo detrás de todas las diapositivas, y un **mundo** con las 9 estaciones en fila. Cada diapositiva declara su estación con un atributo (por ejemplo, `data-escena="metricas"`) y el motor viaja hacia ella. Ir para atrás funciona igual. Varias diapositivas de un mismo bloque comparten estación: la cámara solo se acomoda (`escena`, 0,8 s).
 - **Guion como datos:** cada escena (color, posición de la cámara, pose de la prenda y objetos extra) se define en un archivo, así se ajusta sin tocar el motor.
-- **Rendimiento:** corre en la notebook del presentador, no en los celulares, pero puede tener una placa de video integrada. Objetivo: **60 fps a 1080p**, con la resolución interna limitada a 1,5×, la sombra de contacto falsa (sin mapas de sombras en tiempo real) y el render pausado cuando nada se mueve.
+- **Rendimiento:** corre en la notebook del presentador, no en los celulares, pero puede tener una placa de video integrada. Objetivo: **60 fps a 1080p**, con la resolución interna limitada a 1,5×, **una sola luz con sombra** (que acompaña a la estación activa), solo las estaciones vecinas visibles y los shaders compilados durante el cargador.
 - **Respaldos:**
   - Si WebGL no está disponible, cada escena se reemplaza por una **imagen pre-renderizada** (las mismas imágenes sirven para el PDF).
-  - Con `prefers-reduced-motion`, las transiciones pasan a ser fundidos cortos.
+  - Con `prefers-reduced-motion`, los viajes pasan a ser cortes con fundido.
 - **Gráficos de datos 2D** (líneas, barras simples): SVG animado con la paleta del design system.
 
 ---
@@ -221,11 +223,9 @@ presentacion/
 ├── estilos.css          # Solo layout propio; importa el design system
 ├── deck.js              # Navegación, teclado, escalado, cronómetro, BroadcastChannel, impresión
 ├── escena/
-│   ├── escena.js        # Renderer, estudio, luces, sombra de contacto, grano, pausa del render
+│   ├── escena.js        # Renderer, luz de cine, protagonista y viaje de cámara (desde design-system/escena/)
 │   ├── sudadera.js      # Modelo de la sudadera por piezas (por código)
-│   ├── extras.js        # Pedestal, caja de envío, corazones, percha y rincón Nude House, pilas, balanza, vidriera
-│   ├── guion.js         # Escena de cada bloque: colorway, cámara, pose y extras
-│   └── transiciones.js  # Animaciones entre escenas (GSAP)
+│   └── mundo.js         # Las 9 estaciones: habitación, celulares, Nude House, balanza, vidriera…
 ├── vendor/              # three.js y GSAP guardados localmente
 ├── interactivo/
 │   ├── hype.js          # Hype colectivo (proyector)
@@ -270,8 +270,8 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 ## 7. Plan de trabajo
 
 ### Fase 0: Prototipo visual (riesgo primero)
-- [ ] Sudadera clay por código girando en el estudio, con 2 o 3 colorways
-- [ ] Una transición de cámara entre dos escenas, con texto animado encima
+- [x] Sudadera clay por código, con todos los colorways ([maqueta viva](../design-system/escena.html))
+- [x] Plano secuencia por las 9 estaciones, con texto animado encima
 - [ ] Medir fps en la notebook que se va a usar y validar que se vea bien en el proyector
 
 ### Fase 1: Motor y plantilla
@@ -280,8 +280,9 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 - [ ] Modo presentador: notas, próxima diapositiva y cronómetro por bloque
 
 ### Fase 2: Escenas 3D
-- [ ] Guion completo de escenas (sección 3.3), con sus extras: caja, corazones, percha y rincón Nude House, vista desarmada, pilas de sudaderas, balanza y vidriera
-- [ ] Transiciones continuas ida y vuelta entre todas las escenas
+- [x] Primera versión de las 9 estaciones (sección 3.3) y del viaje ida y vuelta entre todas
+- [ ] Pulir cada estación con el contenido real (feeds en los celulares, cifras, frase final)
+- [ ] Coreografía del hype en la portada (luz que se apaga, sudadera que sube y baja con el medidor, papelitos)
 - [ ] Imágenes pre-renderizadas de respaldo
 
 ### Fase 3: Interacciones sin servidor

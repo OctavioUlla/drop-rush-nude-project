@@ -28,18 +28,18 @@
     .diapos .np-diapo { box-shadow: var(--np-sombra-md); }
     .regla { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--np-espacio-5); }
     .regla .np-tarjeta h4 { margin: 0 0 var(--np-espacio-2); font-family: var(--np-fuente-display); }
-    /* Maqueta del estudio 3D: en la presentación real es un canvas de Three.js detrás de la diapositiva. */
-    .estudio { position: relative; container-type: inline-size; overflow: hidden; background: linear-gradient(var(--np-presentacion-estudio-crema-fondo) 58%, var(--np-presentacion-estudio-crema-piso)); --pedestal: var(--np-presentacion-pedestal-crema); --logo: var(--np-marca-cacao); }
-    .estudio[data-np-tema="cacao"] { background: linear-gradient(var(--np-presentacion-estudio-cacao-fondo) 58%, var(--np-presentacion-estudio-cacao-piso)); --pedestal: var(--np-presentacion-pedestal-cacao); }
+    /* Fondo de estudio para las demos de componentes de la presentación (en la real es el canvas 3D). */
+    .estudio { position: relative; container-type: inline-size; overflow: hidden; background: radial-gradient(120% 90% at 50% 38%, #fff, var(--np-presentacion-estudio-crema-fondo) 62%); }
+    .estudio[data-np-tema="cacao"] { background: radial-gradient(120% 90% at 50% 38%, #3b221b, var(--np-presentacion-estudio-cacao-fondo) 62%); }
     .estudio .np-diapo { position: relative; z-index: 1; }
-    .estudio__sudadera { position: absolute; right: 9%; bottom: 3%; width: 36%; color: var(--c, var(--np-marca-cacao)); }
-    .estudio__sudadera svg { display: block; width: 100%; height: auto; }
-    .estudio--fondo .estudio__sudadera { right: 50%; translate: 50% 0; width: 52%; bottom: -14%; filter: blur(6px); opacity: .55; }
-    .estudio--centro .estudio__sudadera { right: 50%; translate: 50% 0; width: 18%; bottom: 8%; }
-    .colorways { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--np-espacio-4); }
-    .colorways .estudio { aspect-ratio: 1; }
-    .colorways .estudio__sudadera { right: 50%; translate: 50% 0; width: 78%; bottom: 2%; }
-    .colorways p { margin: var(--np-espacio-2) 0 0; font-size: var(--np-texto-sm); line-height: 1.35; }
+    .vivo { position: relative; aspect-ratio: 16 / 9; background: var(--np-marca-cacao-profundo); box-shadow: var(--np-sombra-lg); }
+    .vivo iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .estaciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--np-espacio-4); }
+    .estacion { border: var(--np-borde-fino) solid var(--np-linea); background: var(--np-superficie); }
+    .estacion__color { height: 88px; position: relative; }
+    .estacion__color span { position: absolute; left: var(--np-espacio-3); bottom: var(--np-espacio-3); font: var(--np-peso-black) 2rem / 1 var(--np-fuente-display); letter-spacing: var(--np-interletra-display); }
+    .estacion p { margin: 0; padding: var(--np-espacio-3); font-size: var(--np-texto-sm); line-height: 1.4; }
+    .estacion code { font-family: var(--np-fuente-mono); font-size: var(--np-texto-xs); color: var(--np-tinta-suave); }
     .pub-falsa { height: 100%; display: grid; place-items: center; padding: 1em; text-align: center; font: 700 0.9em / 1.2 var(--np-fuente-display); }
     .celulares { display: flex; flex-wrap: wrap; gap: var(--np-espacio-5); }
     .celular-chico { width: 200px; aspect-ratio: 9 / 16; border: 8px solid var(--np-marca-cacao-profundo); border-radius: 24px; overflow: hidden; display: grid; place-items: center; text-align: center; }
@@ -146,78 +146,24 @@
 
   <section>
     <span class="np-etiqueta">06 · Presentación</span>
-    <h2 class="np-titulo">Escena 3D: la sudadera</h2>
-    <p class="np-texto np-texto-suave">La presentación es el lanzamiento de un producto. Detrás de todas las diapositivas hay un único canvas 3D con una sudadera estilo <i>clay</i>: formas redondeadas, material mate, luz de estudio y sombras suaves. Las maquetas de esta guía son ilustraciones planas; los valores reales (luces, material, grano) están en <code>tokens.escena</code>.</p>
-
-    <h3 class="np-subtitulo">Colorways por bloque</h3>
-    <p class="np-texto np-texto-suave">Un color por bloque, siempre del design system. La sudadera es el acento de la diapositiva: si está en rosa o mostaza, no se suma otro acento encima.</p>
-    <div class="colorways" id="colorways"></div>
-
-    <h3 class="np-subtitulo">Diapositivas sobre la escena</h3>
-    <p class="np-texto np-texto-suave"><code>np-diapo--escena</code> es transparente: el fondo lo pone el estudio 3D (crema o cacao, según el tema). Layout editorial: texto en 5/12, sudadera en 7/12 (<code>np-diapo__editorial</code>).</p>
-    <div class="diapos">
-      <div class="estudio" data-np-tema="cacao" style="--c: var(--np-colorway-0); --logo: var(--np-marca-crema)">
-        <div class="estudio__sudadera"></div>
-        <div class="np-diapo np-diapo--escena np-diapo--activa" data-np-tema="cacao">
-          <div class="np-diapo__editorial">
-            <div class="np-diapo__texto">
-              <span class="np-etiqueta">Caso de estudio · Comercialización</span>
-              <h1 class="np-display np-revelar" style="font-size: 6.4cqw">
-                <span class="np-revelar__linea" style="--i: 0"><span>Comunidad,</span></span>
-                <span class="np-revelar__linea" style="--i: 1"><span>comunicación</span></span>
-                <span class="np-revelar__linea" style="--i: 2"><span>y autenticidad.</span></span>
-              </h1>
-              <span class="np-insignia">34/40 en la cola</span>
-            </div>
-            <div class="np-diapo__hueco"></div>
-          </div>
-          <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>Grupo X · 2026</span></div>
-        </div>
-      </div>
-      <div class="estudio" style="--c: var(--np-colorway-3)">
-        <div class="estudio__sudadera"></div>
-        <div class="np-diapo np-diapo--escena np-diapo--activa">
-          <div class="np-diapo__editorial">
-            <div class="np-diapo__texto">
-              <span class="np-etiqueta">03 · Marketing viral</span>
-              <h2 class="np-titulo np-revelar">
-                <span class="np-revelar__linea" style="--i: 0"><span>Un video,</span></span>
-                <span class="np-revelar__linea" style="--i: 1"><span><span class="np-cifra">12 M</span> de vistas.</span></span>
-              </h2>
-              <p>Tono cercano, sin guion, en el momento justo.</p>
-            </div>
-            <div class="np-diapo__hueco"></div>
-          </div>
-          <div class="np-cola" style="--avance: .375">
-            <div class="np-cola__fila">
-              <span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona np-cola__persona--nosotros"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span>
-            </div>
-            <span class="np-cola__bloque">03</span>
-            <div class="np-cola__puerta"></div>
-          </div>
-        </div>
-      </div>
-      <div class="estudio" style="--c: var(--np-colorway-5); --logo: var(--np-marca-crema)">
-        <div class="estudio__sudadera"></div>
-        <div class="np-diapo np-diapo--escena">
-          <div class="np-diapo__cuerpo" style="justify-content: flex-start">
-            <span class="np-etiqueta">05 · Métricas · vista desarmada</span>
-          </div>
-          <div class="np-etiqueta-3d" style="--x: 64%; --y: 34%"><span class="np-etiqueta-3d__valor">1,2 M</span><span class="np-etiqueta-3d__texto">Seguidores en Instagram</span></div>
-          <div class="np-etiqueta-3d" style="--x: 72%; --y: 62%"><span class="np-etiqueta-3d__valor">+25 M€</span><span class="np-etiqueta-3d__texto">Facturación</span></div>
-        </div>
-      </div>
-      <div class="estudio" data-np-tema="cacao" style="--c: var(--np-colorway-0); --logo: var(--np-marca-crema)">
-        <div class="np-diapo np-diapo--escena" data-np-tema="cacao">
-          <div class="np-diapo__cuerpo">
-            <span class="np-etiqueta">Bloque 02</span>
-            <h2 class="np-display" style="font-size: 7cqw">EGC vs. UGC</h2>
-            <div class="np-cinta"><div class="np-cinta__pista"><span>Drop 001 — Queda 1 — Drop 001 — Queda 1 —</span><span>Drop 001 — Queda 1 — Drop 001 — Queda 1 —</span></div></div>
-          </div>
-          <div class="np-diapo__pie"><span class="np-logo">Nude<sup>®</sup>Project</span><span>02</span></div>
-        </div>
-      </div>
+    <h2 class="np-titulo">Escena 3D: un plano secuencia</h2>
+    <p class="np-texto np-texto-suave">La presentación es el lanzamiento de un producto contado en <b>una sola toma</b>: la cámara recorre una Nude House en miniatura, hecha en <i>clay</i>, y cada bloque es una estación del recorrido. La sudadera nunca sale de cuadro: viaja con la cámara, da una vuelta y cambia de colorway en cada estación. Esta maqueta es real (Three.js, mismo código que va a usar la presentación): usá ← → o el menú.</p>
+    <div class="vivo">
+      <iframe src="./escena.html" title="Escena 3D de la presentación" loading="lazy"></iframe>
     </div>
+    <p class="np-texto np-texto-suave" style="margin-top: var(--np-espacio-3)"><a href="./escena.html" target="_blank" rel="noopener">Abrir la escena en pantalla completa ↗</a> · Necesita servirse por HTTP (por ejemplo <code>npx serve .</code> desde la raíz) y internet para bajar three.js.</p>
+
+    <h3 class="np-subtitulo">Cuatro recursos que la hacen premium</h3>
+    <div class="regla">
+      <div class="np-tarjeta"><h4>Producto héroe</h4><p class="np-texto">Una sola sudadera protagonista, siempre en movimiento: flota, se balancea mostrando el frente y los tres cuartos, y en cada viaje da una vuelta completa. En la portada la rodean otras sudaderas en los neutros de la marca, flotando.</p></div>
+      <div class="np-tarjeta"><h4>Tipografía sándwich</h4><p class="np-texto">En la portada, una palabra gigante (<code>--np-texto-gigante</code>, 22 cqw) va <b>detrás</b> de la prenda y el título va <b>delante</b>: el producto queda atrapado entre dos capas de texto. Las letras entran de a una.</p></div>
+      <div class="np-tarjeta"><h4>Luz de cine</h4><p class="np-texto">Luz cálida de estudio con sombras suaves reales, un foco cenital con su haz visible y polvo flotando, niebla del color del fondo, viñeta y grano de película. Nada se ve "plástico".</p></div>
+      <div class="np-tarjeta"><h4>Viaje de cámara</h4><p class="np-texto">Entre bloques la cámara hace un travelling con grúa (sube y retrocede a mitad de camino) de 1,8 s con <code>curva-viaje</code>. El texto sale hacia arriba antes de que arranque y el nuevo entra cuando la cámara ya está llegando.</p></div>
+    </div>
+
+    <h3 class="np-subtitulo">Estaciones y colorways</h3>
+    <p class="np-texto np-texto-suave">Un colorway por bloque, siempre del design system. La sudadera es el acento de la estación: si está en rosa o mostaza, no se suma otro acento encima.</p>
+    <div class="estaciones" id="estaciones"></div>
 
     <h3 class="np-subtitulo">Cola de la tienda (barra de progreso)</h3>
     <p class="np-texto np-texto-suave">Al pie de cada diapositiva, ~5 % de alto. Avanza por bloque (<code>--avance</code> de 0 a 1). Con grupos conectados, cada persona lleva el color de su grupo; la nuestra va en mostaza. En el último bloque se abre la puerta.</p>
@@ -248,8 +194,7 @@
           <p class="np-votacion__estado">31/40 votaron</p>
         </div>
       </div>
-      <div class="estudio estudio--centro" style="--c: var(--np-colorway-2)">
-        <div class="estudio__sudadera"></div>
+      <div class="estudio">
         <div class="np-diapo np-diapo--escena">
           <div class="np-diapo__cuerpo">
             <div class="np-feeds" style="justify-content: space-between">
@@ -271,7 +216,7 @@
 
     <h3 class="np-subtitulo">Hype colectivo</h3>
     <div class="diapos">
-      <div class="estudio" data-np-tema="cacao" style="--c: var(--np-colorway-0)">
+      <div class="estudio" data-np-tema="cacao">
         <div class="np-diapo np-diapo--escena" data-np-tema="cacao">
           <div class="np-diapo__cuerpo" style="align-items: center">
             <span class="np-etiqueta">El hype empieza en</span>
@@ -400,38 +345,22 @@
       return `<div class="muestra"><div style="background: var(${nombre})"></div><p><b>${n}</b><br><code>${v(nombre)}</code></p></div>`;
     }).join('');
   }
-  // Sudadera de las maquetas: ilustración plana; la real es un modelo clay en Three.js.
-  const forma = (relleno) => `<g fill="${relleno}" stroke="${relleno}" stroke-width="6" stroke-linejoin="round">
-      <path d="M68 52Q100 16 132 52Q100 64 68 52Z"/>
-      <path d="M62 58Q40 66 35 110L31 150Q39 156 49 152L57 112Z"/>
-      <path d="M138 58Q160 66 165 110L169 150Q161 156 151 152L143 112Z"/>
-      <rect x="59" y="51" width="82" height="114" rx="14"/>
-    </g>`;
-  const sudadera = `<svg viewBox="0 0 200 200" aria-hidden="true">
-    <defs><radialGradient id="luz-clay" cx=".3" cy=".22" r=".95"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></radialGradient>
-      <mask id="silueta-clay">${forma('#fff')}</mask></defs>
-    <ellipse cx="100" cy="177" rx="64" ry="10" style="fill: var(--pedestal)"/>
-    <path d="M36 177a64 10 0 0 0 128 0v14a64 10 0 0 1-128 0z" style="fill: var(--pedestal); filter: brightness(.9)"/>
-    <ellipse cx="100" cy="172" rx="52" ry="5" style="fill: var(--np-presentacion-sombra-contacto); opacity: .3; filter: blur(3px)"/>
-    ${forma('currentColor')}
-    <rect width="200" height="170" fill="url(#luz-clay)" mask="url(#silueta-clay)"/>
-    <path d="M82 50Q100 32 118 50Q100 56 82 50Z" fill="#000" opacity=".22"/>
-    <rect x="58" y="154" width="84" height="14" rx="7" fill="#000" opacity=".1"/>
-    <path d="M74 120H126L133 146H67Z" fill="#000" opacity=".08"/>
-    <path d="M93 58L91 84M107 58L109 84" stroke="#fff" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
-    <text x="100" y="100" text-anchor="middle" style="font: 700 10px var(--np-fuente-display); letter-spacing: -.5px; fill: var(--logo)">Nude® Project</text>
-  </svg>`;
-  // Mismos colorways que tokens.escena.colorways (la guía no importa tokens.js para poder abrirse con file://).
-  const colorways = [
-    [0, 'Portada + hype', 'cacao', 'cacao'], [1, 'La historia', 'crema', 'crema'], [2, 'EGC vs. UGC', 'arena', 'crema'],
-    [3, 'Marketing viral', 'rosa', 'crema'], [4, 'Experiencial', 'bosque', 'crema'], [5, 'Métricas', 'marino', 'crema'],
-    [6, 'Objetivo', 'cacao', 'crema'], [7, 'Desafíos', 'mostaza', 'crema'], [8, 'Drop Rush', 'cacao', 'cacao'],
+  // Mismas estaciones y colorways que tokens.escena (la guía no importa tokens.js para poder abrirse con file://).
+  const estaciones = [
+    [0, 'Portada + hype', 'cacao', 'cacao', 'Pedestal bajo un foco, sudaderas flotando y "Drop 001" gigante detrás.'],
+    [1, 'La historia', 'crema', 'crema', 'La habitación: cama, ventana y cajas de envío; la sudadera sale de una caja.'],
+    [2, 'EGC vs. UGC', 'arena', 'crema', 'Dos celulares gigantes con los feeds; la prenda gira hacia el que se comenta.'],
+    [3, 'Marketing viral', 'rosa', 'crema', 'Una pared de celulares con el mismo video y corazones clay orbitando.'],
+    [4, 'Experiencial', 'bosque', 'crema', 'El salón de la Nude House: sillón, perchero, planta, vinilos y una percha.'],
+    [5, 'Métricas', 'marino', 'crema', 'Vista desarmada con etiquetas flotantes y barras hechas con pilas dobladas.'],
+    [6, 'Objetivo', 'cacao', 'crema', 'Primer plano del logo bordado; la frase de Bruno en la columna libre.'],
+    [7, 'Desafíos', 'mostaza', 'crema', 'Balanza: una sola sudadera contra una pila. Se inclina con la votación.'],
+    [8, 'Drop Rush', 'cacao', 'cacao', 'La vidriera de la tienda en la calle, con el cartel QUEDA 1: pasa al juego.'],
   ];
   const oscuros = ['cacao', 'bosque', 'marino'];
-  document.getElementById('colorways').innerHTML = colorways.map(([n, nombre, color, estudio]) => `
-    <div><div class="estudio" ${estudio === 'cacao' ? 'data-np-tema="cacao"' : ''} style="--c: var(--np-colorway-${n}); --logo: var(--np-marca-${oscuros.includes(color) ? 'crema' : 'cacao'})"><div class="estudio__sudadera"></div></div>
-    <p><b>${n} · ${nombre}</b><br><code>${color}</code> · estudio ${estudio}</p></div>`).join('');
-  document.querySelectorAll('.estudio__sudadera').forEach((el) => { el.innerHTML = sudadera; });
+  document.getElementById('estaciones').innerHTML = estaciones.map(([n, nombre, color, estudio, que]) => `
+    <div class="estacion"><div class="estacion__color" style="background: var(--np-colorway-${n}); color: var(--np-marca-${oscuros.includes(color) ? 'crema' : 'cacao'})"><span>${String(n).padStart(2, '0')}</span></div>
+    <p><b>${nombre}</b> · <code>${color}</code> · estudio ${estudio}<br>${que}</p></div>`).join('');
   document.getElementById('cola-grupos').innerHTML = [3, 18, 7, 26, 11]
     .map((n) => `<span class="np-cola__persona" style="--g: var(--np-grupo-${n})"></span>`).join('') + '<span class="np-cola__persona np-cola__persona--nosotros"></span>';
 
