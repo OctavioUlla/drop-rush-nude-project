@@ -96,6 +96,6 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 - [x] Confirmar la pregunta de la votación ([`datos/votacion.json`](datos/votacion.json)): queda la de 90 €.
 - [ ] Confirmar la fecha del episodio del podcast con la anécdota de Álex (bloque 7).
 - [x] Revisar el banco de preguntas del juego ([`juego/data/preguntas.json`](../juego/data/preguntas.json)): todas salen del guion y las diapositivas. Si cambia el guion, revisar las que dependen de ese bloque.
-- [ ] Repartir los bloques entre los oradores.
+- [x] Repartir los bloques entre los oradores: cinco oradores, A a E, por bloques enteros (ver el [reparto](GUION.md#reparto-de-oradores)). Falta anotar los nombres.
 - [ ] Ensayar con cronómetro: 15 min de exposición + 8 min de juego. Son 13 diapositivas para 9 bloques; las notas del orador suman unas 1.660 palabras (≈ 13 min a 130 palabras por minuto), así que el hype y la votación tienen que entrar en el margen.
 - [ ] Prueba en el aula: notebook (`?medir`), proyector, celulares reales en el Wi-Fi de la facultad y PDF de respaldo (ver [PLANIFICACION.md](PLANIFICACION.md#fase-5-contenido-y-ensayo)).

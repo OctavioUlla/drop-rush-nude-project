@@ -20,7 +20,8 @@
   Pantalla del proyector. Cada <section data-escena> es una diapositiva sobre la escena 3D:
   - data-escena: la estación del plano secuencia (tokens.escena.recorrido). Las diapositivas seguidas con la
     misma escena forman un bloque y la cámara no viaja entre ellas.
-  - data-bloque y data-tiempo, en la primera diapositiva del bloque: nombre en el índice y tiempo del cronómetro.
+  - data-bloque, data-tiempo y data-orador, en la primera diapositiva del bloque: nombre en el índice, tiempo del
+    cronómetro y quién lo presenta (GUION.md, «Reparto de oradores»).
   - <aside class="notas">: notas del orador, solo se ven en el modo presentador (tecla P).
   Agregar o cambiar una diapositiva es editar este HTML con las clases np-*, sin tocar JavaScript.
 -->
@@ -36,7 +37,7 @@
   <div class="np-capas">
 
     <!-- ============ 0. Portada + hype colectivo ============ -->
-    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-np-tema="cacao" data-escena="portada" data-bloque="Portada" data-tiempo="1:00">
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-np-tema="cacao" data-escena="portada" data-bloque="Portada" data-orador="A" data-tiempo="1:00">
       <div class="portada__pie">
         <div class="np-diapo__texto portada__titulo">
           <span class="np-etiqueta np-capa__entra">Caso de estudio · Comercialización</span>
@@ -78,7 +79,7 @@
     </section>
 
     <!-- ============ 1. La historia, el modelo y la votación ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-escena="historia" data-bloque="Historia" data-tiempo="2:00">
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="historia" data-bloque="Historia" data-orador="A" data-tiempo="2:00">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">01 — La historia</span>
         <h2 class="np-display np-revelar">
@@ -122,7 +123,7 @@
     </section>
 
     <!-- ============ 2. EGC vs. UGC ============ -->
-    <section class="np-capa np-diapo np-diapo--escena np-capa--centro" data-escena="egc-ugc" data-bloque="EGC / UGC" data-tiempo="3:00">
+    <section class="np-capa np-diapo np-diapo--escena np-capa--centro" data-escena="egc-ugc" data-bloque="EGC / UGC" data-orador="B" data-tiempo="3:00">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">02 — EGC vs. UGC</span>
         <h2 class="np-titulo np-revelar">
@@ -143,7 +144,7 @@
     </section>
 
     <!-- ============ 3. Marketing viral ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-escena="viral" data-bloque="Viral" data-tiempo="2:00">
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="viral" data-bloque="Viral" data-orador="C" data-tiempo="2:00">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">03 — Marketing viral</span>
         <h2 class="np-display np-revelar">
@@ -176,7 +177,7 @@
     </section>
 
     <!-- ============ 4. Marketing experiencial ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-escena="experiencial" data-bloque="Nude House" data-tiempo="2:00">
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="experiencial" data-bloque="Nude House" data-orador="C" data-tiempo="2:00">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">04 — Marketing experiencial</span>
         <h2 class="np-display np-revelar">
@@ -209,7 +210,7 @@
     </section>
 
     <!-- ============ 5. Métricas ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-escena="metricas" data-bloque="Métricas" data-tiempo="2:00">
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="metricas" data-bloque="Métricas" data-orador="D" data-tiempo="2:00">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">05 — Métricas</span>
         <h2 class="np-display np-revelar">
@@ -255,7 +256,7 @@
     </section>
 
     <!-- ============ 6. Objetivo comunicacional ============ -->
-    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-escena="objetivo" data-bloque="Objetivo" data-tiempo="1:30">
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-escena="objetivo" data-bloque="Objetivo" data-orador="D" data-tiempo="1:30">
       <div class="np-diapo__texto" style="max-width: 44cqw">
         <span class="np-etiqueta np-capa__entra">06 — Objetivo comunicacional</span>
         <p class="np-cita np-revelar" style="max-width: none; color: var(--np-tinta)">
@@ -274,7 +275,7 @@
     </section>
 
     <!-- ============ 7. Desafíos y puente al juego ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-escena="desafios" data-bloque="Desafíos" data-tiempo="1:30">
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="desafios" data-bloque="Desafíos" data-orador="E" data-tiempo="1:30">
       <div class="np-diapo__texto">
         <span class="np-etiqueta np-capa__entra">07 — Desafíos</span>
         <h2 class="np-display np-revelar">
@@ -302,7 +303,7 @@
     </section>
 
     <!-- ============ 8. Drop Rush ============ -->
-    <section class="np-capa np-diapo np-diapo--escena" data-np-tema="cacao" data-escena="drop-rush" data-bloque="Drop Rush" data-tiempo="8:00">
+    <section class="np-capa np-diapo np-diapo--escena" data-np-tema="cacao" data-escena="drop-rush" data-bloque="Drop Rush" data-orador="E" data-tiempo="8:00">
       <div class="np-diapo__texto" style="align-items: flex-start">
         <span class="np-etiqueta np-capa__entra">08 — Drop Rush</span>
         <span class="np-cartel np-latido np-capa__entra">Queda 1</span>
