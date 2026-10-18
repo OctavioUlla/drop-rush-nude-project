@@ -1,5 +1,7 @@
 import { Group, Mesh, PlaneGeometry, MeshBasicMaterial, CanvasTexture, SRGBColorSpace } from 'three';
-import { colores3d, colorDeGrupo } from '../../../../../design-system/tokens.js';
+import { colores3d } from '../../../../../design-system/tokens.js';
+import { colorGrupo } from '../../../shared/grupos.js';
+import { etiquetaGrupo } from '../../../shared/constantes.js';
 import { caja, cilindro, esfera, casquete, unir, materialMundo, curvarMaterial } from './kit.js';
 
 // Corredor articulado: cada parte es un grupo con el pivote en la articulación,
@@ -52,7 +54,7 @@ function texturaNumero(numero, colorTexto) {
 }
 
 export function crearCorredor(numeroGrupo) {
-  const g = colorDeGrupo(numeroGrupo);
+  const g = colorGrupo(numeroGrupo);
   const buzo = g.color3d;
 
   const raiz = new Group();
@@ -110,7 +112,7 @@ export function crearCorredor(numeroGrupo) {
   // Número del grupo en la espalda (la cámara lo ve desde atrás).
   const numero = new Mesh(
     new PlaneGeometry(0.42, 0.42),
-    curvarMaterial(new MeshBasicMaterial({ map: texturaNumero(numeroGrupo, g.texto), transparent: true })),
+    curvarMaterial(new MeshBasicMaterial({ map: texturaNumero(etiquetaGrupo(numeroGrupo), g.texto), transparent: true })),
   );
   numero.position.set(0, 0.38, 0.185);
   torso.add(numero);

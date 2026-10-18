@@ -1,4 +1,6 @@
-import { colores, grupos as coloresGrupos } from '../../../design-system/tokens.js';
+import { colores } from '../../../design-system/tokens.js';
+import { colorGrupo } from '../shared/grupos.js';
+import { esProfe, etiquetaGrupo } from '../shared/constantes.js';
 import { crearRng } from '../shared/rng.js';
 import { proyectarMeta } from '../shared/carrera.js';
 import { VENTAJAS } from '../shared/poderes.js';
@@ -81,7 +83,9 @@ export class Mapa {
     const primero = posiciones[0]?.[1] ?? 0;
     const objetivo = Math.max(primero, guion ? proyectarMeta(guion, t, primero) : primero, 1);
     this.meta = this.meta == null ? objetivo : this.meta + (objetivo - this.meta) * Math.min(1, dt * 2);
-    this.actualizarCabecera(posiciones[0]);
+    // El que va primero es el mejor grupo de alumnos: un profe puede ir adelante, pero no gana.
+    const lider = posiciones.find(([numero]) => !esProfe(numero));
+    this.actualizarCabecera(lider);
 
     ctx.clearRect(0, 0, g.w, g.h);
     ctx.drawImage(this.fondo, 0, 0, g.w, g.h);
@@ -131,7 +135,7 @@ export class Mapa {
     for (let i = posiciones.length - 1; i >= 0; i--) {
       const numero = posiciones[i][0];
       const m = this.marcadores.get(numero);
-      if (!m.oculto) this.dibujarFicha(numero, m, lado, i === 0, agrupados.get(numero));
+      if (!m.oculto) this.dibujarFicha(numero, m, lado, numero === lider?.[0], agrupados.get(numero));
     }
   }
 
@@ -142,12 +146,12 @@ export class Mapa {
       this.textoFalta = texto;
       if (!primero) this.elFalta.replaceChildren();
       else {
-        const c = coloresGrupos[primero[0] - 1];
+        const c = colorGrupo(primero[0]);
         const ficha = document.createElement('span');
         ficha.className = 'np-ficha';
         ficha.style.setProperty('--g', c.color);
         ficha.style.setProperty('--gt', c.texto);
-        ficha.textContent = primero[0];
+        ficha.textContent = etiquetaGrupo(primero[0]);
         const resto = document.createElement('span');
         resto.innerHTML = falta > 0 ? `va primero · le faltan <b>${falta} m</b>` : 'llega a la tienda';
         this.elFalta.replaceChildren(ficha, resto);
@@ -155,7 +159,7 @@ export class Mapa {
     }
     const avance = primero ? Math.min(1, primero[1] / this.meta) : 0;
     this.elProgreso.style.width = `${avance * 100}%`;
-    if (primero) this.elProgreso.style.background = coloresGrupos[primero[0] - 1].color;
+    if (primero) this.elProgreso.style.background = colorGrupo(primero[0]).color;
   }
 
   // ---------- Fondo (una vez por tamaño) ----------
@@ -267,7 +271,7 @@ export class Mapa {
   // ---------- Fichas ----------
   dibujarEstela(numero, m, lado) {
     const { ctx } = this;
-    const c = coloresGrupos[numero - 1];
+    const c = colorGrupo(numero);
     ctx.globalAlpha = m.conectado ? 1 : 0.35;
     // Sombra en el asfalto.
     ctx.fillStyle = 'rgba(46, 25, 20, 0.35)';
@@ -290,7 +294,7 @@ export class Mapa {
 
   dibujarFicha(numero, m, lado, primero, agrupados) {
     const { ctx } = this;
-    const c = coloresGrupos[numero - 1];
+    const c = colorGrupo(numero);
     const s = lado * (primero ? 1.12 : 1);
     const x = m.x - s / 2;
     const y = m.y - s / 2;
@@ -305,8 +309,9 @@ export class Mapa {
     ctx.fillStyle = c.texto;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = `900 ${s * (numero > 9 ? 0.56 : 0.66)}px ${FUENTE}`;
-    ctx.fillText(String(numero), m.x, m.y + s * 0.04);
+    const etiqueta = etiquetaGrupo(numero);
+    ctx.font = `900 ${s * (etiqueta.length > 1 ? 0.56 : 0.66)}px ${FUENTE}`;
+    ctx.fillText(etiqueta, m.x, m.y + s * 0.04);
     if (primero) {
       // "1.º" pegado a la derecha de la ficha (arriba lo taparía la fila de encima).
       const tamano = Math.max(11, s * 0.34);

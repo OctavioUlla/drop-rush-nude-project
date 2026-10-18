@@ -333,13 +333,13 @@ export class Partida {
     grupo.carriles.set(index, lane);
   }
 
-  /** Grupos que ya eligieron carril en la pregunta en curso (sin revelar cuál). */
+  /** Grupos de alumnos que ya eligieron carril en la pregunta en curso (sin revelar cuál; los profes no cuentan). */
   posicionados() {
     const index = this.preguntaEnCurso;
     if (index == null) return null;
-    let count = 0;
-    for (const g of this.sala.grupos.values()) if (g.carriles.has(index) || g.respuestas.has(index)) count++;
-    return { index, count, total: this.sala.grupos.size };
+    const alumnos = this.sala.alumnos;
+    const count = alumnos.filter((g) => g.carriles.has(index) || g.respuestas.has(index)).length;
+    return { index, count, total: alumnos.length };
   }
 
   registrarProgreso(grupo, datos) {
@@ -498,8 +498,9 @@ export class Partida {
     this.enviar('hosts', 'question:reveal', resumen);
   }
 
+  /** Cómo respondió la clase (los profes no cuentan: el repaso es sobre lo que aprendieron los alumnos). */
   resumenPregunta(index) {
-    const { correctRate, ...resumen } = estadisticaPregunta(this.preguntas[index], index, this.sala.jugadores);
+    const { correctRate, ...resumen } = estadisticaPregunta(this.preguntas[index], index, this.sala.alumnos);
     return resumen;
   }
 
@@ -537,26 +538,42 @@ export class Partida {
     return { position: posicion, total, catchUp: Boolean(this.configActual.emparejar) && recibeImpulso(posicion, total) };
   }
 
+  /**
+   * Puesto que ve el celular de `grupo` en el `ranking` general: un alumno se compara solo con los alumnos
+   * (los profes no le quitan el puesto ni el impulso); un profe ve dónde va entre todos, sin impulso.
+   */
+  rangoDe(grupo, ranking = this.ranking()) {
+    if (grupo.profe) return { position: ranking.indexOf(grupo) + 1, total: ranking.length, catchUp: false };
+    const alumnos = ranking.filter((g) => !g.profe);
+    return this.rango(alumnos.indexOf(grupo) + 1, alumnos.length);
+  }
+
+  /** Final: el ganador y los puestos son solo de los alumnos; los profes van al final, fuera de concurso. */
   terminar() {
     this.terminada = true;
     this.preguntaEnCurso = null;
-    const [ganador, ...cola] = this.ranking();
+    const ranking = this.ranking();
+    const alumnos = ranking.filter((g) => !g.profe);
+    const [ganador, ...cola] = alumnos;
+    const datos = (g) => ({
+      group: g.numero,
+      distance: Math.round(g.distanciaTotal),
+      correct: g.aciertos,
+      hits: g.choques,
+      dodged: g.esquivados,
+      jumps: g.saltos,
+      likes: g.likes,
+      powers: g.poderesUsados,
+    });
     this.final = {
       winner: ganador?.numero ?? null,
       queue: cola.map((g) => g.numero),
       // Si el presentador terminó antes, solo cuentan las preguntas que llegaron a revelarse.
       questions: this.revelados.size,
-      stats: this.ranking().map((g, i) => ({
-        group: g.numero,
-        position: i + 1,
-        distance: Math.round(g.distanciaTotal),
-        correct: g.aciertos,
-        hits: g.choques,
-        dodged: g.esquivados,
-        jumps: g.saltos,
-        likes: g.likes,
-        powers: g.poderesUsados,
-      })),
+      stats: [
+        ...alumnos.map((g, i) => ({ ...datos(g), position: i + 1 })),
+        ...ranking.filter((g) => g.profe).map((g) => ({ ...datos(g), position: null, teacher: true })),
+      ],
     };
     this.enviar('todos', 'game:end', this.final);
   }
@@ -564,7 +581,7 @@ export class Partida {
   /** Preguntas más erradas, con su distribución y explicación, para el repaso del final. */
   repaso() {
     if (!this.guion) return [];
-    return elegirRepaso(this.preguntas, this.sala.jugadores, this.configActual.preguntasEnRepaso, this.revelados);
+    return elegirRepaso(this.preguntas, this.sala.alumnos, this.configActual.preguntasEnRepaso, this.revelados);
   }
 
   /** Pregunta que se está respondiendo ahora (para quien entra o recarga en plena pregunta). */
@@ -598,9 +615,7 @@ export class Partida {
       answers: [...grupo.respuestas.values()].filter((r) => this.revelados.has(r.index)),
       answeredIndexes: [...grupo.respuestas.keys()],
       question: this.preguntaActual(),
-      position: ranking.indexOf(grupo) + 1,
-      total: ranking.length,
-      catchUp: this.rango(ranking.indexOf(grupo) + 1, ranking.length).catchUp,
+      ...this.rangoDe(grupo, ranking), // position, total y catchUp
       final: this.final,
       // Ventajas y poderes: el celular que recarga o reconecta los retoma donde estaban.
       advantage: v && ahora < v.hasta && this.revelados.has(this.indiceRespondido(v)) ? { id: v.id, until: v.hasta } : null,

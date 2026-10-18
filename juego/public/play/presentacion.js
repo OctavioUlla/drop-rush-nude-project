@@ -1,4 +1,5 @@
-import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
+import { colorGrupo } from '../shared/grupos.js';
+import { etiquetaGrupo } from '../shared/constantes.js';
 
 // Pantallas del celular durante la presentación (PLANIFICACION de la presentación, secciones 2.1 y 2.3):
 // espera quieta con el número del grupo, cuenta regresiva y botón HYPE del hype colectivo, y la votación en vivo.
@@ -229,9 +230,9 @@ export class PantallaPresentacion {
       }
     }
     const numero = this.grupo();
-    if (this.el.grupo.textContent !== String(numero)) {
-      const c = coloresGrupos[numero - 1];
-      this.el.grupo.textContent = numero;
+    if (this.el.grupo.textContent !== etiquetaGrupo(numero)) {
+      const c = colorGrupo(numero);
+      this.el.grupo.textContent = etiquetaGrupo(numero);
       this.el.grupo.style.setProperty('--g', c.color);
       this.el.grupo.style.setProperty('--gt', c.texto);
     }

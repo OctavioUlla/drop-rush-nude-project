@@ -42,3 +42,15 @@ export const FASES = {
   SPRINT: 'sprint',
   FIN: 'fin',
 };
+
+/**
+ * Profes (issue #35): cada uno entra con su propio celular como P1…P5, juega la presentación y la carrera,
+ * pero queda fuera de concurso (no gana ni cuenta en las estadísticas de la clase). Internamente son los
+ * grupos 101 a 105, lejos de los números de los grupos de alumnos (1 a maxGrupos, como mucho 40).
+ */
+export const PRIMER_PROFE = 101;
+export const MAX_PROFES = 5;
+export const NUMEROS_PROFES = Array.from({ length: MAX_PROFES }, (_, i) => PRIMER_PROFE + i);
+export const esProfe = (numero) => Number.isInteger(numero) && numero >= PRIMER_PROFE && numero < PRIMER_PROFE + MAX_PROFES;
+/** Lo que se ve en la ficha: "7" para un grupo, "P2" para un profe. */
+export const etiquetaGrupo = (numero) => (esProfe(numero) ? `P${numero - PRIMER_PROFE + 1}` : String(numero));

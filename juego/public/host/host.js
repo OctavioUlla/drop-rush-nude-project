@@ -1,8 +1,8 @@
 import { io } from 'socket.io-client';
-import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
+import { colorGrupo } from '../shared/grupos.js';
 import { Reloj } from '../shared/reloj.js';
 import { Guion } from '../shared/guion.js';
-import { FASES } from '../shared/constantes.js';
+import { FASES, esProfe, etiquetaGrupo } from '../shared/constantes.js';
 import { PODERES, VENTAJAS } from '../shared/poderes.js';
 import { Mapa } from './map.js';
 import { Sonido } from './sonido.js';
@@ -180,7 +180,7 @@ socket.on('game:reset', limpiarPartida);
 socket.on('question:start', (p) => {
   pregunta = p;
   ajustarPregunta();
-  posicionados = { index: p.index, count: 0, total: grupos.filter((g) => g.taken).length };
+  posicionados = { index: p.index, count: 0, total: grupos.filter((g) => g.taken && !g.teacher).length };
 });
 socket.on('question:positioned', (p) => (posicionados = p));
 socket.on('question:reveal', (r) => {
@@ -329,7 +329,8 @@ if (new URLSearchParams(location.search).has('debug')) $('debug').hidden = false
 
 // Liberar un grupo (por ejemplo, si su celular se quedó sin batería): en el lobby o en el ranking.
 function pedirLiberar(numero) {
-  if (confirm(`¿Liberar el grupo ${numero}? Otro celular del grupo lo va a poder retomar${guion ? ' conservando su distancia' : ''}.`)) {
+  const quien = esProfe(numero) ? `el lugar del profe ${etiquetaGrupo(numero)}? Otro celular` : `el grupo ${numero}? Otro celular del grupo`;
+  if (confirm(`¿Liberar ${quien} lo va a poder retomar${guion ? ' conservando su distancia' : ''}.`)) {
     socket.emit('host:release_group', { groupId: numero });
   }
 }
@@ -381,20 +382,21 @@ function moverRepaso(paso) {
 
 // ---------- Dibujo ----------
 function ficha(numero, tomado = false) {
-  const c = coloresGrupos[numero - 1];
+  const c = colorGrupo(numero);
   const s = document.createElement('span');
   s.className = 'np-ficha';
   s.style.setProperty('--g', c.color);
   s.style.setProperty('--gt', c.texto);
-  s.textContent = numero;
+  s.textContent = etiquetaGrupo(numero);
   s.dataset.grupo = numero;
   if (tomado) s.dataset.tomado = '';
   return s;
 }
 
+/** Grilla de los grupos de alumnos y, al final, los profes que ya entraron (fuera de concurso). */
 function dibujarGrupos() {
   $('grilla').replaceChildren(
-    ...grupos.map((g) => {
+    ...grupos.filter((g) => !g.teacher || g.taken).map((g) => {
       const f = ficha(g.number, g.taken);
       if (!g.taken) f.classList.add('np-ficha--libre');
       else if (!g.connected) f.classList.add('np-ficha--desconectada');
@@ -402,10 +404,12 @@ function dibujarGrupos() {
       return f;
     }),
   );
-  const listos = grupos.filter((g) => g.taken).length;
-  $('contador').textContent = `${listos} ${listos === 1 ? 'grupo listo' : 'grupos listos'}`;
-  $('btn-empezar').disabled = listos === 0;
-  $('btn-arrancar').disabled = listos === 0;
+  const listos = grupos.filter((g) => g.taken && !g.teacher).length;
+  const profes = grupos.filter((g) => g.taken && g.teacher).length;
+  $('contador').textContent =
+    `${listos} ${listos === 1 ? 'grupo listo' : 'grupos listos'}` + (profes ? ` · ${profes} ${profes === 1 ? 'profe' : 'profes'}` : '');
+  $('btn-empezar').disabled = listos + profes === 0;
+  $('btn-arrancar').disabled = listos + profes === 0;
 }
 
 function itemsTutorial(lista) {
@@ -443,7 +447,7 @@ function filaTop(numero) {
   const pista = document.createElement('div');
   pista.className = 'pista';
   const barra = document.createElement('div');
-  barra.style.setProperty('--g', coloresGrupos[numero - 1].color);
+  barra.style.setProperty('--g', colorGrupo(numero).color);
   pista.append(barra);
   const metros = document.createElement('span');
   metros.className = 'metros';
@@ -465,9 +469,18 @@ function ordenEstable(nuevas) {
   return [...nuevas].sort((a, b) => b[1] - a[1] || orden(a[0]) - orden(b[0]));
 }
 
+/**
+ * Puesto de cada fila: los grupos de alumnos se numeran entre ellos y los profes llevan 🎓 (corren fuera de concurso).
+ */
+function puestos() {
+  let n = 0;
+  return posiciones.map(([numero]) => (esProfe(numero) ? '🎓' : `${++n}.`));
+}
+
 /** Top 10 grande (con barras y cambios de puesto animados) y el resto en columnas compactas. */
 function dibujarPosiciones() {
   const top = posiciones.slice(0, EN_TOP);
+  const textos = puestos();
   const maximo = Math.max(1, top[0]?.[1] ?? 1);
   const enTop = new Set();
   top.forEach(([numero, distancia, , conectado], i) => {
@@ -475,9 +488,9 @@ function dibujarPosiciones() {
     enTop.add(numero);
     li.hidden = false;
     li.style.transform = `translateY(calc(var(--fila) * ${i}))`;
-    li.classList.toggle('primero', i === 0);
+    li.classList.toggle('primero', textos[i] === '1.');
     li.classList.toggle('desconectado', !conectado);
-    li.children[0].textContent = `${i + 1}.`;
+    li.children[0].textContent = textos[i];
     li.children[2].firstChild.style.width = `${(distancia / maximo) * 100}%`;
     li.children[3].textContent = `${distancia} m`;
   });
@@ -490,7 +503,7 @@ function dibujarPosiciones() {
       if (!conectado) li.classList.add('desconectado');
       const puesto = document.createElement('span');
       puesto.className = 'puesto';
-      puesto.textContent = `${EN_TOP + i + 1}.`;
+      puesto.textContent = textos[EN_TOP + i];
       const metros = document.createElement('span');
       metros.textContent = `${distancia} m`;
       li.append(puesto, ficha(numero, true), metros);
@@ -517,7 +530,7 @@ function actualizar() {
   }
   if (vista === 'repaso') return mostrarPantalla('pantalla-repaso');
   if (vista === 'debate') {
-    const otros = (final?.stats.length ?? 1) - 1;
+    const otros = (final?.stats.filter((s) => !s.teacher).length ?? 1) - 1;
     $('debate-pregunta').textContent =
       otros > 0 ? `¿Cómo se sintieron los ${otros} ${otros === 1 ? 'grupo que quedó' : 'grupos que quedaron'} sin sudadera?` : '¿Cómo se siente quedarse sin la sudadera?';
     const retoma = textoRetoma(otros);
@@ -651,7 +664,7 @@ function dibujarPregunta(f, t) {
   const estado = $('pregunta-estado');
   if (r) estado.innerHTML = `<b>${r.correctCount}</b> de ${r.total} grupos acertaron`;
   else if (respondiendo) {
-    const pos = posicionados?.index === p.index ? posicionados : { count: 0, total: grupos.filter((g) => g.taken).length };
+    const pos = posicionados?.index === p.index ? posicionados : { count: 0, total: grupos.filter((g) => g.taken && !g.teacher).length };
     estado.innerHTML = `<b>${pos.count}</b>/${pos.total} grupos posicionados · ${Math.ceil(restante / 1000)} s`;
   } else estado.textContent = 'Atravesando los arcos…';
 
@@ -661,7 +674,8 @@ function dibujarPregunta(f, t) {
 }
 
 function dibujarFinal() {
-  const ganador = final.stats[0];
+  // Los profes van al final de stats, fuera de concurso: el ganador es siempre un grupo de alumnos.
+  const ganador = final.stats.find((s) => !s.teacher);
   if (!ganador) {
     $('ganador-nombre').textContent = 'Nadie llegó a la tienda';
     $('ganador-ficha').replaceChildren();
@@ -695,11 +709,12 @@ function dibujarFinal() {
     }),
   );
   $('cola').replaceChildren(
-    ...final.stats.slice(1).map((s) => {
+    ...final.stats.filter((s) => s !== ganador).map((s) => {
       const li = document.createElement('li');
       const puesto = document.createElement('span');
       puesto.className = 'puesto';
-      puesto.textContent = `${s.position}.`;
+      puesto.textContent = s.teacher ? '🎓' : `${s.position}.`;
+      if (s.teacher) li.title = 'Profe · fuera de concurso';
       const datos = document.createElement('span');
       datos.textContent = `${s.correct}/${final.questions} · ${s.distance} m`;
       li.append(puesto, ficha(s.group), datos);
