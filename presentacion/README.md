@@ -81,7 +81,7 @@ En todas, la **cola de la tienda** (`np-cola`) corre al pie. Las plantillas plan
 ## Pendientes
 - [x] Herramienta: **HTML** con el design system (ver [PLANIFICACION.md](PLANIFICACION.md))
 - [x] Definir los contenidos de cada bloque (ver el [guion](GUION.md))
-- [ ] Juntar ejemplos reales de EGC y UGC (Instagram, TikTok, YouTube, podcast).
+- [x] Juntar ejemplos reales de EGC y UGC: 4 y 4 clips de TikTok en los feeds (ver [`media/`](media/README.md)).
 - [x] Elegir la campaña viral a analizar: *Out of Office* (agosto de 2025).
 - [ ] Relevar métricas públicas actualizadas y citar las fuentes (relevadas a octubre de 2026; falta citar las fuentes).
 - [ ] Ensayar con cronómetro: 15 min de exposición + 7 min de juego. Una diapositiva por minuto como máximo (≈ 15 diapositivas).

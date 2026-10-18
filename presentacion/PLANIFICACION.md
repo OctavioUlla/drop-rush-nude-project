@@ -318,7 +318,7 @@ Del lado del **celular** no hay una app aparte: las pantallas de espera, hype y 
 ## 8. Contenido pendiente (a cargo del equipo)
 
 - [ ] Texto e imágenes de cada bloque (ver [`README.md`](README.md))
-- [ ] 4 a 6 publicaciones **EGC** y 4 a 6 **UGC** para los feeds (descargar los clips y anotar cuenta y cifras)
+- [x] 4 publicaciones **EGC** y 4 **UGC** para los feeds (clips en [`media/`](media/README.md), con cuenta y vistas)
 - [ ] Campaña o publicación viral a analizar
 - [ ] Métricas públicas actualizadas, con sus fuentes
 - [ ] Pregunta definitiva de la votación y sus opciones
