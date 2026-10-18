@@ -3,7 +3,7 @@ import { grupos as coloresGrupos } from '../../../design-system/tokens.js';
 import { Reloj } from '../shared/reloj.js';
 import { Guion } from '../shared/guion.js';
 import { FASES } from '../shared/constantes.js';
-import { PODERES } from '../shared/poderes.js';
+import { PODERES, VENTAJAS } from '../shared/poderes.js';
 import { Mapa } from './map.js';
 import { Sonido } from './sonido.js';
 
@@ -37,7 +37,7 @@ let posicionados = null;
 let posiciones = [];
 let final = null;
 let repaso = [];
-let vista = 'auto'; // 'auto' (según el guion) | 'repaso' | 'debate'
+let vista = 'auto'; // 'auto' (según el guion) | 'tutorial' (antes de empezar) | 'repaso' | 'debate'
 let repasoIndice = 0;
 const mapa = new Mapa({ lienzo: $('mapa-lienzo'), falta: $('mapa-falta'), progreso: $('mapa-progreso') });
 const sonido = new Sonido(leerPreferenciaSonido() ?? true);
@@ -219,17 +219,44 @@ function mostrarPausa() {
 }
 
 // ---------- Controles ----------
-$('btn-empezar').addEventListener('click', () =>
-  socket.emit('host:start', {
-    cantidadPreguntas: Number($('cfg-preguntas').value),
-    duracionTramo: Number($('cfg-tramo').value),
-    tiempoPorDefecto: Number($('cfg-pregunta').value),
-    preguntasEnRepaso: Number($('cfg-repaso').value),
-    dificultadObstaculos: $('cfg-dificultad').value,
-    poderesActivos: $('cfg-poderes').checked,
-    emparejar: $('cfg-emparejar').checked,
-  }),
-);
+const ajustesElegidos = () => ({
+  cantidadPreguntas: Number($('cfg-preguntas').value),
+  duracionTramo: Number($('cfg-tramo').value),
+  tiempoPorDefecto: Number($('cfg-pregunta').value),
+  preguntasEnRepaso: Number($('cfg-repaso').value),
+  dificultadObstaculos: $('cfg-dificultad').value,
+  poderesActivos: $('cfg-poderes').checked,
+  emparejar: $('cfg-emparejar').checked,
+});
+
+// "Empezar el drop" muestra primero cómo se juega; "¡Arrancar!" recién ahí arranca la cuenta regresiva.
+$('btn-empezar').addEventListener('click', () => {
+  dibujarTutorial(ajustesElegidos());
+  vista = 'tutorial';
+  actualizar();
+});
+function arrancar() {
+  if (vista !== 'tutorial' || guion || !grupos.some((g) => g.taken)) return;
+  vista = 'auto';
+  socket.emit('host:start', ajustesElegidos());
+}
+function volverAlLobby() {
+  if (vista !== 'tutorial') return;
+  vista = 'auto';
+  actualizar();
+}
+$('btn-arrancar').addEventListener('click', arrancar);
+$('btn-tutorial-volver').addEventListener('click', volverAlLobby);
+document.addEventListener('keydown', (e) => {
+  if (vista !== 'tutorial' || e.repeat) return;
+  if (['ArrowRight', 'PageDown', 'Enter', ' '].includes(e.key)) {
+    e.preventDefault();
+    arrancar();
+  } else if (['ArrowLeft', 'PageUp', 'Escape'].includes(e.key)) {
+    e.preventDefault();
+    volverAlLobby();
+  }
+});
 
 // El navegador habilita el audio recién con un gesto: cualquier clic o tecla del presentador sirve.
 for (const evento of ['pointerdown', 'keydown']) document.addEventListener(evento, () => sonido.desbloquear());
@@ -360,6 +387,31 @@ function dibujarGrupos() {
   const listos = grupos.filter((g) => g.taken).length;
   $('contador').textContent = `${listos} ${listos === 1 ? 'grupo listo' : 'grupos listos'}`;
   $('btn-empezar').disabled = listos === 0;
+  $('btn-arrancar').disabled = listos === 0;
+}
+
+function itemsTutorial(lista) {
+  return Object.values(lista).map(({ icono, nombre, efecto }) => {
+    const li = document.createElement('li');
+    const b = document.createElement('b');
+    b.textContent = `${icono} ${nombre}`;
+    li.append(b, `: ${efecto.replace(/^[^:]+: /, '').replace(/^./, (c) => c.toLowerCase())}`);
+    return li;
+  });
+}
+
+/** Instrucciones según los ajustes que eligió el presentador (sin poderes, la tarjeta no aparece). */
+function dibujarTutorial(a) {
+  $('tutorial-ventajas').replaceChildren(...itemsTutorial(VENTAJAS));
+  $('tutorial-poderes').replaceChildren(...itemsTutorial(PODERES));
+  $('tutorial-poderes-paso').hidden = !a.poderesActivos;
+  const racha = sala?.settings?.rachaParaPoder;
+  $('tutorial-racha').textContent = `Con ${racha ? `${racha} aciertos seguidos` : 'aciertos seguidos'} ganás un poder. Se guarda uno a la vez y se usa con el botón del celular:`;
+  const preguntas = `${a.cantidadPreguntas} ${a.cantidadPreguntas === 1 ? 'pregunta' : 'preguntas'}`;
+  $('tutorial-resumen').textContent =
+    `${preguntas} · tramos de ${a.duracionTramo} s · ${a.tiempoPorDefecto} s para responder` +
+    (a.emparejar ? ' · los últimos corren un 10 % más rápido' : '') +
+    ' · gana solo el primero en llegar.';
 }
 
 const filas = new Map(); // número de grupo → <li> del top 10
@@ -441,7 +493,7 @@ function actualizar() {
   $('controles').hidden = !enCarrera;
 
   if (!guion) {
-    mostrarPantalla('pantalla-lobby');
+    mostrarPantalla(vista === 'tutorial' ? 'pantalla-tutorial' : 'pantalla-lobby');
     $('barra-fase').textContent = '';
     return;
   }

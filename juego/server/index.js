@@ -341,6 +341,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
       preguntasEnRepaso: c.preguntasEnRepaso,
       poderesActivos: c.poderesActivos,
       emparejar: c.emparejar,
+      rachaParaPoder: c.rachaParaPoder,
       sonido: c.sonido,
     };
   };
