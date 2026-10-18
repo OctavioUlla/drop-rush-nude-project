@@ -5,7 +5,7 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 - **Duración:** **22 minutos en total**: 15 de exposición + 7 del juego Drop Rush (la consigna pide entre 20 y 30).
 - **Consigna completa:** [`docs/caso-nude-project.pdf`](../docs/caso-nude-project.pdf) (sección *Tarea*).
 - **Estética:** [Design System](../design-system/README.md), el mismo que usa el juego.
-- **Visual:** lanzamiento de producto con una **sudadera 3D estilo *clay*** que protagoniza cada bloque (gira, cambia de color, se desarma en piezas con datos).
+- **Visual:** lanzamiento de producto en **un solo plano secuencia**: la cámara recorre una Nude House en miniatura estilo *clay* y la **sudadera 3D** viaja con ella por cada bloque (gira, cambia de color, se desarma en piezas con datos). Ver la [maqueta viva](../design-system/escena.html).
 - **Formato:** HTML interactivo, con hype colectivo de apertura, cola de la tienda como barra de progreso, votación en vivo y feeds de EGC vs. UGC. Ver la [planificación de la presentación](PLANIFICACION.md).
 - **Cierre interactivo:** el juego [Drop Rush](../juego/PLANIFICACION.md).
 

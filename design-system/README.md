@@ -1,8 +1,10 @@
 # 🎨 Design System · Nude Project
 
-Un solo lenguaje visual para la **presentación interactiva** del caso (HTML con una sudadera 3D estilo *clay*) y para el juego **Drop Rush**, construido a partir de la identidad real de Nude Project.
+Un solo lenguaje visual para la **presentación interactiva** del caso (un plano secuencia 3D por la Nude House en estilo *clay*, con la sudadera como protagonista) y para el juego **Drop Rush**, construido a partir de la identidad real de Nude Project.
 
-👉 Abrí [`index.html`](index.html) en el navegador para ver la guía visual completa: colores, tipografía, componentes, pantallas del juego, la escena 3D con sus colorways, diapositivas e interacciones de la presentación y el modo presentador.
+👉 Abrí [`index.html`](index.html) en el navegador para ver la guía visual completa: colores, tipografía, componentes, pantallas del juego, la escena 3D en vivo con sus estaciones y colorways, las interacciones de la presentación y el modo presentador.
+
+🎬 [`escena.html`](escena.html) es la **escena de la presentación funcionando** (Three.js): recorrela con ← →. Necesita servirse por HTTP, por ejemplo `npx serve .` desde la raíz del repositorio.
 
 ---
 
@@ -28,8 +30,9 @@ Un solo lenguaje visual para la **presentación interactiva** del caso (HTML con
 2. **Un acento por vez.** Mostaza, rosa, marino, bosque o ladrillo señalan *una sola cosa* por pantalla (el "QUEDA 1", un like, un error). En la presentación, **la sudadera es el acento**: si su colorway es rosa o mostaza, no se suma otro acento en la diapositiva.
 3. **Tipografía como imagen.** Títulos grandes, bold, interletra cerrada. Pocas palabras.
 4. **Aire.** Una idea por diapositiva. Márgenes generosos. El vacío también es marca.
-5. **Interfaz plana, escena con volumen.** La interfaz (botones, tarjetas, diapositivas, pantallas del celular) es recta y plana: sin esquinas redondeadas (salvo insignias tipo píldora), sin sombras ni degradados. El volumen vive **solo en el 3D**: en la presentación, la sudadera *clay* con luz de estudio, sombras suaves y grano (ver [3.1](#31-escena-3d-de-la-presentación)); en el juego, el mundo *low-poly* con su cielo degradado.
+5. **Interfaz plana, escena con volumen.** La interfaz (botones, tarjetas, diapositivas, pantallas del celular) es recta y plana: sin esquinas redondeadas (salvo insignias tipo píldora), sin sombras ni degradados. El volumen vive **solo en el 3D**: en la presentación, el plano secuencia *clay* con luz de cine, sombras suaves, polvo y grano (ver [3.1](#31-escena-3d-de-la-presentación-un-plano-secuencia)); en el juego, el mundo *low-poly* con su cielo degradado.
 6. **Legible en proyector.** Contraste alto (texto principal ≥ 7:1, números de grupo ≥ 4:1) y tamaños grandes: la presentación y el host se ven en un aula.
+7. **Calidad de lanzamiento.** La presentación tiene que verse como la web de una marca premium, no como diapositivas: nada aparece de golpe (todo entra con su curva), nada queda quieto del todo (la prenda flota, el polvo se mueve) y nunca hay un corte entre bloques.
 
 ---
 
@@ -62,7 +65,11 @@ Un solo lenguaje visual para la **presentación interactiva** del caso (HTML con
 | `presentacion-estudio-cacao-fondo` / `-piso` | `#2e1914` / `#3a201a` | Ciclorama del tema cacao. Es cacao profundo para que una sudadera cacao se separe del fondo. |
 | `presentacion-pedestal-crema` / `-cacao` | `#e9dccb` / `#573429` | Pedestal según el estudio. |
 | `presentacion-luz-principal`, `-relleno`, `-contorno`, `-ambiente` | `#fff1de`, `#f3e9dc`, `#ffffff`, `#e9d6c2` | Luces cálidas de estudio (tonos Nude House). |
-| `presentacion-sombra-contacto` | `#2e1914` | Sombra difusa bajo la prenda. |
+| `presentacion-sombra-contacto` | `#2e1914` | Sombra difusa bajo la prenda y los objetos. |
+| `presentacion-foco` / `-polvo` | `#ffe9c9` / `#fff1de` | Foco cenital con haz visible y las partículas de polvo dentro del haz. |
+| `presentacion-casa-pared` / `-piso` | `#6e4a40` / `#cf9f7a` | Paredes marrones y piso de madera de la Nude House y de la habitación. |
+| `presentacion-casa-carton` / `-planta` | `#c08a5e` / `#6f8a4a` | Cajas de envío de los primeros pedidos; plantas en oliva apagado. |
+| `presentacion-pantalla` | `#fffaf3` | Luz de las pantallas de los feeds y de la ventana. |
 
 ### Juego
 - **Mundo 3D:** asfalto `#5a4640`, vereda `#cfc3b6`, fachadas de Madrid en tonos tierra (`#efe2d0` → `#a8664a`), cielo de `#e9d6c2` a `#fff8ee`, niebla `#f3e9dc`, tienda cacao con cartel crema.
@@ -70,48 +77,57 @@ Un solo lenguaje visual para la **presentación interactiva** del caso (HTML con
 - **Elementos:** obstáculo alto = ladrillo, obstáculo bajo = mostaza, like = rosa. Cada tipo se reconoce por color *y* por silueta.
 - **40 grupos:** 10 tonos × 4 luminosidades, ordenados para que los primeros 10 grupos sean los más distintos entre sí. Cada color trae su color de texto (crema o cacao) con contraste ≥ 4:1 para el número.
 
-### 3.1 Escena 3D de la presentación
-La presentación es el **lanzamiento de un producto**: una sudadera 3D estilo *clay* está detrás de todas las diapositivas (ver la [dirección visual](../presentacion/PLANIFICACION.md#3-dirección-visual-la-sudadera-como-producto)). Sus valores están en `tokens.json → escena`:
+### 3.1 Escena 3D de la presentación: un plano secuencia
+La presentación es el **lanzamiento de un producto contado en una sola toma** (ver la [dirección visual](../presentacion/PLANIFICACION.md#3-dirección-visual-un-plano-secuencia-por-la-nude-house)). La cámara recorre una **Nude House en miniatura hecha en *clay*** y cada bloque es una **estación** del recorrido; la sudadera protagonista viaja con la cámara y nunca sale de cuadro. Referencias ([#23](https://github.com/OctavioUlla/drop-rush-nude-project/issues/23)): el viaje de cámara por un escenario 3D de [fighterready.com](https://fighterready.com/) y los productos 3D que flotan y giran entre tipografía gigante de [lajoya-foods.com](https://lajoya-foods.com/en).
 
-| Token | Valor | Para qué |
+**Maqueta viva:** [`escena.html`](escena.html) + [`escena/`](escena/) (`sudadera.js`, `mundo.js`, `escena.js`). Es la Fase 0 de la presentación: el mismo código pasa a `presentacion/escena/`.
+
+**Cuatro recursos que la hacen premium**
+
+| Recurso | Cómo se ve | Tokens |
 |---|---|---|
-| `material` | rugosidad `0.92`, metálico `0`, brillo de tela `0.55` | Algodón grueso mate (`MeshPhysicalMaterial` con `sheen`). |
-| `luz` | principal `2.4`, relleno `0.6`, contorno `1.4`, ambiente `0.5` | Intensidades; los colores salen de `color.presentacion`. |
-| `sombra-contacto` | opacidad `0.35`, escala `1.6` | Plano con degradado bajo la prenda (sin mapas de sombras). |
-| `grano` | opacidad `0.05` | Grano de película sobre todo (`np-grano`). |
-| `render` | escala máxima `1.5`, `60` fps | Límite de resolución interna. |
-| `layout` | `5` / `7` columnas | Texto a la izquierda / sudadera a la derecha (`np-diapo__editorial`). |
+| **Producto héroe** | Una sola sudadera protagonista, siempre en movimiento: flota, se balancea mostrando el frente y los tres cuartos (nunca queda de espaldas) y en cada viaje da **una vuelta completa** mientras cambia de colorway. En la portada la rodean sudaderas en los neutros de la marca, flotando y girando. | `escena.producto` |
+| **Tipografía sándwich** | Una palabra gigante (`np-gigante`, 22 cqw) va **detrás** de la prenda y el título va **delante**: el producto queda entre dos capas de texto. Las letras entran de a una. | `--np-texto-gigante` |
+| **Luz de cine** | Luz cálida de estudio con **sombras suaves reales** (una sola luz con sombra, que acompaña a la estación activa), foco cenital con **haz visible y polvo**, niebla del color del fondo, **viñeta** y **grano**. Mapeo de tonos neutro, para que los colores de marca no se laven. | `escena.luz`, `sombra`, `niebla`, `polvo`, `vineta`, `grano` |
+| **Viaje de cámara** | Entre bloques, un **travelling con grúa**: la cámara sube y retrocede a mitad de camino y vuelve a bajar en la estación siguiente (1,8 s, `curva-viaje`). El fondo y la niebla funden entre crema y cacao. El texto sale hacia arriba al arrancar y el nuevo entra cuando la cámara ya está llegando. | `escena.camara`, `movimiento.viaje` |
 
-**Colorways por bloque.** Un color por bloque, siempre del design system (`escena.colorways`, también como `--np-colorway-0` … `--np-colorway-8`):
+**Estaciones.** En orden (`escena.recorrido`), separadas 18 m sobre el eje X. Un colorway por bloque, siempre del design system (`escena.colorways`, también como `--np-colorway-0` … `--np-colorway-8`):
 
-| Bloque | Colorway | Estudio |
-|---|---|---|
-| 0. Portada + hype colectivo | cacao | cacao |
-| 1. La historia | crema | crema |
-| 2. EGC vs. UGC | arena | crema |
-| 3. Marketing viral | rosa | crema |
-| 4. Marketing experiencial | bosque | crema |
-| 5. Métricas | marino | crema |
-| 6. Objetivo comunicacional | cacao | crema |
-| 7. Desafíos | mostaza | crema |
-| 8. Drop Rush | cacao | cacao |
+| # | Estación | Qué hay | Colorway | Estudio | Encuadre |
+|---|---|---|---|---|---|
+| 0 | Portada + hype | Pedestal bajo un foco, sudaderas flotando y *Drop 001* gigante detrás | cacao | cacao | centro |
+| 1 | La historia | La habitación: cama, ventana, cajas de envío; la sudadera sale de una caja abierta | crema | crema | editorial |
+| 2 | EGC vs. UGC | Dos celulares gigantes con los feeds; la prenda gira hacia el que se comenta | arena | crema | centro |
+| 3 | Marketing viral | Pared de celulares con el mismo video y corazones *clay* orbitando | rosa | crema | editorial |
+| 4 | Marketing experiencial | Salón de la Nude House: pared de acento marrón, sillón, perchero, planta, vinilos, lámpara; la prenda en una percha | bosque | crema | editorial |
+| 5 | Métricas | Vista desarmada con etiquetas flotantes; detrás, barras hechas con pilas de sudaderas dobladas | marino | crema | editorial |
+| 6 | Objetivo comunicacional | Primer plano del logo bordado; la frase de Bruno en la columna libre | cacao | crema | macro |
+| 7 | Desafíos | Balanza: una sola sudadera contra una pila. Se inclina con la votación | mostaza | crema | editorial |
+| 8 | Drop Rush | La vidriera de la tienda en la calle, con foco y cartel; *QUEDA 1* → juego | cacao | cacao | editorial |
+
+**Encuadres.** *Editorial*: texto en los 5/12 de la izquierda (`np-diapo__editorial`), la sudadera en los 7/12 de la derecha. *Centro*: la prenda al medio, el texto arriba o abajo. *Macro*: la cámara a 3 m del pecho, el logo a la derecha.
 
 Reglas de la escena:
-- **Nada de texto sobre la prenda.** El texto va en su columna de 5/12; la sudadera ocupa los 7/12. En las diapositivas de cita o de cifra gigante, la sudadera pasa al fondo, desenfocada.
-- **La única excepción son las etiquetas flotantes** de la vista desarmada (`np-etiqueta-3d`): fondo crema y borde cacao, siempre legibles sobre cualquier colorway.
+- **Nada de texto sobre la prenda.** El texto va en su columna; la única excepción son las **etiquetas flotantes** de la vista desarmada (`np-etiqueta-3d`), que se proyectan desde cada pieza en cada cuadro.
+- **Lo que queda detrás del texto es claro y de bajo contraste** (camas, sillones y paredes en crema y arena); los objetos oscuros van del lado de la prenda.
+- **Nunca un corte.** Si se pide otra estación durante un viaje, se encola; la cámara no salta.
 - **Formas redondeadas solo en el 3D.** El *clay* es redondo; la interfaz que lo rodea sigue recta.
+- **Respaldo:** sin WebGL, cada estación se reemplaza por su imagen pre-renderizada (`--respaldo`), la misma que se usa para el PDF.
 
 ### 3.2 Movimiento
 | Token | Valor | Uso |
 |---|---|---|
 | `rapido` / `base` / `lento` | 120 / 220 / 420 ms | Interfaz: botones, barras, destellos. |
-| `escena` + `curva-escena` | 800 ms, `cubic-bezier(.65,0,.35,1)` | Transición continua de cámara y prenda entre bloques, la cola y los feeds. |
+| `viaje` + `curva-viaje` | 1800 ms, `cubic-bezier(.76,0,.24,1)` | Viaje de cámara entre estaciones (arranque y llegada suaves, mitad rápida). Si se saltan varias estaciones dura hasta 1,7×. |
+| `escena` + `curva-escena` | 800 ms, `cubic-bezier(.65,0,.35,1)` | Movimientos dentro de una estación (la prenda gira hacia un feed, la balanza), la cola y los feeds. |
+| `salida-texto` | 380 ms | El texto de la estación que se va sube y desaparece cuando arranca la cámara. |
+| `cargador` | 1400 ms | Cuenta del 0 al 100 % del cargador antes de abrir el telón. |
 | `texto` + `escalonado` | 700 ms, 90 ms por línea | Títulos que suben desde una máscara (`np-revelar__linea`). |
 | `cifra` | 1200 ms | Cifras que cuentan desde 0. |
 | `latido` | 900 ms | Cartel *QUEDA 1* antes del juego y botón HYPE al tocarlo (`np-latido`). |
 | `cinta` | 24 s | Vuelta completa de la cinta de los separadores (`np-cinta`). |
 
-En JavaScript, `segundos('escena')` devuelve `0.8`, listo para GSAP. Con `prefers-reduced-motion`, las animaciones pasan a fundidos cortos y la cinta y el latido se detienen.
+En JavaScript, `segundos('viaje')` devuelve `1.8`, listo para GSAP; `curva()` de `escena/escena.js` convierte cualquier `cubic-bezier` en una función, así cámara y texto usan la misma curva. Con `prefers-reduced-motion`, los viajes pasan a cortes y la cinta y el latido se detienen.
 
 ---
 
@@ -120,6 +136,7 @@ En JavaScript, `segundos('escena')` devuelve `0.8`, listo para GSAP. Con `prefer
 | Rol | Familia | Peso | Interletra |
 |---|---|---|---|
 | Logo | Inter Tight | 700 | −0.055em |
+| Gigante (detrás del producto) | Inter Tight | 800 | −0.065em, 22 cqw |
 | Display / títulos | Inter Tight | 700–800 | −0.04em / −0.02em |
 | Texto | Inter | 400–500 | 0 |
 | Etiquetas | Inter | 500, MAYÚSCULAS | +0.08em |
@@ -145,8 +162,9 @@ En JavaScript, `segundos('escena')` devuelve `0.8`, listo para GSAP. Con `prefer
 | [`build.mjs`](build.mjs) | Genera `tokens.css` y `tokens.js` desde `tokens.json`: `node design-system/build.mjs` |
 | [`tokens.css`](tokens.css) | *(generado)* Variables CSS `--np-*`, `@font-face` y los temas crema y cacao. |
 | [`tokens.js`](tokens.js) | *(generado)* Módulo ES con los mismos valores, más `colores3d` (números `0x482922` para Three.js), `colorDeGrupo(n)`, `colorwayDeBloque(n)` y `segundos(nombre)`. |
-| [`components.css`](components.css) | Componentes con prefijo `np-`: logo, tipografía, botones, insignias, cartel, sello, tarjetas, datos, fichas de grupo, opciones A/B/C, temporizador, HUD, ranking, diapositivas 16:9 y las piezas de la presentación (escena, texto animado, cinta, grano, cola, votación, feeds, hype, etiquetas 3D y modo presentador). |
+| [`components.css`](components.css) | Componentes con prefijo `np-`: logo, tipografía, botones, insignias, cartel, sello, tarjetas, datos, fichas de grupo, opciones A/B/C, temporizador, HUD, ranking, diapositivas 16:9 y las piezas de la presentación (escenario, tipografía gigante, capas de texto, interfaz, cargador, viñeta, texto animado, cinta, grano, cola, votación, feeds, hype, etiquetas 3D y modo presentador). |
 | [`index.html`](index.html) | Guía visual con todo lo anterior en uso. |
+| [`escena.html`](escena.html), [`escena/`](escena/) | Maqueta viva del plano secuencia: sudadera *clay* por piezas (`sudadera.js`), las 9 estaciones (`mundo.js`) y el motor de luz y cámara (`escena.js`). |
 | [`fonts/`](fonts/) | Inter e Inter Tight (woff2 variables, subconjunto latino) + licencia. |
 
 > ✏️ Para cambiar un color o una medida: editar `tokens.json` y correr `node design-system/build.mjs`. Nunca editar `tokens.css` ni `tokens.js` a mano.
@@ -183,18 +201,18 @@ Sin WebGL, poner `data-np-sin-webgl` en `<html>`: cada `np-diapo--escena` muestr
 
 ### En la escena 3D de la presentación (Three.js)
 ```js
-import { colores3d, colorwayDeBloque, tokens, segundos } from '../../design-system/tokens.js';
+import { iniciar } from '../../design-system/escena/escena.js';
 
-const { escena } = tokens;
-const tela = new THREE.MeshPhysicalMaterial({
-  color: colorwayDeBloque(3).color3d,           // rosa
-  roughness: escena.material.rugosidad,
-  sheen: escena.material['brillo-tela'],
-  sheenRoughness: escena.material['brillo-tela-rugosidad'],
+const motor = iniciar({
+  lienzo: document.querySelector('canvas'),
+  escenario: document.querySelector('.np-escenario'),
+  eventos: { salir(desde) {}, entrar(i) {}, llegar(i) {} }, // el texto sale, entra y aparecen las etiquetas
 });
-const luz = new THREE.DirectionalLight(colores3d.presentacion['luz-principal'], escena.luz.principal);
-gsap.to(camara.position, { ...destino, duration: segundos('escena') });
+motor.siguiente();                           // viaje a la estación siguiente
+motor.estaciones[7].valor = 0.7;             // inclina la balanza con el resultado de la votación
+const { x, y } = motor.proyectar('capucha'); // % en pantalla, para una np-etiqueta-3d
 ```
+La sudadera sola: `crearSudadera(colorwayDeBloque(3).color3d)` de `escena/sudadera.js` devuelve sus piezas, `ponerColor()` (acepta un fundido cuadro a cuadro) y `desarmar(t)`.
 
 ### En el juego (JavaScript / Three.js)
 ```js
@@ -221,6 +239,11 @@ const { color3d } = colorDeGrupo(numeroDeGrupo); // tinte del corredor
 ### Componentes de la presentación
 | Clase | Para qué |
 |---|---|
+| `np-escenario` | Escenario 16:9 a pantalla completa con todas las capas; `--fondo-escena` lo actualiza el motor |
+| `np-gigantes`, `np-gigante` (+ `--activa`, `--sale`) | Tipografía gigante detrás del canvas; cada letra en un `<span style="--i: n">` |
+| `np-capas`, `np-capa` (+ `--centro`, `--abajo`, `--sale`, `__entra`) | Texto de cada estación: sale hacia arriba y entra cuando llega la cámara |
+| `np-vineta`, `np-interfaz` (+ `__menu`, `__contador`, `__barra`, `__pista`, `__drop`), `np-cargador` (+ `--listo`) | Viñeta, interfaz con el índice de bloques y el avance, y cargador con telón |
+| `np-etiquetas` (+ `--visibles`) | Contenedor de las `np-etiqueta-3d` de la vista desarmada |
 | `np-diapo--escena`, `np-diapo--activa` | Diapositiva transparente sobre el canvas 3D (con `--respaldo` para PDF y sin WebGL) / diapositiva actual, dispara las animaciones |
 | `np-diapo__editorial` (+ `__texto`, `__hueco`) | Layout 5/12 texto + 7/12 sudadera |
 | `np-revelar__linea`, `np-cifra` | Títulos que suben línea por línea / cifras con ancho fijo para contar desde 0 |

@@ -61,7 +61,14 @@ export const colores = {
     "luz-relleno": "#f3e9dc",
     "luz-contorno": "#ffffff",
     "luz-ambiente": "#e9d6c2",
-    "sombra-contacto": "#2e1914"
+    "sombra-contacto": "#2e1914",
+    "foco": "#ffe9c9",
+    "polvo": "#fff1de",
+    "casa-pared": "#6e4a40",
+    "casa-piso": "#cf9f7a",
+    "casa-carton": "#c08a5e",
+    "casa-planta": "#6f8a4a",
+    "pantalla": "#fffaf3"
   }
 };
 
@@ -128,7 +135,14 @@ export const colores3d = {
     "luz-relleno": 15985116,
     "luz-contorno": 16777215,
     "luz-ambiente": 15324866,
-    "sombra-contacto": 3021076
+    "sombra-contacto": 3021076,
+    "foco": 16771529,
+    "polvo": 16773598,
+    "casa-pared": 7227968,
+    "casa-piso": 13606778,
+    "casa-carton": 12618334,
+    "casa-planta": 7309898,
+    "pantalla": 16775923
   }
 };
 
@@ -168,7 +182,8 @@ export const tokens = {
       "3xl": "2.75rem",
       "4xl": "3.75rem",
       "5xl": "5rem",
-      "6xl": "7rem"
+      "6xl": "7rem",
+      "gigante": "22cqw"
     },
     "interletra": {
       "logo": "-0.055em",
@@ -222,10 +237,14 @@ export const tokens = {
     "cifra": "1200ms",
     "latido": "900ms",
     "cinta": "24s",
-    "curva-escena": "cubic-bezier(.65,0,.35,1)"
+    "curva-escena": "cubic-bezier(.65,0,.35,1)",
+    "viaje": "1800ms",
+    "curva-viaje": "cubic-bezier(.76,0,.24,1)",
+    "salida-texto": "380ms",
+    "cargador": "1400ms"
   },
   "escena": {
-    "$descripcion": "Escena 3D de la presentación (sudadera clay). Valores para Three.js: intensidades de luz, material y render. Los colores salen de color.presentacion y los colorways apuntan a tokens de color.",
+    "$descripcion": "Escena 3D de la presentación: un solo plano secuencia por la Nude House en clay, con la sudadera como protagonista. Valores para Three.js; los colores salen de color.presentacion y los colorways apuntan a tokens de color.",
     "material": {
       "rugosidad": 0.92,
       "metalico": 0,
@@ -233,17 +252,19 @@ export const tokens = {
       "brillo-tela-rugosidad": 0.8
     },
     "luz": {
-      "principal": 2.4,
-      "relleno": 0.6,
-      "contorno": 1.4,
-      "ambiente": 0.5
+      "principal": 2.6,
+      "relleno": 0.5,
+      "contorno": 1.6,
+      "ambiente": 0.35,
+      "foco": 38,
+      "entorno": 0.35,
+      "exposicion": 1
     },
     "sombra-contacto": {
-      "opacidad": 0.35,
-      "escala": 1.6
+      "opacidad": 0.35
     },
     "grano": {
-      "opacidad": 0.05
+      "opacidad": 0.06
     },
     "render": {
       "escala-maxima": 1.5,
@@ -308,6 +329,55 @@ export const tokens = {
         "color": "marca.cacao",
         "estudio": "cacao"
       }
-    ]
+    ],
+    "sombra": {
+      "$descripcion": "Una sola luz con sombra suave, que acompaña a la estación activa (barato y con contacto creíble).",
+      "mapa": 2048,
+      "radio": 7,
+      "area": 7
+    },
+    "niebla": {
+      "cerca": 14,
+      "lejos": 34
+    },
+    "polvo": {
+      "cantidad": 420,
+      "opacidad": 0.55,
+      "tamano": 0.035
+    },
+    "vineta": {
+      "opacidad": 0.38
+    },
+    "camara": {
+      "campo": 30,
+      "distancia": 8.5,
+      "altura": 1.7,
+      "elevacion-viaje": 2.4,
+      "retroceso-viaje": 4,
+      "paralaje": 0.35
+    },
+    "producto": {
+      "$descripcion": "La sudadera nunca está quieta: flota, se balancea mostrando el frente y los tres cuartos, y en cada viaje da una vuelta completa.",
+      "flotar-amplitud": 0.06,
+      "flotar-periodo": "4s",
+      "balanceo-amplitud": 0.6,
+      "balanceo-velocidad": 0.25,
+      "vueltas-viaje": 1
+    },
+    "recorrido": {
+      "$descripcion": "Estaciones del plano secuencia, en orden. Cada bloque de la presentación es una estación; el motor viaja de una a otra sin cortes.",
+      "separacion": 18,
+      "estaciones": [
+        "portada",
+        "historia",
+        "egc-ugc",
+        "viral",
+        "experiencial",
+        "metricas",
+        "objetivo",
+        "desafios",
+        "drop-rush"
+      ]
+    }
   }
 };

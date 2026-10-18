@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escena · Nude Project</title>
+  <link rel="stylesheet" href="./tokens.css">
+  <link rel="stylesheet" href="./components.css">
+  <!-- Maqueta viva de la dirección visual. La presentación real guarda three.js en presentacion/vendor/ para funcionar sin internet. -->
+  <script type="importmap">
+    { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.min.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+    } }
+  </script>
+  <style>
+    html, body { height: 100%; margin: 0; background: var(--np-marca-cacao-profundo); overflow: hidden; }
+    body { display: grid; place-items: center; }
+    .np-escenario { width: min(100vw, 100vh * 16 / 9); }
+  </style>
+</head>
+<body>
+<main class="np-escenario" id="escenario" data-np-tema="cacao" aria-roledescription="presentación" aria-label="Escena de la presentación · Nude Project">
+
+  <div class="np-gigantes" aria-hidden="true">
+    <div class="np-gigante" data-estacion="0">Drop 001</div>
+  </div>
+
+  <canvas id="lienzo"></canvas>
+  <div class="np-vineta"></div>
+
+  <div class="np-capas">
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-np-tema="cacao">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">Caso de estudio · Comercialización</span>
+        <h1 class="np-titulo np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Comunidad, comunicación</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>y autenticidad.</span></span>
+        </h1>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena">
+      <div class="np-diapo__texto" style="margin-top: 6cqw">
+        <span class="np-etiqueta np-capa__entra">01 — La historia</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>600 €,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>una habitación</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>y un drop.</span></span>
+        </h2>
+        <p class="np-capa__entra">De vender desde el cuarto a facturar más de 25 M€.</p>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena np-capa--centro">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">02 — EGC vs. UGC</span>
+        <h2 class="np-titulo np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>¿Quién cuenta la historia?</span></span>
+        </h2>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena">
+      <div class="np-diapo__texto" style="margin-top: 6cqw">
+        <span class="np-etiqueta np-capa__entra">03 — Marketing viral</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Un video,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>12 M</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>de vistas.</span></span>
+        </h2>
+        <p class="np-capa__entra">Tono cercano, sin guion, en el momento justo.</p>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena">
+      <div class="np-diapo__texto" style="margin-top: 6cqw">
+        <span class="np-etiqueta np-capa__entra">04 — Marketing experiencial</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Una casa,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>no una</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>tienda.</span></span>
+        </h2>
+        <p class="np-capa__entra">Nude House, Madrid: salón, sala de lectura y sala de juegos.</p>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena">
+      <div class="np-diapo__texto" style="margin-top: 6cqw">
+        <span class="np-etiqueta np-capa__entra">05 — Métricas</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Los números,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>pieza por</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>pieza.</span></span>
+        </h2>
+        <p class="np-capa__entra">Cifras de ejemplo: se cargan con las fuentes públicas.</p>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo">
+      <div class="np-diapo__texto" style="max-width: 44cqw">
+        <span class="np-etiqueta np-capa__entra">06 — Objetivo comunicacional</span>
+        <p class="np-cita np-revelar" style="max-width: none; color: var(--np-tinta)">
+          <span class="np-revelar__linea" style="--i: 0"><span>El mundo no necesita</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>más sudaderas, pero la gente</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>sí necesita pertenecer a algo.</span></span>
+        </p>
+        <span class="np-etiqueta np-capa__entra">Bruno Casanovas · Cofundador</span>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena">
+      <div class="np-diapo__texto" style="margin-top: 6cqw">
+        <span class="np-etiqueta np-capa__entra">07 — Desafíos</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Exclusividad</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>vs. acceso.</span></span>
+        </h2>
+        <p class="np-capa__entra">La balanza se inclina con lo que votó la clase.</p>
+      </div>
+    </section>
+    <section class="np-capa np-diapo np-diapo--escena" data-np-tema="cacao">
+      <div class="np-diapo__texto" style="margin-top: 6cqw; align-items: flex-start">
+        <span class="np-etiqueta np-capa__entra">08 — Drop Rush</span>
+        <span class="np-cartel np-latido np-capa__entra">Queda 1</span>
+        <h2 class="np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span class="np-logo-juego">Drop <span>Rush</span></span></span>
+        </h2>
+        <p class="np-capa__entra">Escaneá el QR: un celular por grupo. Gana uno solo.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="np-etiquetas" aria-hidden="true">
+    <div class="np-etiqueta-3d" data-pieza="capucha" style="--i: 0"><span class="np-etiqueta-3d__valor">1,2 M</span><span class="np-etiqueta-3d__texto">Seguidores en Instagram</span></div>
+    <div class="np-etiqueta-3d" data-pieza="mangaDerecha" style="--i: 1"><span class="np-etiqueta-3d__valor">8,4 %</span><span class="np-etiqueta-3d__texto">Engagement</span></div>
+    <div class="np-etiqueta-3d" data-pieza="bolsillo" style="--i: 2"><span class="np-etiqueta-3d__valor">+25 M€</span><span class="np-etiqueta-3d__texto">Facturación</span></div>
+  </div>
+
+  <div class="np-interfaz">
+    <div class="np-interfaz__arriba">
+      <span class="np-logo">Nude<sup>®</sup>Project</span>
+      <ol class="np-interfaz__menu" id="menu"></ol>
+      <span class="np-interfaz__drop">Drop 001 · 2026</span>
+    </div>
+    <div class="np-interfaz__abajo">
+      <div class="np-interfaz__contador"><b id="numero">00</b><span>/ 08</span><span class="np-interfaz__barra" id="barra"></span></div>
+      <span class="np-interfaz__pista">← → para recorrer</span>
+      <div class="np-cola" id="cola" style="--avance: 0">
+        <div class="np-cola__fila"><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona np-cola__persona--nosotros"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span></div>
+        <span class="np-cola__bloque" id="bloque">00</span>
+        <div class="np-cola__puerta" id="puerta"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="np-grano"></div>
+
+  <div class="np-cargador" id="cargador">
+    <span class="np-logo">Nude<sup>®</sup>Project</span>
+    <div class="np-cargador__linea" id="carga"></div>
+    <div class="np-cargador__estado"><span>Preparando el drop</span><span id="porcentaje">0 %</span></div>
+    <p class="np-cargador__aviso">La escena usa módulos de JavaScript: abrila con un servidor local (por ejemplo <code>npx serve .</code> desde la raíz del repositorio) y con internet para bajar three.js.</p>
+  </div>
+</main>
+
+<script>
+  // Si los módulos no cargan (abierta con file:// o sin internet), avisar en vez de quedar en el cargador.
+  setTimeout(() => { if (!window.escenaLista) document.getElementById('cargador').classList.add('np-cargador--sin-servidor'); }, 5000);
+</script>
+<script type="module">
+  import { iniciar } from './escena/escena.js';
+  import { tokens } from './tokens.js';
+
+  const $ = (s, el = document) => el.querySelector(s);
+  const escenario = $('#escenario');
+  const capas = [...document.querySelectorAll('.np-capa')];
+  const gigantes = [...document.querySelectorAll('.np-gigante')];
+  const etiquetas = $('.np-etiquetas');
+  const nombres = ['Portada', 'Historia', 'EGC / UGC', 'Viral', 'Nude House', 'Métricas', 'Objetivo', 'Desafíos', 'Drop Rush'];
+  const dosDigitos = (n) => String(n).padStart(2, '0');
+
+  // Letras de la tipografía gigante, para que entren una por una.
+  for (const g of gigantes) g.innerHTML = [...g.textContent].map((c, i) => `<span style="--i: ${i}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+
+  let motor;
+  try {
+    motor = iniciar({ lienzo: $('#lienzo'), escenario, eventos: { salir, entrar, llegar } });
+  } catch (error) {
+    document.documentElement.setAttribute('data-np-sin-webgl', '');
+    console.error(error);
+  }
+  window.escenaLista = true;
+
+  $('#menu').innerHTML = nombres.map((n, i) => `<li><button data-i="${i}"><b>${dosDigitos(i)}</b>${n}</button></li>`).join('');
+  $('#menu').addEventListener('click', (ev) => { const b = ev.target.closest('button'); if (b) motor.ir(Number(b.dataset.i)); });
+
+  function salir(desde) {
+    capas[desde].classList.remove('np-diapo--activa');
+    capas[desde].classList.add('np-capa--sale');
+    gigantes.forEach((g) => { if (g.classList.contains('np-gigante--activa')) g.classList.replace('np-gigante--activa', 'np-gigante--sale'); });
+    etiquetas.classList.remove('np-etiquetas--visibles');
+    setTimeout(() => capas[desde].classList.remove('np-capa--sale'), Number.parseFloat(tokens.movimiento['salida-texto']) + 200);
+  }
+  function entrar(i) {
+    const tema = capas[i].dataset.npTema === 'cacao' ? 'cacao' : 'crema';
+    escenario.setAttribute('data-np-tema', tema);
+    capas.forEach((c, k) => c.classList.toggle('np-diapo--activa', k === i));
+    gigantes.forEach((g) => { g.classList.remove('np-gigante--sale'); g.classList.toggle('np-gigante--activa', Number(g.dataset.estacion) === i); });
+    $('#numero').textContent = dosDigitos(i);
+    $('#bloque').textContent = dosDigitos(i);
+    $('#barra').style.setProperty('--avance', i / (nombres.length - 1));
+    $('#cola').style.setProperty('--avance', i / (nombres.length - 1));
+    $('#puerta').classList.toggle('np-cola__puerta--abierta', i === nombres.length - 1);
+    document.querySelectorAll('#menu button').forEach((b, k) => b.toggleAttribute('aria-current', k === i));
+  }
+  function llegar(i) {
+    etiquetas.classList.toggle('np-etiquetas--visibles', motor.estaciones[i].desarmar === true);
+    history.replaceState(null, '', `#${i}`);
+  }
+
+  // Etiquetas de la vista desarmada: se proyectan desde cada pieza en cada cuadro.
+  const fijar = () => {
+    if (etiquetas.classList.contains('np-etiquetas--visibles')) {
+      for (const el of etiquetas.children) {
+        const { x, y } = motor.proyectar(el.dataset.pieza);
+        el.style.setProperty('--x', `${x}%`);
+        el.style.setProperty('--y', `${y}%`);
+      }
+    }
+    requestAnimationFrame(fijar);
+  };
+  if (motor) requestAnimationFrame(fijar);
+
+  // Teclado (también sirve con un control de diapositivas), rueda del mouse y deslizar.
+  addEventListener('keydown', (ev) => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(ev.key)) { ev.preventDefault(); motor.siguiente(); }
+    if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(ev.key)) { ev.preventDefault(); motor.anterior(); }
+    if (ev.key === 'Home') motor.ir(0);
+    if (ev.key === 'End') motor.ir(nombres.length - 1);
+  });
+  // La rueda recorre la escena solo a pantalla completa: dentro de la guía (iframe) tiene que seguir bajando la página.
+  let rueda = 0, ruedaHasta = 0;
+  if (window.top === window) addEventListener('wheel', (ev) => {
+    if (performance.now() < ruedaHasta) return;
+    rueda += ev.deltaY;
+    if (Math.abs(rueda) > 80) { (rueda > 0 ? motor.siguiente : motor.anterior)(); rueda = 0; ruedaHasta = performance.now() + 900; }
+  }, { passive: true });
+  let x0 = null;
+  escenario.addEventListener('pointerdown', (ev) => { x0 = ev.clientX; });
+  escenario.addEventListener('pointerup', (ev) => {
+    if (x0 !== null && Math.abs(ev.clientX - x0) > 50) (ev.clientX < x0 ? motor.siguiente : motor.anterior)();
+    x0 = null;
+  });
+
+  // Cargador: cuenta hasta 100 mientras se compilan los shaders y cargan las fuentes; después se abre el telón.
+  const inicial = Math.max(0, Math.min(nombres.length - 1, Number.parseInt(location.hash.slice(1), 10) || 0));
+  if (motor && inicial) motor.saltar(inicial);
+  const durCarga = Number.parseFloat(tokens.movimiento.cargador);
+  const t0 = performance.now();
+  await document.fonts.ready;
+  const contar = (ahora) => {
+    const p = Math.min((ahora - t0) / durCarga, 1);
+    const suave = 1 - (1 - p) ** 3;
+    $('#carga').style.setProperty('--p', suave);
+    $('#porcentaje').textContent = `${Math.round(suave * 100)} %`;
+    if (p < 1) return requestAnimationFrame(contar);
+    $('#cargador').classList.add('np-cargador--listo');
+    entrar(inicial);
+    setTimeout(() => { motor?.arrancar(); llegar(inicial); }, 350);
+  };
+  requestAnimationFrame(contar);
+</script>
+</body>
+</html>
