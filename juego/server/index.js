@@ -373,6 +373,13 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     res.redirect(301, `${req.path}/${consulta}`);
   });
 
+  // La presentación (PLANIFICACION de la presentación, sección 6.1) y el design system que usa se sirven tal cual,
+  // sin compilar: son módulos ES con three.js guardado en presentacion/vendor/.
+  if (archivos === 'auto') {
+    app.use('/presentacion', express.static(resolve(RAIZ, '../presentacion'), { maxAge: 0 }));
+    app.use('/design-system', express.static(resolve(RAIZ, '../design-system'), { maxAge: 0 }));
+  }
+
   // `--produccion` en vez de NODE_ENV=production: así `npm start` anda igual en Windows.
   const produccion = process.env.NODE_ENV === 'production' || process.argv.includes('--produccion');
   let vite = null;
@@ -458,6 +465,7 @@ if (esPrincipal(import.meta.url)) {
   console.log(`\n  Drop Rush en marcha`);
   console.log(`  Celular:   http://localhost:${servidor.puerto}/play/`);
   console.log(`  Proyector: http://localhost:${servidor.puerto}/host/  (crea la sala y muestra el código y el QR)`);
+  console.log(`  Presentación: http://localhost:${servidor.puerto}/presentacion/  (P abre el modo presentador)`);
   for (const ip of direccionesLocales()) console.log(`  En la red: http://${ip}:${servidor.puerto}/play/`);
   console.log('');
 }

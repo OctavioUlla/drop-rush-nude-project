@@ -240,6 +240,18 @@
   --np-invertido-tinta: var(--np-marca-crema);
 }
 
+/* Tema crema explícito: para volver a crema dentro de algo en cacao (miniaturas del modo presentador) */
+[data-np-tema="crema"] {
+  --np-fondo: var(--np-marca-crema);
+  --np-fondo-alterno: var(--np-marca-arena);
+  --np-superficie: var(--np-marca-blanco);
+  --np-tinta: var(--np-marca-cacao);
+  --np-tinta-suave: var(--np-marca-cacao-suave);
+  --np-linea: var(--np-marca-piedra);
+  --np-invertido-fondo: var(--np-marca-cacao);
+  --np-invertido-tinta: var(--np-marca-crema);
+}
+
 /* Tema cacao: portadas, separadores de sección y pantalla del host */
 [data-np-tema="cacao"] {
   --np-fondo: var(--np-marca-cacao);

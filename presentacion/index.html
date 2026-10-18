@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nude Project · Presentación</title>
+  <link rel="stylesheet" href="../design-system/tokens.css">
+  <link rel="stylesheet" href="../design-system/components.css">
+  <link rel="stylesheet" href="./estilos.css">
+  <!-- three.js guardado en vendor/ (npm run vendor:presentacion): funciona sin internet. -->
+  <script type="importmap">
+    { "imports": {
+      "three": "./vendor/three.module.min.js",
+      "three/addons/": "./vendor/addons/"
+    } }
+  </script>
+</head>
+<body>
+<!--
+  Pantalla del proyector. Cada <section data-escena> es una diapositiva sobre la escena 3D:
+  - data-escena: la estación del plano secuencia (tokens.escena.recorrido). Las diapositivas seguidas con la
+    misma escena forman un bloque y la cámara no viaja entre ellas.
+  - data-bloque y data-tiempo, en la primera diapositiva del bloque: nombre en el índice y tiempo del cronómetro.
+  - <aside class="notas">: notas del orador, solo se ven en el modo presentador (tecla P).
+  Agregar o cambiar una diapositiva es editar este HTML con las clases np-*, sin tocar JavaScript.
+-->
+<main class="np-escenario" id="escenario" data-np-tema="cacao" aria-roledescription="presentación" aria-label="Caso Nude Project">
+
+  <div class="np-gigantes" aria-hidden="true">
+    <div class="np-gigante" data-escena="portada">Drop 001</div>
+  </div>
+
+  <canvas id="lienzo"></canvas>
+  <div class="np-vineta"></div>
+
+  <div class="np-capas">
+
+    <!-- ============ 0. Portada + hype colectivo ============ -->
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-np-tema="cacao" data-escena="portada" data-bloque="Portada" data-tiempo="1:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">Caso de estudio · Comercialización</span>
+        <h1 class="np-titulo np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Comunidad, comunicación</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>y autenticidad.</span></span>
+        </h1>
+        <span class="marcador np-capa__entra">Pendiente · QR, grupos conectados y medidor de hype (fase 4)</span>
+      </div>
+      <aside class="notas">
+        <p><em>Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.</em></p>
+        <p>“Antes de arrancar: escaneen el QR y elijan el número de su grupo. Un celular por grupo.”</p>
+        <p><em>Con el contador alto, <kbd>H</kbd>: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.</em></p>
+        <p>“Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 1. La historia, el modelo y la votación ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="historia" data-bloque="Historia" data-tiempo="2:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">01 — La historia</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>600 €,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>una habitación</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>y un drop.</span></span>
+        </h2>
+        <p class="np-capa__entra">De 2019 a 26 M€: venta directa (D2C) y colecciones limitadas que se agotan.</p>
+        <span class="marcador np-capa__entra">Pendiente · Votación en vivo: ¿pagarías 90 € por una sudadera que se agota en minutos? (fase 4)</span>
+      </div>
+      <aside class="notas">
+        <p><em>La sudadera sale de una caja de envío; la caja se multiplica con los años 2019 → hoy.</em></p>
+        <p>“Imaginen empezar una marca de ropa con 600 euros, desde una habitación, sin saber de moda. Eso hicieron Bruno Casanovas y Álex Benlloch en 2019: pusieron 300 euros cada uno y crearon Nude Project. El nombre lo dice todo: <i>nude</i> es transparencia y autenticidad.</p>
+        <p>Su primera colección facturó unos 600.000 euros; en 2022 llegaron a 11,5 millones y en 2023, a 26 millones. Hoy venden en más de cien países, con 11 tiendas en Europa y unos 250 empleados.</p>
+        <p>¿Cómo lo hicieron? Con dos decisiones. Un modelo <i>direct-to-consumer</i>: venden sin intermediarios, desde su web, sus tiendas y sus redes. Y drops limitados: colecciones pequeñas que se agotan rápido y generan urgencia y deseo.”</p>
+        <p><em><kbd>V</kbd>: se abre la votación.</em></p>
+        <p>“Ahora les toca a ustedes. En el celular tienen una pregunta: ¿pagarían 90 euros por una sudadera que se agota en minutos?</p>
+        <p>Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se convierte una marca de sudaderas en una comunidad? La vamos a responder en cinco pasos: el contenido que producen, cómo se vuelven virales, las experiencias físicas, qué dicen los números y cuál es, en el fondo, su objetivo. Y al final, los desafíos que vienen.”</p>
+        <p><em>A los ~20 s, <kbd>V</kbd>: se cierra la votación.</em> “Guardamos el resultado: lo retomamos al final.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 2. EGC vs. UGC ============ -->
+    <section class="np-capa np-diapo np-diapo--escena np-capa--centro" data-escena="egc-ugc" data-bloque="EGC / UGC" data-tiempo="3:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">02 — EGC vs. UGC</span>
+        <h2 class="np-titulo np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>¿Quién cuenta la historia?</span></span>
+        </h2>
+      </div>
+      <div class="marcadores-pie">
+        <span class="marcador np-capa__entra">Pendiente · Feed EGC 9:16 (fase 3)</span>
+        <span class="marcador np-capa__entra">Pendiente · Feed UGC 9:16 (fase 3)</span>
+      </div>
+      <aside class="notas">
+        <p><em>Los dos feeds 9:16; la sudadera en el centro gira hacia el lado que se comenta. <kbd>F</kbd> pausa un feed.</em></p>
+        <p>“Empecemos por el contenido. El <b>EGC</b> es el que crean los dueños y el equipo de la marca; el <b>UGC</b>, el que crean los usuarios. En Nude Project el EGC es la base, y el UGC lo amplifica.</p>
+        <p><em>Feed EGC.</em> Su EGC tiene muchos formatos. Bruno hizo del contenido el protagonista desde el primer día, con material de detrás de escena, y lo sigue haciendo en su propio canal de vlogs. Cuando llegaron a Nueva York lo documentaron todo con la serie <i>Day 1, Day 2 of making our brand known in the US</i>. Publicaron hasta sus <i>House Rules</i>, como las reglas de una casa de amigos. El primer episodio del podcast cuenta cómo pasaron de cero a 200.000 seguidores. Y en su campaña viral, los que aparecen en las fotos son los propios empleados.</p>
+        <p><em>Feed UGC.</em> El UGC aparece donde la marca no controla la escena. Cuando abre una tienda, la gente hace cola desde las seis de la mañana, y las primeras 60 personas reciben una llave metálica que se volvió objeto de colección y símbolo de estatus. Esa llave se fotografía y se comparte. También Lil Nas X, Drake y Bad Gyal publicaron fotos con prendas de la marca.</p>
+        <p>¿Qué impacto tiene en su identidad? El EGC hace que la historia sea genuina pero no improvisada: lo que el caso llama <b>autenticidad controlada</b>. El UGC aporta <b>validación social</b>: ya no lo dice la marca, lo dice su gente. Juntos logran que la marca hable como un amigo y que la comunidad le responda.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 3. Marketing viral ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="viral" data-bloque="Viral" data-tiempo="2:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">03 — Marketing viral</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Out of Office:</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>500 mil likes</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>en un día.</span></span>
+        </h2>
+        <p class="np-capa__entra">Tono, mensaje, estética y contexto: la viralidad parece casual, pero está diseñada.</p>
+        <span class="marcador np-capa__entra">Pendiente · Publicación de la campaña y contador de likes (fase 2)</span>
+      </div>
+      <aside class="notas">
+        <p><em>Corazones rosas orbitan la sudadera; el contador sube hasta el medio millón de likes.</em></p>
+        <p>“Lo viral está en el ADN de la marca. Su primera sudadera, con la frase <i>pretty girls like trap music</i>, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.</p>
+        <p>La campaña que elegimos es <b>Out of Office</b>, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, <i>Heading to work because I was too shy to dance on TikTok in 2020</i>. Superó el medio millón de likes en Instagram en menos de 24 horas.</p>
+        <p>¿Por qué funcionó? Por el <b>tono</b>: ironía y humor. Por el <b>mensaje</b>: le habla a la frustración de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la <b>estética</b>: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el <b>contexto</b>: salió justo cuando todos volvían de vacaciones. Y porque el <b>producto es el mensaje</b>: quien se pone la remera comparte el chiste.</p>
+        <p>También generan conversación con contrastes: para lanzar la línea de mujer eligieron a Belén Esteban y a Victoria Federica, dos perfiles opuestos. No buscan una imagen perfecta: buscan que se hable.</p>
+        <p>La lección: la viralidad parece casual, pero está diseñada. Eligen el momento, el mensaje y el formato para que la gente quiera compartirlo.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 4. Marketing experiencial ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="experiencial" data-bloque="Nude House" data-tiempo="2:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">04 — Marketing experiencial</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Una casa,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>no una</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>tienda.</span></span>
+        </h2>
+        <p class="np-capa__entra">Nude House en Madrid, el Château en Ibiza y las pop-ups en Estados Unidos.</p>
+        <span class="marcador np-capa__entra">Pendiente · Fotos de la Nude House y del Château (fase 5)</span>
+      </div>
+      <aside class="notas">
+        <p><em>La sudadera se cuelga de una percha y aparece el rincón de la Nude House.</em></p>
+        <p>“Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la <b>Nude House</b> de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.</p>
+        <p>El evento más ambicioso es el <b>Nude Project Château</b>, en una mansión de Ibiza. Empezó en 2024 y ya va por su tercera edición. En 2025 reunió a más de 30 artistas, actores, deportistas e influencers que sumaban más de 70 millones de seguidores, con una regla: lo que pasa en la mansión se queda en la mansión. Eso genera misterio y exclusividad, y funciona casi como un reality de marca. Además, en la web se pueden comprar los looks que aparecen en las imágenes: el contenido se conecta directo con la venta. Las dos primeras ediciones superaron los 100 millones de interacciones.</p>
+        <p>Esa lógica la llevaron a Estados Unidos, con pop-ups en Miami, Los Ángeles y Nueva York. La de Nueva York reunió a unas 400 personas en la apertura y fue la pop-up más vendida de su historia, con moda, música, cine, deporte y hasta una carrera en ropa interior de la marca.</p>
+        <p>¿Cómo fortalece esto a la comunidad digital? Es un círculo: el evento genera contenido, el contenido atrae gente a la comunidad y esa comunidad vuelve a las tiendas y a los drops. Hoy el canal físico ya es el 35 % de la facturación.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 5. Métricas ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="metricas" data-bloque="Métricas" data-tiempo="2:00">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">05 — Métricas</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Los números,</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>pieza por</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>pieza.</span></span>
+        </h2>
+        <p class="np-capa__entra">Seguidores a octubre de 2026. Falta citar las fuentes.</p>
+      </div>
+      <!-- Etiquetas de la vista desarmada: el motor las proyecta desde cada pieza de la sudadera. -->
+      <div class="np-etiquetas" aria-hidden="true">
+        <div class="np-etiqueta-3d" data-pieza="capucha" style="--i: 0"><span class="np-etiqueta-3d__valor">1,6 M</span><span class="np-etiqueta-3d__texto">Instagram</span></div>
+        <div class="np-etiqueta-3d" data-pieza="mangaDerecha" style="--i: 1"><span class="np-etiqueta-3d__valor">1 M</span><span class="np-etiqueta-3d__texto">TikTok</span></div>
+        <div class="np-etiqueta-3d" data-pieza="bolsillo" style="--i: 2"><span class="np-etiqueta-3d__valor">950 mil</span><span class="np-etiqueta-3d__texto">YouTube</span></div>
+        <div class="np-etiqueta-3d" data-pieza="cuerpo" style="--i: 3"><span class="np-etiqueta-3d__valor">275 mil</span><span class="np-etiqueta-3d__texto">Podcast</span></div>
+      </div>
+      <aside class="notas">
+        <p><em>Vista desarmada: capucha → Instagram 1,6 M · manga → TikTok 1 M · bolsillo → YouTube 950 mil · cuerpo → podcast 275 mil. Después, las pilas de sudaderas comparan comienzos de 2024 con hoy.</em></p>
+        <p>“Veamos los números, con datos a octubre de 2026. Nude Project tiene 1,6 millones de seguidores en Instagram, un millón en TikTok, 950 mil en YouTube y 275 mil solo en la cuenta de su podcast. Y crecen rápido: a comienzos de 2024, Instagram y YouTube tenían la mitad de seguidores que hoy, y el podcast, menos de la mitad.</p>
+        <p>Pero hay números que dicen más que los seguidores. En TikTok suman 51 millones de me gusta: unos 51 por cada seguidor. Su conversación con Maluma en YouTube superó el millón de visualizaciones, más que los suscriptores del canal, con unos 22 mil me gusta y 800 comentarios: el contenido llegó más allá de su propia comunidad. Y Out of Office pasó el medio millón de likes en un día.</p>
+        <p>También hay medidas externas: en <i>The Hype List</i> de Modaes, Nude Project lideró ocho meses seguidos entre las marcas jóvenes españolas, y Spotify destacó su podcast entre los más relevantes de España.</p>
+        <p>¿Qué interpretamos? Que su comunicación es muy eficaz: lograron una comunidad enorme con poca publicidad paga, porque el contenido lo producen ellos y su gente. Un estudio de la Universidad Complutense sobre su TikTok llega a la misma idea: importa más integrarse en la lógica de la plataforma y conectar emocionalmente que invertir en promoción. Y esa comunidad se traduce en ventas: en 2023, el canal online fue el 62 % del negocio.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 6. Objetivo comunicacional ============ -->
+    <section class="np-capa np-diapo np-diapo--escena np-capa--abajo" data-escena="objetivo" data-bloque="Objetivo" data-tiempo="1:30">
+      <div class="np-diapo__texto" style="max-width: 44cqw">
+        <span class="np-etiqueta np-capa__entra">06 — Objetivo comunicacional</span>
+        <p class="np-cita np-revelar" style="max-width: none; color: var(--np-tinta)">
+          <span class="np-revelar__linea" style="--i: 0"><span>El mundo no necesita</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>más sudaderas, pero la gente</span></span>
+          <span class="np-revelar__linea" style="--i: 2"><span>sí necesita pertenecer a algo.</span></span>
+        </p>
+        <span class="np-etiqueta np-capa__entra">Bruno Casanovas · Cofundador</span>
+      </div>
+      <aside class="notas">
+        <p><em>La cámara se acerca al logo bordado y la frase de Bruno se escribe encima.</em></p>
+        <p>“¿Cuál es su objetivo comunicacional principal? Construir <b>pertenencia</b>. Lo dijo Bruno: <i>‘El mundo no necesita más sudaderas, pero la gente sí necesita pertenecer a algo’</i>.</p>
+        <p>No buscan convencerte de que la sudadera es mejor, sino de que ser parte de la comunidad lo es. Se ve en el podcast, que habla de emprendimiento y no de ropa; en experiencias de estilo de vida como el Château, y en su lema, <i>by artists, for artists</i>. Como dice Bruno, cada cliente es un embajador potencial. La venta es la consecuencia.</p>
+        <p>Por eso Nude Project no vende ropa: vende una identidad compartida. Y lo logra porque su comunicación, antes que publicidad, es una conversación.”</p>
+      </aside>
+    </section>
+
+    <!-- ============ 7. Desafíos y puente al juego ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-escena="desafios" data-bloque="Desafíos" data-tiempo="1:30">
+      <div class="np-diapo__texto">
+        <span class="np-etiqueta np-capa__entra">07 — Desafíos</span>
+        <h2 class="np-display np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span>Exclusividad</span></span>
+          <span class="np-revelar__linea" style="--i: 1"><span>vs. acceso.</span></span>
+        </h2>
+        <p class="np-capa__entra">Autenticidad al crecer, sostenibilidad, dependencia de las redes y exclusividad.</p>
+        <span class="marcador np-capa__entra">Pendiente · Resultado de la votación y balanza (fase 4)</span>
+      </div>
+      <aside class="notas">
+        <p><em>La balanza: exclusividad contra accesibilidad.</em></p>
+        <p>“Pero crecer así tiene sus desafíos, y el caso marca cuatro.</p>
+        <p>El primero, <b>la autenticidad</b>: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada Álex le escribió a Bruno que lo que los trajo hasta aquí no los iba a llevar más allá, y planteó cambios en todos los departamentos.</p>
+        <p>El segundo, <b>la sostenibilidad</b>: prometen prendas duraderas, pero la demanda y el ritmo del mercado ponen a prueba esa promesa.</p>
+        <p>El tercero, <b>la dependencia de las redes</b>: un cambio en el algoritmo de Instagram o de TikTok impacta directo en su visibilidad y en sus ventas.</p>
+        <p>Y el cuarto, <b>exclusividad contra accesibilidad</b>. <em>La balanza se inclina según la votación.</em> Al principio les preguntamos si pagarían 90 euros por una sudadera que se agota en minutos, y el <em>[X %]</em> dijo que sí. El encanto de la marca es sentir que pertenecés a algo especial; pero si esa exclusividad se vuelve frustración o elitismo, la comunidad se divide.</p>
+        <p>Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora llegamos a la puerta de la tienda y queda una sola sudadera. Y como en la pop-up de Nueva York, se define con una carrera. Por suerte, con ropa puesta.”</p>
+        <p><em>La cola llega a la puerta: cartel QUEDA 1 → Drop Rush.</em></p>
+      </aside>
+    </section>
+
+    <!-- ============ 8. Drop Rush ============ -->
+    <section class="np-capa np-diapo np-diapo--escena" data-np-tema="cacao" data-escena="drop-rush" data-bloque="Drop Rush" data-tiempo="8:00">
+      <div class="np-diapo__texto" style="align-items: flex-start">
+        <span class="np-etiqueta np-capa__entra">08 — Drop Rush</span>
+        <span class="np-cartel np-latido np-capa__entra">Queda 1</span>
+        <h2 class="np-revelar">
+          <span class="np-revelar__linea" style="--i: 0"><span class="np-logo-juego">Drop <span>Rush</span></span></span>
+        </h2>
+        <p class="np-capa__entra">Un celular por grupo. Gana uno solo.</p>
+        <span class="marcador np-capa__entra">Pendiente · Paso al lobby del juego (fase 4)</span>
+      </div>
+      <aside class="notas">
+        <p><em>Abrir el proyector del juego (<code>/host/</code>): instrucciones (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min).</em></p>
+        <p>En el debate se retoman el hype, la votación y el resultado: “Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera.”</p>
+      </aside>
+    </section>
+  </div>
+
+  <div class="np-interfaz">
+    <div class="np-interfaz__arriba">
+      <span class="np-logo">Nude<sup>®</sup>Project</span>
+      <ol class="np-interfaz__menu" id="menu"></ol>
+      <span class="np-interfaz__drop">Drop 001 · 2026</span>
+    </div>
+    <div class="np-interfaz__abajo">
+      <div class="np-interfaz__contador"><b id="numero">00</b><span id="de">/ 08</span><span class="np-interfaz__barra" id="barra"></span></div>
+      <span class="np-interfaz__pista">← → recorrer · P presentador</span>
+      <div class="np-cola" id="cola" style="--avance: 0">
+        <div class="np-cola__fila"><span class="np-cola__persona"></span><span class="np-cola__persona"></span><span class="np-cola__persona np-cola__persona--nosotros"></span><span class="np-cola__persona"></span><span class="np-cola__persona"></span></div>
+        <span class="np-cola__bloque" id="bloque">00</span>
+        <div class="np-cola__puerta" id="puerta"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tecla B: pantalla en cacao mientras se pausa. -->
+  <div class="pausa" id="pausa" aria-hidden="true"><span class="np-logo">Nude<sup>®</sup>Project</span></div>
+
+  <div class="np-grano"></div>
+
+  <div class="np-cargador" id="cargador">
+    <span class="np-logo">Nude<sup>®</sup>Project</span>
+    <div class="np-cargador__linea" id="carga"></div>
+    <div class="np-cargador__estado"><span>Preparando el drop</span><span id="porcentaje">0 %</span></div>
+    <p class="np-cargador__aviso">La presentación usa módulos de JavaScript: abrila desde el servidor del juego (<code>npm run dev</code> en <code>juego/</code> y entrar a <code>/presentacion/</code>) o con un servidor local desde la raíz del repositorio.</p>
+  </div>
+</main>
+
+<script>
+  // Si los módulos no cargan (abierta con file://), avisar en vez de quedar en el cargador.
+  setTimeout(() => { if (!window.deckListo) document.getElementById('cargador').classList.add('np-cargador--sin-servidor'); }, 5000);
+</script>
+<script type="module" src="./deck.js"></script>
+</body>
+</html>

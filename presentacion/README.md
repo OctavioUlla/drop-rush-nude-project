@@ -12,6 +12,32 @@ Exposición del caso de éxito de Nude Project para la materia **Comercializaci�
 
 ---
 
+## Cómo abrirla
+
+```
+cd juego
+npm run dev
+```
+
+- **Proyector:** `http://localhost:3000/presentacion/` (pantalla completa con F11).
+- **Modo presentador:** tecla `P` desde el proyector (abre otra ventana con las notas, la próxima diapositiva y el cronómetro).
+
+| Tecla | Acción |
+|---|---|
+| → / Espacio / ↓ / RePág | Siguiente |
+| ← / ↑ / AvPág | Anterior |
+| Inicio / Fin | Primera / última |
+| `P` | Modo presentador |
+| `B` (o `.` del control) | Pantalla en cacao (pausa) |
+| `M` | Medidor de fps |
+
+- `#3` en la URL abre directo en la diapositiva 3.
+- `?medir` hace un recorrido de prueba por las 9 estaciones y muestra los fps; `?escala=1` baja la resolución interna si la notebook no llega a 60 fps.
+- `?imprimir` muestra el PDF de respaldo en pantalla; imprimir desde el navegador (Ctrl+P) genera una diapositiva por página.
+- Las diapositivas están en [`index.html`](index.html): cada `<section data-escena>` es una diapositiva, con sus notas en `<aside class="notas">`.
+
+---
+
 ## Estructura propuesta
 
 Cada punto de la consigna es un bloque; los separadores de bloque usan el tema **cacao** y el contenido el tema **crema**.
