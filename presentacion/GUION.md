@@ -70,7 +70,7 @@ Su primera colección facturó unos 600.000 euros; en 2022 llegaron a 11,5 millo
 
 *[`V`: se abre la votación.]*
 
-"Ahora les toca a ustedes. En el celular tienen una pregunta: ¿pagarían 90 euros por una sudadera que se agota en minutos?
+"En el celular tienen una pregunta: ¿pagarían 90 euros por una sudadera que se agota en minutos?
 
 Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se convierte una marca de sudaderas en una comunidad? La vamos a responder en cinco pasos: el contenido que producen, cómo se vuelven virales, las experiencias físicas, qué dicen los números y cuál es, en el fondo, su objetivo. Y al final, los desafíos que vienen."
 
