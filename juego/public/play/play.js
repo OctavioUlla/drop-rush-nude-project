@@ -483,7 +483,14 @@ function responder(fase) {
     setTimeout(() => mostrarResultado(resultadoSolo(fase, r.desde)), 600);
     return;
   }
-  red.encolar(`q${fase.index}:${guion.id}`, 'question:answer', datos);
+  // Si el celular estaba sin red cuando el presentador pausó, cerró la pregunta antes que el servidor (que la corrió):
+  // la respuesta se reintenta hasta que la pregunta empiece allá, en vez de perderse.
+  const id = guion.id;
+  const enviar = () =>
+    red.encolar(`q${fase.index}:${id}`, 'question:answer', datos, (r) => {
+      if (r?.motivo === 'too_early' && guion?.id === id) setTimeout(enviar, 1000);
+    });
+  enviar();
 }
 
 /** Partida simulada (?solo): acierta al azar (más seguido con el 50/50) y reparte ventajas y poderes como el servidor. */

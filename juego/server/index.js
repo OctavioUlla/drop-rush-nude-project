@@ -542,6 +542,10 @@ function direccionesLocales() {
 if (esPrincipal(import.meta.url)) {
   const puerto = Number(process.env.PORT) || 3000;
   const servidor = await iniciarServidor({ puerto, host: '0.0.0.0' });
+  // Ya escuchando, un error inesperado en un evento no puede tirar el servidor en plena clase (y con él la sala,
+  // el túnel y el QR): se anota y se sigue atendiendo a los demás.
+  process.on('uncaughtException', (error) => console.error('\n  Error inesperado (el servidor sigue andando):', error));
+  process.on('unhandledRejection', (error) => console.error('\n  Promesa rechazada sin manejar (el servidor sigue andando):', error));
   console.log(`\n  Drop Rush en marcha`);
   console.log(`  Celular:   http://localhost:${servidor.puerto}/play/`);
   console.log(`  Proyector: http://localhost:${servidor.puerto}/host/  (crea la sala y muestra el código y el QR)`);

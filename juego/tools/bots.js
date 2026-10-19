@@ -170,6 +170,14 @@ class Bot {
         item.enviando = false;
         if (error) return;
         this.cola.delete(clave);
+        // Como el celular: una respuesta que llegó antes que la pregunta (por una pausa que se perdió en un corte) se reintenta.
+        if (item.tipo === 'respuesta' && r?.motivo === 'too_early') {
+          setTimeout(() => {
+            this.cola.set(clave, item);
+            this.vaciarCola();
+          }, 1000);
+          return;
+        }
         if (item.tipo === 'poder') this.m[r?.ok ? 'poderesOk' : 'poderesRechazados']++;
         else if (item.tipo === 'voto') {
           // El voto que vale es el más nuevo que aceptó el servidor (un reintento viejo no lo pisa).
