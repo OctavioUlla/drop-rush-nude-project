@@ -12,7 +12,7 @@ import { TURBO, IMPULSO_EMPAREJAR, DURACION_ALGORITMO } from '../public/shared/p
 //   - "torpe": se queda en el carril del medio y no salta nunca (choca con todo lo que aparece ahí).
 // La diferencia entre los dos es lo máximo que se puede perder por no saber esquivar.
 //
-//   npm run balanceo                       (8 preguntas, dificultad fácil)
+//   npm run balanceo                       (6 preguntas, dificultad caótica)
 //   npm run balanceo -- --dificultad normal --semillas 400
 
 const PASO = 1 / PASOS_POR_SEGUNDO;
