@@ -100,11 +100,11 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 "Lo viral está en el ADN de la marca. Su primera sudadera, con la frase *pretty girls like trap music*, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.
 
-La campaña que elegimos es **Out of Office**, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, *Heading to work because I was too shy to dance on TikTok in 2020*. Superó el medio millón de likes en Instagram en menos de 24 horas.
+Nos llamo la atencion la campaña **Out of Office**, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, *Heading to work because I was too shy to dance on TikTok in 2020*. Superó el medio millón de likes en Instagram en menos de 24 horas.
 
 *[`→`: la cámara se acerca a la pared hasta que se lee la remera. Diapositiva "El producto es el mensaje".]*
 
-¿Por qué funcionó? Por el **tono**: ironía y humor. Por el **mensaje**: le habla a la frustración de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la **estética**: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el **contexto**: salió justo cuando todos volvían de vacaciones. Y porque el **producto es el mensaje**: quien se pone la remera comparte el chiste.
+¿Por qué funcionó? Por el **tono**: ironía y humor. Por el **mensaje**: le habla a la "frustración" de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la **estética**: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el **contexto**: salió justo cuando todos volvían de vacaciones. Y porque el **producto es el mensaje**: quien se pone la remera comparte el chiste.
 
 También generan conversación con contrastes: para lanzar la línea de mujer eligieron a Belén Esteban y a Victoria Federica, dos perfiles opuestos. No buscan una imagen perfecta: buscan que se hable.
 
