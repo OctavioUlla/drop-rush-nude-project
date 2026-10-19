@@ -246,6 +246,7 @@ export const publicaciones = {
 
 const DURACION_CLASE = 15; // s que se ven las fotos de la clase (después el feed sigue con los clips reales)
 const QUIETO_CLASE = 2; // s que el feed de la clase queda quieto al empezar y al terminar de bajar
+const VELOCIDAD_CLASE = 0.12; // pantallas por segundo que baja la grilla de la clase (más rápido si no alcanza el tiempo)
 
 /** Fotos de ejemplo para el ensayo (sin servidor o sin fotos): selfies y fit checks dibujados con colores de grupo. */
 function fotosDeEnsayo() {
@@ -263,15 +264,21 @@ function fotosDeEnsayo() {
   });
 }
 
-/** Feed de la clase: cabecera "Creado por la clase" y las fotos en una grilla que baja de a poco (avance de 0 a 1). */
-function dibujarClase(ctx, w, h, fotos, avance, ensayo) {
-  ctx.fillStyle = M.crema; ctx.fillRect(0, 0, w, h);
-  const cols = fotos.length <= 2 ? 1 : fotos.length <= 16 ? 2 : 3;
+/** Grilla del feed de la clase: columnas, lado de cada foto y cuánto tiene que bajar para mostrarlas todas. */
+function grillaClase(w, h, n) {
+  const cols = n <= 2 ? 1 : n <= 16 ? 2 : 3;
   const gap = w * 0.02;
   const lado = (w - gap * (cols + 1)) / cols;
   const arriba = w * 0.42;
-  const alto = Math.ceil(fotos.length / cols) * (lado + gap) + gap;
-  const desplazado = Math.max(0, alto - (h - arriba)) * avance;
+  const alto = Math.ceil(n / cols) * (lado + gap) + gap;
+  return { cols, gap, lado, arriba, recorrido: Math.max(0, alto - (h - arriba)) };
+}
+
+/** Feed de la clase: cabecera "Creado por la clase" y las fotos en una grilla que baja de a poco (avance de 0 a 1). */
+function dibujarClase(ctx, w, h, fotos, avance, ensayo) {
+  ctx.fillStyle = M.crema; ctx.fillRect(0, 0, w, h);
+  const { cols, gap, lado, arriba, recorrido } = grillaClase(w, h, fotos.length);
+  const desplazado = recorrido * avance;
   ctx.save();
   ctx.beginPath(); ctx.rect(0, arriba, w, h - arriba); ctx.clip();
   fotos.forEach((f, k) => {
@@ -354,7 +361,7 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
       if (y > 0) ctx.drawImage(capas[i % n].image, 0, y - h);
       if (y < 0) ctx.drawImage(capas[i % n].image, 0, y + h);
       ctx.save(); ctx.translate(0, y);
-      dibujarClase(ctx, w, h, clase.fotos, suave(limitar((clase.t - QUIETO_CLASE) / (DURACION_CLASE - 2 * QUIETO_CLASE))), clase.ensayo);
+      dibujarClase(ctx, w, h, clase.fotos, suave(limitar((clase.t - QUIETO_CLASE) / clase.bajada)), clase.ensayo);
       ctx.restore();
       barraEstado(ctx, w, M.cacao);
       if (pausado) cartelPausa(ctx, w);
@@ -441,13 +448,18 @@ export function feed(tipo, { publicaciones: pubs, ancho = 540, alto = 1134, cada
     }
     const lista = fotos.length
       ? fotos.map((f) => {
+          if (f.imagen) return f; // precargada: ya está (o está llegando)
           const imagen = new Image();
           imagen.onload = () => (imagen.listo = true);
           imagen.src = f.url;
           return { ...f, imagen };
         })
       : fotosDeEnsayo();
-    clase = { fotos: lista, t: 0, ensayo: !fotos.length };
+    // La grilla baja a velocidad pareja: con pocas fotos el recorrido es corto y termina enseguida (antes se estiraba
+    // siempre a los 11 s y con 2 fotos se arrastraba, issue #70); con muchas, se apura para mostrarlas todas a tiempo.
+    const { recorrido } = grillaClase(ancho, alto, lista.length);
+    const bajada = THREE.MathUtils.clamp(recorrido / (alto * VELOCIDAD_CLASE), 0.01, DURACION_CLASE - 2 * QUIETO_CLASE);
+    clase = { fotos: lista, t: 0, ensayo: !fotos.length, bajada };
     reloj = fase().i * cada; // al volver, la publicación de antes se ve entera
     cuadro = 1;
     return true;
