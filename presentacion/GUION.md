@@ -156,9 +156,9 @@ Por eso Nude Project no vende ropa: vende una identidad compartida. Y lo logra p
 
 *[La balanza: exclusividad contra accesibilidad.]*
 
-"Pero crecer así tiene sus desafíos, y el caso marca cuatro.
+"Pero crecer así tiene sus desafíos, y haz 4 que salen a la luz.
 
-El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada de principios de 2024 Álex le mandó un correo a Bruno con un asunto que lo resume: «Lo que nos trajo aquí no nos llevará más allá». Fue la llamada de atención para hacer cambios en todos los departamentos.
+El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada de principios de 2024 Álex le mandó un correo a Bruno con un asunto que decia: «Lo que nos trajo aquí no nos llevará más allá». Fue la llamada de atención para hacer cambios en todos los departamentos.
 
 El segundo, **la sostenibilidad**: prometen prendas duraderas, pero la demanda y el ritmo del mercado ponen a prueba esa promesa.
 
@@ -167,6 +167,8 @@ El tercero, **la dependencia de las redes**: un cambio en el algoritmo de Instag
 Y el cuarto, **exclusividad contra accesibilidad**. *[La balanza se inclina según la votación.]* Al principio les preguntamos si pagarían 90 euros por una sudadera que se agota en minutos, y el *[X %]* dijo que sí. El encanto de la marca es sentir que pertenecés a algo especial; pero si esa exclusividad se vuelve frustración o elitismo, la comunidad se divide.
 
 Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora llegamos a la puerta de la tienda y queda una sola sudadera. Y como en la pop-up de Nueva York, se define con una carrera. Por suerte, con ropa puesta."
+
+"Miren sus celulares, comienza el juego"
 
 *[La cola llega a la puerta: cartel QUEDA 1 → Drop Rush.]*
 
