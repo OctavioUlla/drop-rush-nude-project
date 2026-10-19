@@ -143,9 +143,9 @@ Cada push a `main` que toca `juego/`, `presentacion/`, `design-system/` o `deplo
 **Configuración (una sola vez).**
 
 1. El Cloud Server de DonWeb tiene **AlmaLinux 10** (también sirve Ubuntu o Debian; alcanza 1 vCPU y 1 GB, porque la imagen se construye en GitHub y no en el VPS). Si el panel de DonWeb tiene firewall propio, abrir **22, 80 y 443** (TCP, y 443 UDP).
-2. En la notebook, generar la clave con la que entra GitHub Actions:
+2. En la notebook, desde la raíz del repositorio, generar la clave con la que entra GitHub Actions. Pide una frase de contraseña: **Enter dos veces** (sin frase; Actions no puede escribirla). No usar `-N ""` en PowerShell: Windows PowerShell descarta el argumento vacío y `ssh-keygen` responde *Too many arguments*. Los archivos `drop-rush-deploy*` están en el `.gitignore`.
    ```bash
-   ssh-keygen -t ed25519 -N "" -C github-actions -f drop-rush-deploy
+   ssh-keygen -t ed25519 -C github-actions -f drop-rush-deploy
    ```
 3. Preparar el VPS desde la raíz del repositorio, con la contraseña de root que da DonWeb (el dominio es opcional; sin dominio, sslip.io):
    ```bash
@@ -155,10 +155,19 @@ Cada push a `main` que toca `juego/`, `presentacion/`, `design-system/` o `deplo
    ssh root@IP_DEL_VPS bash instalar.sh drop-rush-deploy.pub juego.midominio.com
    ```
    [`instalar.sh`](../deploy/vps/instalar.sh) instala Docker CE desde el repositorio oficial (en Alma saca antes Podman, que choca con Docker), crea el usuario `deploy` con esa clave (con la etiqueta de SELinux que necesita SSH), deja abiertos en firewalld solo SSH, 80 y 443, apaga Apache o Nginx si venían prendidos y prepara `/opt/drop-rush`. En Alma no activa actualizaciones automáticas, para que no reinicien Docker en medio de una clase: correr `dnf upgrade` a mano de vez en cuando. Al final muestra el dominio y las líneas para `VPS_KNOWN_HOSTS`. Con dominio propio, antes hay que apuntar un registro **A** a la IP del VPS.
-4. En GitHub → *Settings* → *Secrets and variables* → *Actions*:
+4. En GitHub → *Settings* → *Secrets and variables* → *Actions* (o con `gh`, desde la misma carpeta, en PowerShell):
    - Variable **`VPS_HOST`**: la IP del VPS (sin esta variable el workflow no despliega, solo prueba y construye). Opcional: **`VPS_PORT`** si SSH no está en el 22.
-   - Secreto **`VPS_SSH_KEY`**: el contenido de `drop-rush-deploy` (la clave privada). Después se puede borrar el archivo de la notebook.
-   - Secreto **`VPS_KNOWN_HOSTS`**: las líneas que mostró `instalar.sh` (sin este secreto se acepta la clave que presente el servidor, con un aviso).
+     ```powershell
+     gh variable set VPS_HOST --body IP_DEL_VPS
+     ```
+   - Secreto **`VPS_SSH_KEY`**: el contenido de `drop-rush-deploy` (la clave privada, sin `.pub`). Después se puede borrar el archivo de la notebook.
+     ```powershell
+     Get-Content drop-rush-deploy -Raw | gh secret set VPS_SSH_KEY
+     ```
+   - Secreto **`VPS_KNOWN_HOSTS`**: alguna de las líneas que mostró `instalar.sh`; alcanza con la de `ssh-ed25519` (sin este secreto se acepta la clave que presente el servidor, con un aviso).
+     ```powershell
+     gh secret set VPS_KNOWN_HOSTS --body "IP_DEL_VPS ssh-ed25519 AAAA…"
+     ```
 5. *Actions* → **Deploy al VPS** → *Run workflow*. El resumen del run muestra las direcciones del proyector y de la presentación.
 
 **Día a día.** Push a `main` y listo. Para **volver atrás**, *Run workflow* con el SHA completo de un commit ya desplegado en *version* (no vuelve a construir). Para ver qué pasa en el VPS: `ssh deploy@IP_DEL_VPS`, `cd /opt/drop-rush` y `docker compose logs -f juego`; [`desplegar.sh`](../deploy/vps/desplegar.sh) también se puede correr a mano ahí. Antes de la clase, abrir `/api/health` desde el Wi-Fi de la facultad (ver [Ensayo en el aula](#ensayo-en-el-aula)).
