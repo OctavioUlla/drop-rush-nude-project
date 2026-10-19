@@ -241,6 +241,7 @@ canal?.addEventListener('message', ({ data }) => {
   else if (data.tipo === 'qr') alternarQr();
   else if (data.tipo === 'votacion') votacion?.alternar();
   else if (data.tipo === 'reiniciar-interactivo') reiniciarInteractivo();
+  else if (data.tipo === 'nueva-sala') nuevaSala();
   else if (data.tipo === 'reloj') { (data.accion === 'empezar' ? empezarReloj : reiniciarReloj)(); avisar(); }
 });
 const abrirPresentador = () => window.open('./presentador.html', 'np-presentador', 'popup,width=1440,height=900');
@@ -365,6 +366,13 @@ function abrirJuego() {
 /** Ensayos: borra el hype y la votación guardados en el servidor. */
 function reiniciarInteractivo() {
   sala?.pedir('pres:reiniciar');
+}
+
+/** Botón del modo presentador: otra sala (con su QR) sin recargar el proyector, igual que Ajustes → Nueva sala en /host/. */
+function nuevaSala() {
+  if (!sala) return;
+  sala.nuevaSala().then(pintarSala);
+  pintarSala();
 }
 
 /** Estado de la sala, el hype y la votación para el modo presentador. */

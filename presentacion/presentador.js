@@ -119,6 +119,9 @@ document.addEventListener('click', (ev) => {
   else if (accion === 'reiniciar-interactivo') {
     if (confirm('¿Borrar el hype y la votación guardados en el servidor? (para después de un ensayo)')) enviar(accion);
   }
+  else if (accion === 'nueva-sala') {
+    if (confirm('¿Crear una sala nueva? Los celulares van a tener que escanear el QR nuevo.')) enviar(accion);
+  }
   else if (accion) enviar(accion);
 });
 addEventListener('keydown', (ev) => {
