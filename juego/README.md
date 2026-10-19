@@ -164,7 +164,10 @@ Cada push a `main` que toca `juego/`, `presentacion/`, `design-system/` o `deplo
      ```powershell
      Get-Content drop-rush-deploy -Raw | gh secret set VPS_SSH_KEY
      ```
-   - Secreto **`VPS_KNOWN_HOSTS`**: las líneas que mostró `instalar.sh` (sin este secreto se acepta la clave que presente el servidor, con un aviso). Copiarlas y correr `gh secret set VPS_KNOWN_HOSTS`, pegarlas y terminar con `Ctrl+Z` y Enter.
+   - Secreto **`VPS_KNOWN_HOSTS`**: alguna de las líneas que mostró `instalar.sh`; alcanza con la de `ssh-ed25519` (sin este secreto se acepta la clave que presente el servidor, con un aviso).
+     ```powershell
+     gh secret set VPS_KNOWN_HOSTS --body "IP_DEL_VPS ssh-ed25519 AAAA…"
+     ```
 5. *Actions* → **Deploy al VPS** → *Run workflow*. El resumen del run muestra las direcciones del proyector y de la presentación.
 
 **Día a día.** Push a `main` y listo. Para **volver atrás**, *Run workflow* con el SHA completo de un commit ya desplegado en *version* (no vuelve a construir). Para ver qué pasa en el VPS: `ssh deploy@IP_DEL_VPS`, `cd /opt/drop-rush` y `docker compose logs -f juego`; [`desplegar.sh`](../deploy/vps/desplegar.sh) también se puede correr a mano ahí. Antes de la clase, abrir `/api/health` desde el Wi-Fi de la facultad (ver [Ensayo en el aula](#ensayo-en-el-aula)).
