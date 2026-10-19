@@ -44,11 +44,15 @@ Se reparte por **bloques enteros**: nadie corta un bloque al medio y los cambios
 
 **Orador A**
 
-*[Mientras la clase se acomoda: portada cacao con el QR y el contador de grupos conectados.]*
+*[Mientras la clase se acomoda: portada con el QR y el contador de grupos conectados.]*
 
-"Antes de arrancar: escaneen el QR y elijan el número de su grupo. Un celular por grupo."
+"Antes de arrancar: escaneen el QR y elijan el número de su grupo. La presentacion es interactiva y esto tambien sirve para el juego final. Un celular por grupo."
+"Los profes tambien se pueden conectar, participar y jugar (aunque no podran ganar). Los profes deben seleccionar la opcion de P1, P2, P3, etc. No un numero de grupo"
+"Mientras todos se conectan pueden desde su celular sacar una selfie de su grupo o un fit check (Zapatillas y pantalon por ejemplo) para que sea su foto de perfil en el juego. Estaria bueno que lo hagan" *[Incentivar a la gente para que lo haga]*
 
-*[Con el contador alto, `H`: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.]*
+[Esperar que gente se conecte y que haya un par de fotos]
+
+"Bueno, arrancamos, miren su celulares" *[Con el contador alto, `H`: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.]*
 
 "Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo."
 
