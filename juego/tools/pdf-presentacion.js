@@ -62,7 +62,7 @@ await pagina.pdf({
   path: join(raiz, 'docs/guion-nude-project.pdf'), format: 'A4', printBackground: true,
   margin: { top: '18mm', bottom: '20mm', left: '18mm', right: '18mm' },
   displayHeaderFooter: true, headerTemplate: '<span></span>',
-  footerTemplate: '<div style="width: 100%; padding: 0 18mm; font: 8px Arial, sans-serif; color: #6e4a40; display: flex; justify-content: space-between;"><span>Nude Project · Guion de la presentación</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
+  footerTemplate: '<div style="width: 100%; padding: 0 18mm; font: 8px Arial, sans-serif; color: #6e4a40; display: flex; justify-content: space-between;"><span>Nude Project · Guion de la presentación (v2)</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>',
 });
 console.log('✔ docs/guion-nude-project.pdf');
 
@@ -76,7 +76,7 @@ function paginaGuion() {
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Guion · Nude Project</title>
+  <title>Guion · Nude Project (v2)</title>
   <link rel="stylesheet" href="/design-system/tokens.css">
   <style>
     body { margin: 0; font: 10.5pt/1.5 var(--np-fuente-texto); color: var(--np-marca-cacao); background: #fff; print-color-adjust: exact; -webkit-print-color-adjust: exact; }

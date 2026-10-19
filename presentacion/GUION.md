@@ -1,4 +1,4 @@
-# 🎙️ Guion de la presentación
+# 🎙️ Guion de la presentación (v2)
 
 > Guion hablado de los **15 minutos de exposición**, ordenado por los bloques de la [estructura](README.md#estructura-propuesta). Parte del borrador del equipo y está adaptado a lo que ya se diseñó: hype de apertura, votación en vivo, feeds, escenas de la sudadera y transición a Drop Rush.
 >
