@@ -170,7 +170,7 @@ Así que vamos a comprobarlo. Al principio llenaron el hype entre todos. Ahora l
 
 **Orador E**
 
-Instrucciones en el proyector (1 min), carrera con 8 preguntas (~4,5 min), repaso de errores y debate final (2,5 min) (ver [`juego/PLANIFICACION.md`](../juego/PLANIFICACION.md)). En el debate se retoman el hype, la votación y el resultado: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera."*
+Instrucciones en el proyector (1 min), carrera con 6 preguntas (~3,5 min), repaso de errores y debate final (3,5 min) (ver [`juego/PLANIFICACION.md`](../juego/PLANIFICACION.md)). En el debate se retoman el hype, la votación y el resultado: *"Al principio llenaron el hype entre los 40… y al final 39 se quedaron sin sudadera."*
 
 ---
 

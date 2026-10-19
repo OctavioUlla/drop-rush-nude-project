@@ -59,7 +59,7 @@ La partida alterna **tramos de carrera** y **preguntas**, sin pausas entre medio
 | **Revelado** ⚡ | ~2 s, **sin frenar** | Destello verde o rojo en el celular y la respuesta correcta resaltada en el proyector, mientras ya arranca el tramo siguiente | 📱 + 📽️ |
 | **Repaso de errores** | 2 min (al final) | Las preguntas con más errores, con sus explicaciones | 📽️ Proyector |
 
-Con 8 preguntas, la carrera dura unos **4,5 minutos**: 8 × (15 s de tramo + 15 s de pregunta) = 4 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 9 o 10 preguntas (~5 a 5,5 min); si falta, bajar a 6 (~3,5 min).
+Con 6 preguntas (una por tema), la carrera dura unos **3,5 minutos**: 6 × (15 s de tramo + 15 s de pregunta) = 3 min, más la cuenta regresiva y el sprint final. Corta e intensa, para que no decaiga la atención. Si en el ensayo sobra tiempo se puede subir a 8 preguntas (~4,5 min) o más desde *Ajustes*.
 
 1. **Lobby**
    - El host crea una sala y el proyector muestra un **código de 4 letras** y un **QR**.
@@ -163,7 +163,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 - No hay castigos fuertes, para que ningún grupo quede descolgado y desmotivado.
 
 ### 3.6 Rachas y poderes
-- **2 aciertos seguidos** otorgan un **poder** (con 8 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
+- **2 aciertos seguidos** otorgan un **poder** (con 6 preguntas, 3 seguidos dejaría muy poco margen para usarlo) que se guarda en el celular y se activa con un botón cuando el grupo quiere.
 - Cada grupo puede guardar **un poder a la vez**.
 
 | Poder | Ícono | Efecto |
@@ -176,7 +176,7 @@ Acertar es **la principal forma de sacar distancia**. Cada respuesta correcta da
 
 ### 3.7 Coleccionables
 - **❤️ Likes** en la calle, muchos, como las monedas de Subway Surfers: filas de 8 en un carril libre y arcos de 7 sobre los obstáculos bajos que siguen la curva del salto (saltando a tiempo se juntan enteros). Dan una pequeña cantidad de distancia extra y suman a las estadísticas finales.
-- Su valor es bajo (0,5 m cada uno), para que no compitan con las preguntas: no se pueden juntar todos (en cada fila hay likes en más de un carril), y aun juntando todos los que se pueden en la carrera suman menos que una respuesta correcta cada 6 preguntas (con 8 preguntas, el tope es de 200 m).
+- Su valor es bajo (0,5 m cada uno), para que no compitan con las preguntas: no se pueden juntar todos (en cada fila hay likes en más de un carril), y aun juntando todos los que se pueden en la carrera suman menos que una respuesta correcta cada 6 preguntas (con 6 preguntas, el tope es de 150 m: una sola respuesta).
 
 ### 3.8 Un celular por grupo
 - Los grupos se identifican **solo con un número**, del 1 a `maxGrupos` (por ejemplo, 1 a 40).
@@ -460,7 +460,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 | `correcta` | número | Índice de la opción correcta (empieza en 0) |
 | `explicacion` | texto | **Recomendado**; se muestra en el **repaso de errores** al final (no durante la carrera). Puede ser más larga que antes, ya que hay tiempo para leerla y comentarla |
 | `tiempo` | número | Opcional; segundos para responder (por defecto, `tiempoPorDefecto`) |
-| `reserva` | booleano | Opcional; las de reserva solo se usan si la partida pide más preguntas que las principales (con las 8 por defecto se suman 2 de reserva; con 6 sale una por tema) |
+| `reserva` | booleano | Opcional; las de reserva solo se usan si la partida pide más preguntas que las principales (con las 6 por defecto sale una por tema, sin reserva; con 8 se suman 2 de reserva) |
 
 > El servidor **mezcla el orden de las opciones** en cada partida, para que la respuesta correcta no quede siempre en el mismo carril. Las estadísticas del repaso se muestran con el orden mezclado que vieron los grupos.
 
@@ -472,7 +472,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 - Objetivo comunicacional: 1
 - Modelo D2C, drops y desafíos: 1
 
-Hay 8 de reserva (2 de marketing viral, 2 de métricas y 1 de cada uno de los otros temas): las 8 preguntas por defecto suman 2 de ellas, elegidas al azar, y alcanzan si se sube la cantidad. Los desafíos de la marca entran en una pregunta y además se trabajan en el debate final, a partir del resultado del juego.
+Hay 8 de reserva (2 de marketing viral, 2 de métricas y 1 de cada uno de los otros temas): las 6 preguntas por defecto no las usan (sale una por tema); si se sube la cantidad, se suman al azar. Los desafíos de la marca entran en una pregunta y además se trabajan en el debate final, a partir del resultado del juego.
 
 **Criterio del banco.** Todas se responden con lo que se dijo en la exposición ([`presentacion/GUION.md`](../presentacion/GUION.md) y las diapositivas), no con datos del caso que no se presentaron. Son **difíciles a propósito**, para que haya diferencia entre los grupos: las opciones incorrectas salen de otros datos de la misma exposición (la «autenticidad controlada» del EGC contra la validación social del UGC, los 600 € de inversión contra los 600 mil € de la primera colección, etc.). Con 15 s por pregunta, las opciones están recortadas para leerse rápido en el proyector; si en el ensayo no alcanza, se sube la duración en *Ajustes*. Si cambia el guion, hay que revisar las preguntas que dependen de ese bloque.
 
@@ -485,7 +485,7 @@ En `data/config.json`, o desde el lobby del host:
 | Parámetro | Por defecto | Descripción |
 |---|---|---|
 | `maxGrupos` | 40 | Cantidad de grupos; se numeran del 1 a este valor |
-| `cantidadPreguntas` | 8 | Cuántas preguntas del banco se usan |
+| `cantidadPreguntas` | 6 | Cuántas preguntas del banco se usan |
 | `ordenAleatorio` | true | Mezclar el orden de las preguntas |
 | `mezclarOpciones` | true | Mezclar el orden de las opciones en los carriles |
 | `tiempoPorDefecto` | 15 | Segundos por pregunta |
@@ -622,7 +622,7 @@ juego/
 - [x] Efectos: partículas, líneas de velocidad, sacudida de cámara, *squash & stretch*
 - [x] Calidad automática, resolución adaptable, Wake Lock y Service Worker *(+ tope de 30 FPS en calidad baja y archivos precomprimidos con Brotli y gzip)*
 - [x] Controles del presentador (pausar, saltar, terminar)
-- [x] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7) *(`npm run balanceo` y en `npm test`: en fácil y con 8 preguntas, no esquivar nada en toda la carrera cuesta 158 m, menos que una respuesta correcta cada 6 preguntas: 200 m)*
+- [x] **Balanceo**: comprobar que acertar pese más que esquivar (sección 7) *(`npm run balanceo` y en `npm test`: en fácil y con 6 preguntas, no esquivar nada en toda la carrera cuesta 116 m, menos que una respuesta correcta: 150 m)*
 - [ ] Prueba de carga con 40 bots + algunos celulares reales a la vez *(40 bots con cortes contra el build de producción: ✓; falta sumar celulares reales)*
 - [ ] Prueba en el **Wi-Fi real de la facultad** (portal cautivo, WebSocket, velocidad de descarga) *(lista de pasos en el README)*
 - [ ] Deploy *(Dockerfile, `fly.toml` y `render.yaml` listos; falta crear la app en la cuenta del equipo)*
