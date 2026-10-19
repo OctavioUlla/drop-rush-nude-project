@@ -1,4 +1,4 @@
-# 🎙️ Guion de la presentación
+# 🎙️ Guion de la presentación (v2)
 
 > Guion hablado de los **15 minutos de exposición**, ordenado por los bloques de la [estructura](README.md#estructura-propuesta). Parte del borrador del equipo y está adaptado a lo que ya se diseñó: hype de apertura, votación en vivo, feeds, escenas de la sudadera y transición a Drop Rush.
 >
@@ -46,13 +46,13 @@ Se reparte por **bloques enteros**: nadie corta un bloque al medio y los cambios
 
 *[Mientras la clase se acomoda: portada con el QR y el contador de grupos conectados.]*
 
-"Antes de arrancar: escaneen el QR y elijan el número de su grupo. La presentacion es interactiva y esto tambien sirve para el juego final. Un celular por grupo."
-"Los profes tambien se pueden conectar, participar y jugar (aunque no podran ganar). Los profes deben seleccionar la opcion de P1, P2, P3, etc. No un numero de grupo"
-"Mientras todos se conectan pueden desde su celular sacar una selfie de su grupo o un fit check (Zapatillas y pantalon por ejemplo) para que sea su foto de perfil en el juego. Estaria bueno que lo hagan" *[Incentivar a la gente para que lo haga]*
+"Antes de arrancar: escaneen el QR y elijan el número de su grupo. La presentación es interactiva y esto también sirve para el juego final. Un celular por grupo."
+"Los profes también se pueden conectar, participar y jugar (aunque no podrán ganar). Los profes deben seleccionar la opción de P1, P2, P3, etc. No un número de grupo"
+"Mientras todos se conectan pueden desde su celular sacar una selfie de su grupo o un fit check (Zapatillas y pantalón por ejemplo) para que sea su foto de perfil en el juego. Estaría bueno que lo hagan" *[Incentivar a la gente para que lo haga]*
 
 [Esperar que gente se conecte y que haya un par de fotos]
 
-"Bueno, arrancamos, miren su celulares" *[Con el contador alto, `H`: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.]*
+"Bueno, arrancamos, miren sus celulares" *[Con el contador alto, `H`: cuenta regresiva, botón HYPE en los celulares y medidor en el proyector. Al 100 %, la sudadera cae al pedestal.]*
 
 "Lo que acaban de hacer entre todos es exactamente cómo funciona Nude Project. Ningún drop sale de la nada: antes de lanzarlo, la comunidad ya lo está pidiendo. Eso es hype. Y esta es la historia de cómo una marca aprendió a generarlo."
 
@@ -100,7 +100,7 @@ Mientras votan, les cuento la pregunta que guía esta presentación: ¿cómo se 
 
 "Lo viral está en el ADN de la marca. Su primera sudadera, con la frase *pretty girls like trap music*, se volvió viral en una noche y les trajo 60.000 seguidores en 24 horas.
 
-Nos llamo la atencion la campaña **Out of Office**, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, *Heading to work because I was too shy to dance on TikTok in 2020*. Superó el medio millón de likes en Instagram en menos de 24 horas.
+Nos llamó la atención la campaña **Out of Office**, de fines de agosto de 2025: una remera con un mensaje irónico sobre volver al trabajo, *Heading to work because I was too shy to dance on TikTok in 2020*. Superó el medio millón de likes en Instagram en menos de 24 horas.
 
 *[`→`: la cámara se acerca a la pared hasta que se lee la remera. Diapositiva "El producto es el mensaje".]*
 
@@ -156,9 +156,9 @@ Por eso Nude Project no vende ropa: vende una identidad compartida. Y lo logra p
 
 *[La balanza: exclusividad contra accesibilidad.]*
 
-"Pero crecer así tiene sus desafíos, y haz 4 que salen a la luz.
+"Pero crecer así tiene sus desafíos, y hay 4 que salen a la luz.
 
-El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada de principios de 2024 Álex le mandó un correo a Bruno con un asunto que decia: «Lo que nos trajo aquí no nos llevará más allá». Fue la llamada de atención para hacer cambios en todos los departamentos.
+El primero, **la autenticidad**: lo que empezó en una habitación hoy tiene 250 empleados, y una marca global corre el riesgo de volverse corporativa. Ellos lo saben: en su podcast cuentan que una madrugada de principios de 2024 Álex le mandó un correo a Bruno con un asunto que decía: «Lo que nos trajo aquí no nos llevará más allá». Fue la llamada de atención para hacer cambios en todos los departamentos.
 
 El segundo, **la sostenibilidad**: prometen prendas duraderas, pero la demanda y el ritmo del mercado ponen a prueba esa promesa.
 
