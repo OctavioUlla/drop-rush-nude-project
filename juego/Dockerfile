@@ -20,5 +20,5 @@ COPY --chown=node:node design-system /app/design-system
 COPY --chown=node:node presentacion /app/presentacion
 USER node
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://localhost:3000/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
 CMD ["node", "server/index.js", "--produccion"]

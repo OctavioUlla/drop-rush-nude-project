@@ -27,7 +27,8 @@ El repositorio reúne las tres piezas del trabajo, que comparten una misma ident
 │   ├── server/ · public/       # Servidor Node y clientes (celular y proyector)
 │   ├── tools/ · test/          # Simulador de 40 bots, balanceo y pruebas
 │   └── Dockerfile              # Imagen del servidor (se construye desde la raíz)
-├── fly.toml · render.yaml      # Deploy en la nube (Fly.io o Render)
+├── deploy/vps/                 # Deploy al VPS de DonWeb (Docker + Caddy), lo usa .github/workflows/deploy-vps.yml
+├── fly.toml · render.yaml      # Otros deploys en la nube (Fly.io o Render)
 └── design-system/
     ├── README.md               # Identidad, principios y uso
     ├── index.html              # Guía visual (abrir en el navegador)

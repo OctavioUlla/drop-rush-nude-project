@@ -1,0 +1,159 @@
+# CD al VPS de DonWeb: cada push a main que toca el juego, la presentación o el design system corre las pruebas,
+# construye la imagen, la sube a GHCR y la levanta en el VPS por SSH (deploy/vps/desplegar.sh).
+# Se puede correr a mano desde Actions → "Deploy al VPS" para forzar el reinicio o volver a un commit anterior.
+# Configuración (una sola vez) en juego/README.md → Deploy → VPS de DonWeb.
+
+name: Deploy al VPS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "juego/**"
+      - "presentacion/**"
+      - "design-system/**"
+      - "deploy/vps/**"
+      - ".dockerignore"
+      - ".github/workflows/deploy-vps.yml"
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "Reiniciar aunque haya gente conectada (corta la partida en curso)"
+        type: boolean
+        default: false
+      version:
+        description: "Volver atrás: SHA completo de un commit ya desplegado (vacío = el commit elegido arriba)"
+        type: string
+        default: ""
+
+# Un deploy por vez y sin cancelar el que está en curso.
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  probar:
+    if: inputs.version == ''
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: juego
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: juego/package-lock.json
+      - run: npm ci
+      - run: npm test
+
+  imagen:
+    needs: probar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Nombre de la imagen
+        run: echo "IMAGEN=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/drop-rush" >> "$GITHUB_ENV"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: juego/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGEN }}:${{ github.sha }}
+            ${{ env.IMAGEN }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  desplegar:
+    needs: imagen
+    # Sin la variable VPS_HOST el VPS todavía no está configurado: se saltea en vez de fallar en cada push.
+    # `always()` deja correr la vuelta atrás (version), en la que las pruebas y la imagen se saltean.
+    if: >-
+      always() && vars.VPS_HOST != '' &&
+      (needs.imagen.result == 'success' || (inputs.version != '' && needs.imagen.result == 'skipped'))
+    runs-on: ubuntu-latest
+    environment: produccion
+    permissions:
+      contents: read
+      packages: read
+    env:
+      HOST: ${{ vars.VPS_HOST }}
+      PUERTO: ${{ vars.VPS_PORT || '22' }}
+      DESTINO: deploy@${{ vars.VPS_HOST }}
+      FORZAR: ${{ inputs.forzar && 'si' || 'no' }}
+      VERSION: ${{ inputs.version || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Imagen a desplegar
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::\"$VERSION\" no es el SHA completo de un commit (40 caracteres hexadecimales)."
+            exit 1
+          fi
+          echo "IMAGEN=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/drop-rush:$VERSION" >> "$GITHUB_ENV"
+
+      - name: Clave SSH
+        env:
+          CLAVE: ${{ secrets.VPS_SSH_KEY }}
+          CONOCIDOS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$CLAVE" > ~/.ssh/id_vps
+          chmod 600 ~/.ssh/id_vps
+          if [ -n "$CONOCIDOS" ]; then
+            printf '%s\n' "$CONOCIDOS" > ~/.ssh/known_hosts
+          else
+            echo "::warning::Falta el secreto VPS_KNOWN_HOSTS: se acepta la clave que presente el servidor."
+            ssh-keyscan -p "$PUERTO" "$HOST" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+          {
+            echo "Host vps"
+            echo "  HostName $HOST"
+            echo "  Port $PUERTO"
+            echo "  User deploy"
+            echo "  IdentityFile ~/.ssh/id_vps"
+            echo "  IdentitiesOnly yes"
+            echo "  ServerAliveInterval 15"
+          } > ~/.ssh/config
+
+      - name: Copiar la configuración
+        run: scp deploy/vps/docker-compose.yml deploy/vps/Caddyfile deploy/vps/desplegar.sh vps:/opt/drop-rush/
+
+      - name: Desplegar
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # El token del job solo sirve mientras corre: se usa para bajar la imagen y se cierra la sesión.
+          printf '%s' "$TOKEN" | ssh vps "docker login ghcr.io -u '$GITHUB_ACTOR' --password-stdin" >/dev/null
+          set +e
+          ssh vps "bash /opt/drop-rush/desplegar.sh '$IMAGEN' '$FORZAR'"
+          codigo=$?
+          ssh vps "docker logout ghcr.io" >/dev/null
+          exit $codigo
+
+      - name: Comprobar desde afuera
+        run: |
+          DOMINIO="$(ssh vps "grep '^DOMINIO=' /opt/drop-rush/.env | cut -d= -f2-")"
+          echo "### Juego en https://$DOMINIO" >> "$GITHUB_STEP_SUMMARY"
+          echo "Proyector: https://$DOMINIO/host/ · Presentación: https://$DOMINIO/presentacion/" >> "$GITHUB_STEP_SUMMARY"
+          # La primera vez Caddy tarda unos segundos en sacar el certificado.
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 5 "https://$DOMINIO/api/health"; then echo; exit 0; fi
+            sleep 4
+          done
+          echo "::error::https://$DOMINIO/api/health no respondió. Revisar el firewall del panel de DonWeb (80 y 443)."
+          exit 1

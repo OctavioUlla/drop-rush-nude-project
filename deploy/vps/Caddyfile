@@ -1,0 +1,7 @@
+# HTTPS en el 443 con certificado de Let's Encrypt (Caddy lo saca y lo renueva solo) y WebSockets hacia el juego.
+# DOMINIO sale de /opt/drop-rush/.env: un dominio propio o, sin dominio, la IP en sslip.io (200-58-1-2.sslip.io).
+# Sin `encode`: el servidor ya manda los archivos precomprimidos en Brotli y gzip.
+
+{$DOMINIO} {
+	reverse_proxy juego:3000
+}
