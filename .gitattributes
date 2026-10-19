@@ -1,0 +1,3 @@
+# Los scripts del VPS se copian tal cual a Linux: siempre con fin de línea LF, también en Windows.
+*.sh text eol=lf
+deploy/vps/* text eol=lf

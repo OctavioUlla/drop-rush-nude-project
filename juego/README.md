@@ -132,6 +132,39 @@ Lo que queda de la Fase 4 solo se puede hacer con celulares y la red reales. Lis
 
 El servidor es un único proceso de Node (Express + Socket.io) que sirve el juego y el tiempo real en el mismo dominio y puerto (sección 10). El estado de la partida vive en memoria: **tiene que haber una sola instancia**.
 
+El plan para la clase es el **VPS de DonWeb** con deploy automático; la **notebook con Cloudflare Tunnel** queda de respaldo si el VPS o su red fallan ese día.
+
+### VPS de DonWeb (el plan)
+
+Cada push a `main` que toca `juego/`, `presentacion/`, `design-system/` o `deploy/vps/` dispara el workflow [**Deploy al VPS**](../.github/workflows/deploy-vps.yml): corre las pruebas, construye la imagen del [`Dockerfile`](Dockerfile), la sube a GitHub Container Registry (`ghcr.io/octavioulla/drop-rush:<commit>`) y la levanta en el VPS por SSH. En el VPS corren dos contenedores ([`deploy/vps/docker-compose.yml`](../deploy/vps/docker-compose.yml)): el juego y **Caddy**, que saca y renueva solo el certificado HTTPS y pasa los WebSockets. No hace falta comprar un dominio: sin dominio se usa la IP en [sslip.io](https://sslip.io) (`200-58-1-2.sslip.io`), que tiene certificado de verdad.
+
+**Protecciones.** El deploy **no reinicia el servidor si hay alguien conectado** (celulares, proyector o presentación; lo cuenta `/api/health`), para no cortar una clase con un push: el workflow falla con un aviso y hay que correrlo a mano con *forzar*. Si la imagen nueva no da sano el healthcheck en 90 segundos, vuelve sola a la anterior. Al final el workflow abre `https://DOMINIO/api/health` desde afuera y deja las direcciones en el resumen del run.
+
+**Configuración (una sola vez).**
+
+1. El Cloud Server de DonWeb tiene **AlmaLinux 10** (también sirve Ubuntu o Debian; alcanza 1 vCPU y 1 GB, porque la imagen se construye en GitHub y no en el VPS). Si el panel de DonWeb tiene firewall propio, abrir **22, 80 y 443** (TCP, y 443 UDP).
+2. En la notebook, generar la clave con la que entra GitHub Actions:
+   ```bash
+   ssh-keygen -t ed25519 -N "" -C github-actions -f drop-rush-deploy
+   ```
+3. Preparar el VPS desde la raíz del repositorio, con la contraseña de root que da DonWeb (el dominio es opcional; sin dominio, sslip.io):
+   ```bash
+   scp deploy/vps/instalar.sh drop-rush-deploy.pub root@IP_DEL_VPS:
+   ```
+   ```bash
+   ssh root@IP_DEL_VPS bash instalar.sh drop-rush-deploy.pub juego.midominio.com
+   ```
+   [`instalar.sh`](../deploy/vps/instalar.sh) instala Docker CE desde el repositorio oficial (en Alma saca antes Podman, que choca con Docker), crea el usuario `deploy` con esa clave (con la etiqueta de SELinux que necesita SSH), deja abiertos en firewalld solo SSH, 80 y 443, apaga Apache o Nginx si venían prendidos y prepara `/opt/drop-rush`. En Alma no activa actualizaciones automáticas, para que no reinicien Docker en medio de una clase: correr `dnf upgrade` a mano de vez en cuando. Al final muestra el dominio y las líneas para `VPS_KNOWN_HOSTS`. Con dominio propio, antes hay que apuntar un registro **A** a la IP del VPS.
+4. En GitHub → *Settings* → *Secrets and variables* → *Actions*:
+   - Variable **`VPS_HOST`**: la IP del VPS (sin esta variable el workflow no despliega, solo prueba y construye). Opcional: **`VPS_PORT`** si SSH no está en el 22.
+   - Secreto **`VPS_SSH_KEY`**: el contenido de `drop-rush-deploy` (la clave privada). Después se puede borrar el archivo de la notebook.
+   - Secreto **`VPS_KNOWN_HOSTS`**: las líneas que mostró `instalar.sh` (sin este secreto se acepta la clave que presente el servidor, con un aviso).
+5. *Actions* → **Deploy al VPS** → *Run workflow*. El resumen del run muestra las direcciones del proyector y de la presentación.
+
+**Día a día.** Push a `main` y listo. Para **volver atrás**, *Run workflow* con el SHA completo de un commit ya desplegado en *version* (no vuelve a construir). Para ver qué pasa en el VPS: `ssh deploy@IP_DEL_VPS`, `cd /opt/drop-rush` y `docker compose logs -f juego`; [`desplegar.sh`](../deploy/vps/desplegar.sh) también se puede correr a mano ahí. Antes de la clase, abrir `/api/health` desde el Wi-Fi de la facultad (ver [Ensayo en el aula](#ensayo-en-el-aula)).
+
+### Notebook + Cloudflare Tunnel (respaldo)
+
 **Notebook + Cloudflare Tunnel** (gratis, sin cuenta y con la menor latencia desde Argentina: el tráfico entra por el nodo de Cloudflare en Buenos Aires). El servidor corre en la notebook del proyector y Cloudflare le da una dirección pública `https://….trycloudflare.com` con WebSockets, a la que los celulares entran por el Wi-Fi de la facultad o por datos.
 
 1. Instalar `cloudflared` una sola vez y volver a abrir la terminal: `winget install --id Cloudflare.cloudflared` en Windows o `brew install cloudflared` en macOS.
@@ -142,6 +175,8 @@ El servidor es un único proceso de Node (Express + Socket.io) que sirve el jueg
 Probado desde Argentina con 40 bots por el túnel, 3 preguntas y un corte por bot: 120 de 120 respuestas contadas una sola vez, 40 sesiones recuperadas y RTT mediano de 17 ms (p95 56 ms).
 
 Cosas a tener en cuenta: la notebook tiene que estar enchufada, sin suspenderse y con buena conexión durante toda la clase (si se corta, se corta el juego). `cloudflared` sale por el puerto 7844: si la red de la facultad lo bloquea, el script lo avisa y se puede conectar la notebook a los datos de un celular. El túnel rápido no tiene garantía de servicio; para el día de la clase conviene probarlo antes en el aula (ver [Ensayo en el aula](#ensayo-en-el-aula), prueba 5, con `--url` apuntando al túnel).
+
+### Otros hostings
 
 **Fly.io** (región São Paulo, no se duerme; ya no tiene plan gratis para cuentas nuevas). Desde la raíz del repositorio:
 
@@ -160,7 +195,7 @@ docker build -f juego/Dockerfile -t drop-rush .
 docker run -p 3000:3000 drop-rush
 ```
 
-Sin Docker: `npm ci && npm run build && npm start` dentro de `juego/` (respeta la variable `PORT`). Todo tiene que ir por **HTTPS en el puerto 443** (lo dan Fly y Render), que es lo que menos bloquean las redes institucionales.
+Sin Docker: `npm ci && npm run build && npm start` dentro de `juego/` (respeta la variable `PORT`). Todo tiene que ir por **HTTPS en el puerto 443** (lo dan Caddy en el VPS, Fly y Render), que es lo que menos bloquean las redes institucionales.
 
 ## Qué hay en la Fase 4
 

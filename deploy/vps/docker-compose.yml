@@ -1,0 +1,43 @@
+# Drop Rush en el VPS de DonWeb: el juego (imagen de GHCR) detrás de Caddy, que saca el certificado HTTPS solo.
+# Vive en /opt/drop-rush junto con Caddyfile, desplegar.sh y .env (DOMINIO e IMAGEN). Lo copia y lo levanta el
+# workflow .github/workflows/deploy-vps.yml; a mano: `docker compose up -d` dentro de /opt/drop-rush.
+
+services:
+  juego:
+    image: ${IMAGEN:?falta IMAGEN en .env}
+    restart: unless-stopped
+    # El estado de la partida vive en memoria: una sola instancia, sin réplicas.
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      start_interval: 2s
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    depends_on:
+      - juego
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMINIO: ${DOMINIO:?falta DOMINIO en .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro,z   # z: etiqueta de SELinux para que Caddy pueda leerlo en AlmaLinux
+      - caddy_data:/data
+      - caddy_config:/config
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+volumes:
+  caddy_data:
+  caddy_config:

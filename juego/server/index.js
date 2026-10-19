@@ -409,7 +409,8 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     };
   };
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, time: Date.now() }));
+  // `conectados` lo usa el deploy del VPS para no reiniciar el servidor en medio de una clase.
+  app.get('/api/health', (_req, res) => res.json({ ok: true, time: Date.now(), conectados: io.engine.clientsCount }));
   app.get('/api/informes', (_req, res) => res.json(informes));
 
   // QR del lobby, generado en el servidor para no sumar peso al juego del celular.
