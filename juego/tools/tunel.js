@@ -59,26 +59,37 @@ if (op.build || !compilado || Math.max(...fuentes) > compilado) {
   if (r.status !== 0) salir(1);
 }
 
-// 3. Servidor.
-const servidor = spawn(process.execPath, ['server/index.js', '--produccion'], {
-  cwd: RAIZ,
-  env: { ...process.env, PORT: String(puerto) },
-  stdio: ['ignore', 'pipe', 'inherit'],
-});
-hijos.push(servidor);
-servidor.on('exit', (c) => {
-  console.error(`\n  El servidor se cerró (código ${c}).`);
-  salir(1);
-});
-await new Promise((resolve) => {
-  servidor.stdout.on('data', function listo(d) {
-    if (String(d).includes('Drop Rush en marcha')) {
-      servidor.stdout.off('data', listo);
-      resolve();
-    }
+// 3. Servidor. Si se cae con el túnel ya abierto, se vuelve a levantar en el mismo puerto: la dirección del túnel (y el
+// QR) no cambia. La sala vive en memoria y se pierde: el proyector y la presentación crean otra solos al reconectarse
+// y los celulares piden el código nuevo.
+let tunelAbierto = false;
+function levantarServidor() {
+  const servidor = spawn(process.execPath, ['server/index.js', '--produccion'], {
+    cwd: RAIZ,
+    env: { ...process.env, PORT: String(puerto) },
+    stdio: ['ignore', 'pipe', 'inherit'],
   });
-});
-servidor.stdout.pipe(process.stdout);
+  hijos.push(servidor);
+  servidor.on('exit', (c) => {
+    if (!tunelAbierto) {
+      console.error(`\n  El servidor se cerró (código ${c}).`);
+      salir(1);
+    }
+    console.error(`\n  El servidor se cerró (código ${c}): se vuelve a levantar con la misma dirección.`);
+    console.error('  La sala se perdió: el proyector muestra un código nuevo y los celulares lo escriben.');
+    setTimeout(levantarServidor, 1000);
+  });
+  return new Promise((resolve) => {
+    servidor.stdout.on('data', function listo(d) {
+      if (String(d).includes('Drop Rush en marcha')) {
+        servidor.stdout.off('data', listo);
+        servidor.stdout.pipe(process.stdout);
+        resolve();
+      }
+    });
+  });
+}
+await levantarServidor();
 
 // 4. Túnel. cloudflared escribe la dirección en stderr.
 const tunel = spawn('cloudflared', ['tunnel', '--url', `http://localhost:${puerto}`, '--no-autoupdate'], {
@@ -124,6 +135,7 @@ for (let i = 0; ; i++) {
   await espera(2000);
 }
 
+tunelAbierto = true;
 console.log(`\n\n  Túnel listo: ${url}`);
 console.log(`  Proyector:    ${url}/host/`);
 console.log(`  Presentación: ${url}/presentacion/`);
