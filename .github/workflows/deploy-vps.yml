@@ -92,7 +92,8 @@ jobs:
       packages: read
     env:
       HOST: ${{ vars.VPS_HOST }}
-      PUERTO: ${{ vars.VPS_PORT || '22' }}
+      # Puerto de SSH del VPS: variable (o secreto) VPS_PORT; sin ella, el 22.
+      PUERTO: ${{ vars.VPS_PORT || secrets.VPS_PORT || '22' }}
       DESTINO: deploy@${{ vars.VPS_HOST }}
       FORZAR: ${{ inputs.forzar && 'si' || 'no' }}
       VERSION: ${{ inputs.version || github.sha }}
@@ -111,6 +112,10 @@ jobs:
           CLAVE: ${{ secrets.VPS_SSH_KEY }}
           CONOCIDOS: ${{ secrets.VPS_KNOWN_HOSTS }}
         run: |
+          if ! [[ "$PUERTO" =~ ^[0-9]+$ ]] || [ "$PUERTO" -lt 1 ] || [ "$PUERTO" -gt 65535 ]; then
+            echo "::error::VPS_PORT=\"$PUERTO\" no es un puerto válido (1 a 65535)."
+            exit 1
+          fi
           install -d -m 700 ~/.ssh
           printf '%s\n' "$CLAVE" > ~/.ssh/id_vps
           chmod 600 ~/.ssh/id_vps
@@ -119,6 +124,10 @@ jobs:
           else
             echo "::warning::Falta el secreto VPS_KNOWN_HOSTS: se acepta la clave que presente el servidor."
             ssh-keyscan -p "$PUERTO" "$HOST" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+          # Fuera del 22, ssh busca la clave como "[IP]:PUERTO": se adaptan las líneas escritas solo con la IP.
+          if [ "$PUERTO" != 22 ]; then
+            sed -i "s/^${HOST//./\\.} /[$HOST]:$PUERTO /" ~/.ssh/known_hosts
           fi
           {
             echo "Host vps"

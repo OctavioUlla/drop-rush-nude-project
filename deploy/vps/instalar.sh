@@ -123,10 +123,17 @@ done
 
 echo
 echo "Listo. Dominio: https://$DOMINIO"
+PUERTO_SSH="${PUERTOS_SSH%%[[:space:]]*}"
+if [ "$PUERTO_SSH" != 22 ]; then
+  echo "SSH escucha en el puerto $PUERTO_SSH: cargarlo en la variable VPS_PORT de GitHub."
+  NOMBRE="[$IP]:$PUERTO_SSH"
+else
+  NOMBRE="$IP"
+fi
 echo "Claves del servidor para el secreto VPS_KNOWN_HOSTS de GitHub (copiar las líneas siguientes):"
 echo
 for f in /etc/ssh/ssh_host_*_key.pub; do
-  echo "$IP $(awk '{print $1, $2}' "$f")"
+  echo "$NOMBRE $(awk '{print $1, $2}' "$f")"
 done
 echo
 echo "Ahora correr el workflow \"Deploy al VPS\" en GitHub (o hacer push a main)."
