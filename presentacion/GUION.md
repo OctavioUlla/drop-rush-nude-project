@@ -136,7 +136,7 @@ Pero hay números que dicen más que los seguidores. En TikTok suman 51 millones
 
 También hay medidas externas: en *The Hype List* de Modaes, Nude Project lideró ocho meses seguidos entre las marcas jóvenes españolas, y Spotify destacó su podcast entre los más relevantes de España.
 
-¿Qué interpretamos? Que su comunicación es muy eficaz: lograron una comunidad enorme con poca publicidad paga, porque el contenido lo producen ellos y su gente. Un estudio de la Universidad Complutense sobre su TikTok llega a la misma idea: importa más integrarse en la lógica de la plataforma y conectar emocionalmente que invertir en promoción. Y esa comunidad se traduce en ventas: en 2023, el canal online fue el 62 % del negocio."
+En definitiva, lograron una comunidad enorme con poca publicidad paga, porque el contenido lo producen ellos y su gente. Un estudio de la Universidad Complutense sobre su TikTok llega a la misma idea: importa más integrarse en la lógica de la plataforma y conectar emocionalmente que invertir en promoción. Y esa comunidad se traduce en ventas: en 2023, el canal online fue el 62 % del negocio."
 
 ## 6. Objetivo comunicacional (~1:30)
 
