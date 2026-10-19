@@ -267,6 +267,7 @@ const fotosDeLaClase = () =>
   (servidor === 'conectado' ? sala.fotos : []).map((f) => ({
     cuenta: f.profe ? '@profes' : `@grupo${f.numero}`,
     url: f.url,
+    imagen: f.imagen, // ya pedida al llegar room:groups (sala.js)
     color: f.profe ? colores.marca.cacao : colorDeGrupo(f.numero).color,
   }));
 

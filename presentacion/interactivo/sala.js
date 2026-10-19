@@ -48,6 +48,7 @@ class Sala extends EventTarget {
     this.max = 40;
     this.grupos = []; // [{ number, taken, connected, photo }] de room:groups
     this.clave = null; // clave del proyector: también sirve para pedir las fotos de los grupos
+    this.imagenes = new Map(); // url → Image: las fotos se piden apenas room:groups las anuncia, no al mostrarlas
     this.estado = null; // { etapa, hype, votacion } que guarda el servidor
     this.urlCelulares = null;
 
@@ -59,6 +60,7 @@ class Sala extends EventTarget {
     });
     s.on('room:groups', (lista) => {
       this.grupos = lista;
+      this.precargarFotos();
       this.avisar('cambio');
     });
     for (const evento of EVENTOS) s.on(evento, (datos) => {
@@ -89,6 +91,7 @@ class Sala extends EventTarget {
     if (estado?.ok) this.estado = estado;
     await this.reloj.sincronizar();
     this.conectado = this.socket.connected;
+    this.precargarFotos(); // room:groups pudo llegar antes de tener la clave
     this.avisar('cambio');
     if (estado?.ok) this.avisar('pres:estado', estado);
   }
@@ -124,7 +127,25 @@ class Sala extends EventTarget {
     if (!this.conectado) return [];
     return this.grupos
       .filter((g) => g.photo)
-      .map((g) => ({ numero: g.number, profe: Boolean(g.teacher), url: `/api/fotos/${this.codigo}/${g.number}?v=${g.photo}&clave=${encodeURIComponent(this.clave)}` }));
+      .map((g) => {
+        const url = `/api/fotos/${this.codigo}/${g.number}?v=${g.photo}&clave=${encodeURIComponent(this.clave)}`;
+        return { numero: g.number, profe: Boolean(g.teacher), url, imagen: this.imagenes.get(url) };
+      });
+  }
+
+  /** Pide las fotos nuevas en cuanto llegan (y suelta las viejas): cuando el presentador toca U ya están cargadas. */
+  precargarFotos() {
+    if (!this.codigo || !this.clave) return;
+    const vigentes = new Set();
+    for (const { url } of this.fotos) {
+      vigentes.add(url);
+      if (this.imagenes.has(url)) continue;
+      const imagen = new Image();
+      imagen.onload = () => (imagen.listo = true);
+      imagen.src = url;
+      this.imagenes.set(url, imagen);
+    }
+    for (const url of this.imagenes.keys()) if (!vigentes.has(url)) this.imagenes.delete(url);
   }
 
   /** Dirección que abre el QR: la sala ya elegida, así el celular solo toca su número. */
