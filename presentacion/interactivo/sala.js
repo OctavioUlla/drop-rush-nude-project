@@ -5,6 +5,7 @@
 // const sala = await abrirSala({ etapa: 'presentacion' });   // falla si no hay servidor (se ensaya sin celulares)
 // sala.conectado, sala.codigo, sala.conectados, sala.grupos, sala.estado (hype y votación guardados), sala.fotos
 // await sala.pedir('pres:hype:preparar', { segundos: 3 })     // null si no hay conexión
+// await sala.nuevaSala()                                       // otra sala (los celulares escanean el QR nuevo)
 // sala.addEventListener('pres:hype:nivel', (e) => …)
 //
 // socket.io-client y el reloj sincronizado los sirve el mismo servidor del juego: si la presentación se abre desde
@@ -94,6 +95,19 @@ class Sala extends EventTarget {
     this.precargarFotos(); // room:groups pudo llegar antes de tener la clave
     this.avisar('cambio');
     if (estado?.ok) this.avisar('pres:estado', estado);
+  }
+
+  /**
+   * Botón "Nueva sala" del modo presentador (después de un ensayo): deja la sala actual y crea otra en el mismo socket.
+   * Los celulares que estaban quedan en la vieja: tienen que escanear el QR nuevo.
+   */
+  async nuevaSala() {
+    if (!this.socket.connected) return false;
+    this.nueva = true;
+    this.grupos = [];
+    this.imagenes.clear();
+    await this.entrar();
+    return this.conectado;
   }
 
   /** Evento con respuesta; null si no hay conexión o el servidor no contesta a tiempo. */
