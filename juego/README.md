@@ -143,7 +143,7 @@ Cada push a `main` que toca `juego/`, `presentacion/`, `design-system/` o `deplo
 
 **Configuración (una sola vez).**
 
-1. El Cloud Server de DonWeb tiene **AlmaLinux 10** (también sirve Ubuntu o Debian; alcanza 1 vCPU y 1 GB, porque la imagen se construye en GitHub y no en el VPS). Si el panel de DonWeb tiene firewall propio, abrir el puerto de SSH (**22** o el que use el VPS), **80 y 443** (TCP, y 443 UDP).
+1. El Cloud Server de DonWeb tiene **AlmaLinux 10** (también sirve Ubuntu o Debian; alcanza 1 vCPU y 1 GB, porque la imagen se construye en GitHub y no en el VPS). El panel de DonWeb tiene firewall propio: abrir ahí el puerto de SSH (**22** o el que use el VPS), **80 y 443** (TCP, y 443 UDP).
 2. En la notebook, desde la raíz del repositorio, generar la clave con la que entra GitHub Actions. Pide una frase de contraseña: **Enter dos veces** (sin frase; Actions no puede escribirla). No usar `-N ""` en PowerShell: Windows PowerShell descarta el argumento vacío y `ssh-keygen` responde *Too many arguments*. Los archivos `drop-rush-deploy*` están en el `.gitignore`.
    ```bash
    ssh-keygen -t ed25519 -C github-actions -f drop-rush-deploy

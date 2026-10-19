@@ -159,10 +159,19 @@ jobs:
           DOMINIO="$(ssh vps "grep '^DOMINIO=' /opt/drop-rush/.env | cut -d= -f2-")"
           echo "### Juego en https://$DOMINIO" >> "$GITHUB_STEP_SUMMARY"
           echo "Proyector: https://$DOMINIO/host/ · Presentación: https://$DOMINIO/presentacion/" >> "$GITHUB_STEP_SUMMARY"
+          # Si un puerto ni siquiera conecta (timeout), es un firewall: se avisa enseguida en vez de esperar.
+          abierto() { timeout 5 bash -c "exec 3<>/dev/tcp/$HOST/$1" 2>/dev/null; }
+          cerrados=""
+          for p in 80 443; do abierto "$p" || cerrados="$cerrados $p"; done
+          if [ -n "$cerrados" ]; then
+            echo "::error::Desde internet no se llega al VPS por el puerto (TCP)$cerrados: el juego está corriendo, pero un firewall lo bloquea. Abrir 80 y 443 (TCP, y 443 UDP) en el firewall del panel de DonWeb."
+            exit 1
+          fi
           # La primera vez Caddy tarda unos segundos en sacar el certificado.
-          for i in $(seq 1 30); do
-            if curl -fsS --max-time 5 "https://$DOMINIO/api/health"; then echo; exit 0; fi
-            sleep 4
+          for i in $(seq 1 20); do
+            if curl -fsS --connect-timeout 5 --max-time 10 "https://$DOMINIO/api/health"; then echo; exit 0; fi
+            sleep 5
           done
-          echo "::error::https://$DOMINIO/api/health no respondió. Revisar el firewall del panel de DonWeb (80 y 443)."
+          echo "::error::Los puertos están abiertos pero https://$DOMINIO/api/health no respondió. Ver el certificado en el VPS: docker compose logs caddy."
+          ssh vps "cd /opt/drop-rush && docker compose logs --tail 30 caddy" || true
           exit 1
