@@ -387,3 +387,119 @@ test('la foto del grupo vale hasta el hype de apertura (o, sin presentación, ha
     await servidor.cerrar();
   }
 });
+
+test('dos celulares tocan el mismo grupo a la vez: entra uno solo y el otro vuelve a la grilla', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno' });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const a = await conectar(servidor.url);
+    const b = await conectar(servidor.url);
+    sockets.push(host, a, b);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    // Sin esperar el ack de ninguno: llegan juntos al servidor.
+    const [ra, rb] = await Promise.all([
+      a.emitWithAck('player:join', { code, groupId: 3 }),
+      b.emitWithAck('player:join', { code, groupId: 3 }),
+    ]);
+    assert.deepEqual([ra.ok, rb.ok].sort(), [false, true]);
+    assert.equal((ra.ok ? rb : ra).reason, 'taken');
+    const grupo = [...servidor.salas][0].grupos.get(3);
+    assert.equal(grupo.socketId, (ra.ok ? a : b).id);
+    assert.equal(grupo.token, (ra.ok ? ra : rb).deviceToken);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+test('doble toque en la grilla: el celular queda en el primer grupo y no lo rechaza a él mismo', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno' });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const celu = await conectar(servidor.url);
+    sockets.push(host, celu);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    // Mismo número dos veces y, enseguida, otro número: todo antes de que vuelva la primera respuesta.
+    const respuestas = await Promise.all([
+      celu.emitWithAck('player:join', { code, groupId: 5 }),
+      celu.emitWithAck('player:join', { code, groupId: 5 }),
+      celu.emitWithAck('player:join', { code, groupId: 6 }),
+    ]);
+    for (const r of respuestas) assert.equal(r.groupId, 5);
+    assert.equal(new Set(respuestas.map((r) => r.deviceToken)).size, 1);
+    assert.ok(!celu.eventos.some(([n]) => n === 'player:join_rejected'));
+    const sala = [...servidor.salas][0];
+    assert.equal(sala.ocupados, 1, 'el grupo 6 no queda tomado por nadie');
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+test('un celular que vuelve de un microcorte no le quita el grupo al que lo retomó', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno', config: { duracionCuenta: 1, duracionTramo: 20 } });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const viejo = await conectar(servidor.url);
+    const nuevo = await conectar(servidor.url);
+    sockets.push(host, viejo, nuevo);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    await viejo.emitWithAck('player:join', { code, groupId: 9 });
+    host.emit('host:start', {});
+    await viejo.esperar('game:script');
+
+    // Corte abrupto: el servidor guarda la sesión para recuperarla.
+    viejo.io.reconnection(false);
+    viejo.io.engine.close();
+    const sala = [...servidor.salas][0];
+    while (sala.grupos.get(9).conectado) await espera(20);
+    host.emit('host:release_group', { groupId: 9 });
+    while (sala.grupos.get(9).token) await espera(20);
+    assert.ok((await nuevo.emitWithAck('player:join', { code, groupId: 9 })).ok);
+    nuevo.emit('run:progress', { runDistance: 10 });
+
+    viejo.io.reconnection(true);
+    viejo.connect();
+    await viejo.esperar('player:released');
+    assert.ok(viejo.recovered, 'Socket.io recuperó la sesión del celular viejo');
+    viejo.emit('run:progress', { runDistance: 999 });
+    await espera(150);
+    const grupo = sala.grupos.get(9);
+    assert.equal(grupo.socketId, nuevo.id);
+    assert.equal(grupo.distanciaCorrida, 10);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
+
+test('el mismo token en dos pestañas: manda la última y la otra deja de contar', { timeout: 30_000 }, async () => {
+  const servidor = await iniciarServidor({ puerto: 0, archivos: 'ninguno', config: { duracionCuenta: 1, duracionTramo: 20 } });
+  const sockets = [];
+  try {
+    const host = await conectar(servidor.url);
+    const vieja = await conectar(servidor.url);
+    const nueva = await conectar(servidor.url);
+    sockets.push(host, vieja, nueva);
+    const { code } = await host.emitWithAck('host:create_room', {});
+    const { deviceToken } = await vieja.emitWithAck('player:join', { code, groupId: 2 });
+    host.emit('host:start', {});
+    await vieja.esperar('game:script');
+    assert.ok((await nueva.emitWithAck('player:join', { code, groupId: null, deviceToken })).ok);
+    nueva.emit('run:progress', { runDistance: 10 });
+    vieja.emit('run:progress', { runDistance: 999 });
+    await espera(150);
+    const grupo = [...servidor.salas][0].grupos.get(2);
+    assert.equal(grupo.distanciaCorrida, 10);
+    // La pestaña vieja ya no recibe lo del grupo ni lo marca desconectado al cerrarse.
+    vieja.disconnect();
+    await espera(150);
+    assert.equal(grupo.conectado, true);
+  } finally {
+    sockets.forEach((s) => s.disconnect());
+    await servidor.cerrar();
+  }
+});
