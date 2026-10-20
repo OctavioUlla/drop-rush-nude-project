@@ -74,6 +74,15 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
   const heroe = crearSudadera(colorways[0].color3d);
   escena.add(heroe.grupo);
   escena.updateMatrixWorld(true);
+  // Las luces de las estaciones (focos, lámparas) pasan a colgar de la escena y nunca se ocultan. Si se ocultaran con
+  // su estación, cada viaje cambiaría la cantidad de luces y three.js recompilaría los shaders de todos los
+  // materiales: la cámara se trababa la primera vez que pasaba por cada estación. Su alcance es más corto que la
+  // separación entre estaciones, así que encendidas no tocan a las vecinas.
+  for (const e of estaciones) {
+    const luces = [];
+    e.grupo.traverse((o) => { if (o.isLight) luces.push(o); });
+    for (const luz of luces) escena.attach(luz);
+  }
 
   // Pose de cámara de cada estación, calculada una vez desde su ancla.
   const { distancia, altura } = esc.camara;
@@ -278,8 +287,24 @@ export function iniciar({ lienzo, escenario, eventos = {}, escalaMaxima = esc.re
   });
   escenario.addEventListener('pointerleave', () => puntero.set(0, 0));
 
-  // Compila los shaders antes de mostrar nada, así el primer viaje no se traba.
-  renderer.compile(escena, camara);
+  // Precalienta la escena antes de mostrar nada (queda detrás del cargador). La primera vez que algo entra en cuadro,
+  // three.js compila sus shaders (también los de la sombra) y sube sus geometrías y texturas a la placa: hecho en
+  // pleno viaje, traba la cámara la primera vez que se pasa por cada estación. renderer.compile() solo cubre los
+  // shaders de lo visible; un cuadro con todo visible y sin recorte por cámara cubre todo lo demás.
+  function precalentar() {
+    const tocados = [];
+    escena.traverse((o) => {
+      tocados.push([o, o.visible, o.frustumCulled]);
+      o.visible = true;
+      o.frustumCulled = false;
+    });
+    for (const t of heroe.texturas) renderer.initTexture(t); // el bordado claro y el oscuro
+    camara.position.copy(estaciones[0].camara);
+    camara.lookAt(estaciones[0].mira);
+    render();
+    for (const [o, visible, recorte] of tocados) { o.visible = visible; o.frustumCulled = recorte; }
+  }
+  precalentar();
   let ultimo = null;
   const bucle = (ahora) => {
     const dt = ultimo === null ? 0 : Math.min((ahora - ultimo) / 1000, 1 / 20);
