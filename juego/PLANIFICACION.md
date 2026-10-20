@@ -472,7 +472,7 @@ Las preguntas **se cargan aparte**, en `data/preguntas.json`, y se pueden editar
 - Objetivo comunicacional: 1
 - Modelo D2C, drops y desafíos: 1
 
-Hay 8 de reserva (2 de marketing viral, 2 de métricas y 1 de cada uno de los otros temas): las 6 preguntas por defecto no las usan (sale una por tema); si se sube la cantidad, se suman al azar. Los desafíos de la marca entran en una pregunta y además se trabajan en el debate final, a partir del resultado del juego.
+Hay 7 de reserva (2 de métricas y 1 de cada uno de los otros temas): las 6 preguntas por defecto no las usan (sale una por tema); si se sube la cantidad, se suman al azar. Los desafíos de la marca entran en una pregunta y además se trabajan en el debate final, a partir del resultado del juego.
 
 **Criterio del banco.** Todas se responden con lo que se dijo en la exposición ([`presentacion/GUION.md`](../presentacion/GUION.md) y las diapositivas), no con datos del caso que no se presentaron. Son **difíciles a propósito**, para que haya diferencia entre los grupos: las opciones incorrectas salen de otros datos de la misma exposición (la «autenticidad controlada» del EGC contra la validación social del UGC, los 600 € de inversión contra los 600 mil € de la primera colección, etc.). Con 15 s por pregunta, las opciones están recortadas para leerse rápido en el proyector; si en el ensayo no alcanza, se sube la duración en *Ajustes*. Si cambia el guion, hay que revisar las preguntas que dependen de ese bloque.
 
@@ -585,7 +585,7 @@ juego/
 
 - [x] Inicializar el proyecto Node con Express, Socket.io y Vite
 - [x] Crear sala con código y QR; lista de grupos con **un celular por grupo** y token de dispositivo
-- [x] Cargar las preguntas desde el JSON *(14 preguntas tomadas de la exposición: 6 principales y 8 de reserva)*
+- [x] Cargar las preguntas desde el JSON *(13 preguntas tomadas de la exposición: 6 principales y 7 de reserva)*
 - [x] Guion de la partida, sincronización de reloj y ciclo pregunta → elección de carril → **revelado instantáneo**
 - [x] Puntuación por distancia y ranking en el host para 40 grupos
 - [x] Estadísticas por pregunta, pantalla final con ranking y **repaso de errores**
