@@ -3,9 +3,11 @@
 // Abre la presentación con ?render (solo la escena y sus etiquetas, sin texto ni interfaz), deja que se asiente cada
 // estación y guarda presentacion/renders/<escena>[-<pose>].jpg a 1920×1080.
 // Uso: npm run renders:presentacion (necesita Playwright: npx playwright install chromium la primera vez).
-import { createReadStream, mkdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createReadStream, existsSync, mkdirSync, readdirSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize } from 'node:path';
+import { tmpdir } from 'node:os';
+import { basename, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const raiz = fileURLToPath(new URL('../../', import.meta.url));
@@ -20,12 +22,35 @@ try {
   process.exit(1);
 }
 
+// El Chromium de Playwright no decodifica H.264: sin esto los celulares muestran las ilustraciones de prueba en vez
+// de los reels. Antes de abrir el navegador, cada .mp4 de media/ se convierte a WebM (VP9) y el servidor entrega esa
+// copia (necesita ffmpeg; las copias quedan en la carpeta temporal y se reusan mientras el .mp4 no cambie).
+const cacheVideos = join(tmpdir(), 'np-renders-webm');
+mkdirSync(cacheVideos, { recursive: true });
+const webms = new Map();
+for (const nombre of readdirSync(join(raiz, 'presentacion/media')).filter((n) => n.endsWith('.mp4'))) {
+  const mp4 = join(raiz, 'presentacion/media', nombre);
+  const webm = join(cacheVideos, `${basename(nombre, '.mp4')}-${statSync(mp4).mtimeMs}.webm`);
+  try {
+    if (!existsSync(webm)) execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', mp4, '-an', '-c:v', 'libvpx-vp9', '-b:v', '0', '-crf', '32', '-deadline', 'realtime', '-cpu-used', '8', webm]);
+    webms.set(mp4, webm);
+  } catch {
+    console.warn(`⚠ no se pudo convertir ${nombre} (¿falta ffmpeg?): ese celular sale con la ilustración de prueba`);
+  }
+}
+
 // Servidor estático mínimo desde la raíz del repositorio (la presentación importa ../design-system).
 const servidor = createServer((req, res) => {
   const ruta = normalize(join(raiz, decodeURIComponent(new URL(req.url, 'http://x').pathname)));
   let archivo = ruta.startsWith(raiz) ? ruta : null;
   try { if (archivo && statSync(archivo).isDirectory()) archivo = join(archivo, 'index.html'); statSync(archivo); } catch { archivo = null; }
   if (!archivo) { res.writeHead(404).end(); return; }
+  const webm = webms.get(archivo);
+  if (webm) {
+    res.writeHead(200, { 'content-type': 'video/webm', 'content-length': statSync(webm).size });
+    createReadStream(webm).pipe(res);
+    return;
+  }
   res.writeHead(200, { 'content-type': tipos[extname(archivo)] ?? 'application/octet-stream' });
   createReadStream(archivo).pipe(res);
 }).listen(0);
@@ -55,6 +80,9 @@ for (const [nombre, diapositiva] of encuadres) {
   // La escena se adelanta sin esperar: cámara, prenda, contadores y feeds quedan asentados.
   await pagina.evaluate(() => { window.motor.depuracion.pausar(true); window.motor.adelantar(7); });
   await pagina.waitForTimeout(2200); // entran las etiquetas
+  // Con la escena pausada el fundido puede quedar a medias: se espera a que cada etiqueta esté opaca del todo.
+  await pagina.waitForFunction(() => [...document.querySelectorAll('.np-diapo--activa .np-etiqueta-3d')]
+    .every((e) => getComputedStyle(e).opacity === '1'), null, { timeout: 10000 }).catch(() => console.warn(`⚠ ${nombre}: etiquetas sin asentar`));
   await pagina.locator('#escenario').screenshot({ path: join(destino, `${nombre}.jpg`), type: 'jpeg', quality: 84 });
   console.log(`✔ renders/${nombre}.jpg`);
 }
