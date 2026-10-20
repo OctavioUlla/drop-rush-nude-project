@@ -106,8 +106,6 @@ Nos llamó la atención la campaña **Out of Office**, de fines de agosto de 202
 
 ¿Por qué funcionó? Por el **tono**: ironía y humor. Por el **mensaje**: le habla a la "frustración" de quien, si hubiera hecho TikToks en 2020, hoy no tendría que entrar a trabajar a las 9. Por la **estética**: se fotografió en el metro, un escenario cotidiano y nada glamoroso. Por el **contexto**: salió justo cuando todos volvían de vacaciones. Y porque el **producto es el mensaje**: quien se pone la remera comparte el chiste.
 
-También generan conversación con contrastes: para lanzar la línea de mujer eligieron a Belén Esteban y a Victoria Federica, dos perfiles opuestos. No buscan una imagen perfecta: buscan que se hable.
-
 La lección: la viralidad parece casual, pero está diseñada. Eligen el momento, el mensaje y el formato para que la gente quiera compartirlo."
 
 ## 4. Marketing experiencial (~2:00)
@@ -116,7 +114,7 @@ La lección: la viralidad parece casual, pero está diseñada. Eligen el momento
 
 *[La sudadera queda colgada de una percha en el salón de la Nude House; detrás, la pared de cuadros. Después de la primera frase (“…es un espacio de encuentro”), la cámara se acerca a los cuadros (“Del salón al feed”): la Nude House de Madrid en el centro, la pared de las llaves a la izquierda y la Mansion de Ibiza a la derecha.]*
 
-"Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la **Nude House** de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify, y la cola con la llave de coleccionista ya es parte del ritual.
+"Ahora, el mundo físico. Para Nude Project una tienda no es solo un lugar de venta: es un espacio de encuentro. Pasa en la **Nude House** de Madrid y en cada apertura: la música es una selección de la marca, la misma de su lista de Spotify.
 
 El evento más ambicioso es el **Nude Project Château**, en una mansión de Ibiza. Empezó en 2024 y ya va por su tercera edición. En 2025 reunió a más de 30 artistas, actores, deportistas e influencers que sumaban más de 70 millones de seguidores, con una regla: lo que pasa en la mansión se queda en la mansión. Eso genera misterio y exclusividad, y funciona casi como un reality de marca. Además, en la web se pueden comprar los looks que aparecen en las imágenes: el contenido se conecta directo con la venta. Las dos primeras ediciones superaron los 100 millones de interacciones.
 
