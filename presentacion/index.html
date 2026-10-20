@@ -71,7 +71,7 @@
       </div>
       <aside class="notas">
         <p><em>Mientras la clase se acomoda: portada con el QR y el contador de grupos conectados.</em></p>
-        <p><em><kbd>Q</kbd> (o tocar el QR) lo agranda a pantalla completa para el fondo del aula; <kbd>Q</kbd> o <kbd>Esc</kbd> lo cierra. Sirve en cualquier diapositiva para los que llegan tarde.</em></p>
+        <p><em><kbd>Q</kbd> (o tocar el QR) lo agranda, uno en cada una de las 4 pantallas del aula; <kbd>Q</kbd> o <kbd>Esc</kbd> lo cierra. Sirve en cualquier diapositiva para los que llegan tarde.</em></p>
         <p>“Antes de arrancar: escaneen el QR y elijan el número de su grupo. La presentación es interactiva y esto también sirve para el juego final. Un celular por grupo.”</p>
         <p>“Los profes también se pueden conectar, participar y jugar (aunque no podrán ganar). Los profes deben seleccionar la opción de P1, P2, P3, etc. No un número de grupo”</p>
         <p>“Mientras todos se conectan pueden desde su celular sacar una selfie de su grupo o un fit check (Zapatillas y pantalón por ejemplo) para que sea su foto de perfil en el juego. Estaría bueno que lo hagan” <em>Incentivar a la gente para que lo haga.</em></p>
@@ -337,16 +337,19 @@
     </div>
   </div>
 
-  <!-- Tecla Q (o tocar el QR chico): el QR a pantalla completa, para que se pueda escanear desde el fondo del aula y
-       para los que llegan tarde en cualquier diapositiva. Se cierra con Q, Esc, un clic o al cambiar de diapositiva. -->
+  <!-- Tecla Q (o tocar el QR chico): el QR en grande, para que se pueda escanear desde el fondo del aula y para los que
+       llegan tarde en cualquier diapositiva. Se cierra con Q, Esc, un clic o al cambiar de diapositiva. El aula tiene una
+       pantalla armada con 4 en grilla: deck.js copia el panel en cada cuarto para que ningún borde corte el QR. -->
   <div class="qr-grande" id="qr-grande" data-np-tema="cacao" aria-hidden="true">
-    <img class="qr-grande__codigo" id="qr-grande-img" alt="QR para entrar desde el celular">
-    <div class="qr-grande__texto">
-      <span class="np-etiqueta">Escaneá con la cámara y elegí tu grupo</span>
-      <p class="qr-grande__titulo">Entrá al drop</p>
-      <p class="qr-grande__sin-camara">¿Sin cámara? Entrá a <b id="qr-grande-url"></b> y escribí</p>
-      <p class="qr-grande__sala" data-sala="codigo">—</p>
-      <p class="qr-grande__cola"><b data-sala="conectados"></b> grupos en la cola</p>
+    <div class="qr-grande__panel">
+      <img class="qr-grande__codigo" data-qr="codigo" alt="QR para entrar desde el celular">
+      <div class="qr-grande__texto">
+        <span class="np-etiqueta">Escaneá con la cámara y elegí tu grupo</span>
+        <p class="qr-grande__titulo">Entrá al drop</p>
+        <p class="qr-grande__sin-camara">¿Sin cámara? Entrá a <b data-qr="url"></b> y escribí</p>
+        <p class="qr-grande__sala" data-sala="codigo">—</p>
+        <p class="qr-grande__cola"><b data-sala="conectados"></b> grupos en la cola</p>
+      </div>
     </div>
   </div>
 

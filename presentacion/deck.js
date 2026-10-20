@@ -341,8 +341,12 @@ function pintarSala() {
   const cifra = enLinea ? `${conectados}/${sala.max}` : '';
   if (enLinea && $('#qr').dataset.url !== sala.urlQr) {
     $('#qr').dataset.url = sala.urlQr;
-    $('#qr').src = $('#qr-grande-img').src = `/api/qr.svg?texto=${encodeURIComponent(sala.urlQr)}`;
-    $('#sala-url').textContent = $('#qr-grande-url').textContent = `${sala.urlCelulares.replace(/^https?:\/\//, '')}/play`;
+    const src = `/api/qr.svg?texto=${encodeURIComponent(sala.urlQr)}`;
+    const url = `${sala.urlCelulares.replace(/^https?:\/\//, '')}/play`;
+    $('#qr').src = src;
+    $('#sala-url').textContent = url;
+    for (const el of document.querySelectorAll('[data-qr="codigo"]')) el.src = src;
+    for (const el of document.querySelectorAll('[data-qr="url"]')) el.textContent = url;
   }
   if (!enLinea) alternarQr(false);
   for (const el of document.querySelectorAll('[data-sala="codigo"]')) el.textContent = sala?.codigo ?? '—';
@@ -355,8 +359,15 @@ function pintarSala() {
   avisar();
 }
 
+// La pantalla del aula son 4 en grilla: un panel con el QR en cada cuarto (los lectores de pantalla leen solo el primero).
+for (let i = 1; i < 4; i++) {
+  const copia = $('.qr-grande__panel').cloneNode(true);
+  copia.setAttribute('aria-hidden', 'true');
+  $('#qr-grande').append(copia);
+}
+
 /**
- * Tecla Q (o tocar el QR chico): el QR a pantalla completa, para que se escanee desde el fondo del aula y para los que
+ * Tecla Q (o tocar el QR chico): el QR en cada cuarto de la pantalla, para que se escanee desde el fondo del aula y para los que
  * llegan tarde en cualquier diapositiva. Sin sala no hay QR que mostrar. Se cierra al cambiar de diapositiva.
  */
 function alternarQr(si = !qrGrande) {

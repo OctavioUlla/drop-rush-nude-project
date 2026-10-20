@@ -208,7 +208,7 @@ La **cola** está presente todo el tiempo y no suma minutos.
 | → / Espacio / ↓ | Siguiente |
 | ← / ↑ | Anterior |
 | `H` | Lanzar el hype (y completarlo si se estanca) |
-| `Q` | QR a pantalla completa, para escanearlo desde el fondo del aula (y para los que llegan tarde) |
+| `Q` | QR en grande, uno en cada cuarto de la pantalla (la del aula son 4 en grilla), para escanearlo desde el fondo del aula (y para los que llegan tarde) |
 | `V` | Abrir o cerrar la votación |
 | `F` | Pausar o reanudar los feeds |
 | `J` | En el bloque de Drop Rush: abrir el proyector del juego (`/host/`) en la misma ventana y con la misma sala |

@@ -31,7 +31,7 @@ npm run dev
 | `P` | Modo presentador |
 | `B` (o `.` del control) | Pantalla en cacao (pausa) |
 | `H` | En la portada: hype colectivo (cuenta regresiva, botón HYPE en los celulares, medidor y drop). Con el medidor corriendo, lo completa |
-| `Q` | QR a pantalla completa (también tocando el QR chico de la portada), con el código de la sala para escribirlo a mano. Sirve en cualquier diapositiva para los que llegan tarde; se cierra con `Q`, `Esc` o al cambiar de diapositiva |
+| `Q` | QR en grande (también tocando el QR chico de la portada), con el código de la sala para escribirlo a mano. Va una copia en cada cuarto de la pantalla, porque la del aula son 4 pantallas en grilla y un QR único quedaría cortado por los bordes. Sirve en cualquier diapositiva para los que llegan tarde; se cierra con `Q`, `Esc` o al cambiar de diapositiva |
 | `V` | Abrir o cerrar la votación en vivo (en la historia solo se ve cuántos grupos votaron; el resultado se revela en los desafíos, con la balanza) |
 | `F` | Pausar o reanudar los feeds de EGC vs. UGC (para comentar una publicación) |
 | `U` | En EGC vs. UGC, después de los clips reales: el celular de UGC muestra unos 15 s las fotos que se sacaron los grupos (*@grupo7*, *@grupo12*…) y vuelve solo a los clips; otra `U` lo corta antes. Sin servidor o sin fotos, fotos de ensayo |
