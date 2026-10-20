@@ -1,5 +1,5 @@
 // Sudadera Nude Project estilo clay, hecha por código y por piezas (para poder desarmarla).
-// crearSudadera(color) → { grupo, piezas, material, ponerColor(hex), desarmar(t) }
+// crearSudadera(color) → { grupo, piezas, material, texturas, ponerColor(hex), desarmar(t) }
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { tokens, colores, colores3d } from '../tokens.js';
@@ -11,13 +11,20 @@ function texturaLogo(color) {
   const c = document.createElement('canvas');
   c.width = 1024; c.height = 256;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.font = '700 150px "Inter Tight", "Inter", sans-serif';
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '-8px';
-  ctx.fillText('Nude® Project', 512, 132);
+  const fuente = '700 150px "Inter Tight", "Inter", sans-serif';
   const t = new THREE.CanvasTexture(c);
+  const dibujar = () => {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = fuente;
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '-8px';
+    ctx.fillText('Nude® Project', 512, 132);
+    t.needsUpdate = true;
+  };
+  dibujar();
+  document.fonts?.load(fuente).then(dibujar, () => {}); // se dibuja de nuevo cuando carga la tipografía
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   return t;
@@ -175,6 +182,8 @@ export function crearSudadera(colorInicial = colores3d.marca.cacao) {
 
   const hsl = {};
   let bordadoClaro;
+  // Las dos versiones del bordado se dibujan una sola vez: regenerarlas al cambiar de colorway trababa el viaje.
+  const logos = { claro: texturaLogo(colores.marca.cacao), oscuro: texturaLogo(colores.marca.crema) };
   /** Acepta un hex o un THREE.Color; se puede llamar en cada cuadro durante un fundido. */
   function ponerColor(c) {
     tela.color.set(c);
@@ -183,9 +192,7 @@ export function crearSudadera(colorInicial = colores3d.marca.cacao) {
     const claro = tela.color.getHSL(hsl).l > 0.55;
     if (claro === bordadoClaro) return;
     bordadoClaro = claro;
-    logoMat.map?.dispose();
-    logoMat.map = texturaLogo(claro ? colores.marca.cacao : colores.marca.crema);
-    logoMat.needsUpdate = true;
+    logoMat.map = claro ? logos.claro : logos.oscuro;
   }
   ponerColor(colorInicial);
 
@@ -197,5 +204,5 @@ export function crearSudadera(colorInicial = colores3d.marca.cacao) {
     piezas.mangaDerecha.rotation.z = 0.25 * t;
   }
 
-  return { grupo, piezas, material: tela, ponerColor, desarmar };
+  return { grupo, piezas, material: tela, texturas: Object.values(logos), ponerColor, desarmar };
 }
