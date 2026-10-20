@@ -65,7 +65,7 @@ function insigniasInteractivas(i) {
   if (i.servidor === 'conectado') lista.push(`<span class="np-insignia np-insignia--relleno">Sala ${i.sala} · ${i.conectados}/${i.max} conectados</span>`);
   else if (i.servidor === 'conectando') lista.push('<span class="np-insignia">Conectando con el servidor…</span>');
   else lista.push('<span class="np-insignia np-insignia--alerta">Sin servidor: hype y votación de ensayo</span>');
-  if (i.qrGrande) lista.push('<span class="np-insignia np-insignia--rosa">QR a pantalla completa (Q)</span>');
+  if (i.qrGrande) lista.push('<span class="np-insignia np-insignia--rosa">QR en grande (Q)</span>');
   const h = i.hype;
   const ensayo = (x) => (x?.modo === 'ensayo' ? ' (ensayo)' : '');
   if (h?.fase === 'cuenta') lista.push(`<span class="np-insignia np-insignia--rosa">Hype: cuenta regresiva${ensayo(h)}</span>`);

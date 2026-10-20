@@ -88,13 +88,16 @@ body { display: grid; place-items: center; }
 /* ?render: solo la escena 3D (y sus etiquetas), para las imágenes de respaldo. */
 [data-render] :is(.np-diapo__texto, .portada__pie, .np-interfaz, .np-grano, .np-cargador, .hype) { display: none !important; }
 
-/* QR a pantalla completa (tecla Q): lo más grande posible a lo alto, con el código de la sala para escribirlo a mano. */
+/* QR en grande (tecla Q), con el código de la sala para escribirlo a mano. La pantalla del aula son 4 en grilla y un QR
+   único quedaría cortado por los bordes: va una copia en cada cuarto. Cada panel es su propio contenedor, así que las
+   medidas en cqw son relativas al cuarto y cada copia es la vista de pantalla completa a la mitad. */
 .qr-grande {
-  z-index: 6; display: flex; align-items: center; justify-content: center; gap: 5cqw; padding: 3cqw;
+  z-index: 6; display: grid; grid-template: 1fr 1fr / 1fr 1fr;
   background: var(--np-marca-cacao-profundo); color: var(--np-tinta);
   opacity: 0; visibility: hidden; cursor: zoom-out;
   transition: opacity var(--np-movimiento-lento) linear, visibility 0s linear var(--np-movimiento-lento);
 }
+.qr-grande__panel { container-type: size; display: flex; align-items: center; justify-content: center; gap: 2.5cqw; padding: 1.5cqw; min-width: 0; min-height: 0; } /* fuera del panel: cqw de la pantalla entera */
 .qr-grande--activo { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
 .qr-grande__codigo { flex: none; height: 48cqw; aspect-ratio: 1; image-rendering: pixelated; transform: scale(0.94); transition: transform var(--np-movimiento-texto) var(--np-movimiento-curva); }
 .qr-grande--activo .qr-grande__codigo { transform: none; }
