@@ -87,6 +87,28 @@ $('#de').textContent = `/ ${dosDigitos(ultimoBloque)}`;
 // paso; en el último nos toca y se abre la puerta (QUEDA 1).
 const cola = crearCola($('#cola'), { bloques: bloques.length });
 
+// Al imprimir, cada diapositiva lleva su copia de la interfaz con su bloque: logo, índice, contador y cola quieta.
+// La pista de abajo (teclas, o sala y conectados) queda afuera: en el PDF no sirve.
+let interfacesImpresas = false;
+function imprimirInterfaces() {
+  if (interfacesImpresas) return;
+  interfacesImpresas = true;
+  const interfaz = $('.np-interfaz');
+  for (const d of diapos) {
+    const copia = interfaz.cloneNode(true);
+    copia.classList.add('np-interfaz--impresa');
+    copia.setAttribute('aria-hidden', 'true');
+    copia.querySelector('.np-interfaz__pista').remove();
+    copia.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    copia.querySelector('.np-interfaz__contador b').textContent = dosDigitos(d.bloque);
+    copia.querySelectorAll('.np-interfaz__menu button').forEach((b, k) => b.toggleAttribute('aria-current', k === d.bloque));
+    crearCola(copia.querySelector('.np-cola'), { bloques: bloques.length }).ir(d.bloque, { animar: false });
+    d.el.append(copia);
+  }
+}
+addEventListener('beforeprint', imprimirInterfaces);
+if (imprimiendo) imprimirInterfaces();
+
 // ---------- Estado ----------
 const limitar = (n) => Math.max(0, Math.min(diapos.length - 1, n));
 let actual = limitar(Number.parseInt(location.hash.slice(1), 10) || 0); // la diapositiva pedida
