@@ -78,7 +78,14 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
   };
 
   const salaDe = (socket) => (socket.data.sala ? salas.get(socket.data.sala) : null);
-  const grupoDe = (socket) => salaDe(socket)?.grupos.get(socket.data.grupo) ?? null;
+  /**
+   * El grupo de este socket, solo si sigue siendo el suyo: otro celular (u otra pestaña con el mismo token) pudo
+   * haberlo tomado después, y entonces lo que mande este socket no cuenta.
+   */
+  const grupoDe = (socket) => {
+    const grupo = salaDe(socket)?.grupos.get(socket.data.grupo);
+    return grupo && !grupo.libre && grupo.socketId === socket.id ? grupo : null;
+  };
   const esHost = (socket) => {
     const sala = salaDe(socket);
     return sala && socket.data.host === sala.codigo ? sala : null;
@@ -106,7 +113,11 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
 
   const conectarGrupo = (socket, sala, grupo) => {
     if (socket.data.grupo !== grupo.numero) salirDeGrupo(socket);
+    // Si el grupo estaba en otro socket (la pestaña vieja o el socket de antes de un corte), ese deja de recibir lo del grupo.
+    const anterior = grupo.socketId !== socket.id && io.sockets.sockets.get(grupo.socketId);
+    if (anterior && anterior.data.grupo === grupo.numero) salirDeGrupo(anterior);
     socket.data.grupo = grupo.numero;
+    socket.data.token = grupo.token;
     socket.join(canal.grupo(sala.codigo, grupo.numero));
     grupo.conectado = true;
     grupo.socketId = socket.id;
@@ -125,13 +136,18 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     });
 
     // Si Socket.io recuperó la sesión tras un microcorte, el celular sigue en su sala y su grupo sin hacer nada.
-    if (socket.recovered) {
+    // Pero solo si el grupo sigue siendo suyo: durante el corte el presentador pudo liberarlo y otro celular retomarlo
+    // (con otro token). En ese caso vuelve a la grilla, como si lo hubieran liberado con él conectado.
+    if (socket.recovered && socket.data.grupo != null) {
       const sala = salaDe(socket);
-      const grupo = grupoDe(socket);
-      if (sala && grupo && !grupo.libre) {
+      const grupo = sala?.grupos.get(socket.data.grupo);
+      if (grupo && !grupo.libre && grupo.token === socket.data.token) {
         conectarGrupo(socket, sala, grupo);
         socket.emit('state:sync', sala.partida.estadoDe(grupo));
         socket.emit('pres:estado', sala.presentacion.estadoCelular(grupo));
+      } else {
+        socket.emit('player:released', { groupId: socket.data.grupo });
+        salirDeGrupo(socket);
       }
     }
 
@@ -148,7 +164,11 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
 
     socket.on('player:join', (datos, ack) => {
       const sala = salas.get(datos?.code);
-      const r = sala ? sala.unir(Number(datos?.groupId), datos?.deviceToken) : { ok: false, motivo: 'room_not_found' };
+      // Doble toque en la grilla: si este socket ya tiene un grupo en la sala, se queda en ese (no se rechaza a sí
+      // mismo con 'taken' ni deja tomado un segundo número). Para cambiar de número primero se suelta (player:leave).
+      const propio = sala && socket.data.sala === sala.codigo ? grupoDe(socket) : null;
+      const token = propio ? propio.token : datos?.deviceToken;
+      const r = sala ? sala.unir(Number(datos?.groupId), token) : { ok: false, motivo: 'room_not_found' };
       if (!r.ok) {
         socket.emit('player:join_rejected', { reason: r.motivo });
         return responder(ack, { ok: false, reason: r.motivo });
@@ -169,7 +189,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     socket.on('player:leave', (_datos, ack) => {
       const sala = salaDe(socket);
       const grupo = grupoDe(socket);
-      if (!sala || !grupo || grupo.socketId !== socket.id) return responder(ack, { ok: false, reason: 'no_group' });
+      if (!sala || !grupo) return responder(ack, { ok: false, reason: 'no_group' });
       if (sala.presentacion.comenzo || sala.partida.guion) return responder(ack, { ok: false, reason: 'started' });
       sala.liberar(grupo.numero);
       salirDeGrupo(socket);
@@ -182,7 +202,7 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     socket.on('player:photo', (datos, ack) => {
       const sala = salaDe(socket);
       const grupo = grupoDe(socket);
-      if (!sala || !grupo || grupo.socketId !== socket.id) return responder(ack, { ok: false, reason: 'no_group' });
+      if (!sala || !grupo) return responder(ack, { ok: false, reason: 'no_group' });
       if (sala.presentacion.comenzo || sala.partida.guion) return responder(ack, { ok: false, reason: 'started' });
       const r = sala.ponerFoto(grupo, datos?.image);
       if (!r.ok) return responder(ack, { ok: false, reason: r.motivo });
@@ -336,8 +356,8 @@ export async function iniciarServidor({ puerto = 3000, host, config: extra = {},
     socket.on('disconnect', () => {
       const sala = salaDe(socket);
       const grupo = grupoDe(socket);
-      // Solo se marca desconectado si no hay un socket más nuevo del mismo celular.
-      if (sala && grupo && grupo.socketId === socket.id) {
+      // Solo se marca desconectado si no hay un socket más nuevo del mismo celular (grupoDe ya lo verifica).
+      if (sala && grupo) {
         grupo.conectado = false;
         avisarGrupos(sala);
       }
