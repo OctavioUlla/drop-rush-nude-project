@@ -55,6 +55,9 @@ for (const [nombre, diapositiva] of encuadres) {
   // La escena se adelanta sin esperar: cámara, prenda, contadores y feeds quedan asentados.
   await pagina.evaluate(() => { window.motor.depuracion.pausar(true); window.motor.adelantar(7); });
   await pagina.waitForTimeout(2200); // entran las etiquetas
+  // Con la escena pausada el fundido puede quedar a medias: se espera a que cada etiqueta esté opaca del todo.
+  await pagina.waitForFunction(() => [...document.querySelectorAll('.np-diapo--activa .np-etiqueta-3d')]
+    .every((e) => getComputedStyle(e).opacity === '1'), null, { timeout: 10000 }).catch(() => console.warn(`⚠ ${nombre}: etiquetas sin asentar`));
   await pagina.locator('#escenario').screenshot({ path: join(destino, `${nombre}.jpg`), type: 'jpeg', quality: 84 });
   console.log(`✔ renders/${nombre}.jpg`);
 }
