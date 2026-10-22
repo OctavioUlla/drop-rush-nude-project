@@ -1,0 +1,206 @@
+/* Estilos genéricos de la presentación 3D en plano secuencia. No dependen de la temática:
+   la paleta, las fuentes y la marca se definen en el <style id="paleta"> de index.html.
+   Capas del escenario, de atrás hacia adelante:
+   tipografía gigante → canvas 3D → viñeta → texto y etiquetas → interfaz → cargador → grano. */
+
+@font-face { font-family: "Inter Tight"; src: url("fuentes/InterTight-latin.woff2") format("woff2"); font-weight: 100 900; font-display: block; }
+@font-face { font-family: "Inter"; src: url("fuentes/Inter-latin.woff2") format("woff2"); font-weight: 100 900; font-display: block; }
+
+:root {
+  /* Movimiento: las mismas curvas usa el motor 3D (cámara y texto van sincronizados). */
+  --curva: cubic-bezier(.2, .8, .2, 1);
+  --curva-viaje: cubic-bezier(.76, 0, .24, 1);
+  --rapido: 120ms;
+  --base: 220ms;
+  --lento: 420ms;
+  --viaje: 1800ms;
+  --texto: 700ms;
+  --escalonado: 90ms;
+  --salida-texto: 380ms;
+  --grano-opacidad: 0.06;
+  --vineta-opacidad: 0.38;
+  --interletra-display: -0.04em;
+  --interletra-titulo: -0.02em;
+  --interletra-etiqueta: 0.08em;
+  --interletra-logo: -0.055em;
+}
+
+/* Temas: el texto toma el color del estudio de la estación (claro u oscuro). */
+[data-tema="claro"] { --fondo: var(--estudio-claro); --tinta: var(--oscuro); --tinta-suave: var(--oscuro-suave); --linea: var(--piedra); }
+[data-tema="oscuro"] { --fondo: var(--estudio-oscuro); --tinta: var(--claro); --tinta-suave: var(--claro-suave); --linea: color-mix(in srgb, var(--claro) 25%, transparent); }
+
+html, body { height: 100%; margin: 0; background: var(--estudio-oscuro); overflow: hidden; }
+body { display: grid; place-items: center; font-family: var(--fuente-texto); -webkit-font-smoothing: antialiased; }
+
+/* ============ Escenario 16:9: todo escala con su ancho (cqw) ============ */
+.escenario {
+  --fondo-escena: var(--estudio-oscuro);
+  position: relative;
+  width: min(100vw, 100vh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 38%, color-mix(in srgb, var(--fondo-escena), #fff 7%), var(--fondo-escena) 62%);
+  color: var(--tinta);
+  user-select: none;
+}
+.escenario > * { position: absolute; inset: 0; }
+.escenario > canvas { z-index: 1; width: 100%; height: 100%; display: block; }
+.escenario--sin-cursor { cursor: none; }
+.vineta { pointer-events: none; z-index: 2; background: radial-gradient(75% 75% at 50% 45%, transparent 55%, color-mix(in srgb, var(--estudio-oscuro) calc(var(--vineta-opacidad) * 100%), transparent)); }
+
+/* Sin WebGL: queda el fondo del tema y el texto sigue funcionando. */
+[data-sin-webgl] .escenario { background: var(--fondo); }
+[data-sin-webgl] .gigantes, [data-sin-webgl] .etiquetas { display: none; }
+
+/* ============ Tipografía gigante DETRÁS del héroe (debajo del canvas) ============ */
+.gigantes { z-index: 0; pointer-events: none; display: grid; place-items: center; }
+.gigante {
+  grid-area: 1 / 1;
+  margin: -17cqw 0 0;
+  font: 800 var(--tamano-gigante, 22cqw) / 0.8 var(--fuente-display);
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+  color: var(--color-gigante, var(--claro));
+  display: flex;
+}
+.gigante > span { display: inline-block; opacity: 0; transform: translateY(40%) rotate(4deg); transition: transform var(--viaje) var(--curva-viaje), opacity var(--lento) linear; transition-delay: calc(var(--i) * 45ms); }
+.gigante--activa > span { opacity: 1; transform: none; }
+.gigante--sale > span { opacity: 0; transform: translateY(-30%); transition-duration: var(--salida-texto); transition-delay: 0ms; }
+
+/* ============ Capas de texto: una por diapositiva ============ */
+.capas { z-index: 3; pointer-events: none; }
+.capa { position: absolute; inset: 0; visibility: hidden; padding: 9% 7% 10%; display: flex; flex-direction: column; justify-content: center; color: var(--tinta); }
+.capa--activa, .capa--sale { visibility: visible; }
+/* Layouts: editorial (por defecto, texto en los 5/12 de la izquierda), centro (arriba al medio) y abajo (portadas). */
+.texto { display: flex; flex-direction: column; gap: 2.2cqw; max-width: 40cqw; }
+.capa--centro { justify-content: flex-start; align-items: center; text-align: center; padding-top: 7%; }
+.capa--centro .texto { align-items: center; max-width: 70cqw; }
+.capa--abajo { justify-content: flex-end; }
+.capa--abajo .texto { max-width: 60cqw; }
+.capa--derecha { align-items: flex-end; text-align: right; }
+.capa--derecha .texto { align-items: flex-end; }
+
+.etiqueta { display: flex; align-items: center; gap: 1.2cqw; margin: 0; font: 500 1.05cqw / 1.2 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; }
+.etiqueta::before { content: ''; flex: none; width: 0.6cqw; height: 0.6cqw; background: var(--acento-etiqueta, currentColor); }
+.display { margin: 0; font: 700 7.4cqw / 0.92 var(--fuente-display); letter-spacing: var(--interletra-display); }
+.titulo { margin: 0; font: 700 5.4cqw / 0.98 var(--fuente-display); letter-spacing: var(--interletra-display); }
+.capa--centro .titulo { font-size: 4.4cqw; }
+.cita { margin: 0; font: 700 3.5cqw / 1.02 var(--fuente-display); letter-spacing: var(--interletra-display); }
+.capa p:not(.etiqueta) { margin: 0; font-size: 1.55cqw; line-height: 1.45; max-width: 30cqw; color: var(--tinta-suave); }
+.capa--centro p:not(.etiqueta) { max-width: 46cqw; }
+.subrayado { box-shadow: inset 0 -0.34em 0 var(--acento); }
+.firma { font: 500 1.05cqw / 1.3 var(--fuente-texto) !important; letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; }
+.cifra { font-variant-numeric: tabular-nums; }
+
+/* Títulos que suben línea por línea desde una máscara:
+   <h2 class="titulo revelar"><span class="revelar__linea" style="--i: 0"><span>Primera línea</span></span>…</h2> */
+.revelar__linea { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.revelar__linea > span { display: block; }
+.capa--activa .revelar__linea > span { animation: subir var(--texto) var(--curva) both; animation-delay: calc(var(--i, 0) * var(--escalonado)); }
+@keyframes subir { from { transform: translateY(110%); } to { transform: none; } }
+.capa--sale .revelar__linea > span { animation: subir-salir var(--salida-texto) var(--curva-viaje) both; animation-delay: calc(var(--i, 0) * 40ms); }
+@keyframes subir-salir { from { transform: none; } to { transform: translateY(-110%); } }
+/* Lo que no es título entra con un fundido corto, después de las líneas. */
+.entra { opacity: 0; transform: translateY(1.5cqw); transition: opacity var(--lento) linear, transform var(--texto) var(--curva); }
+.capa--activa .entra { opacity: 1; transform: none; transition-delay: calc(380ms + var(--d, 0) * 120ms); }
+.capa--sale .entra { opacity: 0; transition-duration: var(--salida-texto); transition-delay: 0ms; }
+
+/* Hasta 3 cifras grandes en fila: <div class="datos entra"><div><b data-contar="26">0</b><span>…</span></div>…</div> */
+.datos { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, max-content); gap: 3cqw; }
+.datos > div { display: grid; gap: 0.6cqw; padding-top: 1cqw; border-top: 1px solid var(--linea); }
+.datos > div:first-child { border-top: 2px solid var(--tinta); }
+.datos b { font: 700 3.6cqw / 1 var(--fuente-display); letter-spacing: var(--interletra-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.datos > div > span { font: 500 0.95cqw / 1.3 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; color: var(--tinta-suave); max-width: 14cqw; }
+
+/* Hitos en una línea de tiempo: <ol class="hitos entra"><li><b>2019</b><span>…</span></li>…</ol> */
+.hitos { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; justify-content: start; gap: 2.4cqw; }
+.hitos li { display: grid; gap: 0.5cqw; padding-top: 0.9cqw; border-top: 1px solid var(--linea); }
+.hitos li:last-child { border-top: 2px solid var(--tinta); }
+.hitos b { font: 700 2.1cqw / 1 var(--fuente-display); letter-spacing: var(--interletra-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hitos span { font: 500 0.85cqw / 1.2 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; color: var(--tinta-suave); }
+
+/* Lista corta con número: <ol class="lista entra"><li>…</li></ol> */
+.lista { margin: 0; padding: 0; list-style: none; counter-reset: l; display: grid; gap: 1.1cqw; max-width: 34cqw; }
+.lista li { counter-increment: l; display: grid; grid-template-columns: 2.6cqw 1fr; align-items: baseline; padding-top: 1cqw; border-top: 1px solid var(--linea); font: 500 1.45cqw / 1.3 var(--fuente-texto); }
+.lista li::before { content: counter(l, decimal-leading-zero); font: 700 0.95cqw / 1 var(--fuente-display); letter-spacing: var(--interletra-etiqueta); color: var(--tinta-suave); }
+
+/* Insignia y cartel de acento (la única superficie grande de acento en la pantalla). */
+.insignia { display: inline-flex; align-self: flex-start; padding: 0.45em 0.9em; border: 1px solid currentColor; border-radius: 999px; font: 500 1.05cqw / 1 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; }
+.cartel { display: inline-flex; align-self: flex-start; padding: 0.35em 0.6em; background: var(--acento); color: var(--sobre-acento, var(--oscuro)); font: 800 2.2cqw / 1 var(--fuente-display); letter-spacing: var(--interletra-titulo); text-transform: uppercase; }
+.capa--centro .insignia, .capa--centro .cartel { align-self: center; }
+
+/* ============ Etiquetas flotantes: señalan piezas del héroe u objetos de la escena ============ */
+/* El deck proyecta data-pieza / data-ancla a la pantalla y escribe --x, --y (en %). */
+.etiquetas { position: absolute; inset: 0; pointer-events: none; font-size: 1.3cqw; }
+.etiqueta-3d {
+  position: absolute; left: var(--x, -100%); top: var(--y, -100%);
+  display: flex; flex-direction: column; gap: 0.2em; padding: 0.5em 0.8em;
+  translate: 1.2em -50%;
+  background: var(--claro); color: var(--oscuro); border: 1px solid var(--oscuro);
+  opacity: 0; transition: opacity var(--lento) linear;
+}
+.etiquetas--visibles .etiqueta-3d { opacity: 1; transition-delay: calc(var(--i, 0) * 120ms + 300ms); }
+.etiqueta-3d::before { content: ''; position: absolute; right: 100%; top: 50%; width: 1.2em; border-top: 1px solid var(--oscuro); }
+.etiqueta-3d::after { content: ''; position: absolute; right: calc(100% + 1.2em - 0.25em); top: calc(50% - 0.25em); width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--oscuro); }
+.etiqueta-3d--izquierda { translate: calc(-100% - 1.2em) -50%; text-align: right; align-items: flex-end; }
+.etiqueta-3d--izquierda::before { right: auto; left: 100%; }
+.etiqueta-3d--izquierda::after { right: auto; left: calc(100% + 1.2em - 0.25em); }
+.etiqueta-3d--abajo { translate: -50% 1.2em; text-align: center; align-items: center; white-space: nowrap; }
+.etiqueta-3d--abajo::before { right: auto; left: 50%; top: auto; bottom: 100%; width: 0; height: 1.2em; border-top: 0; border-left: 1px solid var(--oscuro); }
+.etiqueta-3d--abajo::after { right: auto; left: calc(50% - 0.25em); top: calc(-1.2em - 0.25em); }
+.etiqueta-3d b { font: 700 1.6em / 1 var(--fuente-display); letter-spacing: var(--interletra-display); font-variant-numeric: tabular-nums; }
+.etiqueta-3d span { font: 500 0.7em / 1.2 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; color: var(--oscuro-suave); }
+
+/* ============ Interfaz: marca, índice de bloques, contador y avance ============ */
+.interfaz { z-index: 4; pointer-events: none; padding: 2.4cqw 3cqw; display: flex; flex-direction: column; justify-content: space-between; color: var(--tinta); transition: color var(--lento) linear; }
+/* Velo al pie, del color del tema: la interfaz de abajo se lee aunque el piso de la escena sea del tono contrario. */
+.interfaz::before { content: ''; position: absolute; inset: auto 0 0; height: 14%; z-index: -1; background: linear-gradient(to top, color-mix(in srgb, var(--fondo) 70%, transparent), transparent); }
+.interfaz__arriba, .interfaz__abajo { display: flex; align-items: center; justify-content: space-between; gap: 3cqw; }
+.logo { font: 700 1.7cqw / 1 var(--fuente-display); letter-spacing: var(--interletra-logo); white-space: nowrap; }
+.logo sup { font-size: 0.32em; font-weight: 500; vertical-align: 1.35em; letter-spacing: 0; margin-left: 0.04em; }
+.interfaz__menu { display: flex; gap: 1.6cqw; margin: 0; padding: 0; list-style: none; pointer-events: auto; }
+.interfaz__menu button {
+  all: unset; cursor: pointer; position: relative; padding: 0.5cqw 0;
+  font: 500 0.82cqw / 1 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase;
+  opacity: 0.55; transition: opacity var(--base) linear;
+}
+.interfaz__menu button b { font-weight: 700; margin-right: 0.4em; }
+.interfaz__menu button::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform var(--lento) var(--curva); }
+.interfaz__menu button:hover, .interfaz__menu button[aria-current] { opacity: 1; }
+.interfaz__menu button[aria-current]::after { transform: none; }
+.interfaz__menu button:focus-visible { outline: 1px solid currentColor; outline-offset: 0.4cqw; }
+.interfaz__marca { font: 500 0.82cqw / 1 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; }
+.interfaz__contador { display: flex; align-items: baseline; gap: 0.6cqw; font: 700 1.1cqw / 1 var(--fuente-display); font-variant-numeric: tabular-nums; }
+.interfaz__contador b { font-size: 2.6cqw; letter-spacing: var(--interletra-display); }
+.interfaz__avance { flex: 1; max-width: 26cqw; height: 1px; background: var(--linea); position: relative; }
+.interfaz__avance::after { content: ''; position: absolute; inset: 0; background: var(--tinta); transform: scaleX(var(--avance, 0)); transform-origin: left; transition: transform var(--viaje) var(--curva-viaje); }
+.interfaz__pista { font: 500 0.78cqw / 1 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; opacity: 0.6; }
+
+/* ============ Cargador: cuenta del 0 al 100 % mientras se compila la escena y se abre como un telón ============ */
+.cargador {
+  z-index: 8; display: grid; place-items: center; align-content: center; gap: 2cqw;
+  background: var(--estudio-oscuro); color: var(--claro);
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1100ms var(--curva-viaje);
+}
+.cargador--listo { clip-path: inset(0 0 100% 0); pointer-events: none; }
+.cargador .logo { font-size: 4.6cqw; }
+.cargador__linea { width: 22cqw; height: 1px; background: color-mix(in srgb, var(--claro) 20%, transparent); position: relative; }
+.cargador__linea::after { content: ''; position: absolute; inset: 0; background: var(--claro); transform: scaleX(var(--p, 0)); transform-origin: left; }
+.cargador__estado { display: flex; justify-content: space-between; width: 22cqw; font: 500 0.85cqw / 1 var(--fuente-texto); letter-spacing: var(--interletra-etiqueta); text-transform: uppercase; font-variant-numeric: tabular-nums; opacity: .7; }
+
+/* ============ Grano de película: que la escena no se vea "plástica" ============ */
+.grano {
+  z-index: 10; pointer-events: none; opacity: var(--grano-opacidad); mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.notas { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .capa--activa .revelar__linea > span { animation: fundido var(--lento) ease-out both; }
+  .gigante > span, .entra { transition-duration: 1ms !important; transition-delay: 0ms !important; }
+  .capa--sale { visibility: hidden; }
+}
+@keyframes fundido { from { opacity: 0; } to { opacity: 1; } }

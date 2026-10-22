@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Del grano a la taza</title>
+  <link rel="stylesheet" href="estilos.css">
+  <!-- Paleta y fuentes de ESTA presentación. El motor 3D lee estas mismas variables: una sola fuente de verdad. -->
+  <style id="paleta">
+    :root {
+      --oscuro: #3a2418;          /* color de marca: texto sobre claro, estudio oscuro */
+      --oscuro-suave: #6d5243;    /* texto secundario sobre claro */
+      --claro: #fbf5ec;           /* fondo claro y texto sobre oscuro */
+      --claro-suave: #d8c8b8;     /* texto secundario sobre oscuro */
+      --arena: #efe3d3;           /* superficies alternas, pedestales del estudio claro */
+      --piedra: #d9cfc4;          /* líneas, bordes */
+      --acento: #e8b04a;          /* un solo acento por pantalla: subrayados, cartel, la cosa importante */
+      --estudio-claro: #fbf5ec;   /* ciclorama del tema claro (se funde con el fondo) */
+      --estudio-oscuro: #24160f;  /* ciclorama del tema oscuro (más profundo que --oscuro, para que el héroe se separe) */
+      --piso-claro: #eadccb;
+      --piso-oscuro: #4a2f22;
+      --color-1: #5f7a4a;         /* colorways del héroe, uno por estación */
+      --color-2: #c8553d;
+      --color-3: #2f4a6b;
+      --fuente-display: "Inter Tight", "Inter", system-ui, sans-serif;
+      --fuente-texto: "Inter", system-ui, sans-serif;
+    }
+  </style>
+  <script type="importmap">
+    { "imports": {
+      "three": "./vendor/three.module.min.js",
+      "three/addons/RoundedBoxGeometry.js": "./vendor/addons/RoundedBoxGeometry.js",
+      "three/addons/RoomEnvironment.js": "./vendor/addons/RoomEnvironment.js",
+      "motor": "./motor.js",
+      "tema": "./tema.js",
+      "deck": "./deck.js"
+    } }
+  </script>
+</head>
+<body>
+<main class="escenario" id="escenario" data-tema="oscuro" aria-roledescription="presentación" aria-label="Del grano a la taza">
+
+  <!-- Tipografía gigante DETRÁS del héroe: una por estación (data-escena), opcionalmente por pose (data-pose). -->
+  <div class="gigantes" aria-hidden="true">
+    <div class="gigante" data-escena="portada">Café</div>
+  </div>
+
+  <canvas id="lienzo"></canvas>
+  <div class="vineta"></div>
+
+  <div class="capas">
+
+    <!-- ============ 0. Portada ============ -->
+    <section class="capa capa--abajo" data-escena="portada" data-bloque="Portada">
+      <div class="texto">
+        <p class="etiqueta entra">Informe 2026 · Café de especialidad</p>
+        <h1 class="titulo revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Del grano</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>a la taza.</span></span>
+        </h1>
+      </div>
+      <aside class="notas">Notas del orador (no se ven en pantalla).</aside>
+    </section>
+
+    <!-- ============ 1. Origen ============ -->
+    <section class="capa" data-escena="origen" data-bloque="Origen">
+      <div class="texto">
+        <p class="etiqueta entra">01 — Origen</p>
+        <h2 class="display revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Nace a</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>1.800</span></span>
+          <span class="revelar__linea" style="--i: 2"><span>metros.</span></span>
+        </h2>
+        <p class="entra">Cuanto más alto crece la planta, más despacio madura el grano y más dulce es la taza.</p>
+      </div>
+    </section>
+    <section class="capa" data-escena="origen">
+      <div class="texto">
+        <p class="etiqueta entra">01 — Cosecha</p>
+        <h2 class="titulo revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Nueve meses</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>por cada taza.</span></span>
+        </h2>
+        <ol class="hitos entra">
+          <li><b>Flor</b><span>Mes 0</span></li>
+          <li><b>Cereza</b><span>Mes 7</span></li>
+          <li><b>Cosecha</b><span>Mes 9</span></li>
+          <li><b>Secado</b><span>3 semanas</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 2. Tueste (encuadre centro: el texto arriba, etiquetas debajo de los cuencos) ============ -->
+    <section class="capa capa--centro" data-escena="tueste" data-bloque="Tueste">
+      <div class="texto">
+        <p class="etiqueta entra">02 — Tueste</p>
+        <h2 class="titulo revelar"><span class="revelar__linea" style="--i: 0"><span>El mismo grano, dos cafés.</span></span></h2>
+      </div>
+      <div class="etiquetas" aria-hidden="true">
+        <div class="etiqueta-3d etiqueta-3d--abajo" data-ancla="claro" style="--i: 0"><b>Claro</b><span>Acidez y fruta</span></div>
+        <div class="etiqueta-3d etiqueta-3d--abajo" data-ancla="oscuro" style="--i: 1"><b>Oscuro</b><span>Cuerpo y amargor</span></div>
+      </div>
+    </section>
+
+    <!-- ============ 3. Datos: el héroe desarmado con etiquetas, y después la pose «barras» ============ -->
+    <section class="capa" data-escena="datos" data-bloque="Datos">
+      <div class="texto">
+        <p class="etiqueta entra">03 — Anatomía</p>
+        <h2 class="titulo revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Qué hay</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>en una taza.</span></span>
+        </h2>
+        <p class="entra">Cada pieza suma a la experiencia: no solo el café.</p>
+      </div>
+      <div class="etiquetas" aria-hidden="true">
+        <div class="etiqueta-3d etiqueta-3d--izquierda" data-pieza="vapor" data-punto="-1,0,0" style="--i: 0"><b>68 °C</b><span>Temperatura ideal</span></div>
+        <div class="etiqueta-3d etiqueta-3d--izquierda" data-pieza="cafe" data-punto="-1,0,0" style="--i: 1"><b>18 g</b><span>De café por taza</span></div>
+        <div class="etiqueta-3d etiqueta-3d--izquierda" data-pieza="plato" data-punto="-1,0,0" style="--i: 2"><b>1:16</b><span>Proporción con agua</span></div>
+      </div>
+    </section>
+    <section class="capa" data-escena="datos" data-pose="barras">
+      <div class="texto">
+        <p class="etiqueta entra">03 — Consumo</p>
+        <h2 class="titulo revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Cada vez</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>más tazas.</span></span>
+        </h2>
+        <div class="datos entra">
+          <div><b><span data-contar="2.7" data-decimales="1">0</span></b><span>Tazas por día, 2025</span></div>
+          <div><b>+<span data-contar="160">0</span> %</b><span>Desde 2015</span></div>
+        </div>
+      </div>
+      <div class="etiquetas" aria-hidden="true">
+        <div class="etiqueta-3d etiqueta-3d--abajo" data-ancla="barra-0" style="--i: 0"><b>2015</b><span>1,0 por día</span></div>
+        <div class="etiqueta-3d etiqueta-3d--abajo" data-ancla="barra-1" style="--i: 1"><b>2020</b><span>1,7 por día</span></div>
+        <div class="etiqueta-3d etiqueta-3d--abajo" data-ancla="barra-2" style="--i: 2"><b>2025</b><span>2,7 por día</span></div>
+      </div>
+    </section>
+
+    <!-- ============ 4. Cita (macro) ============ -->
+    <section class="capa" data-escena="cita" data-bloque="Idea">
+      <div class="texto">
+        <p class="etiqueta entra">04 — La idea</p>
+        <blockquote class="cita revelar" style="margin: 0">
+          <span class="revelar__linea" style="--i: 0"><span>“El café no se toma:</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>se <span class="subrayado">recorre</span>.”</span></span>
+        </blockquote>
+        <p class="firma entra">Equipo de investigación</p>
+      </div>
+    </section>
+
+    <!-- ============ 5. Cierre ============ -->
+    <section class="capa" data-escena="cierre" data-bloque="Cierre">
+      <div class="texto">
+        <p class="etiqueta entra">05 — Cierre</p>
+        <h2 class="display revelar">
+          <span class="revelar__linea" style="--i: 0"><span>Tres</span></span>
+          <span class="revelar__linea" style="--i: 1"><span>decisiones.</span></span>
+        </h2>
+        <ol class="lista entra">
+          <li>Comprar a productores con trazabilidad.</li>
+          <li>Tostar para cada método, no para todos.</li>
+          <li>Medir la taza, no solo la venta.</li>
+        </ol>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Interfaz: marca, índice de bloques (se arma solo con data-bloque), contador y avance. -->
+  <div class="interfaz">
+    <div class="interfaz__arriba">
+      <span class="logo">Grano<sup>®</sup></span>
+      <ul class="interfaz__menu" id="menu"></ul>
+      <span class="interfaz__marca">Informe 2026</span>
+    </div>
+    <div class="interfaz__abajo">
+      <span class="interfaz__contador"><b id="numero">00</b><span id="total">/ 00</span></span>
+      <span class="interfaz__pista">← → para avanzar · F pantalla completa</span>
+      <span class="interfaz__avance"></span>
+    </div>
+  </div>
+
+  <div class="cargador">
+    <span class="logo">Grano<sup>®</sup></span>
+    <div class="cargador__linea"></div>
+    <div class="cargador__estado"><span>Preparando la escena</span><span id="porcentaje">0 %</span></div>
+  </div>
+  <div class="grano"></div>
+</main>
+<script type="module">import 'deck';</script>
+</body>
+</html>
