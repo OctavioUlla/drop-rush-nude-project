@@ -103,7 +103,8 @@ function asentar() {
 }
 
 /** Cifras que cuentan desde 0: <b data-contar="26.5" data-decimales="1">0</b>. */
-const formato = (dec) => new Intl.NumberFormat(document.documentElement.lang || 'es', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+// useGrouping 'always': en español, Intl no separa los miles en números de 4 cifras (1200 en vez de 1.200).
+const formato = (dec) => new Intl.NumberFormat(document.documentElement.lang || 'es', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: 'always' });
 function contar(el) {
   for (const c of el.querySelectorAll('[data-contar]')) {
     const meta = Number(c.dataset.contar), dec = Number(c.dataset.decimales ?? 0), f = formato(dec);
@@ -211,6 +212,20 @@ window.deck = {
     for (const d of diapos) d.el.classList.remove('capa--sale');
     mostrar(actual);
     asentar();
+  },
+  /** Congela el viaje de la diapositiva i−1 a la i en una fracción (0 a 1) del recorrido. false si no hay viaje. */
+  viajar(i, fraccion = 0.5) {
+    i = limitar(i);
+    if (!motor || i === 0) return false;
+    const desde = diapos[i - 1], hasta = diapos[i];
+    if (desde.estacion === hasta.estacion) return false;
+    motor.saltar(desde.estacion, desde.pose);
+    motor.adelantar(2);
+    mostrar(i - 1);
+    actual = i;
+    motor.ir(hasta.estacion, hasta.pose);
+    motor.adelantar(motor.duracionViaje(desde.estacion, hasta.estacion) * fraccion);
+    return true;
   },
 };
 window.presentacionLista = true;

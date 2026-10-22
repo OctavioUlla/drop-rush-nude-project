@@ -30,7 +30,8 @@ presentacion-3d-premium/
 │   └── vendor/                   ← three.js r186 y dos addons
 └── scripts/
     ├── empaquetar.mjs            ← carpeta → un solo .html autocontenido
-    └── capturas.mjs              ← una imagen por diapositiva + errores de consola (Playwright)
+    ├── capturas.mjs              ← una imagen por diapositiva (y a mitad de cada viaje) + errores de consola
+    └── contraste.mjs             ← contraste WCAG de la paleta
 ```
 
 La plantilla trae un ejemplo completo («Del grano a la taza», con una taza como héroe y 6 estaciones). Antes de escribir código, abrí `assets/plantilla/tema.js` e `index.html`: son el mejor ejemplo de cómo se arma todo.
@@ -63,7 +64,7 @@ Si el usuario dijo que no quiere revisar nada, seguí sin esperar respuesta.
 
 ### 3. Identidad
 
-Leé `references/direccion-visual.md` y definí en el `<style id="paleta">` de `index.html`:
+Leé `references/direccion-visual.md` y definí en el `<style id="paleta">` de `index.html` (después, `node <directorio-de-la-skill>/scripts/contraste.mjs <proyecto>` tiene que dar todo «ok»):
 - `--oscuro`, `--claro` y los neutros (`--arena`, `--piedra`, `--oscuro-suave`, `--claro-suave`), los estudios (`--estudio-claro`, `--estudio-oscuro`, `--piso-claro`, `--piso-oscuro`), **un** `--acento` y 3 a 5 colorways (`--color-1`…) para el héroe.
 - Las fuentes, si el tema pide otra cosa que Inter Tight + Inter (ver la sección de tipografía).
 - La marca de la interfaz (logo en texto) y la etiqueta de arriba a la derecha.
@@ -75,7 +76,7 @@ cp -r <directorio-de-la-skill>/assets/plantilla <destino>/<nombre-corto>
 ```
 
 Después, en la copia:
-1. **`tema.js`**: reescribí `crearHeroe` y `estaciones` para el nuevo tema (ver `references/modelado-clay.md`). Mantené la forma del objeto exportado.
+1. **`tema.js`**: reescribí `crearHeroe` y `estaciones` para el nuevo tema (ver `references/modelado-clay.md`, en especial la tabla de «Qué entra en cuadro» antes de ubicar objetos). Mantené la forma del objeto exportado.
 2. **`index.html`**: paleta, `<title>`, las `.gigante` (una palabra por estación que la use, normalmente solo la portada), las diapositivas (`<section class="capa" data-escena=…>`), la marca de la interfaz y el cargador. Usá solo las clases de `estilos.css` (lista en `references/direccion-visual.md`).
 3. **No toques `motor.js` ni `deck.js`** salvo que falte algo de verdad genérico; si lo hacés, que siga sirviendo para cualquier tema.
 
@@ -84,10 +85,12 @@ Si el usuario aporta fotos o videos, ponelos en `media/` dentro del proyecto y u
 ### 5. Revisión visual (no te la saltees)
 
 ```bash
-node <directorio-de-la-skill>/scripts/capturas.mjs <destino>/<nombre-corto>            # sirve la carpeta por HTTP
+node <directorio-de-la-skill>/scripts/capturas.mjs <destino>/<nombre-corto> --viajes   # sirve la carpeta por HTTP
 ```
 
-Mirá **cada** captura (podés juntar varias en una hoja de contactos con PIL para ahorrar) y repasá la lista de control del final. Corregí y repetí hasta que pase. Los problemas típicos: el héroe muy grande o cortado (ajustar `escala` de la estación), objetos detrás del texto (moverlos a la derecha o hacia atrás), etiquetas que salen de pantalla (cambiar `--izquierda`/`--abajo` o el ancla), decorado que tapa al héroe.
+Escribe en `<destino>/<nombre-corto>-capturas/`: `NN.png` por diapositiva (la escena asentada) y, con `--viajes`, `NN-viaje.png` a mitad de cada viaje de cámara. En este contenedor no hay GPU: el navegador de prueba renderiza por software (~1–2 fps), por eso el script salta directo a cada estado en vez de reproducir la presentación; en una máquina real corre a 60 fps.
+
+Mirá **cada** captura (podés juntar varias en una hoja de contactos con PIL para ahorrar) y repasá la lista de control del final. Corregí y repetí hasta que pase. Los problemas típicos: el héroe muy grande o cortado (ajustar `escala` de la estación), decorado cortado en el borde (tabla de «Qué entra en cuadro»), objetos detrás del texto (moverlos a la derecha o hacia atrás), etiquetas que salen de pantalla (cambiar `--izquierda`/`--abajo`, el ancla o el encuadre), decorado que tapa al héroe en un viaje.
 
 ### 6. Empaquetado y entrega
 
@@ -103,7 +106,8 @@ El empaquetador avisa si quedó alguna referencia local sin resolver: tiene que 
 - [ ] Ningún texto encima de un objeto; lo que queda detrás del texto es claro (o oscuro) y de bajo contraste.
 - [ ] El héroe siempre entero en cuadro, nunca tapado por decorado, nunca atravesando un apoyo (levita con hueco).
 - [ ] Etiquetas flotantes dentro de pantalla y sin pisar el texto ni la interfaz de abajo.
-- [ ] Un solo acento por pantalla; contraste del texto ≥ 7:1 con su fondo (proyector).
+- [ ] Un solo acento por pantalla; `contraste.mjs` todo «ok» (texto ≥ 7:1 con su fondo, para proyector).
+- [ ] Ningún viaje (`--viajes`) pasa la cámara a través de un objeto ni tapa al héroe.
 - [ ] Títulos de 2 a 3 líneas cortas, una idea por diapositiva, párrafos de ≤ 25 palabras.
 - [ ] Cifras reales con su fuente en las notas (`<aside class="notas">`) cuando corresponda.
 - [ ] Sin errores en la consola; el `.html` final abre con doble clic, sin servidor ni internet.

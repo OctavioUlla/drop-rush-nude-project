@@ -64,7 +64,11 @@ Encuadre de la estación (`encuadre` en `tema.js`) y layout de la capa de texto 
 
 ## 5. Paleta para cualquier tema
 
-Variables del `<style id="paleta">` (las lee también el motor 3D):
+Variables del `<style id="paleta">` (las lee también el motor 3D). Se pueden agregar las propias (`--color-4`,
+`--alerta`, `--madera`) y usarlas tanto en CSS como en `tema.js` (`'--alerta'`). A partir de la paleta, `estilos.css`
+deriva por tema las variables que usan los componentes: `--tinta` (texto), `--tinta-suave` (texto secundario),
+`--linea` y `--fondo`; en el estudio claro `--tinta` es `--oscuro` y en el oscuro es `--claro`.
+`node scripts/contraste.mjs <proyecto>` mide los pares que importan.
 
 | Variable | Rol | Cómo elegirla |
 |---|---|---|
@@ -109,7 +113,7 @@ Inter Tight + Inter son neo-grotescas neutras que sirven para casi todo y vienen
 - Títulos de 2 a 3 líneas de 1 a 3 palabras, que se lean como una frase: *"600 €, / una habitación / y un drop."*
 - Una idea por diapositiva. Párrafo de apoyo ≤ 25 palabras, en `--tinta-suave`.
 - La etiqueta de arriba numera el bloque: `01 — La historia`.
-- Cifras grandes y redondas (`26 M€`, `+160 %`), con `data-contar` para que cuenten. Máximo 3 por diapositiva.
+- Cifras grandes y redondas (`26 M€`, `+160 %`), con `data-contar` para que cuenten (con separador de miles: 1.200). Máximo 3 por diapositiva.
 - Mayúsculas solo en etiquetas cortas y carteles, nunca en párrafos.
 - El tono lo pone el tema y el público: cercano y en segunda persona para audiencias jóvenes; sobrio para directorio.
 - Lo que el orador dice va en `<aside class="notas">` (no se ve).

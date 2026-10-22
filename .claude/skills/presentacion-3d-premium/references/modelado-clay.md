@@ -8,7 +8,7 @@ El motor (`motor.js`) ya resuelve cámara, luz, sombras, niebla, viajes, colorwa
 1. Forma de `tema.js`
 2. El kit (API)
 3. Cómo modelar el héroe
-4. Cómo armar una estación
+4. Cómo armar una estación (con lo que entra en cuadro)
 5. Poses, anclas y etiquetas
 6. Recetas de objetos
 7. Errores comunes
@@ -56,7 +56,7 @@ Opciones de estación:
 | `balanceo` | amplitud del balanceo (0.6 por defecto; 0.2 para objetos que no deben mostrar el costado) |
 | `distancia` | distancia de cámara (8.5 por defecto). Más chica = más cerca |
 | `subirMira` | solo `centro`: positivo baja el héroe en pantalla, negativo lo sube (deja lugar abajo para etiquetas) |
-| `mira: [x,y,z]` | punto local que mira la cámara (en vez del centro del héroe) |
+| `mira: [x,y,z]` | punto local que reemplaza al centro del héroe como centro del encuadre. En `editorial` se le sigue restando el corrimiento de 1,75 en x, así que `mira: [1, 1.2, 0]` corre todo el encuadre 1 m a la derecha: el héroe queda más a la izquierda y entra más decorado a su derecha (ver la sección 4) |
 | `macro: { corrimiento, distancia }` | solo `macro`, en tamaños de héroe (−0.45 y 2.9 por defecto) |
 
 ## 2. El kit (API)
@@ -65,7 +65,7 @@ Colores: `'#rrggbb'`, `0xrrggbb` o una variable de la paleta (`'--acento'`). Med
 
 | Función | Devuelve |
 |---|---|
-| `kit.heroe(color)` | base del héroe: `{ grupo, material, piezas, pieza(nombre, desarme, giro), ponerColor, desarmar, alColor, actualizar }` |
+| `kit.heroe(color)` | base del héroe: `{ grupo, material, piezas, pieza(nombre, desarme, giro), ponerColor, desarmar, alColor, actualizar, texturas }`. Si el héroe usa texturas propias (`kit.lienzo`, fotos), agregalas a `h.texturas` para que se suban a la placa durante el cargador |
 | `kit.copiaHeroe(color)` | otra instancia del héroe (decorado: copias flotando, estantes, pilas) |
 | `kit.clay(color, extra)` | material mate cacheado (`extra`: `{ roughness, emissive… }`) |
 | `kit.malla(geo, mat, x, y, z)` | malla con sombras |
@@ -118,10 +118,33 @@ Claves para que se vea clay y "de producto":
 
 ## 4. Cómo armar una estación
 
+### Qué entra en cuadro
+
+Con la cámara por defecto (campo 30°, distancia 8,5, 16:9), lo visible depende de la profundidad. Medidas en metros
+desde el centro del héroe (x = 0 local); el texto ocupa el 42 % izquierdo de la pantalla y la interfaz, ~8 % arriba y
+~12 % abajo:
+
+| Profundidad (z) | `editorial`: x visible | `editorial`: x libre a la derecha del texto | `centro`: x visible | alto visible |
+|---|---|---|---|---|
+| +2 (delante) | −4,8 a +1,3 | −2,2 a +1,3 | ±3,1 | ±1,7 |
+| 0 (el héroe) | −5,8 a +2,3 | −2,4 a +2,3 | ±4,0 | ±2,3 |
+| −3 | −7,2 a +3,7 | −2,6 a +3,7 | ±5,5 | ±3,1 |
+| −6 | −8,7 a +5,2 | −2,9 a +5,2 | ±6,9 | ±3,9 |
+
+(El alto se mide desde la mira, que está a la altura del centro del héroe.) Cuanto más lejos de la cámara, más ancho
+entra pero más chico se ve. Lo que tenga que leerse al lado del héroe va en z = 0 a −2, entre x = +1,2 y +2,3; lo
+grande (barrios, colinas, estantes) va al fondo. Si cambia `distancia`, los anchos escalan en proporción
+(`distancia: 10` ≈ ×1,18); `escala` solo cambia el tamaño del héroe.
+
+Para hacer lugar a la derecha del héroe, corré el encuadre con `mira` (o una pose con `camara` y `mira` iguales) en
+vez de achicar todo.
+
+### Pasos
+
 1. **Piso**: `kit.pisoSombra()` para estaciones en el vacío (el fondo lo pinta el CSS, se ve como un ciclorama infinito) o `kit.habitacion()` para un interior.
 2. **Apoyo del héroe**: pedestal, caja, mesa, roca, estante… y el `ancla` encima con `+ kit.LEVITA`.
 3. **2 a 5 objetos que cuentan el bloque**, todos del lado del héroe:
-   - en `editorial`, de x = −1 a x = +5 (lo que está en x < −1.5 queda detrás del texto: solo cosas claras y bajas);
+   - en `editorial`, a la derecha del héroe y dentro de lo visible según la profundidad (tabla de arriba: en z = 0 solo hasta x = +2,3); lo que queda a la izquierda de la franja libre está detrás del texto: solo cosas claras y bajas;
    - en `centro`, a los costados (x = ±2.5) y un poco atrás (z ≈ −0.5), con el título arriba;
    - al fondo (z = −3 a −6) cosas grandes y de bajo contraste (colinas, edificios, estantes).
 4. **Luz propia** si suma: `kit.foco()` en portada y cierre; lámparas con `PointLight` de alcance corto (< 8 m).
@@ -130,10 +153,16 @@ Claves para que se vea clay y "de producto":
 
 ## 5. Poses, anclas y etiquetas
 
+- **Medida de una etiqueta**: ~13 cqw de ancho (13 % de la pantalla) y ~5 cqw de alto, más 1,2 em de línea guía.
+- **El héroe desarmado en `editorial`**: la franja libre entre el texto (termina en el 42 %) y el héroe (~70 %) mide
+  ~18 % de la pantalla: entra una columna de etiquetas `--izquierda` si las piezas se separan **en vertical**
+  (desarmes en y, poco en x). Si las piezas se abren a los costados, usá `encuadre: 'centro'` con etiquetas a ambos
+  lados (`--izquierda` las de la izquierda, por defecto las de la derecha) y el título arriba.
+
 - **Etiqueta sobre una pieza del héroe**: `<div class="etiqueta-3d etiqueta-3d--izquierda" data-pieza="tapa" data-punto="-1,0,0" style="--i: 0"><b>12 M</b><span>Ventas</span></div>`. `data-punto` es un punto dentro de la caja de la pieza, de −1 a 1 (`-1,0,0` = borde izquierdo, `0,1,0` = arriba).
 - **Etiqueta sobre un objeto de la estación**: `data-ancla="nombre"` (un `Object3D` de `anclas`), con `data-punto` como desplazamiento en metros.
 - Variantes: por defecto a la derecha del punto; `--izquierda` (cuando el punto está a la derecha de la pantalla); `--abajo` (bajo objetos apoyados en el piso). Las etiquetas aparecen cuando la cámara llega (`etiquetas--visibles`).
-- **Poses**: definilas en `construir` (necesitan posiciones calculadas, como el tope de una barra). `heroe` es el desvío desde el ancla: para coronar una barra, `tope.x + grupo.x − ancla.x, tope.y + 0.08 − ancla.y, 0`.
+- **Poses**: definilas en `construir` (necesitan posiciones calculadas, como el tope de una barra). También sirven en una estación con **una sola diapositiva**: es la forma de cambiar la altura o el ángulo de la cámara para esa estación (por ejemplo, una vista alta de un barrio: `poses: { alta: { camara: [0, 3, -1], mira: [0, -0.5, 0] } }` y `data-pose="alta"`). `heroe` es el desvío desde el ancla: para coronar una barra, `tope.x + grupo.x − ancla.x, tope.y + 0.08 − ancla.y, 0`.
 
 ## 6. Recetas de objetos
 
@@ -158,6 +187,8 @@ Claves para que se vea clay y "de producto":
 ## 7. Errores comunes
 
 - **El héroe sale enorme o cortado**: bajá `escala` de la estación (0.75–0.9) o, en macro, subí `macro.distancia`.
+- **Decorado cortado en el borde derecho**: mirá la tabla de la sección 4; mandalo más al fondo, acercalo al héroe o corré el encuadre con `mira`.
+- **El héroe se ve lavado bajo el foco** (colores claros en portada y cierre): `kit.foco(g, x, y, z, { intensidad: 0.6 })`.
 - **Algo tapa al héroe en el viaje**: lo que esté en x entre estaciones y alto (> 3 m) se cruza con el arco de la cámara; mantené el decorado alto al fondo (z < −3).
 - **La cámara se traba la primera vez**: no agregues ni quites luces en caliente ni crees mallas en `actualizar`; todo se crea en `construir`.
 - **Cambiar el color de algo que no es el héroe**: usá su propio material (`kit.clay` está cacheado y compartido: clonalo con `.clone()` antes de modificarlo).

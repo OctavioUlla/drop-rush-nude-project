@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Captura cada diapositiva de una presentación (con la escena asentada) para revisarlas como imágenes.
-//   node capturas.mjs <presentacion.html | carpeta-del-proyecto> [carpeta-de-salida] [--ancho 1600]
+//   node capturas.mjs <presentacion.html | carpeta-del-proyecto> [carpeta-de-salida] [--ancho 1600] [--viajes]
+// - Por defecto escribe en <nombre>-capturas/, al lado del proyecto o del .html (nunca dentro del proyecto).
+// - --viajes: además, un cuadro a mitad de cada viaje de cámara (NN-viaje.png) para ver que nada tape al héroe.
 // - Un .html empaquetado se abre directo (file://). Una carpeta se sirve por HTTP en un puerto libre
 //   (los módulos ES no cargan desde file:// si no están empaquetados).
 // - Escribe NN.png por diapositiva y muestra los errores de la consola. Sale con código 1 si hubo errores.
@@ -15,6 +17,8 @@ import { pathToFileURL } from 'node:url';
 const args = process.argv.slice(2);
 const opcion = (n, d) => { const i = args.indexOf(n); if (i < 0) return d; const v = args[i + 1]; args.splice(i, 2); return v; };
 const ancho = Number(opcion('--ancho', 1600));
+const viajes = args.includes('--viajes');
+if (viajes) args.splice(args.indexOf('--viajes'), 1);
 const [entrada, salidaArg] = args;
 if (!entrada) { console.error('Uso: node capturas.mjs <presentacion.html | carpeta> [salida] [--ancho 1600]'); process.exit(1); }
 
@@ -28,7 +32,7 @@ const { chromium } = await cargarPlaywright();
 
 const ruta = resolve(entrada);
 const esCarpeta = statSync(ruta).isDirectory();
-const salida = resolve(salidaArg ?? join(esCarpeta ? ruta : dirname(ruta), 'capturas'));
+const salida = resolve(salidaArg ?? join(dirname(ruta), `${basename(ruta).replace(/\.html?$/i, '')}-capturas`));
 mkdirSync(salida, { recursive: true });
 
 let servidor, url;
@@ -74,6 +78,15 @@ for (let i = 0; i < total; i++) {
   const archivo = join(salida, `${String(i).padStart(2, '0')}.png`);
   await pagina.screenshot({ path: archivo });
   console.log(`diapositiva ${i} → ${archivo}`);
+}
+if (viajes) {
+  for (let i = 1; i < total; i++) {
+    if (!(await pagina.evaluate((n) => window.deck.viajar(n, 0.5), i))) continue;
+    await pagina.waitForTimeout(500);
+    const archivo = join(salida, `${String(i).padStart(2, '0')}-viaje.png`);
+    await pagina.screenshot({ path: archivo });
+    console.log(`viaje hacia ${i} → ${archivo}`);
+  }
 }
 await navegador.close();
 servidor?.close();

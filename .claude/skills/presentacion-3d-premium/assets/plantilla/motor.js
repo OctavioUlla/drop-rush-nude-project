@@ -621,6 +621,8 @@ export function iniciar({ lienzo, escenario, tema, eventos = {}, escalaMaxima })
     arrancar() { arrancado = true; },
     /** Saltar sin viaje (al abrir con #n en la URL, o para las capturas). */
     saltar(i, nombrePose = null) { actual = clamp(i, 0, estaciones.length - 1); viaje = null; pendiente = null; pose = nombrePose; },
+    /** Duración en segundos del viaje entre dos estaciones. */
+    duracionViaje: (a, b) => (reducido ? 0.001 : dur * Math.min(1 + 0.18 * (Math.abs(b - a) - 1), 1.7)),
     /** Avanza la animación sin esperar y dibuja (capturas: la escena queda asentada). */
     adelantar(segundos) { for (let k = 0; k < segundos * 60; k++) actualizar(1 / 60); render(); },
     depuracion: { renderer, escena, camara, render, pausar: (si) => { ultimo = null; renderer.setAnimationLoop(si ? null : bucle); } },
